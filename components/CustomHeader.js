@@ -7,6 +7,7 @@ import MovableModal from './MovableModal';
 export default function CustomHeader() {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isPdfOpen, setIsPdfOpen] = useState(false);
+  const [pdfUrl, setPdfUrl] = useState(null);
   const router = useRouter();
 
   const toggleFullscreen = () => {
@@ -41,12 +42,21 @@ export default function CustomHeader() {
     }
   };
 
-  const openPdf = () => {
-    setIsPdfOpen(true);
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setPdfUrl(e.target.result);
+        setIsPdfOpen(true);
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const closePdf = () => {
     setIsPdfOpen(false);
+    setPdfUrl(null);
   };
 
   return (
@@ -57,9 +67,16 @@ export default function CustomHeader() {
       <button className={styles.iconButton} onClick={toggleFullscreen}>
         <span className="material-icons">fullscreen</span>
       </button>
-      <button className={styles.iconButton} onClick={openPdf}>
+      <input
+        type="file"
+        accept="application/pdf"
+        style={{ display: 'none' }}
+        id="pdfInput"
+        onChange={handleFileChange}
+      />
+      <label htmlFor="pdfInput" className={styles.iconButton}>
         <span className="material-icons">picture_as_pdf</span>
-      </button>
+      </label>
       <div className={styles.accountMenu}>
         <button className={styles.iconButton}>
           <span className="material-icons">account_circle</span>
@@ -72,7 +89,7 @@ export default function CustomHeader() {
       </div>
       {isPdfOpen && (
         <MovableModal onClose={closePdf}>
-          <iframe src="/path/to/your/pdf.pdf" width="100%" height="100%"></iframe>
+          <iframe src={pdfUrl} width="100%" height="100%"></iframe>
         </MovableModal>
       )}
     </div>
