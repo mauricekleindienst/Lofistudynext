@@ -1,4 +1,3 @@
-// components/SelectionBar.js
 import { useState } from 'react';
 import PomodoroTimer from './PomodoroTimer';
 import Sounds from './Sounds';
@@ -7,6 +6,7 @@ import Calendar from './Calendar';
 import LiveChat from './LiveChat';
 import MusicPlayer from './MusicPlayer';
 import Scoreboard from './Scoreboard';
+import Settings from './Settings'; // Ensure Settings is imported
 import styles from '../styles/SelectionBar.module.css';
 
 export default function SelectionBar() {

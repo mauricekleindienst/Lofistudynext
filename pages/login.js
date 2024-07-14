@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { signIn } from 'next-auth/react';
+import Image from 'next/image';
 import styles from '../styles/Login.module.css';
 
 const backgrounds = [
@@ -27,7 +28,7 @@ export default function Login() {
       <div className={styles.gradientOverlay}></div>
       <main className={styles.main}>
         <div className={styles.hero}>
-          <img src="/lo-fi.study.svg" alt="lo-fi.study" className={styles.logo} />
+          <Image src="/lo-fi.study.svg" alt="lo-fi.study" className={styles.logo} />
           <h1 className={styles.title}>Welcome to lo-fi.study</h1>
           <p className={styles.subtitle}>Sign in to access your calm, digital space to work.</p>
           <button onClick={() => signIn('google')} className={styles.loginButton}>

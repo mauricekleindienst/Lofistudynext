@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faClock, faMusic, faImages, faComments, faStickyNote, faCalendarAlt } from '@fortawesome/free-solid-svg-icons';
 import { Carousel } from 'react-responsive-carousel';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
+import Image from 'next/image';
 import styles from '../styles/Home.module.css';
 
 const features = [
@@ -52,7 +53,7 @@ export default function Home() {
     <div className={styles.container}>
       <header className={styles.header}>
         <div className={styles.logo}>
-          <img src="/lo-fi.study.svg" alt="lo-fi.study" />
+          <Image src="/lo-fi.study.svg" alt="lo-fi.study" />
         </div>
         <nav className={styles.nav}>
           <a href="#">Contact</a>
