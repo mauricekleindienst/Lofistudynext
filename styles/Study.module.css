@@ -1,0 +1,124 @@
+/* styles/Study.module.css */
+.container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-image: url('/background.png');
+  background-size: cover;
+  color: #fff;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.logo img {
+  height: 50px;
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+}
+
+.logoutButton {
+  background-color: #ff7b00;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  color: #fff;
+  border-radius: 5px;
+}
+
+.main {
+  display: flex;
+  flex: 1;
+  padding: 20px;
+}
+
+.sidebar {
+  width: 300px;
+  background-color: rgba(0, 0, 0, 0.7);
+  padding: 20px;
+  border-radius: 10px;
+  transition: transform 0.3s ease;
+}
+
+.sidebar.closed {
+  transform: translateX(-100%);
+}
+
+.sidebar.open {
+  transform: translateX(0);
+}
+
+.toggleButton {
+  background-color: #ff7b00;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+  color: #fff;
+  border-radius: 5px;
+  position: absolute;
+  top: 20px;
+  left: 300px;
+}
+
+.backgroundSelector {
+  margin-bottom: 20px;
+}
+
+.currentTime {
+  margin-bottom: 20px;
+}
+
+.musicPlayer {
+  margin-bottom: 20px;
+}
+
+.timer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.timer h3 {
+  font-size: 3rem;
+  margin-bottom: 10px;
+}
+
+.startButton {
+  background-color: #ff7b00;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  color: #fff;
+  border-radius: 5px;
+}
+
+.controls button {
+  background-color: #ff7b00;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  color: #fff;
+  border-radius: 5px;
+  margin-right: 10px;
+}
+
+.content {
+  flex: 1;
+  padding: 20px;
+  background-color: rgba(0, 0, 0, 0.7);
+  border-radius: 10px;
+  margin-left: 20px;
+}
+
+.content h1 {
+  margin-bottom: 20px;
+}
