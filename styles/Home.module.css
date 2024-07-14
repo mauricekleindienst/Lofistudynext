@@ -32,7 +32,7 @@
   font-size: 1rem;
 }
 
-.nav button {
+.loginButton, .registerButton {
   background-color: #ff7b00;
   border: none;
   padding: 10px 20px;
@@ -40,6 +40,12 @@
   color: #fff;
   border-radius: 5px;
   font-size: 1rem;
+  transition: background-color 0.3s ease-in-out, transform 0.3s ease-in-out;
+}
+
+.loginButton:hover, .registerButton:hover {
+  background-color: #ff9500;
+  transform: scale(1.1);
 }
 
 .main {
@@ -76,6 +82,11 @@
   animation: fadeIn 2s ease-in-out;
   max-width: 800px;
   z-index: 1;
+  transition: transform 0.3s ease-in-out;
+}
+
+.hero:hover {
+  transform: scale(1.05);
 }
 
 .hero h1 {
@@ -91,23 +102,6 @@
 .hero h2 {
   font-size: 2.5rem;
   margin-bottom: 2rem;
-}
-
-.hero button {
-  background-color: #ff7b00;
-  border: none;
-  padding: 12px 24px;
-  cursor: pointer;
-  color: #fff;
-  border-radius: 50px;
-  font-size: 1.2rem;
-  margin-top: 1rem;
-  transition: background-color 0.3s ease-in-out, transform 0.3s ease-in-out;
-}
-
-.hero button:hover {
-  background-color: #ff9500;
-  transform: scale(1.1);
 }
 
 .features {
@@ -126,10 +120,13 @@
   width: 250px;
   text-align: center;
   animation: fadeInUp 1s ease-in-out;
+  transition: transform 0.3s ease-in-out;
 }
+
 .feature:hover {
   transform: scale(1.05);
 }
+
 .feature h3 {
   font-size: 1.5rem;
   margin-bottom: 1rem;
@@ -167,7 +164,102 @@
   }
 }
 
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .hero h1 {
+    font-size: 2.5rem;
+  }
 
-.hero:hover {
-  transform: scale(1.05);
+  .hero h2 {
+    font-size: 2rem;
+  }
+
+  .hero p {
+    font-size: 1.2rem;
+  }
+
+  .feature {
+    width: 200px;
+  }
+
+  .feature h3 {
+    font-size: 1.2rem;
+  }
+
+  .featureIcon {
+    font-size: 2.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+  }
+
+  .nav a, .loginButton {
+    margin: 10px 0;
+  }
+
+  .hero h1 {
+    font-size: 2rem;
+  }
+
+  .hero h2 {
+    font-size: 1.5rem;
+  }
+
+  .hero p {
+    font-size: 1rem;
+  }
+
+  .hero {
+    padding: 1.5rem;
+  }
+
+  .features {
+    padding: 2rem 1rem;
+  }
+
+  .feature {
+    width: 180px;
+  }
+
+  .feature h3 {
+    font-size: 1rem;
+  }
+
+  .featureIcon {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero h1 {
+    font-size: 1.5rem;
+  }
+
+  .hero h2 {
+    font-size: 1.2rem;
+  }
+
+  .hero p {
+    font-size: 0.9rem;
+  }
+
+  .hero {
+    padding: 1rem;
+  }
+
+  .feature {
+    width: 100%;
+    margin: 0.5rem 0;
+  }
+
+  .feature h3 {
+    font-size: 0.9rem;
+  }
+
+  .featureIcon {
+    font-size: 1.5rem;
+  }
 }
