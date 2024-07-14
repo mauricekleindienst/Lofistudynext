@@ -2,6 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
+body, html, #__next {
+  height: 100%;
+  margin: 0;
+}
+
 body {
   margin: 0;
   padding: 0;

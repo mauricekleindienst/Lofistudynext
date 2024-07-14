@@ -1,0 +1,54 @@
+.header {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    align-items: center;
+    z-index: 1000;
+  }
+  
+  .iconButton {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    color: #fff;
+    margin: 0 5px;
+    font-size: 24px;
+  }
+  
+  .accountMenu {
+    position: relative;
+  }
+  
+  .dropdownContent {
+    display: none;
+    position: absolute;
+    top: 30px;
+    right: 0;
+    background-color: rgba(0, 0, 0, 0.8);
+    padding: 10px;
+    border-radius: 5px;
+  }
+  
+  .accountMenu:hover .dropdownContent {
+    display: block;
+  }
+  
+  .logoutButton {
+    background-color: #ff7b00;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    color: #fff;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .logoutButton .material-icons {
+    font-size: 24px;
+  }
+  

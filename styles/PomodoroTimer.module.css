@@ -1,0 +1,80 @@
+/* styles/PomodoroTimer.module.css */
+
+.timerContainer {
+    background-color: rgba(0, 0, 0, 0.9);
+    padding: 20px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 400px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000; /* Ensure the timer is above other elements */
+  }
+  
+  .timerHeader {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-bottom: 20px;
+  }
+  
+  .timerMode {
+    cursor: pointer;
+    padding: 10px 20px;
+    color: #fff;
+    transition: background-color 0.3s;
+  }
+  
+  .timerMode:hover,
+  .timerMode.active {
+    background-color: #ff7b00;
+    border-radius: 5px;
+  }
+  
+  .timerDisplay {
+    display: flex;
+    align-items: center;
+    position: relative;
+  }
+  
+  .timerDisplay h3 {
+    font-size: 3rem;
+    margin-right: 10px;
+    color: #fff;
+  }
+  
+  .buttonContainer {
+    display: flex;
+    align-items: center;
+  }
+  
+  .startButton {
+    background-color: #ff7b00;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    color: #fff;
+    border-radius: 5px;
+    margin-right: 10px;
+  }
+  
+  .resetButton {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    color: #fff;
+  }
+  
+  .timerContainer, .timerHeader, .timerMode, .timerDisplay, .startButton, .resetButton {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+  

@@ -25,13 +25,11 @@ export default NextAuth({
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     }),
   ],
+  secret: process.env.NEXTAUTH_SECRET,
   callbacks: {
     async signIn({ account, profile }) {
-      console.log('Account:', account); // Debug: Log account
-      console.log('Profile:', profile); // Debug: Log profile
       if (account.provider === 'google') {
         const idToken = account.id_token;
-        console.log('ID Token:', idToken); // Debug: Log idToken
         if (!idToken) {
           console.error('ID Token not found');
           return false;

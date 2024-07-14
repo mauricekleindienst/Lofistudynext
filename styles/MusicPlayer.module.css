@@ -1,0 +1,46 @@
+/* styles/MusicPlayer.module.css */
+
+.musicPlayer {
+    border: #fff;
+   
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    color: #fff;
+    width: 100%;
+    max-width: 400px;
+    margin: auto;
+  }
+  
+  .trackInfo {
+    margin-bottom: 20px;
+  }
+  
+  .controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .controlButton {
+    background-color: #ff7b00;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    color: #fff;
+    border-radius: 50%;
+    margin: 0 10px;
+    font-size: 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .controlButton:hover {
+    background-color: #ff9900;
+  }
+  
+  .material-icons {
+    font-size: 36px;
+  }
+  
