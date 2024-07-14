@@ -23,6 +23,13 @@ export default NextAuth({
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      authorization: {
+        params: {
+          redirect_uri: process.env.NODE_ENV === 'production' 
+            ? 'https://lo-fi.study/api/auth/callback/google' 
+            : 'http://localhost:3000/api/auth/callback/google'
+        }
+      }
     }),
   ],
   secret: process.env.NEXTAUTH_SECRET,
