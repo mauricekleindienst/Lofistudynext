@@ -58,7 +58,7 @@ export default function Home() {
         <nav className={styles.nav}>
           <a href="#">Contact</a>
           <a href="#">FAQ</a>
-          <Link href="/login" passHref>
+          <Link href="/study" passHref>
             <button className={styles.loginButton}>Login</button>
           </Link>
         </nav>
