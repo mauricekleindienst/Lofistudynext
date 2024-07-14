@@ -46,7 +46,7 @@ export default NextAuth({
       return false;
     },
     async redirect({ url, baseUrl }) {
-      return baseUrl + '/study';
+      return `${baseUrl}/study`;
     },
   },
 });
