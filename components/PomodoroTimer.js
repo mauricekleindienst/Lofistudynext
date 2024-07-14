@@ -16,17 +16,26 @@ export default function PomodoroTimer({ onMinimize }) {
   const [currentMode, setCurrentMode] = useState('pomodoro');
   const timerRef = useRef(null);
 
+  // Sound refs
+  const alertLongBreakRef = useRef(null);
+  const alertShortBreakRef = useRef(null);
+  const alertWorkRef = useRef(null);
+  const tickSoundRef = useRef(null);
+
   const handleTimerEnd = useCallback(() => {
     if (currentMode === 'pomodoro') {
       addPomodoro(users[0].id); // Assuming single user for now
       setCurrentMode('shortBreak');
       setTimeLeft(pomodoroDurations.shortBreak);
+      alertShortBreakRef.current.play();
     } else if (currentMode === 'shortBreak') {
       setCurrentMode('pomodoro');
       setTimeLeft(pomodoroDurations.pomodoro);
+      alertWorkRef.current.play();
     } else if (currentMode === 'longBreak') {
       setCurrentMode('pomodoro');
       setTimeLeft(pomodoroDurations.pomodoro);
+      alertWorkRef.current.play();
     }
     setIsTimerRunning(false);
   }, [addPomodoro, currentMode, users]);
@@ -53,17 +62,20 @@ export default function PomodoroTimer({ onMinimize }) {
 
   const toggleTimer = () => {
     setIsTimerRunning(!isTimerRunning);
+    tickSoundRef.current.play();
   };
 
   const resetTimer = () => {
     setIsTimerRunning(false);
     setTimeLeft(pomodoroDurations[currentMode]);
+    tickSoundRef.current.play();
   };
 
   const changeMode = (mode) => {
     setCurrentMode(mode);
     setIsTimerRunning(false);
     setTimeLeft(pomodoroDurations[mode]);
+    tickSoundRef.current.play();
   };
 
   const formatTime = (seconds) => {
@@ -96,6 +108,10 @@ export default function PomodoroTimer({ onMinimize }) {
           </div>
         </div>
       </div>
+      <audio ref={alertLongBreakRef} src="/sounds/alert-long-break.mp3"></audio>
+      <audio ref={alertShortBreakRef} src="/sounds/alert-short-break.mp3"></audio>
+      <audio ref={alertWorkRef} src="/sounds/alert-work.mp3"></audio>
+      <audio ref={tickSoundRef} src="/sounds/static_audio_tick.mp3"></audio>
     </Draggable>
   );
 }
