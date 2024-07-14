@@ -10,7 +10,7 @@ const tracks = [
   { id: 5, title: 'Jazz', videoId: 'xVSlZWkjI94' }
 ];
 
-export default function MusicPlayer() {
+export default function MusicPlayer({ onMinimize }) {
   const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [volume, setVolume] = useState(50);
@@ -105,6 +105,10 @@ export default function MusicPlayer() {
           className={styles.slider}
         />
       </div>
+      <button onClick={() => {
+        playerRef.current.stopVideo(); // Stop video when minimized
+        onMinimize();
+      }} className="material-icons">remove</button>
     </div>
   );
 }

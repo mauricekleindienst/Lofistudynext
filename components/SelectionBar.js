@@ -4,9 +4,8 @@ import Sounds from './Sounds';
 import Notes from './Notes';
 import Calendar from './Calendar';
 import LiveChat from './LiveChat';
-import MusicPlayer from './MusicPlayer';
 import Scoreboard from './Scoreboard';
-import Settings from './Settings'; // Ensure Settings is imported
+import Settings from './Settings';
 import styles from '../styles/SelectionBar.module.css';
 
 export default function SelectionBar() {
@@ -75,12 +74,8 @@ export default function SelectionBar() {
       <div className={`${visibleComponents.chat ? '' : styles.hidden}`}>
         <LiveChat onMinimize={() => handleIconClick('chat')} />
       </div>
-      <div className={`${visibleComponents.settings ? '' : styles.hidden}`}>
-        <Settings onMinimize={() => handleIconClick('settings')} />
-      </div>
-      <div className={`${visibleComponents.music ? '' : styles.hidden}`}>
-        <MusicPlayer onMinimize={() => handleIconClick('music')} />
-      </div>
+     
+      
       <div className={`${visibleComponents.scoreboard ? '' : styles.hidden}`}>
         <Scoreboard onMinimize={() => handleIconClick('scoreboard')} />
       </div>

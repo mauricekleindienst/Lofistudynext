@@ -1,16 +1,14 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { useUserContext } from '../context/UserContext';
 import Draggable from 'react-draggable';
 import styles from '../styles/PomodoroTimer.module.css';
 
 const pomodoroDurations = {
-  pomodoro: 1500, // 25 minutes
-  shortBreak: 300, // 5 minutes
-  longBreak: 900 // 15 minutes
+  pomodoro: 1500,
+  shortBreak: 300,
+  longBreak: 900
 };
 
 export default function PomodoroTimer() {
-  const { users, addPomodoro } = useUserContext();
   const [isTimerRunning, setIsTimerRunning] = useState(false);
   const [timeLeft, setTimeLeft] = useState(pomodoroDurations.pomodoro);
   const [currentMode, setCurrentMode] = useState('pomodoro');
@@ -19,7 +17,6 @@ export default function PomodoroTimer() {
 
   const handleTimerEnd = useCallback(() => {
     if (currentMode === 'pomodoro') {
-      addPomodoro(users[0].id); // Assuming single user for now
       setCurrentMode('shortBreak');
       setTimeLeft(pomodoroDurations.shortBreak);
     } else if (currentMode === 'shortBreak') {
@@ -30,7 +27,7 @@ export default function PomodoroTimer() {
       setTimeLeft(pomodoroDurations.pomodoro);
     }
     setIsTimerRunning(false);
-  }, [addPomodoro, currentMode, users]);
+  }, [currentMode]);
 
   useEffect(() => {
     if (isTimerRunning) {

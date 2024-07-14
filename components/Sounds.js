@@ -1,7 +1,7 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Draggable from 'react-draggable';
-import { FaUmbrella, FaWind, FaWater, FaKeyboard, FaSnowflake } from 'react-icons/fa';
 import styles from '../styles/Sounds.module.css';
+import { FaUmbrella, FaWind, FaWater, FaKeyboard, FaSnowflake } from 'react-icons/fa';
 
 const sounds = [
   { name: 'Rain', icon: <FaUmbrella />, file: '/sounds/rain.mp3' },
@@ -16,14 +16,13 @@ export default function Sounds({ onMinimize }) {
   const audioRefs = useRef(sounds.map(() => new Audio()));
 
   useEffect(() => {
-    const currentAudioRefs = audioRefs.current;
-    currentAudioRefs.forEach((audio, index) => {
+    audioRefs.current.forEach((audio, index) => {
       audio.src = sounds[index].file;
       audio.loop = true;
     });
 
     return () => {
-      currentAudioRefs.forEach(audio => audio.pause());
+      audioRefs.current.forEach(audio => audio.pause());
     };
   }, []);
 
