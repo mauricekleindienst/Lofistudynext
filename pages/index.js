@@ -53,7 +53,7 @@ export default function Home() {
     <div className={styles.container}>
       <header className={styles.header}>
         <div className={styles.logo}>
-          <Image src="/lo-fi.study.svg" alt="lo-fi.study" />
+          <Image src="/lo-fi.study.svg" alt="lo-fi.study" width={100} height={100} />
         </div>
         <nav className={styles.nav}>
           <a href="#">Contact</a>
