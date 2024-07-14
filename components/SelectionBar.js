@@ -10,14 +10,14 @@ import styles from '../styles/SelectionBar.module.css';
 
 export default function SelectionBar() {
   const [visibleComponents, setVisibleComponents] = useState({
-    pomodoro: true,
-    sounds: true,
-    note: true,
-    calendar: true,
-    chat: true,
-    settings: true,
-    music: true,
-    scoreboard: true
+    pomodoro: false,
+    sounds: false,
+    note: false,
+    calendar: false,
+    chat: false,
+    settings: false,
+    music: false,
+    scoreboard: false
   });
 
   const handleIconClick = (component) => {

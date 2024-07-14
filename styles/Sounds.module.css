@@ -6,7 +6,6 @@
   color: #fff;
   display: flex;
   flex-direction: column;
-  animation: fadeIn 0.5s;
   position: fixed; /* Changed to fixed */
   top: 50%;
   left: 50%;
@@ -51,7 +50,3 @@
   width: 100px;
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}

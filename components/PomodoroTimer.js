@@ -1,22 +1,24 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { useUserContext } from '../context/UserContext';
 import Draggable from 'react-draggable';
 import styles from '../styles/PomodoroTimer.module.css';
 
 const pomodoroDurations = {
-  pomodoro: 1500,
-  shortBreak: 300,
-  longBreak: 900
+  pomodoro: 1500, // 25 minutes
+  shortBreak: 300, // 5 minutes
+  longBreak: 900 // 15 minutes
 };
 
-export default function PomodoroTimer() {
+export default function PomodoroTimer({ onMinimize }) {
+  const { users, addPomodoro } = useUserContext();
   const [isTimerRunning, setIsTimerRunning] = useState(false);
   const [timeLeft, setTimeLeft] = useState(pomodoroDurations.pomodoro);
   const [currentMode, setCurrentMode] = useState('pomodoro');
-  const [isMinimized, setIsMinimized] = useState(false);
   const timerRef = useRef(null);
 
   const handleTimerEnd = useCallback(() => {
     if (currentMode === 'pomodoro') {
+      addPomodoro(users[0].id); // Assuming single user for now
       setCurrentMode('shortBreak');
       setTimeLeft(pomodoroDurations.shortBreak);
     } else if (currentMode === 'shortBreak') {
@@ -27,7 +29,7 @@ export default function PomodoroTimer() {
       setTimeLeft(pomodoroDurations.pomodoro);
     }
     setIsTimerRunning(false);
-  }, [currentMode]);
+  }, [addPomodoro, currentMode, users]);
 
   useEffect(() => {
     if (isTimerRunning) {
@@ -70,16 +72,12 @@ export default function PomodoroTimer() {
     return `${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
-  const handleMinimize = () => {
-    setIsMinimized(!isMinimized);
-  };
-
   return (
     <Draggable>
-      <div className={`${styles.timerContainer} ${isMinimized ? styles.minimized : ''}`}>
+      <div className={styles.timerContainer}>
         <div className={styles.header}>
           <h2>Pomodoro Timer</h2>
-          <button onClick={handleMinimize} className="material-icons">remove</button>
+          <button onClick={onMinimize} className="material-icons">remove</button>
         </div>
         <div className={styles.timerHeader}>
           <div className={`${styles.timerMode} ${currentMode === 'pomodoro' ? styles.active : ''}`} onClick={() => changeMode('pomodoro')}>Pomodoro</div>
