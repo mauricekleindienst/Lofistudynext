@@ -6,25 +6,25 @@ import Calendar from './Calendar';
 import LiveChat from './LiveChat';
 import MusicPlayer from './MusicPlayer';
 import Scoreboard from './Scoreboard';
-import Settings from './Settings'; // Ensure Settings is imported
+import Settings from './Settings';
 import styles from '../styles/SelectionBar.module.css';
 
 export default function SelectionBar() {
-  const [activeComponents, setActiveComponents] = useState({
-    pomodoro: false,
-    sounds: false,
-    note: false,
-    calendar: false,
-    chat: false,
-    settings: false,
-    music: false,
-    scoreboard: false
+  const [visibleComponents, setVisibleComponents] = useState({
+    pomodoro: true,
+    sounds: true,
+    note: true,
+    calendar: true,
+    chat: true,
+    settings: true,
+    music: true,
+    scoreboard: true
   });
 
   const handleIconClick = (component) => {
-    setActiveComponents({
-      ...activeComponents,
-      [component]: !activeComponents[component]
+    setVisibleComponents({
+      ...visibleComponents,
+      [component]: !visibleComponents[component]
     });
   };
 
@@ -60,14 +60,30 @@ export default function SelectionBar() {
           <div className={styles.tooltip}>Settings</div>
         </button>
       </div>
-      {activeComponents.pomodoro && <PomodoroTimer onMinimize={() => handleIconClick('pomodoro')} />}
-      {activeComponents.sounds && <Sounds onMinimize={() => handleIconClick('sounds')} />}
-      {activeComponents.note && <Notes onMinimize={() => handleIconClick('note')} />}
-      {activeComponents.calendar && <Calendar onMinimize={() => handleIconClick('calendar')} />}
-      {activeComponents.chat && <LiveChat onMinimize={() => handleIconClick('chat')} />}
-      {activeComponents.settings && <Settings onMinimize={() => handleIconClick('settings')} />}
-      {activeComponents.music && <MusicPlayer onMinimize={() => handleIconClick('music')} />}
-      {activeComponents.scoreboard && <Scoreboard onMinimize={() => handleIconClick('scoreboard')} />}
+      <div className={`${visibleComponents.pomodoro ? '' : styles.hidden}`}>
+        <PomodoroTimer onMinimize={() => handleIconClick('pomodoro')} />
+      </div>
+      <div className={`${visibleComponents.sounds ? '' : styles.hidden}`}>
+        <Sounds onMinimize={() => handleIconClick('sounds')} />
+      </div>
+      <div className={`${visibleComponents.note ? '' : styles.hidden}`}>
+        <Notes onMinimize={() => handleIconClick('note')} />
+      </div>
+      <div className={`${visibleComponents.calendar ? '' : styles.hidden}`}>
+        <Calendar onMinimize={() => handleIconClick('calendar')} />
+      </div>
+      <div className={`${visibleComponents.chat ? '' : styles.hidden}`}>
+        <LiveChat onMinimize={() => handleIconClick('chat')} />
+      </div>
+      <div className={`${visibleComponents.settings ? '' : styles.hidden}`}>
+        <Settings onMinimize={() => handleIconClick('settings')} />
+      </div>
+      <div className={`${visibleComponents.music ? '' : styles.hidden}`}>
+        <MusicPlayer onMinimize={() => handleIconClick('music')} />
+      </div>
+      <div className={`${visibleComponents.scoreboard ? '' : styles.hidden}`}>
+        <Scoreboard onMinimize={() => handleIconClick('scoreboard')} />
+      </div>
     </div>
   );
 }

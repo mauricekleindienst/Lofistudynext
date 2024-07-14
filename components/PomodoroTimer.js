@@ -9,11 +9,12 @@ const pomodoroDurations = {
   longBreak: 900 // 15 minutes
 };
 
-export default function PomodoroTimer({ onMinimize }) {
+export default function PomodoroTimer() {
   const { users, addPomodoro } = useUserContext();
   const [isTimerRunning, setIsTimerRunning] = useState(false);
   const [timeLeft, setTimeLeft] = useState(pomodoroDurations.pomodoro);
   const [currentMode, setCurrentMode] = useState('pomodoro');
+  const [isMinimized, setIsMinimized] = useState(false);
   const timerRef = useRef(null);
 
   const handleTimerEnd = useCallback(() => {
@@ -72,12 +73,16 @@ export default function PomodoroTimer({ onMinimize }) {
     return `${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
+  const handleMinimize = () => {
+    setIsMinimized(!isMinimized);
+  };
+
   return (
     <Draggable>
-      <div className={styles.timerContainer}>
+      <div className={`${styles.timerContainer} ${isMinimized ? styles.minimized : ''}`}>
         <div className={styles.header}>
           <h2>Pomodoro Timer</h2>
-          <button onClick={onMinimize} className="material-icons">remove</button>
+          <button onClick={handleMinimize} className="material-icons">remove</button>
         </div>
         <div className={styles.timerHeader}>
           <div className={`${styles.timerMode} ${currentMode === 'pomodoro' ? styles.active : ''}`} onClick={() => changeMode('pomodoro')}>Pomodoro</div>

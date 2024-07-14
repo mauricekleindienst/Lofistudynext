@@ -23,13 +23,6 @@ export default NextAuth({
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      authorization: {
-        params: {
-          redirect_uri: process.env.NODE_ENV === 'production' 
-            ? 'https://lo-fi.study/api/auth/callback/google' 
-            : 'http://localhost:3000/api/auth/callback/google'
-        }
-      }
     }),
   ],
   secret: process.env.NEXTAUTH_SECRET,
@@ -56,4 +49,11 @@ export default NextAuth({
       return `${baseUrl}/study`;
     },
   },
+  pages: {
+    signIn: '/auth/signin',
+    signOut: '/auth/signout',
+    error: '/auth/error', // Error code passed in query string as ?error=
+    verifyRequest: '/auth/verify-request', // (used for check email message)
+    newUser: null // If set, new users will be directed here on first sign in
+  }
 });
