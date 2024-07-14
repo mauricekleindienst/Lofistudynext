@@ -6,7 +6,7 @@ import Calendar from './Calendar';
 import LiveChat from './LiveChat';
 import MusicPlayer from './MusicPlayer';
 import Scoreboard from './Scoreboard';
-import Settings from './Settings';
+import Settings from './Settings'; // Ensure Settings is imported
 import styles from '../styles/SelectionBar.module.css';
 
 export default function SelectionBar() {
