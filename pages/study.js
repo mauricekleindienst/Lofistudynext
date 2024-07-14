@@ -16,11 +16,13 @@ const backgrounds = [
   { id: 6, src: '/backgrounds/Couch.mp4', alt: 'Couch' }
 ];
 
+
 export default function Study() {
   const { data: session, status } = useSession();
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [currentTime, setCurrentTime] = useState(new Date().toLocaleTimeString());
   const [selectedBackground, setSelectedBackground] = useState('/backgrounds/Train.mp4');
+  const [visibleComponents, setVisibleComponents] = useState({});
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -49,6 +51,13 @@ export default function Study() {
     setSelectedBackground(background.src);
   };
 
+  const handleIconClick = (component) => {
+    setVisibleComponents((prevState) => ({
+      ...prevState,
+      [component]: !prevState[component],
+    }));
+  };
+
   const getFirstName = (fullName) => {
     return fullName.split(' ')[0];
   };
@@ -56,8 +65,8 @@ export default function Study() {
   return (
     <>
       <CustomHeader />
-      <PomodoroTimer />
-      <SelectionBar />
+      {visibleComponents.pomodoro && <PomodoroTimer />}
+      <SelectionBar onIconClick={handleIconClick} />
       <div className={styles.container}>
         <video className={styles.videoBackground} autoPlay loop muted src={selectedBackground}></video>
         <main className={styles.main}>

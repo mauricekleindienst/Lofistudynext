@@ -6,7 +6,7 @@
     left: 50%;
     transform: translateX(-50%);
     background-color: rgba(0, 0, 0, 0.9);
-    border-radius: 10px;
+    border-radius: 20px;
     display: flex;
     padding: 20px;
     z-index: 1000;
@@ -18,11 +18,12 @@
     cursor: pointer;
     color: #fff;
     margin: 0 10px;
-    width: 60px;
-    height: 60px;
+    width: 40px;
+    height: 40px;
     display: flex;
     align-items: center;
     justify-content: center;
+    position: relative;
     transition: background-color 0.3s, color 0.3s;
   }
   
@@ -30,7 +31,33 @@
     color: #ff7b00;
   }
   
+  .iconButton:hover .tooltip {
+    visibility: visible;
+    opacity: 1;
+    transform: translateY(0);
+  }
+  
   .material-icons {
-    font-size: 50px !important;
+    font-size: 48px !important; /* Forcefully increase icon size */
+    line-height: 48px !important; /* Adjust line height */
+  }
+  
+  .tooltip {
+    visibility: hidden;
+    opacity: 0;
+    width: 120px;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px;
+    position: absolute;
+    z-index: 1;
+    bottom: 100%; /* Position above the button */
+    left: 50%;
+    transform: translateX(-50%) translateY(-10px);
+    transition: opacity 0.3s, transform 0.3s;
+    font-size: 14px;
+    line-height: 1.2;
   }
   
