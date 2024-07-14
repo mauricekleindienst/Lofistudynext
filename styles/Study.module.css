@@ -1,7 +1,5 @@
 /* styles/Study.module.css */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+
 .container {
   display: flex;
   flex-direction: column;
