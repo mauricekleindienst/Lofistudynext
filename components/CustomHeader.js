@@ -47,8 +47,12 @@ export default function CustomHeader() {
     if (file) {
       const reader = new FileReader();
       reader.onload = (e) => {
+        console.log('PDF URL:', e.target.result);
         setPdfUrl(e.target.result);
         setIsPdfOpen(true);
+      };
+      reader.onerror = (e) => {
+        console.error('Error reading file:', e);
       };
       reader.readAsDataURL(file);
     }
@@ -88,10 +92,11 @@ export default function CustomHeader() {
         </div>
       </div>
       {isPdfOpen && (
-        <MovableModal onClose={closePdf}>
-          <iframe src={pdfUrl} width="100%" height="100%"></iframe>
-        </MovableModal>
-      )}
+  <MovableModal onClose={closePdf}>
+    <iframe src={pdfUrl} style={{ width: '600px', height: '400px' }}></iframe>
+  </MovableModal>
+)}
+
     </div>
   );
 }
