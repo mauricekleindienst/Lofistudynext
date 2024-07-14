@@ -64,6 +64,25 @@ export default function MusicPlayer({ onMinimize }) {
     }
   }, [currentTrackIndex]);
 
+  // Update the nextTrack and prevTrack functions to start playing immediately if something is currently playing
+  const skipNextTrack = () => {
+    setCurrentTrackIndex((currentTrackIndex + 1) % tracks.length);
+    if (isPlaying) {
+      setTimeout(() => {
+        playerRef.current.playVideo();
+      }, 100); // Give a slight delay to ensure the video is loaded before playing
+    }
+  };
+
+  const skipPrevTrack = () => {
+    setCurrentTrackIndex((currentTrackIndex - 1 + tracks.length) % tracks.length);
+    if (isPlaying) {
+      setTimeout(() => {
+        playerRef.current.playVideo();
+      }, 100); // Give a slight delay to ensure the video is loaded before playing
+    }
+  };
+
   return (
     <div className={styles.musicPlayer}>
       <div className={styles.header}>
@@ -89,13 +108,13 @@ export default function MusicPlayer({ onMinimize }) {
         onStateChange={onStateChange}
       />
       <div className={styles.controls}>
-        <button onClick={prevTrack} className={styles.controlButton}>
+        <button onClick={skipPrevTrack} className={styles.controlButton}>
           <span className="material-icons">skip_previous</span>
         </button>
         <button onClick={playPause} className={styles.controlButton}>
           <span className="material-icons">{isPlaying ? 'pause' : 'play_arrow'}</span>
         </button>
-        <button onClick={nextTrack} className={styles.controlButton}>
+        <button onClick={skipNextTrack} className={styles.controlButton}>
           <span className="material-icons">skip_next</span>
         </button>
       </div>
