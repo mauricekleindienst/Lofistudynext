@@ -4,8 +4,12 @@ import { useState, useEffect } from 'react';
 import styles from '../styles/Study.module.css';
 import MusicPlayer from '../components/MusicPlayer';
 import CustomHeader from '../components/CustomHeader';
-import SelectionBar from '../components/SelectionBar';
 import PomodoroTimer from '../components/PomodoroTimer';
+import SelectionBar from '../components/SelectionBar';
+import Notes from '../components/Notes';
+import Calendar from '../components/Calendar';
+import LiveChat from '../components/LiveChat';
+
 
 const backgrounds = [
   { id: 1, src: '/backgrounds/Night.mp4', alt: 'Night' },
@@ -65,7 +69,10 @@ export default function Study() {
   return (
     <>
       <CustomHeader />
-      {visibleComponents.pomodoro && <PomodoroTimer />}
+      {visibleComponents.pomodoro && <PomodoroTimer onMinimize={() => handleIconClick('pomodoro')} />}
+      {visibleComponents.note && <Notes onMinimize={() => handleIconClick('note')} />}
+      {visibleComponents.calendar && <Calendar onMinimize={() => handleIconClick('calendar')} />}
+      {visibleComponents.chat && <LiveChat onMinimize={() => handleIconClick('chat')} userName={getFirstName(session.user.name)} />}
       <SelectionBar onIconClick={handleIconClick} />
       <div className={styles.container}>
         <video className={styles.videoBackground} autoPlay loop muted src={selectedBackground}></video>

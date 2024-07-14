@@ -1,7 +1,7 @@
 /* styles/PomodoroTimer.module.css */
-
+@import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;700&display=swap');
 .timerContainer {
-    background-color: rgba(0, 0, 0, 0.9);
+    background-color: rgba(0, 0, 0, 0.7);
     padding: 20px;
     border-radius: 10px;
     display: flex;
@@ -12,7 +12,19 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    z-index: 1000; /* Ensure the timer is above other elements */
+    z-index: 1000;
+    font-family: 'Comfortaa', cursive;
+    color: white;
+  }
+  
+  .header {
+    font-size: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: move;
+    width: 100%;
+    font-family: 'Comfortaa', cursive;
   }
   
   .timerHeader {
@@ -20,6 +32,7 @@
     justify-content: space-between;
     width: 100%;
     margin-bottom: 20px;
+    font-family: 'Comfortaa', cursive;
   }
   
   .timerMode {
@@ -27,6 +40,7 @@
     padding: 10px 20px;
     color: #fff;
     transition: background-color 0.3s;
+    font-family: 'Comfortaa', cursive;
   }
   
   .timerMode:hover,
@@ -60,6 +74,7 @@
     color: #fff;
     border-radius: 5px;
     margin-right: 10px;
+    font-family: 'Comfortaa', cursive;
   }
   
   .resetButton {
@@ -69,12 +84,9 @@
     color: #fff;
   }
   
-  .timerContainer, .timerHeader, .timerMode, .timerDisplay, .startButton, .resetButton {
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
+  .material-icons {
+    cursor: pointer;
+    font-size: 24px;
+    color: white;
   }
   

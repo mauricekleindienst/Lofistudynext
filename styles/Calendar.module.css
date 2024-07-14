@@ -1,5 +1,5 @@
 /* styles/Calendar.module.css */
-
+@import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;700&display=swap');
 .calendarContainer {
     background-color: rgba(0, 0, 0, 0.7);
     padding: 20px;
@@ -10,6 +10,21 @@
     left: 50%;
     transform: translate(-50%, -50%);
     z-index: 1000;
+    color: white;
+    font-family: 'Comfortaa', cursive;
+  }
+  
+  .header {
+    font-size: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: move;
+  }
+  
+  .material-icons {
+    cursor: pointer;
+    font-size: 24px;
     color: white;
   }
   

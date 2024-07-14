@@ -7,6 +7,10 @@ export default function SelectionBar({ onIconClick }) {
         <span className="material-icons">alarm</span>
         <div className={styles.tooltip}>Pomodoro</div>
       </button>
+      <button className={styles.iconButton} onClick={() => onIconClick('sounds')}>
+        <span className="material-icons">graphic_eq</span>
+        <div className={styles.tooltip}>Sounds</div>
+      </button>
       <button className={styles.iconButton} onClick={() => onIconClick('note')}>
         <span className="material-icons">edit</span>
         <div className={styles.tooltip}>Note</div>

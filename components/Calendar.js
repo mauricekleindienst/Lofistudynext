@@ -1,11 +1,17 @@
 // components/Calendar.js
+import Draggable from 'react-draggable';
 import styles from '../styles/Calendar.module.css';
 
-export default function Calendar() {
+export default function Calendar({ onMinimize }) {
   return (
-    <div className={styles.calendarContainer}>
-      <h2>Calendar</h2>
-      <p>Calendar content goes here...</p>
-    </div>
+    <Draggable>
+      <div className={styles.calendarContainer}>
+        <div className={styles.header}>
+          <h2>Calendar</h2>
+          <button onClick={onMinimize} className="material-icons">remove</button>
+        </div>
+        <p>Calendar content goes here...</p>
+      </div>
+    </Draggable>
   );
 }

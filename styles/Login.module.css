@@ -1,44 +1,107 @@
-/* styles/Login.module.css */
+@import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;700&display=swap');
 
 .container {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-    background-color: #111;
-    color: #fff;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  .main {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-  }
-  
-  .hero {
-    max-width: 600px;
-  }
-  
-  .hero h1 {
-    font-size: 2.5rem;
-    margin-bottom: 0.5rem;
-  }
-  
-  .hero p {
-    font-size: 1.25rem;
-    margin-bottom: 2rem;
-  }
-  
-  .loginButton {
-    background-color: #ff7b00;
-    border: none;
-    padding: 10px 20px;
-    cursor: pointer;
-    color: #fff;
-    border-radius: 5px;
-    font-size: 1rem;
-  }
-  
+  position: relative;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  font-family: 'Comfortaa', cursive;
+}
+
+.videoBackground {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -1;
+}
+
+.gradientOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.8));
+  z-index: 0;
+}
+
+.main {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  color: white;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+
+.hero {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  padding: 2rem;
+  border-radius: 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease-in-out;
+}
+
+.hero:hover {
+  transform: scale(1.05);
+}
+
+.logo {
+  margin-bottom: 1rem;
+  width: 200px; /* Adjust the size as needed */
+  height: auto;
+
+  animation: fadeIn 2s ease-in-out;
+}
+
+.title {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  animation: fadeIn 2s ease-in-out;
+}
+
+.subtitle {
+  font-size: 1.2rem;
+  margin-bottom: 2rem;
+  animation: fadeIn 2s ease-in-out;
+}
+
+.loginButton {
+  background-color: #ff7b00;
+  border: none;
+  padding: 12px 24px;
+  cursor: pointer;
+  color: #fff;
+  border-radius: 50px;
+  font-size: 1.2rem;
+  margin-top: 1rem;
+  transition: background-color 0.3s ease-in-out, transform 0.3s ease-in-out;
+  display: inline-flex;
+  align-items: center;
+}
+
+.loginButton:hover {
+  background-color: #ff9500;
+  transform: scale(1.1);
+}
+
+.loginButton svg {
+  margin-right: 8px;
+}
+
+@keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+

@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;700&display=swap');
 .container {
   display: flex;
   flex-direction: column;
@@ -18,14 +19,7 @@
   pointer-events: none;
 }
 
-.header {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  padding: 20px;
-  background-color: transparent;
-  width: 100%;
-}
+
 
 .nav {
   display: flex;
@@ -55,7 +49,8 @@
   border-radius: 10px;
   transition: transform 0.3s ease;
   position: relative;
-  z-index: 2; /* Ensure sidebar is above the background but below the timer */
+  z-index: 999; /* Ensure sidebar is above the background but below the timer */
+ 
 }
 
 .sidebar.closed {
@@ -117,8 +112,3 @@
   margin-right: 20px;
 }
 
-.currentTime {
-  background-color: rgba(0, 0, 0, 0.5);
-  padding: 10px;
-  border-radius: 5px;
-}

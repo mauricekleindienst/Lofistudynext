@@ -1,26 +1,43 @@
 /* styles/Notes.module.css */
+@import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;700&display=swap');
+.resizableBox {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1000;
+  background-color: rgba(0, 0, 0, 0.7);
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 10px;
+  color: white;
+  font-family: 'Comfortaa', cursive;
+}
 
 .notesContainer {
-    background-color: rgba(0, 0, 0, 0.7);
-    padding: 20px;
-    border-radius: 10px;
-    width: 400px;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 1000;
-    color: white;
-  }
-  
-  .textarea {
-    width: 100%;
-    height: 200px;
-    background-color: #333;
-    color: white;
-    border: none;
-    padding: 10px;
-    border-radius: 5px;
-    resize: none;
-  }
-  
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  font-family: 'Comfortaa', cursive;
+}
+
+.header {
+  font-size: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: move;
+  padding: 10px;
+  background-color: rgba(0, 0, 0, 0.9);
+  border-bottom: 1px solid #444;
+  font-family: 'Comfortaa', cursive;
+}
+
+.editor {
+  flex-grow: 1;
+  background-color: #333;
+  padding: 10px;
+  overflow: auto;
+}
