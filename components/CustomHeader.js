@@ -1,11 +1,12 @@
-// components/CustomHeader.js
 import { signOut } from 'next-auth/react';
 import styles from '../styles/CustomHeader.module.css';
 import { useState } from 'react';
 import { useRouter } from 'next/router';
+import MovableModal from './MovableModal';
 
 export default function CustomHeader() {
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [isPdfOpen, setIsPdfOpen] = useState(false);
   const router = useRouter();
 
   const toggleFullscreen = () => {
@@ -40,6 +41,14 @@ export default function CustomHeader() {
     }
   };
 
+  const openPdf = () => {
+    setIsPdfOpen(true);
+  };
+
+  const closePdf = () => {
+    setIsPdfOpen(false);
+  };
+
   return (
     <div className={styles.header}>
       <button className={styles.iconButton} onClick={shareVideoRoom}>
@@ -47,6 +56,9 @@ export default function CustomHeader() {
       </button>
       <button className={styles.iconButton} onClick={toggleFullscreen}>
         <span className="material-icons">fullscreen</span>
+      </button>
+      <button className={styles.iconButton} onClick={openPdf}>
+        <span className="material-icons">picture_as_pdf</span>
       </button>
       <div className={styles.accountMenu}>
         <button className={styles.iconButton}>
@@ -58,6 +70,11 @@ export default function CustomHeader() {
           </button>
         </div>
       </div>
+      {isPdfOpen && (
+        <MovableModal onClose={closePdf}>
+          <iframe src="/path/to/your/pdf.pdf" width="100%" height="100%"></iframe>
+        </MovableModal>
+      )}
     </div>
   );
 }
