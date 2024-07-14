@@ -1,0 +1,57 @@
+.soundsContainer {
+  background: rgba(0, 0, 0, 0.7);
+  padding: 20px;
+  border-radius: 10px;
+  width: 300px;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  animation: fadeIn 0.5s;
+  position: fixed; /* Changed to fixed */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1000; /* Ensure it is above other elements */
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.draggable-header {
+  cursor: move;
+  width: 100%;
+  padding: 10px; /* Ensure enough space to grab */
+}
+
+.soundsList {
+  display: flex;
+  flex-direction: column;
+}
+
+.sound {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.icon {
+  margin-right: 10px;
+  font-size: 24px;
+}
+
+.soundName {
+  flex: 1;
+}
+
+.slider {
+  width: 100px;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}

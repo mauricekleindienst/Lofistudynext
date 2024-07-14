@@ -1,46 +1,55 @@
-/* styles/MusicPlayer.module.css */
 @import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;700&display=swap');
 .musicPlayer {
-    border: #fff;
-    font-family: 'Comfortaa', cursive;
-    padding: 20px;
-    border-radius: 10px;
-    text-align: center;
-    color: #fff;
-    width: 100%;
-    max-width: 400px;
-    margin: auto;
-  }
-  
-  .trackInfo {
-    margin-bottom: 20px;
-  }
-  
-  .controls {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  .controlButton {
-    background-color: #ff7b00;
-    border: none;
-    padding: 10px;
-    cursor: pointer;
-    color: #fff;
-    border-radius: 50%;
-    margin: 0 10px;
-    font-size: 24px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  .controlButton:hover {
-    background-color: #ff9900;
-  }
-  
-  .material-icons {
-    font-size: 36px;
-  }
-  
+  border: #fff;
+  font-family: 'Comfortaa', cursive;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  color: #fff;
+  width: 100%;
+  max-width: 400px;
+  margin: auto;
+}
+
+.trackInfo {
+  margin-bottom: 20px;
+}
+
+.controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.controlButton {
+  background-color: #ff7b00;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+  color: #fff;
+  border-radius: 50%;
+  margin: 0 10px;
+  font-size: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.controlButton:hover {
+  background-color: #ff9900;
+}
+
+.material-icons {
+  font-size: 36px;
+}
+
+.volumeControl {
+  display: flex;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.slider {
+  margin-left: 10px;
+  width: 100px;
+}

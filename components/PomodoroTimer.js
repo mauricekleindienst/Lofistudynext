@@ -1,4 +1,6 @@
+// components/PomodoroTimer.js
 import { useState, useEffect, useRef } from 'react';
+import { useUserContext } from '../context/UserContext';
 import Draggable from 'react-draggable';
 import styles from '../styles/PomodoroTimer.module.css';
 
@@ -9,21 +11,12 @@ const pomodoroDurations = {
 };
 
 export default function PomodoroTimer({ onMinimize }) {
+  const { users, addPomodoro } = useUserContext();
   const [isTimerRunning, setIsTimerRunning] = useState(false);
   const [timeLeft, setTimeLeft] = useState(pomodoroDurations.pomodoro);
   const [currentMode, setCurrentMode] = useState('pomodoro');
-  const [pomodoroCount, setPomodoroCount] = useState(0);
   const timerRef = useRef(null);
-  const workAudioRef = useRef(null);
-  const shortBreakAudioRef = useRef(null);
-  const longBreakAudioRef = useRef(null);
-  const clickAudioRef = useRef(null);
 
-  useEffect(() => {
-    if (Notification.permission !== 'granted') {
-      Notification.requestPermission();
-    }
-  }, []);
   useEffect(() => {
     if (isTimerRunning) {
       timerRef.current = setInterval(() => {
@@ -44,88 +37,34 @@ export default function PomodoroTimer({ onMinimize }) {
     return () => clearInterval(timerRef.current);
   }, [isTimerRunning]);
 
-  useEffect(() => {
-    document.title = `${formatTime(timeLeft)} - ${currentMode.charAt(0).toUpperCase() + currentMode.slice(1)}`;
-  }, [timeLeft, currentMode]);
-
   const handleTimerEnd = () => {
     if (currentMode === 'pomodoro') {
-      setPomodoroCount(prevCount => prevCount + 1);
-      showNotification('Pomodoro finished! Time for a break.');
-    } else {
-      showNotification('Break time over! Back to work.');
+      addPomodoro(users[0].id); // Assuming single user for now
+      setCurrentMode('shortBreak');
+      setTimeLeft(pomodoroDurations.shortBreak);
+    } else if (currentMode === 'shortBreak') {
+      setCurrentMode('pomodoro');
+      setTimeLeft(pomodoroDurations.pomodoro);
+    } else if (currentMode === 'longBreak') {
+      setCurrentMode('pomodoro');
+      setTimeLeft(pomodoroDurations.pomodoro);
     }
-
-    if (currentMode === 'pomodoro' && pomodoroCount === 3) {
-      setCurrentMode('longBreak');
-      setTimeLeft(pomodoroDurations.longBreak);
-      if (longBreakAudioRef.current) {
-        longBreakAudioRef.current.play();
-      }
-    } else {
-      switch (currentMode) {
-        case 'pomodoro':
-          setCurrentMode('shortBreak');
-          setTimeLeft(pomodoroDurations.shortBreak);
-          if (shortBreakAudioRef.current) {
-            shortBreakAudioRef.current.play();
-          }
-          break;
-        case 'shortBreak':
-          setCurrentMode('pomodoro');
-          setTimeLeft(pomodoroDurations.pomodoro);
-          if (workAudioRef.current) {
-            workAudioRef.current.play();
-          }
-          break;
-        case 'longBreak':
-          setCurrentMode('pomodoro');
-          setTimeLeft(pomodoroDurations.pomodoro);
-          if (workAudioRef.current) {
-            workAudioRef.current.play();
-          }
-          setPomodoroCount(0);
-          break;
-        default:
-          break;
-      }
-    }
-  };
-
-  const showNotification = (message) => {
-    if (Notification.permission === 'granted') {
-      new Notification(message);
-    } else if (Notification.permission !== 'denied') {
-      Notification.requestPermission().then(permission => {
-        if (permission === 'granted') {
-          new Notification(message);
-        }
-      });
-    }
+    setIsTimerRunning(false);
   };
 
   const toggleTimer = () => {
     setIsTimerRunning(!isTimerRunning);
-    if (clickAudioRef.current) {
-      clickAudioRef.current.play();
-    }
   };
 
   const resetTimer = () => {
     setIsTimerRunning(false);
     setTimeLeft(pomodoroDurations[currentMode]);
-    if (clickAudioRef.current) {
-      clickAudioRef.current.play();
-    }
   };
 
   const changeMode = (mode) => {
     setCurrentMode(mode);
     setIsTimerRunning(false);
     setTimeLeft(pomodoroDurations[mode]);
-    if (clickAudioRef.current) {
-      clickAudioRef.current.play();
-    }
   };
 
   const formatTime = (seconds) => {
@@ -142,24 +81,9 @@ export default function PomodoroTimer({ onMinimize }) {
           <button onClick={onMinimize} className="material-icons">remove</button>
         </div>
         <div className={styles.timerHeader}>
-          <div
-            className={`${styles.timerMode} ${currentMode === 'pomodoro' ? styles.active : ''}`}
-            onClick={() => changeMode('pomodoro')}
-          >
-            Pomodoro
-          </div>
-          <div
-            className={`${styles.timerMode} ${currentMode === 'shortBreak' ? styles.active : ''}`}
-            onClick={() => changeMode('shortBreak')}
-          >
-            Short Break
-          </div>
-          <div
-            className={`${styles.timerMode} ${currentMode === 'longBreak' ? styles.active : ''}`}
-            onClick={() => changeMode('longBreak')}
-          >
-            Long Break
-          </div>
+          <div className={`${styles.timerMode} ${currentMode === 'pomodoro' ? styles.active : ''}`} onClick={() => changeMode('pomodoro')}>Pomodoro</div>
+          <div className={`${styles.timerMode} ${currentMode === 'shortBreak' ? styles.active : ''}`} onClick={() => changeMode('shortBreak')}>Short Break</div>
+          <div className={`${styles.timerMode} ${currentMode === 'longBreak' ? styles.active : ''}`} onClick={() => changeMode('longBreak')}>Long Break</div>
         </div>
         <div className={styles.timerDisplay}>
           <h3>{formatTime(timeLeft)}</h3>
@@ -172,10 +96,6 @@ export default function PomodoroTimer({ onMinimize }) {
             </button>
           </div>
         </div>
-        <audio ref={workAudioRef} src="/sounds/alert-work.mp3" preload="auto"></audio>
-        <audio ref={shortBreakAudioRef} src="/sounds/alert-short-break.mp3" preload="auto"></audio>
-        <audio ref={longBreakAudioRef} src="/sounds/alert-long-break.mp3" preload="auto"></audio>
-        <audio ref={clickAudioRef} src="/sounds/static_audio_tick.mp3" preload="auto"></audio>
       </div>
     </Draggable>
   );
