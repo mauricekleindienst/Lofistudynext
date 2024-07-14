@@ -4,6 +4,7 @@ export default function Document() {
   return (
     <Html>
       <Head>
+      <link rel="shortcut icon" href="/favicon.ico" />
         <link
           href="https://fonts.googleapis.com/icon?family=Material+Icons"
           rel="stylesheet"
