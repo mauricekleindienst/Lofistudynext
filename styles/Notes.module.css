@@ -1,5 +1,5 @@
 /* styles/Notes.module.css */
-
+@import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;700&display=swap');
 .resizableBox {
   position: fixed;
   top: 50%;
