@@ -1,26 +1,29 @@
 /* styles/Notes.module.css */
 @import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;700&display=swap');
+
+
 .resizableBox {
   position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 1000;
-  background-color: rgba(0, 0, 0, 0.7);
+  background-color: rgba(0, 0, 0, 0.9);
   border-radius: 10px;
   display: flex;
   flex-direction: column;
   overflow: hidden;
   padding: 10px;
-  color: white;
-  font-family: 'Comfortaa', cursive;
+  color: var(--text-color);
+  font-family: var(--font-family);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .notesContainer {
   display: flex;
   flex-direction: column;
   height: 100%;
-  font-family: 'Comfortaa', cursive;
+  font-family: var(--font-family);
 }
 
 .header {
@@ -30,14 +33,29 @@
   align-items: center;
   cursor: move;
   padding: 10px;
-  background-color: rgba(0, 0, 0, 0.9);
-  border-bottom: 1px solid #444;
-  font-family: 'Comfortaa', cursive;
+  background-color: var(--background-color);
+  border-bottom: 1px solid var(--border-color);
+  font-family: var(--font-family);
+}
+
+.header h2 {
+  margin: 0;
+  font-weight: 400;
+}
+
+.header button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 24px;
+  color: var(--text-color);
 }
 
 .editor {
   flex-grow: 1;
-  background-color: #333;
+  background-color: var(--editor-background-color);
   padding: 10px;
   overflow: auto;
+  border-radius: 0 0 10px 10px;
+  font-family: var(--font-family);
 }

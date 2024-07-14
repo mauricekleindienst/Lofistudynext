@@ -1,4 +1,3 @@
-// pages/study.js
 import { useSession } from 'next-auth/react';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
@@ -27,9 +26,13 @@ export default function Study() {
   const { roomUrl } = router.query;
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [currentTime, setCurrentTime] = useState(new Date().toLocaleTimeString());
-  const [selectedBackground, setSelectedBackground] = useState('/backgrounds/Train.mp4');
+  const [selectedBackground, setSelectedBackground] = useState('');
   const [visibleComponents, setVisibleComponents] = useState({});
   const [videoRoomUrl, setVideoRoomUrl] = useState('');
+
+  useEffect(() => {
+    setSelectedBackground(backgrounds[Math.floor(Math.random() * backgrounds.length)].src);
+  }, []);
 
   useEffect(() => {
     if (roomUrl) {
@@ -88,7 +91,7 @@ export default function Study() {
         <main className={styles.main}>
           <aside className={`${styles.sidebar} ${sidebarOpen ? styles.open : styles.closed}`}>
             <button className={styles.toggleButton} onClick={toggleSidebar}>
-              {sidebarOpen ? '<<' : '>>'}
+              {sidebarOpen ? <span className="material-icons">chevron_left</span> : <span className="material-icons">chevron_right</span>}
             </button>
             <h1>Welcome, {getFirstName(session.user.name)}! {currentTime}</h1>
             <div className={styles.backgroundSelector}>

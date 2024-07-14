@@ -56,14 +56,19 @@ export default function MusicPlayer({ onMinimize }) {
   }, [volume]);
 
   useEffect(() => {
-    if (playerRef.current && isPlaying) {
-      playerRef.current.playVideo();
+    if (playerRef.current) {
+      playerRef.current.loadVideoById(tracks[currentTrackIndex].videoId);
+      if (isPlaying) {
+        playerRef.current.playVideo();
+      }
     }
-  }, [currentTrackIndex, isPlaying]);
+  }, [currentTrackIndex]);
 
   return (
     <div className={styles.musicPlayer}>
-      <h2>Music Player</h2>
+      <div className={styles.header}>
+        <h2>Music Player</h2>
+      </div>
       <div className={styles.trackInfo}>
         <h3>{tracks[currentTrackIndex].title}</h3>
       </div>
@@ -105,10 +110,6 @@ export default function MusicPlayer({ onMinimize }) {
           className={styles.slider}
         />
       </div>
-      <button onClick={() => {
-        playerRef.current.stopVideo(); // Stop video when minimized
-        onMinimize();
-      }} className="material-icons">remove</button>
     </div>
   );
 }

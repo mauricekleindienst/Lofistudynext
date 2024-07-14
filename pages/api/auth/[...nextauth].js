@@ -12,7 +12,7 @@ const firebaseConfig = {
   storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
   messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
-  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
+  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
 };
 
 const app = initializeApp(firebaseConfig);
@@ -43,10 +43,19 @@ export default NextAuth({
           return false;
         }
       }
-      return false;
+      return true; // Return true for other providers if added in the future
     },
-    async redirect({ url, baseUrl }) {
-      return `${baseUrl}/study`;
+    async session({ session, token }) {
+      session.user.id = token.id;
+      session.user.email = token.email;
+      return session;
+    },
+    async jwt({ token, user, account }) {
+      if (account && user) {
+        token.id = user.id;
+        token.email = user.email;
+      }
+      return token;
     },
   },
   pages: {
@@ -54,6 +63,6 @@ export default NextAuth({
     signOut: '/auth/signout',
     error: '/auth/error', // Error code passed in query string as ?error=
     verifyRequest: '/auth/verify-request', // (used for check email message)
-    newUser: null // If set, new users will be directed here on first sign in
-  }
+    newUser: null, // If set, new users will be directed here on first sign in
+  },
 });
