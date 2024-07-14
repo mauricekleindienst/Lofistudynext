@@ -43,7 +43,7 @@ export default NextAuth({
           return false;
         }
       }
-      return true; // Return true for other providers if added in the future
+      return true;
     },
     async session({ session, token }) {
       session.user.id = token.id;
@@ -61,8 +61,8 @@ export default NextAuth({
   pages: {
     signIn: '/auth/signin',
     signOut: '/auth/signout',
-    error: '/auth/error', // Error code passed in query string as ?error=
-    verifyRequest: '/auth/verify-request', // (used for check email message)
-    newUser: null, // If set, new users will be directed here on first sign in
+    error: '/auth/error',
+    verifyRequest: '/auth/verify-request',
+    newUser: null,
   },
 });
