@@ -3,11 +3,14 @@ import styles from '../styles/CustomHeader.module.css';
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 import MovableModal from './MovableModal';
+import { Worker, Viewer } from '@react-pdf-viewer/core';
+import '@react-pdf-viewer/core/lib/styles/index.css';
+import '@react-pdf-viewer/default-layout/lib/styles/index.css';
 
 export default function CustomHeader() {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isPdfOpen, setIsPdfOpen] = useState(false);
-  const [pdfUrl, setPdfUrl] = useState(null);
+  const [pdfFile, setPdfFile] = useState(null);
   const router = useRouter();
 
   const toggleFullscreen = () => {
@@ -45,22 +48,14 @@ export default function CustomHeader() {
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        console.log('PDF URL:', e.target.result);
-        setPdfUrl(e.target.result);
-        setIsPdfOpen(true);
-      };
-      reader.onerror = (e) => {
-        console.error('Error reading file:', e);
-      };
-      reader.readAsDataURL(file);
+      setPdfFile(file);
+      setIsPdfOpen(true);
     }
   };
 
   const closePdf = () => {
     setIsPdfOpen(false);
-    setPdfUrl(null);
+    setPdfFile(null);
   };
 
   return (
@@ -92,11 +87,14 @@ export default function CustomHeader() {
         </div>
       </div>
       {isPdfOpen && (
-  <MovableModal onClose={closePdf}>
-    <iframe src={pdfUrl} style={{ width: '600px', height: '400px' }}></iframe>
-  </MovableModal>
-)}
-
+        <MovableModal onClose={closePdf}>
+          <Worker workerUrl={`https://unpkg.com/pdfjs-dist@${pdfjsVersion}/build/pdf.worker.min.js`}>
+            <div style={{ height: '500px' }}>
+              <Viewer fileUrl={URL.createObjectURL(pdfFile)} />
+            </div>
+          </Worker>
+        </MovableModal>
+      )}
     </div>
   );
 }

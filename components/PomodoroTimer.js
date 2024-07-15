@@ -36,17 +36,19 @@ export default function PomodoroTimer({ onMinimize }) {
       showNotification('Pomodoro Timer', 'Pomodoro session ended. Take a short break! ☕️');
       setCurrentMode('shortBreak');
       setTimeLeft(pomodoroDurations.shortBreak);
+      setIsTimerRunning(true);
     } else if (currentMode === 'shortBreak') {
       setCurrentMode('pomodoro');
       setTimeLeft(pomodoroDurations.pomodoro);
       showNotification('Pomodoro Timer', 'Short break ended. Get back to work and stay focused! 🚀');
+      setIsTimerRunning(true);
     } else if (currentMode === 'longBreak') {
       longPauseSound.current.play();
       setCurrentMode('pomodoro');
       setTimeLeft(pomodoroDurations.pomodoro);
       showNotification('Pomodoro Timer', 'Long break ended.  Get back to work and stay focused! 🚀');
+      setIsTimerRunning(true);
     }
-    setIsTimerRunning(false);
   }, [currentMode]);
 
   useEffect(() => {
@@ -59,7 +61,6 @@ export default function PomodoroTimer({ onMinimize }) {
         setTimeLeft(prevTime => {
           if (prevTime <= 1) {
             clearInterval(timerRef.current);
-            setIsTimerRunning(false);
             handleTimerEnd();
             document.title = "Pomodoro Timer";
             return 0;
