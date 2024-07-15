@@ -33,18 +33,18 @@ export default function PomodoroTimer({ onMinimize }) {
   const handleTimerEnd = useCallback(() => {
     if (currentMode === 'pomodoro') {
       pomodoroEndSound.current.play();
-      showNotification('Pomodoro Timer', 'Pomodoro session ended. Time for a short break!');
+      showNotification('Pomodoro Timer', 'Pomodoro session ended. Take a short break! ☕️');
       setCurrentMode('shortBreak');
       setTimeLeft(pomodoroDurations.shortBreak);
     } else if (currentMode === 'shortBreak') {
       setCurrentMode('pomodoro');
       setTimeLeft(pomodoroDurations.pomodoro);
-      showNotification('Pomodoro Timer', 'Short break ended. Time for a new Pomodoro session!');
+      showNotification('Pomodoro Timer', 'Short break ended. Get back to work and stay focused! 🚀');
     } else if (currentMode === 'longBreak') {
       longPauseSound.current.play();
       setCurrentMode('pomodoro');
       setTimeLeft(pomodoroDurations.pomodoro);
-      showNotification('Pomodoro Timer', 'Long break ended. Time for a new Pomodoro session!');
+      showNotification('Pomodoro Timer', 'Long break ended.  Get back to work and stay focused! 🚀');
     }
     setIsTimerRunning(false);
   }, [currentMode]);
@@ -79,7 +79,7 @@ export default function PomodoroTimer({ onMinimize }) {
   const toggleTimer = () => {
     if (!isTimerRunning && currentMode === 'pomodoro') {
       pomodoroStartSound.current.play();
-      showNotification('Pomodoro Timer', 'Pomodoro session started!');
+      showNotification('Pomodoro Timer', 'Keep focused for the next 25 minutes! 🚀');
     }
     setIsTimerRunning(!isTimerRunning);
   };
