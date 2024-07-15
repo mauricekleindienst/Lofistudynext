@@ -3,16 +3,15 @@ import styles from '../styles/404.module.css';
 
 const Custom404 = () => {
   return (
-    <div className={styles.container}>
-      <div className={styles.error}>
-        <h1 className={styles.title}>404</h1>
-        <p className={styles.message}>Oops! The page you are looking for cannot be found.</p>
-        <Link href="/">
-          <a className={styles.homeLink}>Go back to Home</a>
-        </Link>
+    <div className={styles.errorPg}>
+      <div className={styles.errorNumber}>
+        <div className={`${styles.number} ${styles.leftCoffee}`}>4</div>
+        <div className={styles.coffeeMug}></div>
+        <div className={`${styles.number} ${styles.rightCoffee}`}>4</div>
       </div>
-      <div className={styles.animationContainer}>
-        <div className={styles.animation}></div>
+      <div className={styles.smScreen}>404</div>
+      <div className={styles.meanMsg}>
+        Nothing to see here, <Link href="/"><a>go back home!</a></Link>
       </div>
     </div>
   );
