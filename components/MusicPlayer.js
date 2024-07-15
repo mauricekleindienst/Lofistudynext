@@ -7,7 +7,9 @@ const tracks = [
   { id: 2, title: 'Deep Ambience Music', videoId: '4xDzrJKXOOY' },
   { id: 3, title: 'Classic Chill', videoId: '4oStw0r33so' },
   { id: 4, title: 'Lofi', videoId: 'jfKfPfyJRdk' },
-  { id: 5, title: 'Jazz', videoId: 'xVSlZWkjI94' }
+  { id: 5, title: 'Jazz', videoId: 'xVSlZWkjI94' },
+  { id: 6, title: 'Skyrim', videoId: '_Z1VzsE1GVg' }
+  { id: 7, title: 'Medieval lofi', videoId: '_uMuuHk_KkQ' }
 ];
 
 export default function MusicPlayer({ onMinimize }) {
