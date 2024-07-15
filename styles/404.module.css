@@ -1,6 +1,6 @@
 @import url("https://fonts.googleapis.com/css?family=Montserrat:300,400");
 
-body {
+.container {
   background: #ddd;
   overflow: hidden;
   cursor: default;
@@ -11,9 +11,6 @@ body {
   font-family: "Montserrat", sans-serif;
 }
 
-a {
-  text-decoration: none !important;
-}
 
 .sm-screen {
   display: none;

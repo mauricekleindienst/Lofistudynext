@@ -3,7 +3,7 @@ import styles from '../styles/404.module.css';
 
 const Custom404 = () => {
   return (
-    <div className={styles.errorPg}>
+    <div className={styles.container}>
       <div className={styles.errorNumber}>
         <div className={`${styles.number} ${styles.leftCoffee}`}>4</div>
         <div className={styles.coffeeMug}></div>
