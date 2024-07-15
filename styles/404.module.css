@@ -1,16 +1,5 @@
 @import url("https://fonts.googleapis.com/css?family=Montserrat:300,400");
 
-.container {
-  background: #ddd;
-  overflow: hidden;
-  cursor: default;
-  height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: "Montserrat", sans-serif;
-}
-
 
 .sm-screen {
   display: none;
