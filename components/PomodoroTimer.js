@@ -14,9 +14,9 @@ export default function PomodoroTimer({ onMinimize }) {
   const [currentMode, setCurrentMode] = useState('pomodoro');
   const timerRef = useRef(null);
 
-  const pomodoroStartSound = useRef(new Audio('/sounds/pomodoro-start.mp3'));
-  const pomodoroEndSound = useRef(new Audio('/sounds/pomodoro-end.mp3'));
-  const longPauseSound = useRef(new Audio('/sounds/long-pause.mp3'));
+  const pomodoroStartSound = useRef(new Audio('/sounds/alert-work.mp3'));
+  const pomodoroEndSound = useRef(new Audio('/sounds/alert-short-break.mp3'));
+  const longPauseSound = useRef(new Audio('/sounds/alert-long-break.mp3'));
 
   const requestNotificationPermission = () => {
     if (Notification.permission !== 'granted') {
