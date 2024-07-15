@@ -1,6 +1,6 @@
 /** @type {import('next-sitemap').IConfig} */
 module.exports = {
-  siteUrl: 'https://www.lo-fi.study',
+  siteUrl: 'https://lo-fi.study',
   generateRobotsTxt: true, // Generate robots.txt file
   changefreq: 'daily', // How frequently the page is likely to change
   priority: 1.0, // Priority of the main page
