@@ -1,41 +1,46 @@
 import { signOut } from 'next-auth/react';
 import styles from '../styles/CustomHeader.module.css';
-import { useState } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import MovableModal from './MovableModal';
 import { Worker, Viewer } from '@react-pdf-viewer/core';
+import { toolbarPlugin, zoomPlugin } from '@react-pdf-viewer/toolbar';
 import '@react-pdf-viewer/core/lib/styles/index.css';
-import '@react-pdf-viewer/default-layout/lib/styles/index.css';
+import '@react-pdf-viewer/toolbar/lib/styles/index.css';
+import '../styles/react-pdf-viewer-overrides.css'; // Import custom styles
+import { version as pdfjsVersion } from 'pdfjs-dist/package.json';
+
 
 export default function CustomHeader() {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isPdfOpen, setIsPdfOpen] = useState(false);
   const [pdfFile, setPdfFile] = useState(null);
+  const [pdfBlobUrl, setPdfBlobUrl] = useState(null);
   const router = useRouter();
 
-  const toggleFullscreen = () => {
+  const toggleFullscreen = useCallback(() => {
     if (!isFullscreen) {
       document.documentElement.requestFullscreen();
     } else {
       document.exitFullscreen();
     }
-    setIsFullscreen(!isFullscreen);
-  };
+    setIsFullscreen((prev) => !prev);
+  }, [isFullscreen]);
 
-  const shareVideoRoom = async () => {
+  const shareVideoRoom = useCallback(async () => {
     try {
       const response = await fetch('/api/rooms', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
-        }
+          'Content-Type': 'application/json',
+        },
       });
 
       const data = await response.json();
       if (data.url) {
         router.push({
           pathname: '/study',
-          query: { roomUrl: data.url }
+          query: { roomUrl: data.url },
         });
       } else {
         console.error('Error creating video room:', data.error);
@@ -43,20 +48,37 @@ export default function CustomHeader() {
     } catch (error) {
       console.error('Error creating video room:', error);
     }
-  };
+  }, [router]);
 
-  const handleFileChange = (event) => {
+  const handleFileChange = useCallback((event) => {
     const file = event.target.files[0];
     if (file) {
+      const blobUrl = URL.createObjectURL(file);
       setPdfFile(file);
+      setPdfBlobUrl(blobUrl);
       setIsPdfOpen(true);
     }
-  };
+  }, []);
 
-  const closePdf = () => {
+  const closePdf = useCallback(() => {
     setIsPdfOpen(false);
     setPdfFile(null);
-  };
+    if (pdfBlobUrl) {
+      URL.revokeObjectURL(pdfBlobUrl);
+      setPdfBlobUrl(null);
+    }
+  }, [pdfBlobUrl]);
+
+  useEffect(() => {
+    return () => {
+      if (pdfBlobUrl) {
+        URL.revokeObjectURL(pdfBlobUrl);
+      }
+    };
+  }, [pdfBlobUrl]);
+
+  const toolbarPluginInstance = toolbarPlugin();
+  const { Toolbar } = toolbarPluginInstance;
 
   return (
     <div className={styles.header}>
@@ -86,11 +108,21 @@ export default function CustomHeader() {
           </button>
         </div>
       </div>
-      {isPdfOpen && (
+      {isPdfOpen && pdfBlobUrl && (
         <MovableModal onClose={closePdf}>
-          <Worker workerUrl={`https://unpkg.com/pdfjs-dist@${pdfjsVersion}/build/pdf.worker.min.js`}>
-            <div style={{ height: '500px' }}>
-              <Viewer fileUrl={URL.createObjectURL(pdfFile)} />
+          <Worker workerUrl={`https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsVersion}/pdf.worker.min.js`}>
+            <div style={{ height: '100%', width: '100%', display: 'flex', flexDirection: 'column' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', padding: '10px', background: 'rgba(0, 0, 0, 0.8)' }}>
+                <Toolbar />
+              
+              </div>
+              <div style={{ flexGrow: 1, overflow: 'hidden' }}>
+                <Viewer
+                  fileUrl={pdfBlobUrl}
+                  plugins={[toolbarPluginInstance]}
+                  defaultScale={1.5} // Adjust scale to improve quality
+                />
+              </div>
             </div>
           </Worker>
         </MovableModal>
