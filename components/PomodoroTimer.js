@@ -3,13 +3,20 @@ import { useTimer } from 'react-timer-hook';
 import Draggable from 'react-draggable';
 import styles from '../styles/PomodoroTimer.module.css';
 
+const getExpiryTimestamp = (duration) => {
+  const time = new Date();
+  time.setSeconds(time.getSeconds() + duration);
+  return time;
+};
+
 export default function PomodoroTimer({ onMinimize }) {
   const [currentMode, setCurrentMode] = useState('pomodoro');
   const [isTimerRunning, setIsTimerRunning] = useState(false);
   const [pomodoroCount, setPomodoroCount] = useState(0);
   const [showSettings, setShowSettings] = useState(false);
   const [isInitialRender, setIsInitialRender] = useState(true);
-
+  const [expiryTimestamp, setExpiryTimestamp] = useState(getExpiryTimestamp(25 * 60));
+  
   const [pomodoroDurations, setPomodoroDurations] = useState({
     pomodoro: 25 * 60,
     shortBreak: 5 * 60,
@@ -53,12 +60,6 @@ export default function PomodoroTimer({ onMinimize }) {
     }
   };
 
-  const getExpiryTimestamp = (duration) => {
-    const time = new Date();
-    time.setSeconds(time.getSeconds() + duration);
-    return time;
-  };
-
   const {
     seconds,
     minutes,
@@ -68,7 +69,7 @@ export default function PomodoroTimer({ onMinimize }) {
     resume,
     restart,
   } = useTimer({ 
-    expiryTimestamp: getExpiryTimestamp(pomodoroDurations[currentMode]), 
+    expiryTimestamp, 
     autoStart: false,  // Make sure this is false
     onExpire: handleTimerEnd,
     key: currentMode
@@ -79,6 +80,7 @@ export default function PomodoroTimer({ onMinimize }) {
       setIsInitialRender(false);
     } else {
       const newExpiryTimestamp = getExpiryTimestamp(pomodoroDurations[currentMode]);
+      setExpiryTimestamp(newExpiryTimestamp);
       restart(newExpiryTimestamp, true);
       setIsTimerRunning(true);
     }

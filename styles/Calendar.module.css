@@ -1,30 +1,98 @@
 /* styles/Calendar.module.css */
 
 .calendarContainer {
-    background-color: rgba(0, 0, 0, 0.9);
-    padding: 20px;
-    border-radius: 10px;
-    width: 400px;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 1000;
-    color: white;
-    font-family: 'Comfortaa', cursive;
-  }
-  
-  .header {
-    font-size: 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    cursor: move;
-  }
-  
-  .material-icons {
-    cursor: pointer;
-    font-size: 24px;
-    color: white;
-  }
-  
+  background-color: rgba(0, 0, 0, 0.9);
+  padding: 20px;
+  border-radius: 10px;
+  width: 350px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1000;
+  color: white;
+  font-family: 'Comfortaa', cursive;
+}
+
+.header {
+  font-size: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: move;
+  margin-bottom: 20px;
+}
+
+.calendarHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.calendarHeader h3 {
+  margin: 0;
+}
+
+.weekDays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+  margin-bottom: 10px;
+}
+
+.weekDay {
+  text-align: center;
+  font-weight: bold;
+  font-size: 0.9em;
+}
+
+.calendarGrid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+}
+
+.calendarDay, .emptyDay {
+  aspect-ratio: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  font-size: 0.9em;
+  transition: background-color 0.3s;
+}
+
+.calendarDay:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  cursor: pointer;
+}
+
+.material-icons {
+  cursor: pointer;
+  font-size: 24px;
+  color: white;
+  background: none;
+  border: none;
+  padding: 5px;
+}
+
+.material-icons:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+}
+
+.hasEvents {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.eventIndicator {
+  width: 5px;
+  height: 5px;
+  background-color: #4285F4;
+  border-radius: 50%;
+  position: absolute;
+  bottom: 2px;
+  left: 50%;
+  transform: translateX(-50%);
+}
