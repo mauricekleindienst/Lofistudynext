@@ -12,12 +12,15 @@ import LiveChat from '../components/LiveChat';
 import DraggableIframe from '../components/DraggableIframe';
 
 const backgrounds = [
-  { id: 1, src: '/backgrounds/Night.mp4', alt: 'Night' },
-  { id: 2, src: '/backgrounds/Rain.mp4', alt: 'Rain' },
-  { id: 3, src: '/backgrounds/Train.mp4', alt: 'Train' },
-  { id: 4, src: '/backgrounds/Classroom.mp4', alt: 'Classroom' },
-  { id: 5, src: '/backgrounds/Autumn.mp4', alt: 'Autumn' },
-  { id: 6, src: '/backgrounds/Couch.mp4', alt: 'Couch' }
+  { id: 1, src: '/backgrounds/Night.mp4', alt: 'Night', note: 'Night' },
+  { id: 2, src: '/backgrounds/Rain.mp4', alt: 'Rain', note: 'Rain' },
+  { id: 3, src: '/backgrounds/Train.mp4', alt: 'Train', note: 'Train' },
+  { id: 4, src: '/backgrounds/Classroom.mp4', alt: 'Classroom', note: 'Classroom' },
+  { id: 5, src: '/backgrounds/Autumn.mp4', alt: 'Autumn', note: 'Autumn' },
+  { id: 6, src: '/backgrounds/Couch.mp4', alt: 'Couch', note: 'Couch' },
+  { id: 7, src: '/backgrounds/Skyrim.mp4', alt: 'Skyrim', note: 'Skyrim' },
+  { id: 8, src: '/backgrounds/Train2.mp4', alt: 'Train2', note: 'Train2' },
+  { id: 9, src: '/backgrounds/Chillroom.mp4', alt: 'Chillroom', note: 'Chillroom' },
 ];
 
 export default function Study() {
@@ -49,7 +52,12 @@ export default function Study() {
   }, []);
 
   if (status === 'loading') {
-    return <p>Loading...</p>;
+    return (
+      <div className={styles.loadingContainer}>
+        <div className={styles.spinner}></div>
+        <p>Loading...</p>
+      </div>
+    );
   }
 
   if (status === 'unauthenticated') {
@@ -101,6 +109,7 @@ export default function Study() {
                   <div
                     key={background.id}
                     className={styles.backgroundOption}
+                    title={background.note}
                     onClick={() => handleBackgroundSelection(background)}
                   >
                     <video src={background.src} alt={background.alt} muted loop></video>
@@ -109,6 +118,11 @@ export default function Study() {
               </div>
             </div>
             <MusicPlayer />
+         
+            <div className={styles.sidebarFooter}>
+              <button className={styles.sidebarButton} onClick={() => router.push('/faq')}>FAQ</button>
+              <button className={styles.sidebarButton} onClick={() => router.push('/contact')}>Contact</button>
+            </div>
           </aside>
           {videoRoomUrl && (
             <DraggableIframe
