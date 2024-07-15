@@ -1,4 +1,3 @@
-// pages/api/auth/[...nextauth].js
 import NextAuth from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
 import { getAuth, GoogleAuthProvider, signInWithCredential } from 'firebase/auth';
@@ -56,6 +55,10 @@ export default NextAuth({
         token.email = user.email;
       }
       return token;
+    },
+    async redirect({ url, baseUrl }) {
+      // Always redirect to /study after login
+      return baseUrl + '/study';
     },
   },
   pages: {

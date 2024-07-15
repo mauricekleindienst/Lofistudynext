@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { signIn } from 'next-auth/react';
+import { signIn, useSession } from 'next-auth/react';
+import { useRouter } from 'next/router';
 import Image from 'next/image';
 import styles from '../styles/Login.module.css';
 
@@ -13,12 +14,20 @@ const backgrounds = [
 ];
 
 export default function Login() {
+  const { data: session, status } = useSession();
+  const router = useRouter();
   const [background, setBackground] = useState(null);
 
   useEffect(() => {
     const randomBackground = backgrounds[Math.floor(Math.random() * backgrounds.length)];
     setBackground(randomBackground);
   }, []);
+
+  useEffect(() => {
+    if (status === 'authenticated') {
+      router.push('/study');
+    }
+  }, [status]);
 
   return (
     <div className={styles.container}>
