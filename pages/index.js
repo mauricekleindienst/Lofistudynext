@@ -1,106 +1,68 @@
-import Link from 'next/link';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faClock, faMusic, faImages, faComments, faStickyNote, faCalendarAlt } from '@fortawesome/free-solid-svg-icons';
-import { Carousel } from 'react-responsive-carousel';
-import 'react-responsive-carousel/lib/styles/carousel.min.css';
+// pages/index.js
+import Head from 'next/head';
 import Image from 'next/image';
+import Link from 'next/link';
+import Navbar from '../components/Navbar';
 import styles from '../styles/Home.module.css';
+import { useEffect } from 'react';
+import Typed from 'typed.js';
 
-const features = [
-  {
-    title: 'Focus Timer',
-    description: 'Boost your productivity with our Pomodoro timer.',
-    icon: faClock
-  },
-  {
-    title: 'Ambient Sounds',
-    description: 'Relax and focus with a variety of ambient soundscapes.',
-    icon: faMusic
-  },
-  {
-    title: 'Custom Backgrounds',
-    description: 'Personalize your space with different background videos.',
-    icon: faImages
-  },
-  {
-    title: 'Live Chat',
-    description: 'Interact and study together with others in real-time.',
-    icon: faComments
-  },
-  {
-    title: 'Notes',
-    description: 'Keep your notes organized and accessible.',
-    icon: faStickyNote
-  },
-  {
-    title: 'Calendar',
-    description: 'Schedule your study sessions and stay on track.',
-    icon: faCalendarAlt
-  }
-];
-
-const backgrounds = [
-  '/backgrounds/Night.mp4',
-  '/backgrounds/Rain.mp4',
-  '/backgrounds/Train.mp4',
-  '/backgrounds/Classroom.mp4',
-  '/backgrounds/Autumn.mp4',
-  '/backgrounds/Couch.mp4'
-];
+const logoPath = '/lo-fi.study.svg';
+const macChromePath = '/Macchrome.webp';
 
 export default function Home() {
-  return (
-    <div className={styles.container}>
-      <header className={styles.header}>
-        <div className={styles.logo}>
-          <Image src="/lo-fi.study.svg" alt="lo-fi.study" width={100} height={100} />
+    useEffect(() => {
+        const typed = new Typed('#typed-text', {
+            strings: ["Work", "Study", "Chill", "Code"],
+            typeSpeed: 120,
+            backSpeed: 120,
+            backDelay: 500,
+            smartBackspace: true,
+            loop: true
+        });
+
+        return () => {
+            typed.destroy();
+        };
+    }, []);
+
+    return (
+        <div className={styles.container}>
+            <Head>
+                <title>lo-fi.study - Improve Your Focus and Productivity</title>
+                <meta name="description" content="lo-fi.study is a website that helps you to study by giving you a distraction-free environment. Enjoy ambient music and focus better." />
+                <meta name="author" content="lo-fi.study" />
+                <meta name="robots" content="index, follow" />
+                <meta property="og:title" content="lo-fi.study - Improve Your Focus and Productivity" />
+                <meta property="og:description" content="lo-fi.study is a website that helps you to study by giving you a distraction-free environment. Enjoy ambient music and focus better." />
+                <meta property="og:type" content="website" />
+                <meta property="og:url" content="https://www.lo-fi.study" />
+                <meta property="og:image" content="/images/og-image.jpg" />
+                <meta name="twitter:card" content="summary_large_image" />
+                <meta name="twitter:title" content="lo-fi.study - Improve Your Focus and Productivity" />
+                <meta name="twitter:description" content="lo-fi.study is a website that helps you to study by giving you a distraction-free environment. Enjoy ambient music and focus better." />
+                <meta name="twitter:image" content="/images/twitter-image.jpg" />
+            </Head>
+            <Navbar />
+            <div className="container-fluid">
+                <div className="row">
+                    <div className="col-md-6">
+                        <div className={styles.heroImg}>
+                            <Image src={logoPath} alt="lo-fi.study Logo" className={styles.loginLogo} width={300} height={300} />
+                        </div>
+                        <div className={styles.heroText} style={{ textAlign: 'center' }}>
+                            <p style={{ fontSize: '2em' }}>Your calm, digital space to<br /><br /><span style={{ textAlign: 'center' }} id="typed-text"></span></p>
+                        </div>
+                        <Link href="/signup" legacyBehavior>
+                            <a className={styles.heroImgBtn}>Register now</a>
+                        </Link>
+                    </div>
+                    <div className="col-md-6">
+                        <Image id="image1" src={macChromePath} alt="website preview" className={`${styles.webPrev} ${styles.imgShadow} ${styles.smoothTransition}`} width={800} height={600} />
+                    </div>
+                </div>
+                {/* Add more sections as necessary */}
+            </div>
         </div>
-        <nav className={styles.nav}>
-          <a href="#">Contact</a>
-          <a href="#">FAQ</a>
-          <Link href="/study" passHref>
-            <button className={styles.loginButton}>Login</button>
-          </Link>
-        </nav>
-      </header>
-      <main className={styles.main}>
-        <div className={styles.carouselContainer}>
-          <Carousel
-            showThumbs={false}
-            autoPlay
-            infiniteLoop
-            showStatus={false}
-            showIndicators={false}
-            interval={5000}
-          >
-            {backgrounds.map((bg, index) => (
-              <div key={index}>
-                <video autoPlay loop muted src={bg} className={styles.carouselVideo} />
-              </div>
-            ))}
-          </Carousel>
-        </div>
-        <div className={styles.hero}>
-          <h1>lo-fi.study</h1>
-          <p>Your calm, digital space to</p>
-          <h2>Work</h2>
-          <Link href="/login" passHref>
-            <button className={styles.registerButton}>Register now</button>
-          </Link>
-        </div>
-      </main>
-      <section className={styles.features}>
-        {features.map((feature, index) => (
-          <div key={index} className={styles.feature}>
-            <FontAwesomeIcon icon={feature.icon} className={styles.featureIcon} />
-            <h3>{feature.title}</h3>
-            <p>{feature.description}</p>
-          </div>
-        ))}
-      </section>
-      <footer className={styles.footer}>
-        <p>&copy; 2024 lo-fi.study</p>
-      </footer>
-    </div>
-  );
+    );
 }
