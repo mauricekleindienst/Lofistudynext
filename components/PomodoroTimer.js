@@ -48,17 +48,11 @@ export default function PomodoroTimer({ onMinimize }) {
   const handleTimerEnd = async () => {
     if (currentMode === 'pomodoro') {
       pomodoroEndSound.current.play();
-      setPomodoroCount((prevCount) => prevCount + 1);
-      if ((pomodoroCount + 1) % 4 === 0) {
-        showNotification('Pomodoro Timer', 'Pomodoro session ended. Time for a long break! ☕️');
-        setCurrentMode('longBreak');
-      } else {
-        showNotification('Pomodoro Timer', 'Pomodoro session ended. Take a short break! ☕️');
-        setCurrentMode('shortBreak');
-      }
+      const newPomodoroCount = pomodoroCount + 1;
+      setPomodoroCount(newPomodoroCount);
 
-       // Update Pomodoro count in the database
-       if (session?.user?.email) {
+      // Update Pomodoro state in the database for each Pomodoro session completed
+      if (session?.user?.email) {
         await fetch('/api/updatePomodoroCount', {
           method: 'POST',
           headers: {
@@ -67,15 +61,24 @@ export default function PomodoroTimer({ onMinimize }) {
           body: JSON.stringify({
             email: session.user.email,
             firstname: session.user.name.split(' ')[0],
-            increment: 1,
+            increment: 1, // increment by 1 for each Pomodoro session
           }),
         });
+      }
+
+      if ((newPomodoroCount) % 4 === 0) {
+        showNotification('Pomodoro Timer', 'Pomodoro session ended. Time for a long break! ☕️');
+        setCurrentMode('longBreak');
+      } else {
+        showNotification('Pomodoro Timer', 'Pomodoro session ended. Take a short break! ☕️');
+        setCurrentMode('shortBreak');
       }
     } else if (currentMode === 'shortBreak' || currentMode === 'longBreak') {
       showNotification('Pomodoro Timer', 'Break ended. Get back to work! 🚀');
       setCurrentMode('pomodoro');
     }
   };
+
   const { seconds, minutes, isRunning, start, pause, resume, restart } = useTimer({
     expiryTimestamp,
     autoStart: false, // Make sure this is false
