@@ -27,7 +27,9 @@ export default function Scoreboard({ onMinimize }) {
       <div className={styles.scoreboardContainer}>
         <div className={`${styles.header} drag-handle`}>
           <h2>Scoreboard</h2>
-          <button onClick={onMinimize} className="material-icons">remove</button>
+          <button onClick={onMinimize} className={styles.minimizeButton}>
+  <span className="material-icons">remove</span>
+</button>
         </div>
         <div className={styles.scoreboard}>
           {scoreboard.map((user, index) => (

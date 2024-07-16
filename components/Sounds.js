@@ -42,8 +42,10 @@ export default function Sounds({ onMinimize }) {
     <Draggable handle=".draggable-header">
       <div className={styles.soundsContainer}>
         <div className={`${styles.header} draggable-header`}>
-          <h2>Sounds</h2>
-          <button onClick={onMinimize} className="material-icons">remove</button>
+          <h2>Ambient Sounds</h2>
+          <button onClick={onMinimize} className={styles.minimizeButton}>
+            <span className="material-icons">remove</span>
+          </button>
         </div>
         <div className={styles.soundsList}>
           {sounds.map((sound, index) => (

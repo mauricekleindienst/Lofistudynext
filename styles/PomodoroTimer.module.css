@@ -1,148 +1,187 @@
 /* styles/PomodoroTimer.module.css */
 @import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;700&display=swap');
+
 .timerContainer {
-    background-color: rgba(0, 0, 0, 0.9);
-    padding: 20px;
-    border-radius: 10px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 400px;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 1000;
-    font-family: 'Comfortaa', cursive;
-    color: white;
-  }
-  
-  .minimized {
-    display: none;
-  }
-  .header {
-    font-size: 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    cursor: move;
-    width: 100%;
-    font-family: 'Comfortaa', cursive;
-  }
-  
-  .timerHeader {
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-    margin-bottom: 20px;
-    font-family: 'Comfortaa', cursive;
-  }
-  
-  .timerMode {
-    cursor: pointer;
-    padding: 10px 20px;
-    color: #fff;
-    transition: background-color 0.3s;
-    font-family: 'Comfortaa', cursive;
-  }
-  
-  .timerMode:hover,
-  .timerMode.active {
-    background-color: #ff7b00;
-    border-radius: 5px;
-  }
-  
-  .timerDisplay {
-    display: flex;
-    align-items: center;
-    position: relative;
-  }
-  
-  .timerDisplay h3 {
-    font-size: 3rem;
-    margin-right: 10px;
-    color: #fff;
-  }
-  
-  .buttonContainer {
-    display: flex;
-    align-items: center;
-  }
-  
-  .startButton {
-    background-color: #ff7b00;
-    border: none;
-    padding: 10px 20px;
-    cursor: pointer;
-    color: #fff;
-    border-radius: 5px;
-    margin-right: 10px;
-    font-family: 'Comfortaa', cursive;
-  }
-  
-  .resetButton {
-    background-color: transparent;
-    border: none;
-    cursor: pointer;
-    color: #fff;
-  }
-  
-  .material-icons {
-    cursor: pointer;
-    font-size: 24px;
-    color: white;
-  }
-  
-  .settingsWheel {
-    position: absolute;
-    bottom: 10px;
-    left: 10px;
-    cursor: pointer;
-    color: #fff;
-  }
-  
-  .settingsModal {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: rgba(0, 0, 0, 0.9);
-    padding: 20px;
-    border-radius: 10px;
-    z-index: 1001;
-    width: 300px;
-  }
-  
-  .settingsModal h3 {
-    margin-top: 0;
-    color: #fff;
-  }
-  
-  .settingsInput {
-    margin-bottom: 15px;
-  }
-  
-  .settingsInput label {
-    display: block;
-    margin-bottom: 5px;
-    color: #fff;
-  }
-  
-  .settingsInput input {
-    width: 100%;
-    padding: 5px;
-    border: none;
-    border-radius: 5px;
-    background-color: rgba(255, 255, 255, 0.1);
-    color: #fff;
-  }
-  
-  .settingsModal button {
-    background-color: #ff7b00;
-    border: none;
-    padding: 10px 20px;
-    cursor: pointer;
-    color: #fff;
-    border-radius: 5px;
-    font-family: 'Comfortaa', cursive;
-  }
+  font-family: 'Comfortaa', cursive;
+  padding: 30px;
+  border-radius: 20px;
+  color: #fff;
+  width: 100%;
+  max-width: 400px;
+  background: linear-gradient(145deg, #1e1e1e, #2a2a2a);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 20px;
+  cursor: move;
+}
+
+.header h2 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.header button {
+  background-color: transparent;
+  border: none;
+  color: #ff7b00;
+  cursor: pointer;
+  font-size: 24px;
+  transition: color 0.3s ease;
+}
+
+.header button:hover {
+  color: #ff9900;
+}
+
+.timerHeader {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.timerMode {
+  cursor: pointer;
+  padding: 10px 15px;
+  color: #fff;
+  transition: all 0.3s ease;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+.timerMode:hover,
+.timerMode.active {
+  background-color: #ff7b00;
+  transform: scale(1.05);
+}
+
+.timerDisplay {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.timerDisplay h3 {
+  font-size: 48px;
+  margin: 0 0 20px 0;
+  color: #fff;
+}
+
+.buttonContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.startButton, .resetButton {
+  background-color: #ff7b00;
+  border: none;
+  padding: 15px;
+  cursor: pointer;
+  color: #fff;
+  border-radius: 50%;
+  margin: 0 10px;
+  font-size: 18px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.3s ease;
+  width: 50px;
+  height: 50px;
+}
+
+.startButton:hover, .resetButton:hover {
+  background-color: #ff9900;
+  transform: scale(1.1);
+}
+
+.pomodoroCount {
+  margin-top: 20px;
+  font-size: 16px;
+}
+
+.settingsWheel {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  cursor: pointer;
+  color: #ff7b00;
+  transition: color 0.3s ease;
+}
+
+.settingsWheel:hover {
+  color: #ff9900;
+}
+
+.settingsModal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: linear-gradient(145deg, #1e1e1e, #2a2a2a);
+  padding: 30px;
+  border-radius: 20px;
+  z-index: 1001;
+  width: 300px;
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+}
+
+.settingsModal h3 {
+  margin-top: 0;
+  color: #fff;
+  font-size: 20px;
+  margin-bottom: 20px;
+}
+
+.settingsInput {
+  margin-bottom: 20px;
+}
+
+.settingsInput label {
+  display: block;
+  margin-bottom: 5px;
+  color: #fff;
+  font-size: 14px;
+}
+
+.settingsInput input {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  font-size: 16px;
+}
+
+.settingsModal button {
+  background-color: #ff7b00;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  color: #fff;
+  border-radius: 5px;
+  font-family: 'Comfortaa', cursive;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+.settingsModal button:hover {
+  background-color: #ff9900;
+}

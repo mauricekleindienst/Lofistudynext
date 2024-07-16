@@ -1,40 +1,71 @@
 /* styles/LiveChat.module.css */
 @import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;700&display=swap');
+
 .chatContainer {
-  background-color: rgba(0, 0, 0, 0.9);
-  padding: 20px;
-  border-radius: 10px;
-  width: 400px;
+  font-family: 'Comfortaa', cursive;
+  padding: 30px;
+  border-radius: 20px;
+  color: #fff;
+  width: 100%;
+  max-width: 400px;
+  height: 500px;
+  background: linear-gradient(145deg, #1e1e1e, #2a2a2a);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
   position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 1000;
-  color: white;
   display: flex;
   flex-direction: column;
-  font-family: 'Comfortaa', cursive;
 }
 
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: 20px;
   cursor: move;
 }
 
+.header h2 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.header button {
+  background-color: transparent;
+  border: none;
+  color: #ff7b00;
+  cursor: pointer;
+  font-size: 24px;
+  transition: color 0.3s ease;
+}
+
+.header button:hover {
+  color: #ff9900;
+}
+
 .messages {
-  height: 200px;
-  overflow-y: auto;
-  margin-bottom: 10px;
   flex-grow: 1;
+  overflow-y: auto;
+  margin-bottom: 20px;
+  padding-right: 10px;
 }
 
 .message {
-  background-color: #444;
-  padding: 10px;
-  border-radius: 5px;
-  margin-bottom: 5px;
+  background-color: rgba(255, 255, 255, 0.1);
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  font-size: 14px;
+  line-height: 1.4;
+  word-wrap: break-word;
+}
+
+.message strong {
+  color: #ff7b00;
 }
 
 .inputContainer {
@@ -43,25 +74,54 @@
 }
 
 .input {
-  width: calc(100% - 70px);
-  padding: 10px;
+  flex-grow: 1;
+  padding: 12px;
   border: none;
-  color: black;
-  border-radius: 5px;
+  border-radius: 25px;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  font-family: 'Comfortaa', cursive;
+  font-size: 14px;
   margin-right: 10px;
+  transition: background-color 0.3s ease;
+}
+
+.input:focus {
+  outline: none;
+  background-color: rgba(255, 255, 255, 0.2);
 }
 
 .sendButton {
-  padding: 10px;
+  padding: 12px 20px;
   background-color: #ff7b00;
   border: none;
-  border-radius: 5px;
+  border-radius: 25px;
   cursor: pointer;
   color: white;
+  font-family: 'Comfortaa', cursive;
+  font-size: 14px;
+  transition: background-color 0.3s ease;
 }
 
-.material-icons {
-  cursor: pointer;
-  font-size: 24px;
-  color: white;
+.sendButton:hover {
+  background-color: #ff9900;
+}
+
+/* Custom scrollbar styles */
+.messages::-webkit-scrollbar {
+  width: 8px;
+}
+
+.messages::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+}
+
+.messages::-webkit-scrollbar-thumb {
+  background: #ff7b00;
+  border-radius: 10px;
+}
+
+.messages::-webkit-scrollbar-thumb:hover {
+  background: #ff9900;
 }
