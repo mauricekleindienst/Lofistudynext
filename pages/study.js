@@ -92,7 +92,12 @@ export default function Study() {
       {visibleComponents.pomodoro && <PomodoroTimer onMinimize={() => handleIconClick('pomodoro')} />}
       {visibleComponents.note && <Notes onMinimize={() => handleIconClick('note')} />}
       {visibleComponents.calendar && <Calendar onMinimize={() => handleIconClick('calendar')} />}
-      {visibleComponents.chat && <LiveChat onMinimize={() => handleIconClick('chat')} userName={getFirstName(session.user.name)} />}
+      {visibleComponents.chat && (
+  <LiveChat
+    onMinimize={() => handleIconClick('chat')}
+    userName={getFirstName(session.user.name)}
+  />
+)}
       <SelectionBar onIconClick={handleIconClick} />
       <div className={styles.container}>
         <video className={styles.videoBackground} autoPlay loop muted src={selectedBackground}></video>

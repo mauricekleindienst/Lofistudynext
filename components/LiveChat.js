@@ -10,6 +10,7 @@ export default function LiveChat({ onMinimize, userName }) {
   const [newMessage, setNewMessage] = useState('');
 
   useEffect(() => {
+    console.log("UserName:", userName);
     // Receive chat history
     socket.on('chat history', (history) => {
       setMessages(history);
@@ -17,6 +18,7 @@ export default function LiveChat({ onMinimize, userName }) {
 
     // Receive new chat messages
     socket.on('chat message', (msg) => {
+      console.log("Received message:", msg);
       setMessages((prevMessages) => [...prevMessages, msg]);
     });
 
@@ -29,6 +31,7 @@ export default function LiveChat({ onMinimize, userName }) {
   const sendMessage = () => {
     if (newMessage.trim() !== '') {
       const message = { id: messages.length, text: newMessage, userName };
+      console.log("Sending message:", message);
       socket.emit('chat message', message);
       setNewMessage('');
     }

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useSession } from 'next-auth/react';
 import { useTimer } from 'react-timer-hook';
 import Draggable from 'react-draggable';
 import styles from '../styles/PomodoroTimer.module.css';
@@ -10,19 +11,20 @@ const getExpiryTimestamp = (duration) => {
 };
 
 export default function PomodoroTimer({ onMinimize }) {
+  const { data: session } = useSession();
   const [currentMode, setCurrentMode] = useState('pomodoro');
   const [isTimerRunning, setIsTimerRunning] = useState(false);
   const [pomodoroCount, setPomodoroCount] = useState(0);
   const [showSettings, setShowSettings] = useState(false);
   const [isInitialRender, setIsInitialRender] = useState(true);
   const [expiryTimestamp, setExpiryTimestamp] = useState(getExpiryTimestamp(25 * 60));
-  
+
   const [pomodoroDurations, setPomodoroDurations] = useState({
-    pomodoro: 25 * 60,
-    shortBreak: 5 * 60,
-    longBreak: 15 * 60
+    pomodoro: 3 * 1,
+    shortBreak: 3 * 1,
+    longBreak: 3 * 1,
   });
-  
+
   const pomodoroStartSound = useRef(new Audio('/sounds/alert-work.mp3'));
   const pomodoroEndSound = useRef(new Audio('/sounds/alert-short-break.mp3'));
   const longPauseSound = useRef(new Audio('/sounds/alert-long-break.mp3'));
@@ -43,10 +45,10 @@ export default function PomodoroTimer({ onMinimize }) {
     requestNotificationPermission();
   }, []);
 
-  const handleTimerEnd = () => {
+  const handleTimerEnd = async () => {
     if (currentMode === 'pomodoro') {
       pomodoroEndSound.current.play();
-      setPomodoroCount(prevCount => prevCount + 1);
+      setPomodoroCount((prevCount) => prevCount + 1);
       if ((pomodoroCount + 1) % 4 === 0) {
         showNotification('Pomodoro Timer', 'Pomodoro session ended. Time for a long break! ☕️');
         setCurrentMode('longBreak');
@@ -54,25 +56,31 @@ export default function PomodoroTimer({ onMinimize }) {
         showNotification('Pomodoro Timer', 'Pomodoro session ended. Take a short break! ☕️');
         setCurrentMode('shortBreak');
       }
+
+       // Update Pomodoro count in the database
+       if (session?.user?.email) {
+        await fetch('/api/updatePomodoroCount', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email: session.user.email,
+            firstname: session.user.name.split(' ')[0],
+            increment: 1,
+          }),
+        });
+      }
     } else if (currentMode === 'shortBreak' || currentMode === 'longBreak') {
       showNotification('Pomodoro Timer', 'Break ended. Get back to work! 🚀');
       setCurrentMode('pomodoro');
     }
   };
-
-  const {
-    seconds,
-    minutes,
-    isRunning,
-    start,
-    pause,
-    resume,
-    restart,
-  } = useTimer({ 
-    expiryTimestamp, 
-    autoStart: false,  // Make sure this is false
+  const { seconds, minutes, isRunning, start, pause, resume, restart } = useTimer({
+    expiryTimestamp,
+    autoStart: false, // Make sure this is false
     onExpire: handleTimerEnd,
-    key: currentMode
+    key: currentMode,
   });
 
   useEffect(() => {
@@ -118,9 +126,9 @@ export default function PomodoroTimer({ onMinimize }) {
 
   const handleSettingsChange = (e) => {
     const { name, value } = e.target;
-    setPomodoroDurations(prev => ({
+    setPomodoroDurations((prev) => ({
       ...prev,
-      [name]: parseInt(value) * 60
+      [name]: parseInt(value) * 60,
     }));
   };
 
@@ -129,7 +137,9 @@ export default function PomodoroTimer({ onMinimize }) {
       <div className={styles.timerContainer}>
         <div className={styles.header}>
           <h2>Pomodoro Timer</h2>
-          <button onClick={onMinimize} className="material-icons" aria-label="Minimize">remove</button>
+          <button onClick={onMinimize} className="material-icons" aria-label="Minimize">
+            remove
+          </button>
         </div>
         <div className={styles.timerHeader}>
           <div
@@ -171,9 +181,7 @@ export default function PomodoroTimer({ onMinimize }) {
             </button>
           </div>
         </div>
-        <div className={styles.pomodoroCount}>
-          Pomodoros: {pomodoroCount}
-        </div>
+        <div className={styles.pomodoroCount}>Pomodoros: {pomodoroCount}</div>
         <div className={styles.settingsWheel} onClick={() => setShowSettings(true)}>
           <span className="material-icons">settings</span>
         </div>
@@ -210,7 +218,14 @@ export default function PomodoroTimer({ onMinimize }) {
                 onChange={handleSettingsChange}
               />
             </div>
-            <button onClick={() => { setShowSettings(false); resetTimer(); }}>Close</button>
+            <button
+              onClick={() => {
+                setShowSettings(false);
+                resetTimer();
+              }}
+            >
+              Close
+            </button>
           </div>
         )}
       </div>

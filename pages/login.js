@@ -5,12 +5,15 @@ import Image from 'next/image';
 import styles from '../styles/Login.module.css';
 
 const backgrounds = [
-  { id: 1, src: '/backgrounds/Night.mp4', alt: 'Night' },
-  { id: 2, src: '/backgrounds/Rain.mp4', alt: 'Rain' },
-  { id: 3, src: '/backgrounds/Train.mp4', alt: 'Train' },
-  { id: 4, src: '/backgrounds/Classroom.mp4', alt: 'Classroom' },
-  { id: 5, src: '/backgrounds/Autumn.mp4', alt: 'Autumn' },
-  { id: 6, src: '/backgrounds/Couch.mp4', alt: 'Couch' }
+  { id: 1, src: '/backgrounds/Night.mp4', alt: 'Night', note: 'Night' },
+  { id: 2, src: '/backgrounds/Rain.mp4', alt: 'Rain', note: 'Rain' },
+  { id: 3, src: '/backgrounds/Train.mp4', alt: 'Train', note: 'Train' },
+  { id: 4, src: '/backgrounds/Classroom.mp4', alt: 'Classroom', note: 'Classroom' },
+  { id: 5, src: '/backgrounds/Autumn.mp4', alt: 'Autumn', note: 'Autumn' },
+  { id: 6, src: '/backgrounds/Couch.mp4', alt: 'Couch', note: 'Couch' },
+  { id: 7, src: '/backgrounds/Skyrim.mp4', alt: 'Skyrim', note: 'Skyrim' },
+  { id: 8, src: '/backgrounds/Train2.mp4', alt: 'Train2', note: 'Train2' },
+  { id: 9, src: '/backgrounds/Chillroom.mp4', alt: 'Chillroom', note: 'Chillroom' },
 ];
 
 export default function Login() {

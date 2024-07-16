@@ -1,62 +1,61 @@
-/* styles/Scoreboard.module.css */
 .scoreboardContainer {
-    background-color: rgba(0, 0, 0, 0.9);
-    padding: 20px;
-    border-radius: 10px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 400px;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 1000;
-    font-family: 'Comfortaa', cursive;
-    color: white;
+  background-color: rgba(0, 0, 0, 0.9);
+  padding: 20px;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 400px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1000;
+  font-family: 'Comfortaa', cursive;
+  color: white;
+}
+
+.header {
+  font-size: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: move;
+  width: 100%;
+  font-family: 'Comfortaa', cursive;
+}
+
+.scoreboard {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.user {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px;
+  width: 100%;
+  border-radius: 4px;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.firstPlace {
+  color: #ffd700;
+  font-weight: bold;
+  animation: glow 1s infinite alternate;
+}
+
+.crown {
+  margin-left: 8px;
+}
+
+@keyframes glow {
+  from {
+    box-shadow: 0 0 10px #ffd700;
   }
-  
-  .header {
-    font-size: 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    cursor: move;
-    width: 100%;
-    font-family: 'Comfortaa', cursive;
+  to {
+    box-shadow: 0 0 20px #ffd700;
   }
-  
-  .scoreboard {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-  
-  .user {
-    display: flex;
-    justify-content: space-between;
-    padding: 8px;
-    width: 100%;
-    border-radius: 4px;
-  }
-  
-  .firstPlace {
-    color:#ffd700;
-    font-weight: bold;
-    animation: glow 1s infinite alternate;
-    
-  }
-  
-  .crown {
-    margin-left: 8px;
-  }
-  
-  @keyframes glow {
-    from {
-        color: 0 0 10px #ffd700;
-    }
-    to {
-      box-color: 0 0 20px #ffd700;
-    }
-  }
-  
+}
