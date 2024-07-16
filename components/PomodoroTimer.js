@@ -20,9 +20,9 @@ export default function PomodoroTimer({ onMinimize }) {
   const [expiryTimestamp, setExpiryTimestamp] = useState(getExpiryTimestamp(25 * 60));
 
   const [pomodoroDurations, setPomodoroDurations] = useState({
-    pomodoro: 3 * 1,
-    shortBreak: 3 * 1,
-    longBreak: 3 * 1,
+    pomodoro: 25 * 60,
+    shortBreak: 5 * 60,
+    longBreak: 15 * 60,
   });
 
   const pomodoroStartSound = useRef(new Audio('/sounds/alert-work.mp3'));
