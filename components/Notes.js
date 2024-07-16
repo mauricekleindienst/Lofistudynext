@@ -5,7 +5,6 @@ import dynamic from 'next/dynamic';
 import { useSession } from 'next-auth/react';
 import styles from '../styles/Notes.module.css';
 
-// Dynamically import EditorJS and tools with no SSR
 const EditorJS = dynamic(() => import('@editorjs/editorjs'), { ssr: false });
 const Header = dynamic(() => import('@editorjs/header'), { ssr: false });
 
@@ -13,56 +12,59 @@ export default function Notes({ onMinimize }) {
   const { data: session, status } = useSession();
   const editorRef = useRef(null);
   const editorInstance = useRef(null);
+  const [pages, setPages] = useState([]);
+  const [selectedPage, setSelectedPage] = useState(null);
   const [content, setContent] = useState('');
 
   useEffect(() => {
     if (session && status === 'authenticated') {
-      fetchNoteFromServer();
+      fetchNotesFromServer();
     }
   }, [session, status]);
 
   useEffect(() => {
-    async function initializeEditor() {
-      if (typeof window !== 'undefined') {
-        const EditorJSModule = (await import('@editorjs/editorjs')).default;
-        const HeaderModule = (await import('@editorjs/header')).default;
+    if (selectedPage) {
+      setContent(selectedPage.content);
+      initializeEditor(selectedPage.content);
+    }
+  }, [selectedPage]);
 
-        if (editorRef.current) {
-          editorInstance.current = new EditorJSModule({
-            holder: editorRef.current,
-            tools: {
-              header: HeaderModule,
-            },
-            data: content ? JSON.parse(content) : {},
-            onChange: async () => {
-              const savedData = await editorInstance.current.save();
-              saveNoteToServer(savedData);
-            },
-          });
-        }
-      }
+  const initializeEditor = async (data) => {
+    const EditorJSModule = (await import('@editorjs/editorjs')).default;
+    const HeaderModule = (await import('@editorjs/header')).default;
+
+    if (editorInstance.current) {
+      await editorInstance.current.isReady;
+      editorInstance.current.destroy();
     }
 
-    initializeEditor();
+    editorInstance.current = new EditorJSModule({
+      holder: editorRef.current,
+      tools: {
+        header: HeaderModule,
+      },
+      data: data ? JSON.parse(data) : {},
+      onChange: async () => {
+        const savedData = await editorInstance.current.save();
+        saveNoteToServer(savedData);
+      },
+    });
+  };
 
-    return () => {
-      if (editorInstance.current) {
-        editorInstance.current.destroy();
-      }
-    };
-  }, [content]);
-
-  const fetchNoteFromServer = async () => {
+  const fetchNotesFromServer = async () => {
     try {
-      const response = await fetch('/api/notes');
+      const response = await fetch(`/api/notes?email=${session.user.email}`);
       if (response.ok) {
-        const noteContent = await response.json();
-        setContent(noteContent);
+        const notes = await response.json();
+        setPages(notes);
+        if (notes.length > 0) {
+          setSelectedPage(notes[0]);
+        }
       } else {
-        console.error('Failed to fetch note:', await response.json());
+        console.error('Failed to fetch notes:', await response.json());
       }
     } catch (error) {
-      console.error('Error fetching note:', error);
+      console.error('Error fetching notes:', error);
     }
   };
 
@@ -73,7 +75,12 @@ export default function Notes({ onMinimize }) {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ content: JSON.stringify(savedData) }),
+        body: JSON.stringify({
+          id: selectedPage?.id,
+          email: session.user.email,
+          title: selectedPage?.title,
+          content: JSON.stringify(savedData),
+        }),
       });
       if (!response.ok) {
         console.error('Failed to save note:', await response.json());
@@ -83,13 +90,46 @@ export default function Notes({ onMinimize }) {
     }
   };
 
+  const createNewPage = async () => {
+    const newPage = {
+      id: null,
+      email: session.user.email,
+      title: 'New Page',
+      content: '{}',
+    };
+    setPages([...pages, newPage]);
+    setSelectedPage(newPage);
+    initializeEditor('{}');
+  };
+
+  const deletePage = async (pageId) => {
+    try {
+      const response = await fetch('/api/notes', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ id: pageId, email: session.user.email }),
+      });
+      if (response.ok) {
+        const updatedPages = pages.filter((page) => page.id !== pageId);
+        setPages(updatedPages);
+        setSelectedPage(updatedPages.length > 0 ? updatedPages[0] : null);
+      } else {
+        console.error('Failed to delete note:', await response.json());
+      }
+    } catch (error) {
+      console.error('Error deleting note:', error);
+    }
+  };
+
   return (
     <Draggable handle={`.${styles.header}`}>
       <ResizableBox
-        width={400}
-        height={300}
-        minConstraints={[300, 200]}
-        maxConstraints={[800, 600]}
+        width={800}
+        height={600}
+        minConstraints={[400, 300]}
+        maxConstraints={[1000, 800]}
         className={styles.resizableBox}
       >
         <div className={styles.notesContainer}>
@@ -97,7 +137,34 @@ export default function Notes({ onMinimize }) {
             <h2>Notes</h2>
             <button onClick={onMinimize} className="material-icons">remove</button>
           </div>
-          <div ref={editorRef} className={styles.editor}></div>
+          <div className={styles.content}>
+            <div className={styles.pageList}>
+              {pages.map((page) => (
+                <div
+                  key={page.id}
+                  className={`${styles.pageItem} ${
+                    selectedPage?.id === page.id ? styles.active : ''
+                  }`}
+                  onClick={() => setSelectedPage(page)}
+                >
+                  {page.title}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      deletePage(page.id);
+                    }}
+                    className="material-icons"
+                  >
+                    delete
+                  </button>
+                </div>
+              ))}
+              <button onClick={createNewPage} className={styles.addPageButton}>
+                + Add Page
+              </button>
+            </div>
+            <div ref={editorRef} className={styles.editor}></div>
+          </div>
         </div>
       </ResizableBox>
     </Draggable>

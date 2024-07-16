@@ -1,14 +1,18 @@
-/* styles/Notes.module.css */
 @import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;700&display=swap');
 
-
 .resizableBox {
+  --text-color: #ffffff;
+  --background-color: rgba(0, 0, 0, 0.9);
+  --border-color: #ccc;
+  --editor-background-color: #333;
+  --font-family: 'Comfortaa', sans-serif;
+
   position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 1000;
-  background-color: rgba(0, 0, 0, 0.9);
+  background-color: var(--background-color);
   border-radius: 10px;
   display: flex;
   flex-direction: column;
@@ -23,7 +27,7 @@
   display: flex;
   flex-direction: column;
   height: 100%;
-  font-family: var(--font-family);
+  font-family: 'Comfortaa', sans-serif;
 }
 
 .header {
@@ -33,9 +37,8 @@
   align-items: center;
   cursor: move;
   padding: 10px;
-  background-color: var(--background-color);
-  border-bottom: 1px solid var(--border-color);
-  font-family: var(--font-family);
+  background-color: rgba(0, 0, 0, 0.9);
+  border-bottom: 1px solid #ccc;
 }
 
 .header h2 {
@@ -48,19 +51,75 @@
   border: none;
   cursor: pointer;
   font-size: 24px;
-  color: var(--text-color);
+  color: #ffffff;
+}
+
+.content {
+  display: flex;
+  height: 100%;
+}
+
+.pageList {
+  width: 150px;
+  background-color: rgba(0, 0, 0, 0.9);
+  padding: 10px;
+  border-right: 1px solid #ccc;
+  overflow-y: auto;
+}
+
+.pageItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: border-color 0.3s;
+  margin-bottom: 5px;
+  border-radius: 5px;
+}
+
+.pageItem:hover {
+  border-color: #ccc;
+}
+
+.pageItem.active {
+  border-color: #ffffff;
+}
+
+.pageItem button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  color: #ffffff;
+}
+
+.addPageButton {
+  width: 100%;
+  padding: 5px;
+  background-color: rgba(0, 0, 0, 0.9);
+  border: 1px solid #ccc;
+  cursor: pointer;
+  color: #ffffff;
+  border-radius: 5px;
+  margin-top: 10px;
+  transition: background-color 0.3s;
+}
+
+.addPageButton:hover {
+  background-color: #444;
 }
 
 .editor {
   flex-grow: 1;
-  background-color: var(--editor-background-color);
+  background-color: #333;
   padding: 10px;
   overflow: auto;
-  border-radius: 0 0 10px 10px;
-  font-family: var(--font-family);
-
-    -webkit-user-select: text; /* Safari */
-    -moz-user-select: text;    /* Firefox */
-    -ms-user-select: text;     /* Internet Explorer/Edge */
-      user-select: text;         /* Non-prefixed version, currently supported by Chrome, Opera and Edge */
+  border-radius: 0 10px 10px 0;
+  font-family: 'Comfortaa', sans-serif;
+  -webkit-user-select: text; /* Safari */
+  -moz-user-select: text;    /* Firefox */
+  -ms-user-select: text;     /* Internet Explorer/Edge */
+  user-select: text;         /* Non-prefixed version, currently supported by Chrome, Opera and Edge */
 }
