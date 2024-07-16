@@ -95,7 +95,7 @@ export default function MusicPlayer({ onMinimize }) {
   return (
     <div className={styles.musicPlayer}>
       <div className={styles.header}>
-        <h2>Music Player</h2>
+        <h2>Lo-fi.study</h2>
       </div>
       <div className={styles.trackInfo}>
         <h3>{tracks[currentTrackIndex].title}</h3>
