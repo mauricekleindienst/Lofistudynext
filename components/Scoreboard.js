@@ -12,7 +12,14 @@ export default function Scoreboard({ onMinimize }) {
       setScoreboard(data);
     };
 
+    // Initial fetch
     fetchScoreboard();
+
+    // Polling every 30 seconds
+    const intervalId = setInterval(fetchScoreboard, 3000);
+
+    // Cleanup interval on component unmount
+    return () => clearInterval(intervalId);
   }, []);
 
   return (

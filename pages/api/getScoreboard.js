@@ -1,10 +1,12 @@
+// pages/api/getScoreboard.js
+
 import { Pool } from 'pg';
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: {
-    rejectUnauthorized: false
-  }
+    rejectUnauthorized: false,
+  },
 });
 
 export default async function handler(req, res) {
