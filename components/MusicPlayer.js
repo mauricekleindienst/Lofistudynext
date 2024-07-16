@@ -66,13 +66,12 @@ export default function MusicPlayer({ onMinimize }) {
     }
   }, [currentTrackIndex]);
 
-  // Update the nextTrack and prevTrack functions to start playing immediately if something is currently playing
   const skipNextTrack = () => {
     setCurrentTrackIndex((currentTrackIndex + 1) % tracks.length);
     if (isPlaying) {
       setTimeout(() => {
         playerRef.current.playVideo();
-      }, 100); // Give a slight delay to ensure the video is loaded before playing
+      }, 100);
     }
   };
 
@@ -81,8 +80,16 @@ export default function MusicPlayer({ onMinimize }) {
     if (isPlaying) {
       setTimeout(() => {
         playerRef.current.playVideo();
-      }, 100); // Give a slight delay to ensure the video is loaded before playing
+      }, 100);
     }
+  };
+
+  const selectTrack = (index) => {
+    setCurrentTrackIndex(index);
+    setIsPlaying(true);
+    setTimeout(() => {
+      playerRef.current.playVideo();
+    }, 100);
   };
 
   return (
@@ -130,6 +137,17 @@ export default function MusicPlayer({ onMinimize }) {
           onChange={(e) => setVolume(parseInt(e.target.value))}
           className={styles.slider}
         />
+      </div>
+      <div className={styles.trackSelection}>
+        {tracks.map((track, index) => (
+          <div
+            key={track.id}
+            className={`${styles.trackItem} ${index === currentTrackIndex ? styles.active : ''}`}
+            onClick={() => selectTrack(index)}
+          >
+            {track.title}
+          </div>
+        ))}
       </div>
     </div>
   );
