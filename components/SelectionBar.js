@@ -74,11 +74,14 @@ export default function SelectionBar() {
       <div className={`${visibleComponents.chat ? '' : styles.hidden}`}>
         <LiveChat onMinimize={() => handleIconClick('chat')} />
       </div>
-     
-      
       <div className={`${visibleComponents.scoreboard ? '' : styles.hidden}`}>
         <Scoreboard onMinimize={() => handleIconClick('scoreboard')} />
       </div>
+      <div className={`${visibleComponents.settings ? '' : styles.hidden}`}>
+        <Settings onMinimize={() => handleIconClick('settings')} />
+      </div>
+      
+     
     </div>
   );
 }
