@@ -1,80 +1,106 @@
-
 .header {
-    position: fixed;
-    top: 10px;
-    right: 10px;
-    display: flex;
-    align-items: center;
-    z-index: 1000;
-    font-family: 'Comfortaa', cursive;
-  }
-  
-  .iconButton {
-    background-color: transparent;
-    border: none;
-    cursor: pointer;
-    color: #fff;
-    margin: 0 5px;
-    font-size: 24px;
-  }
-  
-  .accountMenu {
-    position: relative;
-  }
-  
-  .dropdownContent {
-    display: none;
-    position: absolute;
-    top: 30px;
-    right: 0;
-    background-color: rgba(0, 0, 0, 0.9);
-    padding: 10px;
-    border-radius: 5px;
-  }
-  
-  .accountMenu:hover .dropdownContent {
-    display: block;
-  }
-  
-  .logoutButton {
-    background-color: #ff7b00;
-    border: none;
-    padding: 10px;
-    cursor: pointer;
-    color: #fff;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  .logoutButton .material-icons {
-    font-size: 24px;
-  }
-  
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  align-items: center;
+  z-index: 1000;
+  font-family: 'Comfortaa', cursive;
+}
+
+.iconButton {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  color: #fff;
+  margin: 0 10px;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  transition: all 0.3s ease;
+  border-radius: 50%;
+}
+
+.iconButton:hover {
+  background-color: #ff7b00;
+  transform: scale(1.1);
+}
+
+.material-icons {
+  font-size: 24px;
+}
+
+.accountMenu {
+  position: relative;
+}
+
+.dropdownContent {
+  display: none;
+  position: absolute;
+  top: 60px;
+  right: 0;
+  background: linear-gradient(145deg, #1e1e1e, #2a2a2a);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  padding: 15px;
+  border-radius: 20px;
+}
+
+.accountMenu:hover .dropdownContent {
+  display: block;
+}
+
+.logoutButton {
+  background-color: #ff7b00;
+  border: none;
+  padding: 15px;
+  cursor: pointer;
+  color: #fff;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.3s ease;
+}
+
+.logoutButton:hover {
+  background-color: #ff9900;
+  transform: scale(1.1);
+}
+
+.logoutButton .material-icons {
+  font-size: 24px;
+}
+
 /* Custom styles for react-pdf-viewer */
 .rpv-core__toolbar {
-  background: rgba(0, 0, 0, 0.8) !important; /* Set toolbar background */
+  background: linear-gradient(145deg, #1e1e1e, #2a2a2a) !important;
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  border-radius: 20px;
+  padding: 10px;
 }
 
 .rpv-core__toolbar-button,
 .rpv-core__minimal-button {
-  color: #fff !important; /* Ensure toolbar buttons are white */
+  color: #fff !important;
+  transition: all 0.3s ease;
 }
 
 .rpv-core__toolbar-button:hover,
 .rpv-core__minimal-button:hover {
-  background: rgba(255, 255, 255, 0.2) !important; /* Hover effect */
+  background-color: #ff7b00 !important;
+  transform: scale(1.1);
 }
 
 .rpv-core__zoom-in-button,
 .rpv-core__zoom-out-button {
-  color: #fff !important; /* Ensure zoom buttons are white */
+  color: #fff !important;
 }
 
-/* Ensure all other text and icons in react-pdf-viewer are white */
 .rpv-core__text-layer {
   color: #fff !important;
 }
@@ -85,4 +111,41 @@
 
 .rpv-core__icon {
   fill: #fff !important;
+}
+
+.toast {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(145deg, #1e1e1e, #2a2a2a);
+  color: #fff;
+  padding: 15px 20px;
+  border-radius: 20px;
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  z-index: 1001;
+  font-family: 'Comfortaa', cursive;
+  animation: fadeIn 0.5s, fadeOut 0.5s 2.5s;
+}
+
+.toastMessage {
+  display: flex;
+  align-items: center;
+}
+
+.toastMessage::before {
+  content: 'check_circle';
+  font-family: 'Material Icons';
+  margin-right: 10px;
+  color: #ff7b00;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
 }

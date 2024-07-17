@@ -1,113 +1,182 @@
-/* styles/Home.module.css */
-.navbar {
-  background-color: rgba(255, 255, 255, 0.1) !important;
-  backdrop-filter: blur(10px) !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2) !important;
-  border-bottom-left-radius: 10px !important;
-  border-bottom-right-radius: 10px !important;
+@import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;700&display=swap');
+
+.container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  color: #ffffff;
+  font-family: 'Comfortaa', sans-serif;
+  background: linear-gradient(145deg, #1e1e1e, #2a2a2a);
 }
 
-.nav-item {
-  list-style: none;
-  display: inline-block;
-  margin: 0 10px;
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background: rgba(0, 0, 0, 0.5);
+  position: fixed;
+  width: 100%;
+  top: 0;
+  z-index: 1000;
 }
 
-.navButton {
-  text-decoration: none;
-  color: white;
-  font-size: 16px;
-  transition: color 0.3s ease;
-  padding: 10px 20px;
-  background-color: #F3A953;
-  border: none;
+.logo {
+  display: flex;
+  align-items: center;
+}
+
+.logo img {
+  height: 80px;
+  margin-right: 10px;
+}
+
+.logo span {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #ff7b00;
+}
+.loginButton, .contactButton, .faqButton {
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
   border-radius: 5px;
+  border: none;
   cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
-.navButton:hover {
-  color: white;
-  background-color: #F39C53;
-}
 
 .loginButton {
-  text-decoration: none;
-  color: white;
-  font-size: 16px;
-  transition: color 0.3s ease;
-  padding: 15px 30px;
-  background-color: orange;
-  border: none;
+  font-size: 1.5rem;
+  background-color: #ff7b00;
+  color: #ffffff;
+}
+
+.loginButton:hover, .contactButton:hover, .faqButton:hover {
+  background-color: #ff9900;
+}
+
+.contactButton, .faqButton {
+  padding: 0.4rem 0.8rem; /* Kleineres Padding */
+  font-size: 1rem; /* Kleinere Schriftgröße */
+  border: 1px solid #ff7b00;
+  color: #ff7b00;
+}
+
+.contactButton:hover, .faqButton:hover {
+  color: #ffffff;
+}
+.buttonContainer {
+  display: flex;
+  gap: 10px; /* Abstand zwischen den Buttons */
+  /* Weitere Stildefinitionen nach Bedarf */
+}
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.welcomeSection, .overviewSection, .featureSection {
+  min-height: 60vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  text-align: center;
+}
+
+.title {
+  font-size: 4rem;
+  font-weight: 700;
+  color: #ff7b00;
+  margin-bottom: 1rem;
+}
+
+.description {
+  font-size: 1.5rem;
+  max-width: 800px;
+  margin-bottom: 2rem;
+}
+
+.ctaButton {
+  padding: 1rem 2rem;
+  font-size: 1.2rem;
   border-radius: 5px;
+  border: none;
+  background-color: #ff7b00;
+  color: #ffffff;
   cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
-.loginButton:hover {
-  color: white;
-  background-color: #FFA500;
+.ctaButton:hover {
+  background-color: #ff9900;
 }
 
-.navbar-brand img {
-  width: 50px;
-  height: auto;
+.overviewGrid, .featureGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  max-width: 1200px;
+  width: 100%;
+  margin-top: 2rem;
 }
 
-@media screen and (max-width: 480px) {
-  .navbar {
-    width: 100%;
-    height: fit-content;
+.overviewItem, .featureItem {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 2rem;
+  border-radius: 10px;
+  transition: transform 0.3s ease;
+}
+
+.overviewItem:hover, .featureItem:hover {
+  transform: translateY(-5px);
+}
+
+.icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.sectionTitle {
+  font-size: 2.5rem;
+  color: #ff7b00;
+  margin-bottom: 2rem;
+}
+
+.overviewItem h3,
+.featureItem h3 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.footer {
+  padding: 2rem;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+@media (max-width: 768px) {
+  .title {
+    font-size: 3rem;
   }
 
-  .logo-shadow {
-    width: 50px !important;
-    height: 50px !important;
+  .description {
+    font-size: 1.2rem;
   }
 
-  .content-container {
-    width: 100%;
-    margin-left: 0;
-    padding: 0 20px;
+  .overviewGrid, .featureGrid {
+    grid-template-columns: 1fr;
   }
+}
+.carouselItem {
+  position: relative;
+  padding: 20px;
+}
 
-  .nav-item a {
-    font-size: 14px;
-  }
-
-  .hero-text p, .hero-img-btn {
-    padding: 20px 40px;
-  }
-
-  .navbar-brand img {
-    width: 50%;
-  }
-
-  .login-logo {
-    width: 150px;
-    height: 150px;
-  }
-
-  .content-container {
-    margin-left: 20px;
-  }
-
-  .col-md-6 {
-    padding: 20px 40px 40px 20px;
-  }
-
-  .col-md-3 {
-    padding-right: 40px;
-  }
-
-  .footer-left, .footer-middle, .footer-right {
-    margin: 0 20px;
-  }
-
-  .reduced-size {
-    width: 100%;
-  }
-
-  .wallaper-selection-image {
-    width: 100% !important;
-    height: auto !important;
-  }
+.carouselImage {
+  width: 100%;
+  border-radius: 20px !important;
 }

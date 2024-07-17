@@ -7,6 +7,7 @@
   color: #ffffff;
   position: relative;
   overflow: hidden;
+  font-family: 'Comfortaa', cursive;
 }
 
 .videoBackground {
@@ -19,20 +20,6 @@
   z-index: -1;
 }
 
-.nav {
-  display: flex;
-  align-items: center;
-}
-
-.logoutButton {
-  background-color: #ff7b00;
-  border: none;
-  padding: 10px 20px;
-  cursor: pointer;
-  color: #fff;
-  border-radius: 5px;
-}
-
 .main {
   display: flex;
   flex: 1;
@@ -42,12 +29,13 @@
 
 .sidebar {
   width: 300px;
-  background-color: rgba(0, 0, 0, 0.9);
-  padding: 20px;
-  border-radius: 10px;
+  background: linear-gradient(145deg, #1e1e1e, #2a2a2a);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  padding: 30px;
+  border-radius: 20px;
   transition: transform 0.3s ease;
   position: relative;
-  z-index: 999; /* Ensure sidebar is above the background but below the timer */
+  z-index: 999;
 }
 
 .sidebar.closed {
@@ -61,37 +49,56 @@
 .toggleButton {
   background-color: #ff7b00;
   border: none;
-  padding: 10px;
+  padding: 15px;
   cursor: pointer;
   color: #fff;
-  border-radius: 5px;
+  border-radius: 50%;
   position: absolute;
   top: 20px;
   left: 300px;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.toggleButton:hover {
+  background-color: #ff9900;
+  transform: scale(1.1);
+}
+
+.sidebar h1 {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 20px;
 }
 
 .backgroundSelector {
   margin: 20px 0;
 }
 
+.backgroundSelector h2 {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 15px;
+}
+
 .backgroundGrid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
 }
 
 .backgroundOption {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 5px;
   border: 2px solid transparent;
   cursor: pointer;
-  transition: border-color 0.3s;
+  transition: all 0.3s ease;
+  border-radius: 10px;
+  overflow: hidden;
 }
 
 .backgroundOption:hover {
-  border-color: #ccc;
-  border-radius: 8px;
+  border-color: #ff7b00;
   transform: scale(1.05);
 }
 
@@ -101,37 +108,29 @@
   border-radius: 8px;
 }
 
-.leftContent {
-  display: flex;
-  align-items: center;
-}
-
-.content {
-  margin-right: 20px;
-}
-
 .sidebarFooter {
   position: absolute;
   bottom: 20px;
+  left: 0;
   width: 100%;
   display: flex;
   justify-content: space-around;
-  padding: 1em;
+  padding: 0 30px;
 }
 
 .sidebarButton {
-  padding: 0.5em 1em;
+  padding: 10px 20px;
   background-color: #ff7b00;
   color: white;
   border: none;
-  border-radius: 0.25em;
+  border-radius: 25px;
   cursor: pointer;
-  font-size: small;
-  transition: background-color 0.3s ease-in-out;
+  font-size: 14px;
+  transition: all 0.3s ease;
 }
 
 .sidebarButton:hover {
-  background-color: #ff7b00;
+  background-color: #ff9900;
   transform: scale(1.05);
 }
 
@@ -141,11 +140,11 @@
   align-items: center;
   justify-content: center;
   height: 100vh;
-  background-color: #f0f0f005;
+  background-color: rgba(0, 0, 0, 0.9);
 }
 
 .spinner {
-  border: 8px solid #f3f3f3;
+  border: 8px solid #2a2a2a;
   border-top: 8px solid #FF7B00;
   border-radius: 50%;
   width: 60px;
@@ -154,10 +153,6 @@
 }
 
 @keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }

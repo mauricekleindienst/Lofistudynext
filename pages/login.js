@@ -41,7 +41,7 @@ export default function Login() {
       <main className={styles.main}>
         <div className={styles.hero}>
           <Image src="/lo-fi.study.svg" alt="lo-fi.study" width={100} height={100} className={styles.logo} />
-          <h1 className={styles.title}>Welcome to lo-fi.study</h1>
+          <h1 className={styles.title}>Welcome to Lo-Fi.Study</h1>
           <p className={styles.subtitle}>Sign in to access your calm, digital space to work.</p>
           <button onClick={() => signIn('google')} className={styles.loginButton}>
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="24px" height="24px">

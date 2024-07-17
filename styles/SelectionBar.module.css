@@ -1,67 +1,70 @@
 /* styles/SelectionBar.module.css */
 @import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;700&display=swap');
+
 .selectionBar {
-    position: fixed;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: rgba(0, 0, 0, 0.9);
-    border-radius: 20px;
-    display: flex;
-    padding: 20px;
-    z-index: 1000;
-  }
-  
-  .iconButton {
-    background-color: transparent;
-    border: none;
-    cursor: pointer;
-    color: #fff;
-    margin: 0 10px;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    transition: background-color 0.3s, color 0.3s;
-  }
-  
-  .iconButton:hover {
-    color: #ff7b00;
-  }
-  
-  .iconButton:hover .tooltip {
-    visibility: visible;
-    opacity: 1;
-    transform: translateY(0);
-  }
-  
-  .material-icons {
-    font-size: 48px !important; /* Forcefully increase icon size */
-    line-height: 48px !important; /* Adjust line height */
-  }
-  
-  .tooltip {
-    visibility: hidden;
-    opacity: 0;
-    width: 120px;
-    background-color: #333;
-    color: #fff;
-    text-align: center;
-    border-radius: 6px;
-    padding: 5px;
-    position: absolute;
-    z-index: 1;
-    bottom: 100%; /* Position above the button */
-    left: 50%;
-    transform: translateX(-50%) translateY(-10px);
-    transition: opacity 0.3s, transform 0.3s;
-    font-size: 14px;
-    line-height: 1.2;
-  }
-  
-  .hidden {
-    display: none;
-  }
-  
+  font-family: 'Comfortaa', cursive;
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(145deg, #1e1e1e, #2a2a2a);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  border-radius: 20px;
+  display: flex;
+  padding: 15px;
+  z-index: 1000;
+}
+
+.iconButton {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  color: #fff;
+  margin: 0 10px;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  transition: all 0.3s ease;
+  border-radius: 50%;
+}
+
+.iconButton:hover {
+  background-color: #ff7b00;
+  transform: scale(1.1);
+}
+
+.iconButton:hover .tooltip {
+  visibility: visible;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.material-icons {
+  font-size: 24px;
+}
+
+.tooltip {
+  visibility: hidden;
+  opacity: 0;
+  width: 120px;
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-10px);
+  transition: opacity 0.3s, transform 0.3s;
+  font-size: 14px;
+  line-height: 1.2;
+}
+
+.hidden {
+  display: none;
+}

@@ -7,15 +7,15 @@ import { Worker, Viewer } from '@react-pdf-viewer/core';
 import { toolbarPlugin, zoomPlugin } from '@react-pdf-viewer/toolbar';
 import '@react-pdf-viewer/core/lib/styles/index.css';
 import '@react-pdf-viewer/toolbar/lib/styles/index.css';
-import '../styles/react-pdf-viewer-overrides.css'; // Import custom styles
+import '../styles/react-pdf-viewer-overrides.css';
 import { version as pdfjsVersion } from 'pdfjs-dist/package.json';
-
 
 export default function CustomHeader() {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isPdfOpen, setIsPdfOpen] = useState(false);
   const [pdfFile, setPdfFile] = useState(null);
   const [pdfBlobUrl, setPdfBlobUrl] = useState(null);
+  const [toast, setToast] = useState({ show: false, message: '' });
   const router = useRouter();
 
   const toggleFullscreen = useCallback(() => {
@@ -35,21 +35,35 @@ export default function CustomHeader() {
           'Content-Type': 'application/json',
         },
       });
-
+  
       const data = await response.json();
       if (data.url) {
+        // Construct the full URL
+        const fullUrl = `${window.location.origin}/study?roomUrl=${encodeURIComponent(data.url)}`;
+        
+        // Copy the full URL to clipboard
+        await navigator.clipboard.writeText(fullUrl);
+        
+        // Show toast notification
+        setToast({ show: true, message: 'Room created! Link copied to clipboard.' });
+        
+        // Hide toast after 3 seconds
+        setTimeout(() => setToast({ show: false, message: '' }), 3000);
+  
+        // Navigate to the study room
         router.push({
           pathname: '/study',
           query: { roomUrl: data.url },
         });
       } else {
         console.error('Error creating video room:', data.error);
+        setToast({ show: true, message: 'Error creating room. Please try again.' });
       }
     } catch (error) {
       console.error('Error creating video room:', error);
+      setToast({ show: true, message: 'Error creating room. Please try again.' });
     }
   }, [router]);
-
   const handleFileChange = useCallback((event) => {
     const file = event.target.files[0];
     if (file) {
@@ -114,18 +128,22 @@ export default function CustomHeader() {
             <div style={{ height: '100%', width: '100%', display: 'flex', flexDirection: 'column' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', padding: '10px', background: 'rgba(0, 0, 0, 0.8)' }}>
                 <Toolbar />
-              
               </div>
               <div style={{ flexGrow: 1, overflow: 'hidden' }}>
                 <Viewer
                   fileUrl={pdfBlobUrl}
                   plugins={[toolbarPluginInstance]}
-                  defaultScale={1.5} // Adjust scale to improve quality
+                  defaultScale={1.5}
                 />
               </div>
             </div>
           </Worker>
         </MovableModal>
+      )}
+      {toast.show && (
+        <div className={styles.toast}>
+          <span className={styles.toastMessage}>{toast.message}</span>
+        </div>
       )}
     </div>
   );

@@ -1,18 +1,60 @@
-// pages/index.js
-import Head from 'next/head';
-import Image from 'next/image';
-import Link from 'next/link';
-import Navbar from '../components/Navbar';
-import styles from '../styles/Home.module.css';
 import { useEffect } from 'react';
+import { useRouter } from 'next/router';
+import Head from 'next/head';
 import Typed from 'typed.js';
+import { Carousel } from 'react-responsive-carousel';
+import 'react-responsive-carousel/lib/styles/carousel.min.css';
+import styles from '../styles/Home.module.css';
 
-const logoPath = '/lo-fi.study.svg';
-const macChromePath = '/Macchrome.webp';
-
-export default function Home() {
+export default function Landing() {
+    const router = useRouter();
+    const images = [
+        {
+          src: "https://i.ibb.co/K0qdm4r/lgsarius-cyberpunk-night-study-girl-window-desklight-c1650ad7-776d-470a-a2e0-da9e78140212.webp",
+          alt: "First slide"
+        },
+        {
+          src: "https://i.ibb.co/fGQQfWr/lgsarius-Lofi-study-girl-on-desk-cybperunk-like-coffee-rain-82a5d58d-44f1-4b9a-ae8f-1f82844543a6.webp",
+          alt: "Second slide"
+        },
+        {
+          src: "https://i.ibb.co/pdsgshq/lgsarius-Lofi-girl-and-cat-studying-in-a-field-sunset-3d94459d-fd73-43ee-8c1f-c4547239bb7a.webp",
+          alt: "Third slide"
+        },
+        {
+          src: "https://i.ibb.co/PG0bPhB/lgsarius-Lofi-study-girl-on-desk-plants-rain-coffee-rain-02e5bc5f-943e-4c0b-b986-1cf5d7362034.webp",
+          alt: "Fourth slide"
+        },
+        {
+          src: "https://i.ibb.co/m9QYfwJ/lgsarius-Lofi-Trainstation-sunset-648859c2-8af6-4b30-b276-dca8f45ba231.webp",
+          alt: "Fifth slide"
+        }
+      ];
+      const ImageCarousel = () => {
+        return (
+          <section className={styles.overviewSection}>
+            <h2 className={styles.sectionTitle}>Beautiful Changing Background Selection</h2>
+            <div className={styles.overviewGrid}>
+            <Carousel    
+            showArrows={false}
+            showStatus={false}
+            showThumbs={false}
+            infiniteLoop={true}
+            autoPlay={true}
+            interval={2000}
+        >
+                {images.map((image, index) => (
+                  <div key={index} className={styles.carouselItem}>
+                    <img className={styles.carouselImage} src={image.src} alt={image.alt} />
+                  </div>
+                ))}
+              </Carousel>
+            </div>
+          </section>
+        );
+      };
     useEffect(() => {
-        const typed = new Typed('#typed-text', {
+        const typed = new Typed('#typedtext', {
             strings: ["Work", "Study", "Chill", "Code"],
             typeSpeed: 120,
             backSpeed: 120,
@@ -29,40 +71,90 @@ export default function Home() {
     return (
         <div className={styles.container}>
             <Head>
-                <title>lo-fi.study - Improve Your Focus and Productivity</title>
-                <meta name="description" content="lo-fi.study is a website that helps you to study by giving you a distraction-free environment. Enjoy ambient music and focus better." />
-                <meta name="author" content="lo-fi.study" />
-                <meta name="robots" content="index, follow" />
-                <meta property="og:title" content="lo-fi.study - Improve Your Focus and Productivity" />
-                <meta property="og:description" content="lo-fi.study is a website that helps you to study by giving you a distraction-free environment. Enjoy ambient music and focus better." />
-                <meta property="og:type" content="website" />
-                <meta property="og:url" content="https://www.lo-fi.study" />
-                <meta property="og:image" content="/images/og-image.jpg" />
-                <meta name="twitter:card" content="summary_large_image" />
-                <meta name="twitter:title" content="lo-fi.study - Improve Your Focus and Productivity" />
-                <meta name="twitter:description" content="lo-fi.study is a website that helps you to study by giving you a distraction-free environment. Enjoy ambient music and focus better." />
-                <meta name="twitter:image" content="/images/twitter-image.jpg" />
+                <title>Lo-Fi Study App</title>
+                <meta name="description" content="Enhance your study sessions with our Lo-Fi Study App" />
+                <link rel="icon" href="/favicon.ico" />
             </Head>
-            <Navbar />
-            <div className="container-fluid">
-                <div className="row">
-                    <div className="col-md-6">
-                        <div className={styles.heroImg}>
-                            <Image src={logoPath} alt="lo-fi.study Logo" className={styles.loginLogo} width={300} height={300} />
-                        </div>
-                        <div className={styles.heroText} style={{ textAlign: 'center' }}>
-                            <p style={{ fontSize: '2em' }}>Your calm, digital space to<br /><br /><span style={{ textAlign: 'center' }} id="typed-text"></span></p>
-                        </div>
-                        <Link href="/signup" legacyBehavior>
-                            <a className={styles.heroImgBtn}>Register now</a>
-                        </Link>
-                    </div>
-                    <div className="col-md-6">
-                        <Image id="image1" src={macChromePath} alt="website preview" className={`${styles.webPrev} ${styles.imgShadow} ${styles.smoothTransition}`} width={800} height={600} />
-                    </div>
+            <header className={styles.header}>
+                <div className={styles.logo}>
+                    <img src="/lo-fi.study.svg" alt="lo-fi.study" />
                 </div>
-                {/* Add more sections as necessary */}
-            </div>
+                <div className={styles.buttonContainer}>
+                    <button onClick={() => router.push('/Contact')} className={styles.contactButton}>Contact</button>
+                    <button onClick={() => router.push('/FAQ')} className={styles.faqButton}>FAQ</button>
+                    <button onClick={() => router.push('/login')} className={styles.loginButton}>Log In</button>
+                </div>
+            </header>
+
+            <main className={styles.main}>
+                <div className={styles.welcomeWrapper}>
+                    <section className={styles.welcomeSection}>
+                        <h1 className={styles.title}>Welcome to Lo-Fi.Study</h1>
+                        <p className={styles.description}>
+                            With Lo-Fi Study, you can create the perfect atmosphere to <span id="typedtext"></span>.
+                        </p>
+                        <button onClick={() => router.push('/login')} className={styles.ctaButton}>Get Started</button>
+                    </section>
+                
+                   
+                
+                </div>
+
+                <section className={styles.overviewSection}>
+                    <h2 className={styles.sectionTitle}>Why Choose Lo-Fi Study?</h2>
+                    <div className={styles.overviewGrid}>
+                        <div className={styles.overviewItem}>
+                            <span className={styles.icon}>🎵</span>
+                            <h3>Ambient Sounds</h3>
+                            <p>Create your perfect study atmosphere</p>
+                        </div>
+                        <div className={styles.overviewItem}>
+                            <span className={styles.icon}>⏱️</span>
+                            <h3>Pomodoro Timer</h3>
+                            <p>Stay focused and manage your time effectively</p>
+                        </div>
+                        <div className={styles.overviewItem}>
+                            <span className={styles.icon}>👥</span>
+                            <h3>Collaborative Rooms</h3>
+                            <p>Study with friends in virtual rooms</p>
+                        </div>
+                    </div>
+                </section>
+
+                <div>
+                    <ImageCarousel />
+                </div>
+
+                <section className={styles.featureSection}>
+                    <h2 className={styles.sectionTitle}>Features</h2>
+                    <div className={styles.featureGrid}>
+                        <div className={styles.featureItem}>
+                            <h3>Ambient Sounds</h3>
+                            <p>Choose from a variety of lo-fi beats and nature sounds to create your perfect study atmosphere.</p>
+                        </div>
+                        <div className={styles.featureItem}>
+                            <h3>Pomodoro Timer</h3>
+                            <p>Stay focused with our customizable Pomodoro timer. Break your study sessions into manageable chunks.</p>
+                        </div>
+                        <div className={styles.featureItem}>
+                            <h3>Collaborative Rooms</h3>
+                            <p>Study with friends in virtual rooms. Share notes, chat, and stay motivated together.</p>
+                        </div>
+                        <div className={styles.featureItem}>
+                            <h3>Note Taking</h3>
+                            <p>Capture your thoughts and organize your study materials with our built-in note-taking tool.</p>
+                        </div>
+                        <div className={styles.featureItem}>
+                            <h3>Scoreboard</h3>
+                            <p>Get motivated by tracking your study progress and competing with friends on the leaderboard.</p>
+                        </div>
+                    </div>
+                </section>
+            </main>
+
+            <footer className={styles.footer}>
+                <p>© 2024 Lo-Fi.Study App. All rights reserved.</p>
+            </footer>
         </div>
     );
 }
