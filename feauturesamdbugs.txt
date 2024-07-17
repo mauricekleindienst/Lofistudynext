@@ -1,0 +1,4 @@
+pomodoro stopping doesnt realy work
+
+feautre to add youtube linsk to your own musik player that gets saved to db
+better stats through pomoodoro

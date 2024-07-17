@@ -110,7 +110,7 @@ export default function CustomHeader() {
       <label htmlFor="pdfInput" className={styles.iconButton}>
         <span className="material-icons">picture_as_pdf</span>
       </label>
-      <div className={styles.accountMenu}>
+      <div className={styles.iconButton}>
       <button onClick={() => signOut()} className={styles.logoutButton}>
           <span className="material-icons">account_circle</span>
         </button>

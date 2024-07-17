@@ -1,1 +1,0 @@
-pomodoro stopping doesnt realy work
