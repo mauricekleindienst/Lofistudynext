@@ -52,7 +52,8 @@
   padding: 15px;
   cursor: pointer;
   color: #fff;
-  border-radius: 50%;
+  border-top-right-radius: 20px;
+  border-bottom-right-radius: 20px;
   position: absolute;
   top: 20px;
   left: 300px;
@@ -61,7 +62,6 @@
 
 .toggleButton:hover {
   background-color: #ff9900;
-  transform: scale(1.1);
 }
 
 .sidebar h1 {
