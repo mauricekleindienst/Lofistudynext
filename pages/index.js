@@ -91,7 +91,7 @@ export default function Landing() {
                     <section className={styles.welcomeSection}>
                         <h1 className={styles.title}>Welcome to Lo-Fi.Study</h1>
                         <p className={styles.description}>
-                            With Lo-Fi Study, you can create the perfect atmosphere to <span id="typedtext"></span>.
+                            With Lo-Fi.Study, you can create the perfect atmosphere to <span id="typedtext"></span>.
                         </p>
                         <button onClick={() => router.push('/login')} className={styles.ctaButton}>Get Started</button>
                     </section>
@@ -101,7 +101,7 @@ export default function Landing() {
                 </div>
 
                 <section className={styles.overviewSection}>
-                    <h2 className={styles.sectionTitle}>Why Choose Lo-Fi Study?</h2>
+                    <h2 className={styles.sectionTitle}>Why Choose Lo-Fi.Study?</h2>
                     <div className={styles.overviewGrid}>
                         <div className={styles.overviewItem}>
                             <span className={styles.icon}>🎵</span>
@@ -116,7 +116,7 @@ export default function Landing() {
                         <div className={styles.overviewItem}>
                             <span className={styles.icon}>👥</span>
                             <h3>Collaborative Rooms</h3>
-                            <p>Study with friends in virtual rooms</p>
+                            <p>Study with friends in virtual Chatrooms</p>
                         </div>
                     </div>
                 </section>
