@@ -55,7 +55,7 @@ export default function Landing() {
       };
     useEffect(() => {
         const typed = new Typed('#typedtext', {
-            strings: ["Work", "Study", "Chill", "Code"],
+            strings: ["Work","Study","Chill","Code"],
             typeSpeed: 120,
             backSpeed: 120,
             backDelay: 500,
