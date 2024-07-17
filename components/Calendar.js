@@ -1,138 +1,151 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import { useSession } from 'next-auth/react';
 import Draggable from 'react-draggable';
-import styles from '../styles/Calendar.module.css';
-import ApiCalendar from 'react-google-calendar-api';
+import styles from '../styles/Todo.module.css';
+import { FaPlus, FaTrash } from 'react-icons/fa';
 
-const config = {
-  clientId: "YOUR_CLIENT_ID",
-  apiKey: "YOUR_API_KEY",
-  scope: "https://www.googleapis.com/auth/calendar",
-  discoveryDocs: [
-    "https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest",
-  ],
-};
+export default function Todo({ onMinimize }) {
+  const { data: session, status } = useSession();
+  const [todos, setTodos] = useState([]);
+  const [newTodo, setNewTodo] = useState('');
 
-const apiCalendar = new ApiCalendar(config);
-
-const monthNames = [
-  "January", "February", "March", "April", "May", "June",
-  "July", "August", "September", "October", "November", "December"
-];
-
-export default function Calendar({ onMinimize }) {
-  const [currentDate, setCurrentDate] = useState(new Date());
-  const [events, setEvents] = useState([]);
-  const [isSignedIn, setIsSignedIn] = useState(false);
+  const fetchTodosFromServer = useCallback(async () => {
+    if (session?.user?.email) {
+      try {
+        const response = await fetch(`/api/todos?email=${session.user.email}`);
+        if (response.ok) {
+          const data = await response.json();
+          setTodos(data);
+        } else {
+          console.error('Failed to fetch todos');
+        }
+      } catch (error) {
+        console.error('Error fetching todos:', error);
+      }
+    }
+  }, [session]);
 
   useEffect(() => {
-    apiCalendar.onLoad(() => {
-      const signedIn = apiCalendar.sign; // Check the current sign-in status
-      setIsSignedIn(signedIn);
-    });
-  }, []);
-
-  useEffect(() => {
-    if (isSignedIn) {
-      fetchEvents();
+    if (status === 'authenticated') {
+      fetchTodosFromServer();
     }
-  }, [isSignedIn, currentDate]);
+  }, [status, fetchTodosFromServer]);
 
-  const fetchEvents = async () => {
-    const startDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
-    const endDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
+  const addTodo = async () => {
+    if (newTodo.trim() !== '' && session?.user?.email) {
+      const newTodoItem = { id: Date.now(), text: newTodo, completed: false };
+      setTodos(prev => [...prev, newTodoItem]);
+      setNewTodo('');
 
-    try {
-      const result = await apiCalendar.listEvents({
-        timeMin: startDate.toISOString(),
-        timeMax: endDate.toISOString(),
-        showDeleted: false,
-        maxResults: 100,
-        orderBy: 'startTime',
-      });
-      setEvents(result.result.items);
-    } catch (error) {
-      console.error('Error fetching events', error);
-    }
-  };
+      try {
+        const response = await fetch('/api/todos', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: session.user.email, text: newTodo }),
+        });
 
-  const handleSignIn = () => {
-    apiCalendar.handleAuthClick().then(() => {
-      setIsSignedIn(true);
-    }).catch((error) => {
-      console.error('Error during sign-in', error);
-    });
-  };
-
-  const handleSignOut = () => {
-    try {
-      apiCalendar.handleSignoutClick();
-      setIsSignedIn(false);
-    } catch (error) {
-      console.error('Error signing out', error);
+        if (!response.ok) {
+          console.error('Failed to add todo');
+          setTodos(prev => prev.filter(todo => todo.id !== newTodoItem.id));
+        }
+      } catch (error) {
+        console.error('Error adding todo:', error);
+        setTodos(prev => prev.filter(todo => todo.id !== newTodoItem.id));
+      }
     }
   };
 
-  const prevMonth = () => {
-    setCurrentDate(prevDate => new Date(prevDate.getFullYear(), prevDate.getMonth() - 1, 1));
+  const deleteTodo = async (id) => {
+    if (session?.user?.email) {
+      setTodos(prev => prev.filter(todo => todo.id !== id));
+
+      try {
+        const response = await fetch('/api/todos', {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id, email: session.user.email }),
+        });
+
+        if (!response.ok) {
+          console.error('Failed to delete todo');
+          fetchTodosFromServer();
+        }
+      } catch (error) {
+        console.error('Error deleting todo:', error);
+        fetchTodosFromServer();
+      }
+    }
   };
 
-  const nextMonth = () => {
-    setCurrentDate(prevDate => new Date(prevDate.getFullYear(), prevDate.getMonth() + 1, 1));
-  };
+  const toggleTodo = async (id, completed) => {
+    if (session?.user?.email) {
+      setTodos(prev => prev.map(todo => 
+        todo.id === id ? { ...todo, completed: !completed } : todo
+      ));
 
-  const renderCalendarDays = () => {
-    const days = [];
-    const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1).getDay();
-    const daysInMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).getDate();
+      try {
+        const response = await fetch('/api/todos', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id, email: session.user.email, completed: !completed }),
+        });
 
-    for (let i = 0; i < firstDayOfMonth; i++) {
-      days.push(<div key={`empty-${i}`} className={styles.emptyDay}></div>);
+        if (!response.ok) {
+          console.error('Failed to update todo');
+          fetchTodosFromServer();
+        }
+      } catch (error) {
+        console.error('Error updating todo:', error);
+        fetchTodosFromServer();
+      }
     }
-    for (let i = 1; i <= daysInMonth; i++) {
-      const date = new Date(currentDate.getFullYear(), currentDate.getMonth(), i);
-      const dayEvents = events.filter(event => {
-        const eventDate = new Date(event.start.dateTime || event.start.date);
-        return eventDate.toDateString() === date.toDateString();
-      });
-      days.push(
-        <div key={`day-${i}`} className={`${styles.calendarDay} ${dayEvents.length > 0 ? styles.hasEvents : ''}`}>
-          {i}
-          {dayEvents.length > 0 && <div className={styles.eventIndicator}></div>}
-        </div>
-      );
-    }
-    return days;
   };
 
   return (
-    <Draggable>
-      <div className={styles.calendarContainer}>
-        <div className={styles.header}>
-          <h2>Calendar</h2>
-          <button onClick={onMinimize} className="material-icons">remove</button>
+    <Draggable handle=".draggable-header">
+      <div className={styles.todoContainer}>
+        <div className={`${styles.header} draggable-header`}>
+          <h2>Todo List</h2>
+          <button onClick={onMinimize} className={styles.closeButton}>
+            <span className="material-icons">close</span>
+          </button>
         </div>
-        <div className={styles.calendarContent}>
-          {isSignedIn ? (
-            <>
-              <button onClick={handleSignOut}>Sign Out</button>
-              <div className={styles.calendarHeader}>
-                <button onClick={prevMonth} className="material-icons">chevron_left</button>
-                <h3>{monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}</h3>
-                <button onClick={nextMonth} className="material-icons">chevron_right</button>
-              </div>
-              <div className={styles.weekDays}>
-                {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
-                  <div key={day} className={styles.weekDay}>{day}</div>
-                ))}
-              </div>
-              <div className={styles.calendarGrid}>
-                {renderCalendarDays()}
-              </div>
-            </>
-          ) : (
-            <button onClick={handleSignIn}>Sign In to Google Calendar</button>
-          )}
-        </div>
+        {status === 'authenticated' ? (
+          <>
+            <div className={styles.addTodo}>
+              <input
+                type="text"
+                value={newTodo}
+                onChange={(e) => setNewTodo(e.target.value)}
+                placeholder="Add a new todo..."
+                className={styles.todoInput}
+              />
+              <button onClick={addTodo} className={styles.addButton}>
+                <FaPlus />
+              </button>
+            </div>
+            <div className={styles.todoList}>
+              {todos.map((todo) => (
+                <div key={todo.id} className={styles.todoItem}>
+                  <input
+                    type="checkbox"
+                    checked={todo.completed}
+                    onChange={() => toggleTodo(todo.id, todo.completed)}
+                    className={styles.todoCheckbox}
+                  />
+                  <span className={`${styles.todoText} ${todo.completed ? styles.completed : ''}`}>
+                    {todo.text}
+                  </span>
+                  <button onClick={() => deleteTodo(todo.id)} className={styles.deleteButton}>
+                    <FaTrash />
+                  </button>
+                </div>
+              ))}
+            </div>
+          </>
+        ) : (
+          <p>Please sign in to use the Todo list.</p>
+        )}
       </div>
     </Draggable>
   );
