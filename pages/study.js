@@ -92,6 +92,7 @@ export default function Study() {
   return (
     <>
       <CustomHeader />
+     
       {visibleComponents.pomodoro && <PomodoroTimer onMinimize={() => handleIconClick('pomodoro')} />}
       {visibleComponents.note && <Notes onMinimize={() => handleIconClick('note')} />}
       {visibleComponents.calendar && <Calendar onMinimize={() => handleIconClick('calendar')} />}

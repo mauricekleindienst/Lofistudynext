@@ -8,6 +8,7 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }) {
     <SessionProvider session={session}>
       <UserProvider>
         <Head>
+          <title>Lo-Fi.Study</title>
           <link rel="shortcut icon" href="/favicon.ico" />
           <link
             href="https://fonts.googleapis.com/icon?family=Material+Icons"
