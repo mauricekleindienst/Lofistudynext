@@ -2,3 +2,7 @@ pomodoro stopping doesnt realy work
 
 feautre to add youtube linsk to your own musik player that gets saved to db
 better stats through pomoodoro
+
+Canonical links suggest which URL to show in search results. [Learn more about canonical links](https://developer.chrome.com/docs/lighthouse/seo/canonical/).
+
+Not found

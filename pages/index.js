@@ -71,8 +71,8 @@ export default function Landing() {
     return (
         <div className={styles.container}>
             <Head>
-                <title>Lo-Fi Study App</title>
-                <meta name="description" content="Enhance your study sessions with our Lo-Fi Study App" />
+                <title>Lo-Fi.Study - Enhance Your Study Sessions</title>
+                <meta name="description" content="Enhance your study sessions with our Lo-Fi.Study Lofi styled learning platform" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
             <header className={styles.header}>
