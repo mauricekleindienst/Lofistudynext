@@ -6,9 +6,10 @@ import Calendar from './Calendar';
 import LiveChat from './LiveChat';
 import Scoreboard from './Scoreboard';
 import Settings from './Settings';
+import Todo from './Todo';  // Import the new Todo component
 import styles from '../styles/SelectionBar.module.css';
 
-export default function SelectionBar() {
+export default function SelectionBar({ userEmail }) {
   const [visibleComponents, setVisibleComponents] = useState({
     pomodoro: false,
     sounds: false,
@@ -17,7 +18,8 @@ export default function SelectionBar() {
     chat: false,
     settings: false,
     music: false,
-    scoreboard: false
+    scoreboard: false,
+    todo: false  // Add todo to the state
   });
 
   const handleIconClick = (component) => {
@@ -54,10 +56,15 @@ export default function SelectionBar() {
           <span className="material-icons">stairs</span>
           <div className={styles.tooltip}>Scoreboard</div>
         </button>
+        <button className={styles.iconButton} onClick={() => handleIconClick('todo')}>
+          <span className="material-icons">checklist</span>
+          <div className={styles.tooltip}>Todo</div>
+        </button>
         <button className={styles.iconButton} onClick={() => handleIconClick('settings')}>
           <span className="material-icons">settings</span>
           <div className={styles.tooltip}>Settings</div>
         </button>
+       
       </div>
       <div className={`${visibleComponents.pomodoro ? '' : styles.hidden}`}>
         <PomodoroTimer onMinimize={() => handleIconClick('pomodoro')} />
@@ -66,7 +73,7 @@ export default function SelectionBar() {
         <Sounds onMinimize={() => handleIconClick('sounds')} />
       </div>
       <div className={`${visibleComponents.note ? '' : styles.hidden}`}>
-        <Notes onMinimize={() => handleIconClick('note')} />
+        <Notes onMinimize={() => handleIconClick('note')} userEmail={userEmail} />
       </div>
       <div className={`${visibleComponents.calendar ? '' : styles.hidden}`}>
         <Calendar onMinimize={() => handleIconClick('calendar')} />
@@ -80,8 +87,9 @@ export default function SelectionBar() {
       <div className={`${visibleComponents.settings ? '' : styles.hidden}`}>
         <Settings onMinimize={() => handleIconClick('settings')} />
       </div>
-      
-     
+      <div className={`${visibleComponents.todo ? '' : styles.hidden}`}>
+        <Todo onMinimize={() => handleIconClick('todo')}userEmail={userEmail} />
+      </div>
     </div>
   );
 }

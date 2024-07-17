@@ -1,0 +1,140 @@
+@import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;700&display=swap');
+
+.todoContainer {
+  font-family: 'Comfortaa', cursive;
+  padding: 30px;
+  border-radius: 20px;
+  color: #fff;
+  width: 100%;
+  max-width: 400px;
+  background: linear-gradient(145deg, #1e1e1e, #2a2a2a);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1000;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.header h2 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.closeButton {
+  background-color: transparent;
+  border: none;
+  color: #ff7b00;
+  cursor: pointer;
+  font-size: 24px;
+  transition: color 0.3s ease;
+}
+
+.closeButton:hover {
+  color: #ff9900;
+}
+
+.addTodo {
+  display: flex;
+  margin-bottom: 20px;
+}
+
+.todoInput {
+  flex: 1;
+  padding: 10px;
+  font-size: 16px;
+  border: none;
+  border-radius: 10px 0 0 10px;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.addButton {
+  padding: 10px 15px;
+  font-size: 16px;
+  background-color: #ff7b00;
+  border: none;
+  border-radius: 0 10px 10px 0;
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.addButton:hover {
+  background-color: #ff9900;
+}
+
+.todoList {
+  max-height: 300px;
+  overflow-y: auto;
+  padding-right: 10px;
+}
+
+.todoItem {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  transition: background-color 0.3s ease;
+}
+
+.todoItem:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.todoCheckbox {
+  margin-right: 10px;
+}
+
+.todoText {
+  flex: 1;
+  font-size: 16px;
+  font-weight: 400;
+}
+
+.completed {
+  text-decoration: line-through;
+  opacity: 0.6;
+}
+
+.deleteButton {
+  background-color: transparent;
+  border: none;
+  color: #ff7b00;
+  cursor: pointer;
+  font-size: 16px;
+  transition: color 0.3s ease;
+}
+
+.deleteButton:hover {
+  color: #ff9900;
+}
+
+/* Custom scrollbar styles */
+.todoList::-webkit-scrollbar {
+  width: 8px;
+}
+
+.todoList::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+}
+
+.todoList::-webkit-scrollbar-thumb {
+  background: #ff7b00;
+  border-radius: 10px;
+}
+
+.todoList::-webkit-scrollbar-thumb:hover {
+  background: #ff9900;
+}

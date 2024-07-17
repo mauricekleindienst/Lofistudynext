@@ -38,7 +38,7 @@
 }
 
 .dropdownContent {
-  display: none;
+  display: false;
   position: absolute;
   top: 60px;
   right: 0;
@@ -48,8 +48,10 @@
   border-radius: 20px;
 }
 
-.accountMenu:hover .dropdownContent {
+
+.dropdownContent.show {
   display: block;
+
 }
 
 .logoutButton {

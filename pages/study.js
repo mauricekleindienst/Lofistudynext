@@ -1,3 +1,5 @@
+// pages/Study.js
+
 import { useSession } from 'next-auth/react';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
@@ -62,6 +64,7 @@ export default function Study() {
 
   if (status === 'unauthenticated') {
     if (typeof window !== 'undefined') {
+     
       window.location.href = '/login';
     }
     return null;
@@ -93,11 +96,11 @@ export default function Study() {
       {visibleComponents.note && <Notes onMinimize={() => handleIconClick('note')} />}
       {visibleComponents.calendar && <Calendar onMinimize={() => handleIconClick('calendar')} />}
       {visibleComponents.chat && (
-  <LiveChat
-    onMinimize={() => handleIconClick('chat')}
-    userName={getFirstName(session.user.name)}
-  />
-)}
+        <LiveChat
+          onMinimize={() => handleIconClick('chat')}
+          userName={getFirstName(session.user.name)}
+        />
+      )}
       <SelectionBar onIconClick={handleIconClick} />
       <div className={styles.container}>
         <video className={styles.videoBackground} autoPlay loop muted src={selectedBackground}></video>
@@ -123,7 +126,6 @@ export default function Study() {
               </div>
             </div>
             <MusicPlayer />
-         
             <div className={styles.sidebarFooter}>
               <button className={styles.sidebarButton} onClick={() => router.push('/faq')}>FAQ</button>
               <button className={styles.sidebarButton} onClick={() => router.push('/contact')}>Contact</button>

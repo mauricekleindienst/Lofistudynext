@@ -16,6 +16,7 @@ export default function CustomHeader() {
   const [pdfFile, setPdfFile] = useState(null);
   const [pdfBlobUrl, setPdfBlobUrl] = useState(null);
   const [toast, setToast] = useState({ show: false, message: '' });
+  const [dropdownVisible, setDropdownVisible] = useState(false);
   const router = useRouter();
 
   const toggleFullscreen = useCallback(() => {
@@ -35,22 +36,13 @@ export default function CustomHeader() {
           'Content-Type': 'application/json',
         },
       });
-  
+
       const data = await response.json();
       if (data.url) {
-        // Construct the full URL
         const fullUrl = `${window.location.origin}/study?roomUrl=${encodeURIComponent(data.url)}`;
-        
-        // Copy the full URL to clipboard
         await navigator.clipboard.writeText(fullUrl);
-        
-        // Show toast notification
         setToast({ show: true, message: 'Room created! Link copied to clipboard.' });
-        
-        // Hide toast after 3 seconds
         setTimeout(() => setToast({ show: false, message: '' }), 3000);
-  
-        // Navigate to the study room
         router.push({
           pathname: '/study',
           query: { roomUrl: data.url },
@@ -64,6 +56,7 @@ export default function CustomHeader() {
       setToast({ show: true, message: 'Error creating room. Please try again.' });
     }
   }, [router]);
+
   const handleFileChange = useCallback((event) => {
     const file = event.target.files[0];
     if (file) {
@@ -94,6 +87,11 @@ export default function CustomHeader() {
   const toolbarPluginInstance = toolbarPlugin();
   const { Toolbar } = toolbarPluginInstance;
 
+  const toggleDropdown = () => {
+    setDropdownVisible((prev) => !prev);
+    console.log('Dropdown visible:', !dropdownVisible); // Debugging line
+  };
+
   return (
     <div className={styles.header}>
       <button className={styles.iconButton} onClick={shareVideoRoom}>
@@ -113,15 +111,12 @@ export default function CustomHeader() {
         <span className="material-icons">picture_as_pdf</span>
       </label>
       <div className={styles.accountMenu}>
-        <button className={styles.iconButton}>
+      <button onClick={() => signOut()} className={styles.logoutButton}>
           <span className="material-icons">account_circle</span>
         </button>
-        <div className={styles.dropdownContent}>
-          <button onClick={() => signOut()} className={styles.logoutButton}>
-            <span className="material-icons">logout</span>
-          </button>
+     
         </div>
-      </div>
+      
       {isPdfOpen && pdfBlobUrl && (
         <MovableModal onClose={closePdf}>
           <Worker workerUrl={`https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsVersion}/pdf.worker.min.js`}>
