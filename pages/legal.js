@@ -45,9 +45,9 @@ export default function Contact() {
 
             <main className={styles.main}>
                 <section className={styles.contactSection}>
-                    <h1 className={styles.title}>LEGAL NOTICE</h1>
-                   
-<p><strong>Effective Date:</strong> 18.07/2024</p>
+                <h1>LEGAL NOTICE</h1>
+
+<p><strong>Effective Date:</strong> 01/02/2024</p>
 <p><strong>lo-fi.study</strong></p>
 
 <h2>1. COLLECTION OF PERSONAL INFORMATION</h2>
@@ -86,7 +86,7 @@ export default function Contact() {
 <p>If you have any questions about this privacy policy, please contact us at support@mousewerk.de.</p>
 
 <p><strong>Lofi Study- All rights reserved.</strong></p>
-<p><strong>Last updated:</strong> 18/07/2024</p>    
+<p><strong>Last updated:</strong> 01/02/2024</p>    
                 </section>
             </main>
 
