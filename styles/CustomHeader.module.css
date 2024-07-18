@@ -151,3 +151,48 @@
   from { opacity: 1; }
   to { opacity: 0; }
 }
+
+.pdfViewer {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  background-color: #f0f0f0;
+}
+
+.pdfControls {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  background-color: #333;
+  color: white;
+}
+
+.pdfControls button {
+  background-color: #4CAF50;
+  border: none;
+  color: white;
+  padding: 5px 10px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 14px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 3px;
+}
+
+.pdfControls button:disabled {
+  background-color: #cccccc;
+  color: #666666;
+  cursor: not-allowed;
+}
+
+.pdfDocument {
+  flex-grow: 1;
+  overflow: auto;
+}
+
+.pdfPage {
+  margin: 0 auto;
+}

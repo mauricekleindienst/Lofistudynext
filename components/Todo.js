@@ -107,7 +107,7 @@ export default function Todo({ onMinimize }) {
         <div className={`${styles.header} draggable-header`}>
           <h2>Todo List</h2>
           <button onClick={onMinimize} className={styles.closeButton}>
-            <span className="material-icons">close</span>
+            <span className="material-icons">remove</span>
           </button>
         </div>
         {status === 'authenticated' ? (

@@ -1,98 +1,161 @@
-/* styles/Calendar.module.css */
-
 .calendarContainer {
-  background-color: rgba(0, 0, 0, 0.9);
+  font-family: 'Comfortaa', cursive;
   padding: 20px;
-  border-radius: 10px;
-  width: 350px;
+  border-radius: 20px;
+  color: #fff;
+  width: 90%;
+  max-width: 800px;
+  height: 80vh;
+  background: linear-gradient(145deg, #1e1e1e, #2a2a2a);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
   position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 1000;
-  color: white;
-  font-family: 'Comfortaa', cursive;
+  display: flex;
+  flex-direction: column;
 }
 
 .header {
-  font-size: 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  cursor: move;
-  margin-bottom: 20px;
-}
-
-.calendarHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
 }
 
-.calendarHeader h3 {
+.header h2 {
   margin: 0;
+  font-size: 24px;
+  font-weight: 700;
 }
 
-.weekDays {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 5px;
-  margin-bottom: 10px;
-}
-
-.weekDay {
-  text-align: center;
-  font-weight: bold;
-  font-size: 0.9em;
-}
-
-.calendarGrid {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 5px;
-}
-
-.calendarDay, .emptyDay {
-  aspect-ratio: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 50%;
-  font-size: 0.9em;
-  transition: background-color 0.3s;
-}
-
-.calendarDay:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-  cursor: pointer;
-}
-
-.material-icons {
+.closeButton {
+  background-color: transparent;
+  border: none;
+  color: #ff7b00;
   cursor: pointer;
   font-size: 24px;
-  color: white;
-  background: none;
+  transition: color 0.3s ease;
+}
+
+.closeButton:hover {
+  color: #ff9900;
+}
+
+.addEvent {
+  display: flex;
+  margin-bottom: 20px;
+}
+
+.eventInput {
+  flex: 1;
+  padding: 10px;
+  font-size: 16px;
   border: none;
-  padding: 5px;
-}
-
-.material-icons:hover {
+  border-radius: 10px;
   background-color: rgba(255, 255, 255, 0.1);
-  border-radius: 50%;
+  color: #fff;
+  margin-right: 10px;
 }
 
-.hasEvents {
+.addButton {
+  padding: 10px 15px;
+  font-size: 16px;
+  background-color: #ff7b00;
+  border: none;
+  border-radius: 10px;
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.addButton:hover {
+  background-color: #ff9900;
+}
+
+/* Styles for react-big-calendar */
+.calendarContainer .rbc-calendar {
   background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 10px;
+  height: calc(100% - 100px);
 }
 
-.eventIndicator {
-  width: 5px;
-  height: 5px;
-  background-color: #4285F4;
-  border-radius: 50%;
-  position: absolute;
-  bottom: 2px;
-  left: 50%;
-  transform: translateX(-50%);
+.calendarContainer .rbc-header {
+  padding: 10px;
+  background-color: rgba(255, 255, 255, 0.05);
+  color: #fff;
+}
+
+.calendarContainer .rbc-today {
+  background-color: rgba(255, 123, 0, 0.3);
+}
+
+.calendarContainer .rbc-event {
+  background-color: #ff7b00;
+  border: none;
+}
+
+.calendarContainer .rbc-event.rbc-selected {
+  background-color: #ff9900;
+}
+
+.calendarContainer .rbc-off-range-bg {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.calendarContainer .rbc-day-bg + .rbc-day-bg {
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.calendarContainer .rbc-month-row + .rbc-month-row {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.calendarContainer .rbc-timeslot-group {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.calendarContainer .rbc-time-view .rbc-header {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.calendarContainer .rbc-time-content {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.calendarContainer .rbc-time-header-content {
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.calendarContainer .rbc-day-slot .rbc-time-slot {
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.calendarContainer .rbc-time-view-resources .rbc-time-gutter,
+.calendarContainer .rbc-time-view-resources .rbc-time-header-gutter {
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.calendarContainer .rbc-time-view {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.calendarContainer .rbc-toolbar button {
+  color: #fff;
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.calendarContainer .rbc-toolbar button:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.calendarContainer .rbc-toolbar button.rbc-active {
+  background-color: #ff7b00;
+}
+
+.calendarContainer .rbc-toolbar button.rbc-active:hover {
+  background-color: #ff9900;
 }

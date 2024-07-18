@@ -37,7 +37,7 @@ export default function Contact() {
     return (
         <div className={styles.container}>
             <Head>
-                <title>Contact - Lo-Fi Study</title>
+                <title>Feedback - Lo-Fi Study</title>
                 <meta name="description" content="Get in touch with us at Lo-Fi Study" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
@@ -45,7 +45,7 @@ export default function Contact() {
 
             <main className={styles.main}>
                 <section className={styles.contactSection}>
-                    <h1 className={styles.title}>Contact Us</h1>
+                    <h1 className={styles.title}>Give us a Feedback</h1>
                     <form
                         onSubmit={handleSubmit}
                         action="https://formspree.io/f/mqazannj"
@@ -75,7 +75,7 @@ export default function Contact() {
                             />
                         </div>
                         <div className={styles.formGroup}>
-                            <label htmlFor="message">Message</label>
+                            <label htmlFor="message">Your Feedback</label>
                             <textarea
                                 id="message"
                                 name="message"

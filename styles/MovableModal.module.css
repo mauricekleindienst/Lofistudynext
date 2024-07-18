@@ -24,22 +24,24 @@
 }
 
 .header {
-  background: rgba(0, 0, 0, 0.9);
-  padding: 10px;
-  cursor: move;
   display: flex;
-  justify-content: flex-end;
-  border-top-left-radius: 10px;
-  border-top-right-radius: 10px;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  cursor: move;
 }
 
-.closeButton {
-  background: none;
+.header button {
+  background-color: transparent;
   border: none;
-  font-size: 24px;
+  color: #ff7b00;
   cursor: pointer;
+  font-size: 24px;
+  transition: color 0.3s ease;
 }
-
+.header button:hover {
+  color: #ff9900;
+}
 .closeButton .material-icons {
   color: #fff; /* Use white color for the close icon */
 }

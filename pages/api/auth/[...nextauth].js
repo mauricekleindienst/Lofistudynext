@@ -35,30 +35,36 @@ export default NextAuth({
         }
         const credential = GoogleAuthProvider.credential(idToken);
         try {
-          await signInWithCredential(auth, credential);
+          const result = await signInWithCredential(auth, credential);
+          // You might want to do something with the result here
           return true;
         } catch (error) {
           console.error('Firebase signInWithCredential error:', error);
+          // Consider more robust error handling here
           return false;
         }
       }
       return true;
     },
-    async session({ session, token }) {
-      session.user.id = token.id;
-      session.user.email = token.email;
-      return session;
-    },
     async jwt({ token, user, account }) {
       if (account && user) {
-        token.id = user.id;
+        token.id = user.id; // This might need to be adjusted to use Firebase UID
         token.email = user.email;
+        // Add any additional account info you need
+        // token.accessToken = account.access_token;
       }
       return token;
     },
+    async session({ session, token }) {
+      session.user.id = token.id;
+      session.user.email = token.email;
+      // Add any additional user info you need in the session
+      return session;
+    },
     async redirect({ url, baseUrl }) {
       // Always redirect to /study after login
-      return baseUrl + '/study';
+      // Consider adding logic here if you need conditional redirects
+      return `${baseUrl}/study`;
     },
   },
   pages: {

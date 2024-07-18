@@ -129,7 +129,8 @@ export default function Study() {
             <MusicPlayer />
             <div className={styles.sidebarFooter}>
               <button className={styles.sidebarButton} onClick={() => router.push('/faq')}>FAQ</button>
-              <button className={styles.sidebarButton} onClick={() => router.push('/contact')}>Contact</button>
+              <button className={styles.sidebarButton} onClick={() => router.push('/Feedback')}>Feedback</button>
+              <button className={styles.sidebarButton} onClick={() => router.push('/contact')}>contact</button>
             </div>
           </aside>
           {videoRoomUrl && (

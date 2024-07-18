@@ -1,150 +1,124 @@
-import { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useSession } from 'next-auth/react';
 import Draggable from 'react-draggable';
-import styles from '../styles/Todo.module.css';
-import { FaPlus, FaTrash } from 'react-icons/fa';
+import { Calendar as BigCalendar, momentLocalizer } from 'react-big-calendar';
+import moment from 'moment';
+import styles from '../styles/Calendar.module.css';
+import 'react-big-calendar/lib/css/react-big-calendar.css';
 
-export default function Todo({ onMinimize }) {
+const localizer = momentLocalizer(moment);
+
+export default function Calendar({ onMinimize }) {
   const { data: session, status } = useSession();
-  const [todos, setTodos] = useState([]);
-  const [newTodo, setNewTodo] = useState('');
+  const [events, setEvents] = useState([]);
+  const [newEvent, setNewEvent] = useState({ title: '', start: new Date(), end: new Date() });
 
-  const fetchTodosFromServer = useCallback(async () => {
+  const fetchEventsFromServer = useCallback(async () => {
     if (session?.user?.email) {
       try {
-        const response = await fetch(`/api/todos?email=${session.user.email}`);
+        const response = await fetch(`/api/calendar?email=${session.user.email}`);
         if (response.ok) {
           const data = await response.json();
-          setTodos(data);
+          setEvents(data);
         } else {
-          console.error('Failed to fetch todos');
+          console.error('Failed to fetch events');
         }
       } catch (error) {
-        console.error('Error fetching todos:', error);
+        console.error('Error fetching events:', error);
       }
     }
   }, [session]);
 
-  useEffect(() => {
-    if (status === 'authenticated') {
-      fetchTodosFromServer();
-    }
-  }, [status, fetchTodosFromServer]);
-
-  const addTodo = async () => {
-    if (newTodo.trim() !== '' && session?.user?.email) {
-      const newTodoItem = { id: Date.now(), text: newTodo, completed: false };
-      setTodos(prev => [...prev, newTodoItem]);
-      setNewTodo('');
+  const addEvent = async () => {
+    if (newEvent.title && newEvent.start && session?.user?.email) {
+      const newEventItem = { 
+        id: Date.now(), 
+        title: newEvent.title, 
+        start: newEvent.start,
+        end: newEvent.end
+      };
+      setEvents(prev => [...prev, newEventItem]);
+      setNewEvent({ title: '', start: new Date(), end: new Date() });
 
       try {
-        const response = await fetch('/api/todos', {
+        const response = await fetch('/api/calendar', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: session.user.email, text: newTodo }),
+          body: JSON.stringify({ 
+            email: session.user.email, 
+            title: newEvent.title, 
+            date: newEvent.start.toISOString().split('T')[0]
+          }),
         });
 
         if (!response.ok) {
-          console.error('Failed to add todo');
-          setTodos(prev => prev.filter(todo => todo.id !== newTodoItem.id));
+          console.error('Failed to add event');
+          setEvents(prev => prev.filter(event => event.id !== newEventItem.id));
         }
       } catch (error) {
-        console.error('Error adding todo:', error);
-        setTodos(prev => prev.filter(todo => todo.id !== newTodoItem.id));
+        console.error('Error adding event:', error);
+        setEvents(prev => prev.filter(event => event.id !== newEventItem.id));
       }
     }
   };
 
-  const deleteTodo = async (id) => {
-    if (session?.user?.email) {
-      setTodos(prev => prev.filter(todo => todo.id !== id));
-
-      try {
-        const response = await fetch('/api/todos', {
-          method: 'DELETE',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ id, email: session.user.email }),
-        });
-
-        if (!response.ok) {
-          console.error('Failed to delete todo');
-          fetchTodosFromServer();
-        }
-      } catch (error) {
-        console.error('Error deleting todo:', error);
-        fetchTodosFromServer();
-      }
+  const deleteEventHandler = async (req, res) => {
+    const { id, email } = req.body;
+  
+    if (!id || !email) {
+      return res.status(400).json({ error: 'Id and email are required' });
     }
-  };
-
-  const toggleTodo = async (id, completed) => {
-    if (session?.user?.email) {
-      setTodos(prev => prev.map(todo => 
-        todo.id === id ? { ...todo, completed: !completed } : todo
-      ));
-
-      try {
-        const response = await fetch('/api/todos', {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ id, email: session.user.email, completed: !completed }),
-        });
-
-        if (!response.ok) {
-          console.error('Failed to update todo');
-          fetchTodosFromServer();
-        }
-      } catch (error) {
-        console.error('Error updating todo:', error);
-        fetchTodosFromServer();
-      }
+  
+    try {
+      const client = await pool.connect();
+      await client.query('DELETE FROM events WHERE id = $1 AND email = $2', [id, email]);
+      client.release();
+      res.status(200).json({ message: 'Event deleted successfully' });
+    } catch (error) {
+      console.error('Error deleting event:', error);
+      res.status(500).json({ error: 'Internal server error' });
     }
   };
 
   return (
     <Draggable handle=".draggable-header">
-      <div className={styles.todoContainer}>
+      <div className={styles.calendarContainer}>
         <div className={`${styles.header} draggable-header`}>
-          <h2>Todo List</h2>
+          <h2>Calendar</h2>
           <button onClick={onMinimize} className={styles.closeButton}>
             <span className="material-icons">close</span>
           </button>
         </div>
         {status === 'authenticated' ? (
           <>
-            <div className={styles.addTodo}>
+            <div className={styles.addEvent}>
               <input
                 type="text"
-                value={newTodo}
-                onChange={(e) => setNewTodo(e.target.value)}
-                placeholder="Add a new todo..."
-                className={styles.todoInput}
+                value={newEvent.title}
+                onChange={(e) => setNewEvent({ ...newEvent, title: e.target.value })}
+                placeholder="Event title"
+                className={styles.eventInput}
               />
-              <button onClick={addTodo} className={styles.addButton}>
-                <FaPlus />
+              <input
+                type="datetime-local"
+                value={moment(newEvent.start).format('YYYY-MM-DDTHH:mm')}
+                onChange={(e) => setNewEvent({ ...newEvent, start: new Date(e.target.value), end: new Date(e.target.value) })}
+                className={styles.eventInput}
+              />
+              <button onClick={addEvent} className={styles.addButton}>
+                Add Event
               </button>
             </div>
-            <div className={styles.todoList}>
-              {todos.map((todo) => (
-                <div key={todo.id} className={styles.todoItem}>
-                  <input
-                    type="checkbox"
-                    checked={todo.completed}
-                    onChange={() => toggleTodo(todo.id, todo.completed)}
-                    className={styles.todoCheckbox}
-                  />
-                  <span className={`${styles.todoText} ${todo.completed ? styles.completed : ''}`}>
-                    {todo.text}
-                  </span>
-                  <button onClick={() => deleteTodo(todo.id)} className={styles.deleteButton}>
-                    <FaTrash />
-                  </button>
-                </div>
-              ))}
-            </div>
+            <BigCalendar
+              localizer={localizer}
+              events={events}
+              startAccessor="start"
+              endAccessor="end"
+              style={{ height: 500 }}
+            />
           </>
         ) : (
-          <p>Please sign in to use the Todo list.</p>
+          <p>Please sign in to use the Calendar.</p>
         )}
       </div>
     </Draggable>

@@ -157,7 +157,24 @@
   text-align: center;
   background: rgba(0, 0, 0, 0.5);
 }
+.footer ul {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  gap: 10px;
+}
+.footer ul li {
+  display: inline;
+}
 
+.footer ul li a {
+  color: inherit; /* Ensures the links have the same color as the surrounding text */
+  text-decoration: none; /* Removes the underline from the links */
+}
+
+.footer ul li a:hover {
+  text-decoration: underline; /* Adds an underline when the link is hovered over */
+}
 @media (max-width: 768px) {
   .title {
     font-size: 3rem;

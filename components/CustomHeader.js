@@ -111,8 +111,8 @@ export default function CustomHeader() {
         <span className="material-icons">picture_as_pdf</span>
       </label>
       <div className={styles.iconButton}>
-      <button onClick={() => signOut()} className={styles.logoutButton}>
-          <span className="material-icons">account_circle</span>
+      <button onClick={() => signOut()} className={styles.iconButton}>
+          <span className="material-icons">logout</span>
         </button>
      
         </div>
