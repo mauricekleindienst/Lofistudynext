@@ -5,4 +5,6 @@ better stats through pomoodoro
 
 Canonical links suggest which URL to show in search results. [Learn more about canonical links](https://developer.chrome.com/docs/lighthouse/seo/canonical/).
 
+
+chat should be saved for the day also fix name and add time maybe use Google Pic as Profile Pic
 Not found
