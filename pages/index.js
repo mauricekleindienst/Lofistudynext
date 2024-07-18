@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import Typed from 'typed.js';
+import Link from 'next/link';
 import { Carousel } from 'react-responsive-carousel';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
 import styles from '../styles/Home.module.css';
@@ -155,9 +156,9 @@ export default function Landing() {
             <footer className={styles.footer}>
     <p>© 2024 Lo-Fi.Study App. All rights reserved.</p>
     <ul>
-        <li><a href="/legal">Legal</a></li>
-        <li><a href="/data">Data Policy</a></li>
-        <li><a href="/contact">Contact</a></li>
+    <li><Link href="/legal">Legal</Link></li>
+            <li><Link href="/data">Data Policy</Link></li>
+            <li><Link href="/contact">Contact</Link></li>
     </ul>
 </footer>
         </div>

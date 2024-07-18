@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/router';
 import Head from 'next/head';
+import Link from 'next/link';
 import { useState } from 'react';
 import styles from '../styles/Home.module.css';
 
@@ -94,9 +95,9 @@ export default function Contact() {
             <footer className={styles.footer}>
     <p>© 2024 Lo-Fi.Study App. All rights reserved.</p>
     <ul>
-        <li><a href="/legal">Legal</a></li>
-        <li><a href="/data">Data Policy</a></li>
-        <li><a href="/contact">Contact</a></li>
+    <li><Link href="/legal">Legal</Link></li>
+            <li><Link href="/data">Data Policy</Link></li>
+            <li><Link href="/contact">Contact</Link></li>
     </ul>
 </footer>
 

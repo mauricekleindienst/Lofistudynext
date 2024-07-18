@@ -17,12 +17,12 @@ const Footer = () => {
                     <div className={`footer-middle ${styles.footerMiddle}`}>
                         <div className={`settings-item py-2 ${styles.settingsItem}`}>
                             <Link href="/legal_notice" passHref>
-                                <a className={`settings-link text-white ${styles.settingsLink}`}>Legal Notice</a>
+                                <a className={`settings-link text-white ${styles.settingsLink}`}>Legal Notice
                             </Link>
                         </div>
                         <div className={`settings-item py-2 ${styles.settingsItem}`}>
                             <Link href="/privacy_policy" passHref>
-                                <a className={`settings-link text-white ${styles.settingsLink}`}>Privacy Policy</a>
+                                <a className={`settings-link text-white ${styles.settingsLink}`}>Privacy Policy
                             </Link>
                         </div>
                     </div>
@@ -31,14 +31,14 @@ const Footer = () => {
                             <Link href="https://www.instagram.com/your_instagram_handle" passHref>
                                 <a className={`settings-link text-white ${styles.settingsLink}`}>
                                     <i className="fab fa-instagram fa-3x"></i>
-                                </a>
+                                
                             </Link>
                         </div>
                         <div className={`settings-item py-2 ${styles.settingsItem}`}>
                             <Link href="https://twitter.com/lo_fi_study" passHref>
                                 <a className={`settings-link text-white ${styles.settingsLink}`}>
                                     <i className="fab fa-x-twitter fa-3x"></i>
-                                </a>
+                                
                             </Link>
                         </div>
                     </div>

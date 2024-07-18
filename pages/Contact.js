@@ -94,10 +94,10 @@ export default function Contact() {
             <footer className={styles.footer}>
     <p>© 2024 Lo-Fi.Study App. All rights reserved.</p>
     <ul>
-        <li><a href="/legal">Legal</a></li>
-        <li><a href="/data">Data Policy</a></li>
-        <li><a href="/contact">Contact</a></li>
-    </ul>
+            <li><Link href="/legal">Legal</Link></li>
+            <li><Link href="/data">Data Policy</Link></li>
+            <li><Link href="/contact">Contact</Link></li>
+        </ul>
 </footer>
         </div>
     );
