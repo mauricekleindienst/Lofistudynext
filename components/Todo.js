@@ -106,6 +106,10 @@ export default function Todo({ onMinimize }) {
       <div className={styles.todoContainer}>
         <div className={`${styles.header} draggable-header`}>
           <h2>Todo List</h2>
+          <div className={styles.tooltip}>
+            <span className="material-icons">help</span>
+            <span className={styles.tooltiptext}>Organize tasks.</span>
+          </div>
           <button onClick={onMinimize} className={styles.closeButton}>
             <span className="material-icons">remove</span>
           </button>

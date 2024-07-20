@@ -44,6 +44,10 @@ export default function Sounds({ onMinimize }) {
       <div className={styles.soundsContainer}>
         <div className={`${styles.header} draggable-header`}>
           <h2>Ambient Sounds</h2>
+          <div className={styles.tooltip}>
+            <span className="material-icons">help</span>
+            <span className={styles.tooltiptext}>Play ambient sounds for focus.</span>
+          </div>
           <button onClick={onMinimize} className={styles.minimizeButton}>
             <span className="material-icons">remove</span>
           </button>

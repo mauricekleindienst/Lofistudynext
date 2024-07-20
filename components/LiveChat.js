@@ -48,6 +48,10 @@ export default function LiveChat({ onMinimize, userName }) {
       <div className={styles.chatContainer}>
         <div className={styles.header}>
           <h2>Live Chat</h2>
+          <div className={styles.tooltip}>
+            <span className="material-icons">help</span>
+            <span className={styles.tooltiptext}>Your tooltip text here</span>
+          </div>
           <button onClick={onMinimize} className="material-icons">remove</button>
         </div>
         <div className={styles.messages}>

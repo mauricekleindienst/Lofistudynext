@@ -14,7 +14,7 @@
         "id": 2,
         "title": " Landing Page Updated & Smaller fixes",
         "date": "2024-07-20",
-        "description": "Improved the landing page with a new design. Fixed a bug in the study app: Musik player crashes site when skipping songs to fast.",
+        "description": "Improved the landing page with a new design. Added Tooltips.  Fixed a bug in the study app: Musik player crashes site when skipping songs to fast.",
         "knownBugs": [   "Pomodoro stopping doesn't work sometimes",
             "Names in chat not showing up"
         ]

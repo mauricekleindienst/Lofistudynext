@@ -140,6 +140,10 @@ export default function PomodoroTimer({ onMinimize }) {
       <div className={styles.timerContainer}>
         <div className={styles.header}>
           <h2>Pomodoro Timer</h2>
+          <div className={styles.tooltip}>
+            <span className="material-icons">help</span>
+            <span className={styles.tooltiptext}>Set work/break timers.</span>
+          </div>
           <button onClick={onMinimize} className="material-icons" aria-label="Minimize">
             remove
           </button>

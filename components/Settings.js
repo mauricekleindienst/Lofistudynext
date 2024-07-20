@@ -17,7 +17,10 @@ export default function Settings({ onMinimize }) {
       <div className={styles.settingsContainer}>
         <div className={`${styles.header} draggable-header`}>
           <h2>Settings-Placeholder</h2>
-          <span className="material-icons">question_mark</span>
+          <div className={styles.tooltip}>
+            <span className="material-icons">help</span>
+            <span className={styles.tooltiptext}>Placeholder. Settings Soon</span>
+          </div>
           <button onClick={onMinimize} className={styles.closeButton}>
             <span className="material-icons">remove</span>
           </button>

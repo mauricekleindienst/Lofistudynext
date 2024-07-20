@@ -26,7 +26,11 @@ export default function Scoreboard({ onMinimize }) {
     <Draggable handle=".drag-handle">
       <div className={styles.scoreboardContainer}>
         <div className={`${styles.header} drag-handle`}>
-          <h2>Scoreboard</h2>
+          <h2> Pomo Scoreboard</h2>
+          <div className={styles.tooltip}>
+            <span className="material-icons">help</span>
+            <span className={styles.tooltiptext}>Track Pomodoro sessions.</span>
+          </div>
           <button onClick={onMinimize} className={styles.minimizeButton}>
   <span className="material-icons">remove</span>
 </button>

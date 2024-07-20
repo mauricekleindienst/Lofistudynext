@@ -161,10 +161,7 @@ export default function Landing() {
                             <h3>Pomodoro Timer</h3>
                             <p>Stay focused with our customizable Pomodoro timer. Break your study sessions into manageable chunks.</p>
                         </div>
-                        <div className={styles.featureItem}>
-                            <h3>Collaborative Rooms</h3>
-                            <p>Study with friends in virtual rooms. Share notes, chat, and stay motivated together.</p>
-                        </div>
+                       
                         <div className={styles.featureItem}>
                             <h3>Note Taking</h3>
                             <p>Capture your thoughts and organize your study materials with our built-in note-taking tool.</p>
