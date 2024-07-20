@@ -89,7 +89,7 @@ export default function SignIn() {
         </button>
         {error && <p className={styles.authError}>{error}</p>}
         <Link href="/auth/register">
-          <p className={styles.authLink}>Don't have an account? Register</p>
+          <p className={styles.authLink}>Don&apos;t have an account? Register</p>
         </Link>
         <Link href="/auth/forgot-password">
           <p className={styles.authLink}>Forgot Password?</p>
