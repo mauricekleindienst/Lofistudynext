@@ -47,7 +47,7 @@ export default function Contact() {
             <main className={styles.main}>
                 <section className={styles.contactSection}>
                 <h1 className={styles.title}>LEGAL NOTICE</h1>
-                    <p><strong>Effective Date:</strong> 01/02/2024</p>
+                    <p><strong>Effective Date:</strong> 20/07/2024</p>
                     <p><strong>lo-fi.study</strong></p>
 
                     <h2>1. COLLECTION OF PERSONAL INFORMATION</h2>
