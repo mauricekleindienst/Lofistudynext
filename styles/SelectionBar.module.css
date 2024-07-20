@@ -68,3 +68,13 @@
 .hidden {
   display: none;
 }
+
+.notificationDot {
+  width: 10px;
+  height: 10px;
+  background-color: orange;
+  border-radius: 50%;
+  position: absolute;
+  top: 0;
+  right: 0;
+}

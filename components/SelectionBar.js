@@ -9,7 +9,7 @@ import Settings from './Settings';
 import Todo from './Todo';  // Import the new Todo component
 import styles from '../styles/SelectionBar.module.css';
 
-export default function SelectionBar({ userEmail }) {
+export default function SelectionBar({ userEmail, userName }) {
   const [visibleComponents, setVisibleComponents] = useState({
     pomodoro: false,
     sounds: false,
@@ -22,11 +22,16 @@ export default function SelectionBar({ userEmail }) {
     todo: false  // Add todo to the state
   });
 
+  const [newChatMessage, setNewChatMessage] = useState(false);
+
   const handleIconClick = (component) => {
     setVisibleComponents({
       ...visibleComponents,
       [component]: !visibleComponents[component]
     });
+    if (component === 'chat') {
+      setNewChatMessage(false); // Reset new message indicator when chat is opened
+    }
   };
 
   return (
@@ -50,6 +55,7 @@ export default function SelectionBar({ userEmail }) {
         </button>
         <button className={styles.iconButton} onClick={() => handleIconClick('chat')}>
           <span className="material-icons">chat</span>
+          {newChatMessage && <span className={styles.notificationDot}></span>}
           <div className={styles.tooltip}>Chat</div>
         </button>
         <button className={styles.iconButton} onClick={() => handleIconClick('scoreboard')}>
@@ -64,7 +70,6 @@ export default function SelectionBar({ userEmail }) {
           <span className="material-icons">settings</span>
           <div className={styles.tooltip}>Settings</div>
         </button>
-       
       </div>
       <div className={`${visibleComponents.pomodoro ? '' : styles.hidden}`}>
         <PomodoroTimer onMinimize={() => handleIconClick('pomodoro')} />
@@ -79,7 +84,7 @@ export default function SelectionBar({ userEmail }) {
         <Calendar onMinimize={() => handleIconClick('calendar')} />
       </div>
       <div className={`${visibleComponents.chat ? '' : styles.hidden}`}>
-        <LiveChat onMinimize={() => handleIconClick('chat')} />
+        <LiveChat onMinimize={() => handleIconClick('chat')} userName={userName} onNewMessage={() => setNewChatMessage(true)} />
       </div>
       <div className={`${visibleComponents.scoreboard ? '' : styles.hidden}`}>
         <Scoreboard onMinimize={() => handleIconClick('scoreboard')} />
@@ -88,7 +93,7 @@ export default function SelectionBar({ userEmail }) {
         <Settings onMinimize={() => handleIconClick('settings')} />
       </div>
       <div className={`${visibleComponents.todo ? '' : styles.hidden}`}>
-        <Todo onMinimize={() => handleIconClick('todo')}userEmail={userEmail} />
+        <Todo onMinimize={() => handleIconClick('todo')} userEmail={userEmail} />
       </div>
     </div>
   );

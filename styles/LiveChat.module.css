@@ -152,3 +152,10 @@
   visibility: visible;
   opacity: 1;
 }
+
+.timestamp {
+  font-size: 0.75em;
+  color: #888;
+  margin-top: 2px;
+  text-align: right;
+}

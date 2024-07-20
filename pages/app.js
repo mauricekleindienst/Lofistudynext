@@ -1,5 +1,3 @@
-// pages/app.js
-
 import { useSession } from 'next-auth/react';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
@@ -35,6 +33,7 @@ export default function Study() {
   const [visibleComponents, setVisibleComponents] = useState({});
   const [videoRoomUrl, setVideoRoomUrl] = useState('');
   const [showLoading, setShowLoading] = useState(true);
+
   useEffect(() => {
     setSelectedBackground(backgrounds[Math.floor(Math.random() * backgrounds.length)].src);
   }, []);
@@ -84,7 +83,6 @@ export default function Study() {
 
   if (status === 'unauthenticated') {
     if (typeof window !== 'undefined') {
-     
       window.location.href = '/auth/signin';
     }
     return null;
@@ -122,7 +120,7 @@ export default function Study() {
           userName={getFirstName(session.user.name)}
         />
       )}
-      <SelectionBar onIconClick={handleIconClick} />
+      <SelectionBar userEmail={session.user.email} userName={getFirstName(session.user.name)} onIconClick={handleIconClick} />
       <div className={styles.container}>
         <video className={styles.videoBackground} autoPlay loop muted src={selectedBackground}></video>
         <main className={styles.main}>

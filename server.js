@@ -16,19 +16,21 @@ app.prepare().then(() => {
 
   io.on('connection', (socket) => {
     console.log('a user connected');
-
+  
     // Send all stored messages to the new client
     socket.emit('chat history', messages);
-
+  
     socket.on('disconnect', () => {
       console.log('user disconnected');
     });
-
+  
     socket.on('chat message', (msg) => {
+      console.log("Received chat message:", msg);
       messages.push(msg);
       io.emit('chat message', msg);
     });
   });
+  
 
   server.get('/hello', (req, res) => {
     return res.send('Hello World');

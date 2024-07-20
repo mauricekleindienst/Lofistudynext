@@ -1,39 +1,52 @@
 import Draggable from 'react-draggable';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import io from 'socket.io-client';
 import styles from '../styles/LiveChat.module.css';
 
 const socket = io();
 
-export default function LiveChat({ onMinimize, userName }) {
+export default function LiveChat({ onMinimize, userName, onNewMessage }) {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
+  const messagesEndRef = useRef(null);
 
   useEffect(() => {
-    console.log("UserName:", userName);
+    console.log("LiveChat component mounted with userName:", userName);
     // Receive chat history
     socket.on('chat history', (history) => {
+      console.log("Chat history:", history);
       setMessages(history);
+      scrollToBottom();
     });
 
     // Receive new chat messages
     socket.on('chat message', (msg) => {
       console.log("Received message:", msg);
       setMessages((prevMessages) => [...prevMessages, msg]);
+      onNewMessage();
+      scrollToBottom();
     });
 
     return () => {
       socket.off('chat history');
       socket.off('chat message');
     };
-  }, [userName]);
+  }, [userName, onNewMessage]);
 
   const sendMessage = () => {
     if (newMessage.trim() !== '') {
-      const message = { id: messages.length, text: newMessage, userName };
-      console.log("Sending message:", message);
+      const message = {
+        id: `${messages.length}-${Date.now()}`, // Use a combination of length and timestamp for a unique key
+        text: newMessage,
+        userName: userName,
+        time: new Date().toLocaleString() // Add formatted timestamp
+      };
+      console.log("Sending message with userName:", userName);
       socket.emit('chat message', message);
       setNewMessage('');
+      scrollToBottom();
+    } else {
+      console.log("New message is empty, not sending.");
     }
   };
 
@@ -41,6 +54,10 @@ export default function LiveChat({ onMinimize, userName }) {
     if (e.key === 'Enter') {
       sendMessage();
     }
+  };
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
   return (
@@ -57,9 +74,11 @@ export default function LiveChat({ onMinimize, userName }) {
         <div className={styles.messages}>
           {messages.map((message) => (
             <div key={message.id} className={styles.message}>
-              <strong>{message.userName}: </strong>{message.text}
+              <strong>{message.userName || 'Unknown'}:</strong> {message.text}
+              <div className={styles.timestamp}>{message.time}</div>
             </div>
           ))}
+          <div ref={messagesEndRef}></div>
         </div>
         <div className={styles.inputContainer}>
           <input
