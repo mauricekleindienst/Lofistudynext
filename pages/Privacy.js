@@ -84,7 +84,7 @@ export default function Contact() {
 <p>We reserve the right to modify this privacy policy at any time. Changes and clarifications will take effect immediately upon posting on the website.</p>
 
 <h2>8. CONTACT INFORMATION</h2>
-<p>If you have any questions about this privacy policy, please contact us at support@mousewerk.de.</p>
+<p>If you have any questions about this privacy policy, please contact us at support@lo-fi.study.</p>
 
 <p><strong>Lofi Study- All rights reserved.</strong></p>
 <p><strong>Last updated:</strong> 01/02/2024</p>    

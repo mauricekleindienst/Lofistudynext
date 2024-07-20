@@ -65,7 +65,7 @@ export default function Study() {
   if (status === 'unauthenticated') {
     if (typeof window !== 'undefined') {
      
-      window.location.href = '/login';
+      window.location.href = '/auth/signin';
     }
     return null;
   }

@@ -1,62 +1,65 @@
+// pages/index.js (or pages/landing.js, depending on your setup)
+
 import { useEffect } from 'react';
-import { useRouter } from 'next/router';
 import Head from 'next/head';
 import Typed from 'typed.js';
-import Link from 'next/link';
 import { Carousel } from 'react-responsive-carousel';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
+import Header from '../components/Header';
+import Footer from '../components/Footer';
 import styles from '../styles/Home.module.css';
 
 export default function Landing() {
-    const router = useRouter();
     const images = [
         {
-          src: "https://i.ibb.co/K0qdm4r/lgsarius-cyberpunk-night-study-girl-window-desklight-c1650ad7-776d-470a-a2e0-da9e78140212.webp",
-          alt: "First slide"
+            src: "https://i.ibb.co/K0qdm4r/lgsarius-cyberpunk-night-study-girl-window-desklight-c1650ad7-776d-470a-a2e0-da9e78140212.webp",
+            alt: "First slide"
         },
         {
-          src: "https://i.ibb.co/fGQQfWr/lgsarius-Lofi-study-girl-on-desk-cybperunk-like-coffee-rain-82a5d58d-44f1-4b9a-ae8f-1f82844543a6.webp",
-          alt: "Second slide"
+            src: "https://i.ibb.co/fGQQfWr/lgsarius-Lofi-study-girl-on-desk-cybperunk-like-coffee-rain-82a5d58d-44f1-4b9a-ae8f-1f82844543a6.webp",
+            alt: "Second slide"
         },
         {
-          src: "https://i.ibb.co/pdsgshq/lgsarius-Lofi-girl-and-cat-studying-in-a-field-sunset-3d94459d-fd73-43ee-8c1f-c4547239bb7a.webp",
-          alt: "Third slide"
+            src: "https://i.ibb.co/pdsgshq/lgsarius-Lofi-girl-and-cat-studying-in-a-field-sunset-3d94459d-fd73-43ee-8c1f-c4547239bb7a.webp",
+            alt: "Third slide"
         },
         {
-          src: "https://i.ibb.co/PG0bPhB/lgsarius-Lofi-study-girl-on-desk-plants-rain-coffee-rain-02e5bc5f-943e-4c0b-b986-1cf5d7362034.webp",
-          alt: "Fourth slide"
+            src: "https://i.ibb.co/PG0bPhB/lgsarius-Lofi-study-girl-on-desk-plants-rain-coffee-rain-02e5bc5f-943e-4c0b-b986-1cf5d7362034.webp",
+            alt: "Fourth slide"
         },
         {
-          src: "https://i.ibb.co/m9QYfwJ/lgsarius-Lofi-Trainstation-sunset-648859c2-8af6-4b30-b276-dca8f45ba231.webp",
-          alt: "Fifth slide"
+            src: "https://i.ibb.co/m9QYfwJ/lgsarius-Lofi-Trainstation-sunset-648859c2-8af6-4b30-b276-dca8f45ba231.webp",
+            alt: "Fifth slide"
         }
-      ];
-      const ImageCarousel = () => {
+    ];
+
+    const ImageCarousel = () => {
         return (
-          <section className={styles.overviewSection}>
-            <h2 className={styles.sectionTitle}>Beautiful Changing Background Selection</h2>
-            <div className={styles.overviewGrid}>
-            <Carousel    
-            showArrows={false}
-            showStatus={false}
-            showThumbs={false}
-            infiniteLoop={true}
-            autoPlay={true}
-            interval={2000}
-        >
-                {images.map((image, index) => (
-                  <div key={index} className={styles.carouselItem}>
-                    <img className={styles.carouselImage} src={image.src} alt={image.alt} />
-                  </div>
-                ))}
-              </Carousel>
-            </div>
-          </section>
+            <section className={styles.overviewSection}>
+                <h2 className={styles.sectionTitle}>Beautiful Changing Background Selection</h2>
+                <div className={styles.overviewGrid}>
+                    <Carousel    
+                        showArrows={false}
+                        showStatus={false}
+                        showThumbs={false}
+                        infiniteLoop={true}
+                        autoPlay={true}
+                        interval={2000}
+                    >
+                        {images.map((image, index) => (
+                            <div key={index} className={styles.carouselItem}>
+                                <img className={styles.carouselImage} src={image.src} alt={image.alt} />
+                            </div>
+                        ))}
+                    </Carousel>
+                </div>
+            </section>
         );
-      };
+    };
+
     useEffect(() => {
         const typed = new Typed('#typedtext', {
-            strings: ["Work","Study","Chill","Code"],
+            strings: ["Work", "Study", "Chill", "Code"],
             typeSpeed: 120,
             backSpeed: 120,
             backDelay: 500,
@@ -76,16 +79,7 @@ export default function Landing() {
                 <meta name="description" content="Enhance your study sessions with our Lo-Fi.Study Lofi styled learning platform" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-            <header className={styles.header}>
-                <div className={styles.logo}>
-                    <img src="/lo-fi.study.svg" alt="lo-fi.study" />
-                </div>
-                <div className={styles.buttonContainer}>
-                    <button onClick={() => router.push('/Contact')} className={styles.contactButton}>Contact</button>
-                    <button onClick={() => router.push('/FAQ')} className={styles.faqButton}>FAQ</button>
-                    <button onClick={() => router.push('/login')} className={styles.loginButton}>Log In</button>
-                </div>
-            </header>
+            <Header/>
 
             <main className={styles.main}>
                 <div className={styles.welcomeWrapper}>
@@ -94,11 +88,8 @@ export default function Landing() {
                         <p className={styles.description}>
                             With Lo-Fi.Study, you can create the perfect atmosphere to <span id="typedtext"></span>.
                         </p>
-                        <button onClick={() => router.push('/login')} className={styles.ctaButton}>Get Started</button>
+                        <button onClick={() => router.push('/auth/signin')} className={styles.ctaButton}>Get Started</button>
                     </section>
-                
-                   
-                
                 </div>
 
                 <section className={styles.overviewSection}>
@@ -153,14 +144,7 @@ export default function Landing() {
                 </section>
             </main>
 
-            <footer className={styles.footer}>
-    <p>© 2024 Lo-Fi.Study App. All rights reserved.</p>
-    <ul>
-    <li><Link href="/legal">Legal</Link></li>
-            <li><Link href="/data">Data Policy</Link></li>
-            <li><Link href="/contact">Contact</Link></li>
-    </ul>
-</footer>
+            <Footer />
         </div>
     );
 }

@@ -1,77 +1,109 @@
 import NextAuth from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
-import { getAuth, GoogleAuthProvider, signInWithCredential } from 'firebase/auth';
-import { initializeApp } from 'firebase/app';
+import DiscordProvider from 'next-auth/providers/discord';
+import CredentialsProvider from 'next-auth/providers/credentials';
+import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithCredential } from 'firebase/auth';
+import { auth } from '../../../firebaseConfig';  // Adjust the path according to your folder structure
 
-// Firebase configuration
-const firebaseConfig = {
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
-  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
-};
+const MAX_RETRIES = 3;
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
+async function retrySignInWithCredential(credential, retries = 0) {
+  try {
+    await signInWithCredential(auth, credential);
+  } catch (error) {
+    if (retries < MAX_RETRIES) {
+      console.warn(`Retrying signInWithCredential: Attempt ${retries + 1}`);
+      await retrySignInWithCredential(credential, retries + 1);
+    } else {
+      throw error;
+    }
+  }
+}
 
 export default NextAuth({
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      httpOptions: {
+        timeout: 20000, // 20 seconds
+      },
+    }),
+    DiscordProvider({
+      clientId: process.env.DISCORD_CLIENT_ID,
+      clientSecret: process.env.DISCORD_CLIENT_SECRET,
+      httpOptions: {
+        timeout: 10000, // Set the timeout to 10 seconds
+      },
+    }),
+    CredentialsProvider({
+      name: 'Credentials',
+      credentials: {
+        email: { label: "Email", type: "text" },
+        password: { label: "Password", type: "password" },
+      },
+      async authorize(credentials) {
+        if (!credentials.email || !credentials.password) {
+          throw new Error('Please enter an email and password');
+        }
+        
+        try {
+          const userCredential = await signInWithEmailAndPassword(auth, credentials.email, credentials.password);
+          const user = userCredential.user;
+          return {
+            id: user.uid,
+            email: user.email,
+            name: user.displayName,
+          };
+        } catch (error) {
+          console.error('CredentialsProvider error:', error);
+          throw new Error('Invalid email or password');
+        }
+      },
     }),
   ],
-  secret: process.env.NEXTAUTH_SECRET,
   callbacks: {
     async signIn({ account, profile }) {
+      console.log('Account:', account);
+      console.log('Profile:', profile);
+
       if (account.provider === 'google') {
-        const idToken = account.id_token;
-        if (!idToken) {
-          console.error('ID Token not found');
-          return false;
-        }
-        const credential = GoogleAuthProvider.credential(idToken);
+        const credential = GoogleAuthProvider.credential(account.id_token);
         try {
-          const result = await signInWithCredential(auth, credential);
-          // You might want to do something with the result here
+          await retrySignInWithCredential(credential);
           return true;
         } catch (error) {
           console.error('Firebase signInWithCredential error:', error);
-          // Consider more robust error handling here
           return false;
         }
       }
       return true;
     },
-    async jwt({ token, user, account }) {
-      if (account && user) {
-        token.id = user.id; // This might need to be adjusted to use Firebase UID
-        token.email = user.email;
-        // Add any additional account info you need
-        // token.accessToken = account.access_token;
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = user.id;
       }
       return token;
     },
     async session({ session, token }) {
       session.user.id = token.id;
-      session.user.email = token.email;
-      // Add any additional user info you need in the session
       return session;
     },
-    async redirect({ url, baseUrl }) {
-      // Always redirect to /study after login
-      // Consider adding logic here if you need conditional redirects
-      return `${baseUrl}/study`;
+  },
+  events: {
+    async signIn(message) {
+      console.log('SignIn Event:', message);
     },
+    async error(message) {
+      console.error('NextAuth Error:', message);
+    }
   },
   pages: {
     signIn: '/auth/signin',
     signOut: '/auth/signout',
     error: '/auth/error',
     verifyRequest: '/auth/verify-request',
-    newUser: null,
+    newUser: '/auth/register',
   },
+  debug: true,
 });

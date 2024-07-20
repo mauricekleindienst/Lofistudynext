@@ -3,7 +3,8 @@
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import { useState } from 'react';
-import Link from 'next/link';
+import Header from '../components/Header';
+import Footer from '../components/Footer';
 import styles from '../styles/Home.module.css';
 
 export default function Contact() {
@@ -42,7 +43,8 @@ export default function Contact() {
                 <meta name="description" content="Get in touch with us at Lo-Fi Study" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-           
+
+            <Header />
 
             <main className={styles.main}>
                 <section className={styles.contactSection}>
@@ -92,14 +94,7 @@ export default function Contact() {
                 </section>
             </main>
 
-            <footer className={styles.footer}>
-    <p>© 2024 Lo-Fi.Study App. All rights reserved.</p>
-    <ul>
-            <li><Link href="/legal">Legal</Link></li>
-            <li><Link href="/data">Data Policy</Link></li>
-            <li><Link href="/contact">Contact</Link></li>
-        </ul>
-</footer>
+            <Footer />
         </div>
     );
 }

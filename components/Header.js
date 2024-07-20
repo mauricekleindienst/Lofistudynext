@@ -1,0 +1,20 @@
+import { useRouter } from 'next/router';
+import styles from '../styles/Home.module.css';
+
+export default function Header() {
+    const router = useRouter();
+
+    return (
+        <header className={styles.header}>
+            <div className={styles.logo}>
+                <img src="/lo-fi.study.svg" alt="lo-fi.study" />
+            </div>
+            <div className={styles.buttonContainer}>
+                <button onClick={() => router.push('/dev-updates')} className={styles.contactButton}>Updates</button>
+                <button onClick={() => router.push('/contact')} className={styles.contactButton}>Contact</button>
+                <button onClick={() => router.push('/faq')} className={styles.faqButton}>FAQ</button>
+                <button onClick={() => router.push('/auth/signin')} className={styles.loginButton}>Sign In</button>
+            </div>
+        </header>
+    );
+}

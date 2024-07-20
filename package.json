@@ -28,7 +28,7 @@
     "eslint": "^8",
     "eslint-config-next": "14.2.5",
     "express": "^4.19.2",
-    "firebase": "^10.12.3",
+    "firebase": "^10.12.4",
     "framer-motion": "^11.3.4",
     "http": "^0.0.1-security",
     "moment": "^2.30.1",

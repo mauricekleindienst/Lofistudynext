@@ -30,8 +30,8 @@ const Navbar = () => {
                             </Link>
                         </li>
                         <li className={`nav-item ${styles.navItem}`}>
-                            <Link href="/login" passHref>
-                                <span className={`nav-link ${styles.loginButton}`}>Login</span>
+                            <Link href="/auth/signin" passHref>
+                                <span className={`nav-link ${styles.loginButton}`}>Sign In</span>
                             </Link>
                         </li>
                     </ul>

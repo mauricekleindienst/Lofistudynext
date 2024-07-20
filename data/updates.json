@@ -1,0 +1,13 @@
+[
+    
+    {
+        "id": 1,
+        "title": "Login System Updated",
+        "date": "2024-07-20",
+        "description": "Now possible to signup with email and Discord. Visual changes to fit the style more. Fixed a bug in the study app for the header not displaying correctly.",
+        "knownBugs": [
+            "Pomodoro stopping doesn't work sometimes",
+            "Names in chat not showing up"
+        ]
+    }
+]

@@ -54,25 +54,6 @@
 
 }
 
-.logoutButton {
-  background-color: #ff7b00;
-  border: none;
-  padding: 15px;
-  cursor: pointer;
-  color: #fff;
-  border-radius: 50%;
-  width: 50px;
-  height: 50px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  transition: all 0.3s ease;
-}
-
-.logoutButton:hover {
-  background-color: #ff9900;
-  transform: scale(1.1);
-}
 
 .logoutButton .material-icons {
   font-size: 24px;
