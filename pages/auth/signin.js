@@ -32,7 +32,7 @@ export default function SignIn() {
 
   useEffect(() => {
     if (status === 'authenticated') {
-      router.push('/study');
+      router.push('/app');
     }
   }, [status, router]);
 

@@ -39,12 +39,12 @@ export default function CustomHeader() {
 
       const data = await response.json();
       if (data.url) {
-        const fullUrl = `${window.location.origin}/study?roomUrl=${encodeURIComponent(data.url)}`;
+        const fullUrl = `${window.location.origin}/app?roomUrl=${encodeURIComponent(data.url)}`;
         await navigator.clipboard.writeText(fullUrl);
         setToast({ show: true, message: 'Room created! Link copied to clipboard.' });
         setTimeout(() => setToast({ show: false, message: '' }), 3000);
         router.push({
-          pathname: '/study',
+          pathname: '/app',
           query: { roomUrl: data.url },
         });
       } else {

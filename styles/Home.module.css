@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;700&display=swap');
 
+
 .container {
   padding-top: 140px;
   min-height: 100vh;
@@ -8,8 +9,32 @@
   color: #ffffff;
   font-family: 'Comfortaa', sans-serif;
   background: linear-gradient(145deg, #1e1e1e, #2a2a2a);
+  animation: gradientAnimation 10s ease infinite;
+  position: relative;
+  overflow: hidden;
 }
-
+@keyframes gradientAnimation {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+.container::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('/public/dark_matter.png');
+  opacity: 0.05;
+  animation: noiseAnimation 0.5s steps(10) infinite;
+}
 .header {
   display: flex;
   justify-content: space-between;
@@ -86,6 +111,8 @@
   align-items: center;
   padding: 2rem;
   text-align: center;
+  position: relative;
+  z-index: 1;
 }
 
 .title {
@@ -93,14 +120,32 @@
   font-weight: 700;
   color: #ff7b00;
   margin-bottom: 1rem;
+  animation: fadeInUp 1s ease-out;
 }
-
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 .description {
   font-size: 1.5rem;
-  max-width: 800px;
+  max-width: 1000px;
   margin-bottom: 2rem;
+  animation: fadeIn 1s ease-out 0.5s both;
 }
-
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
 .ctaButton {
   padding: 1rem 2rem;
   font-size: 1.2rem;
@@ -109,11 +154,28 @@
   background-color: #ff7b00;
   color: #ffffff;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
 }
-
+.ctaButton::after {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: rgba(255,255,255,0.1);
+  transform: rotate(45deg);
+  transition: all 0.3s ease;
+}
+.ctaButton:hover::after {
+  left: 100%;
+}
 .ctaButton:hover {
   background-color: #ff9900;
+  transform: translateY(-3px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.2);
 }
 
 .overviewGrid, .featureGrid {
@@ -129,11 +191,13 @@
   background: rgba(255, 255, 255, 0.1);
   padding: 2rem;
   border-radius: 10px;
-  transition: transform 0.3s ease;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
 }
 
 .overviewItem:hover, .featureItem:hover {
-  transform: translateY(-5px);
+  transform: translateY(-5px) scale(1.03);
+  box-shadow: 0 15px 30px rgba(0,0,0,0.2);
 }
 
 .icon {

@@ -6,8 +6,8 @@ export default function Header() {
 
     return (
         <header className={styles.header}>
-            <div className={styles.logo}>
-                <img src="/lo-fi.study.svg" alt="lo-fi.study" />
+            <div className={styles.logo} onClick={() => router.push('/')}>
+                <img src="/lo-fi.study.svg" alt="lo-fi.study" style={{ cursor: 'pointer' }} />
             </div>
             <div className={styles.buttonContainer}>
                 <button onClick={() => router.push('/dev-updates')} className={styles.contactButton}>Updates</button>

@@ -1,9 +1,9 @@
-// pages/Study.js
+// pages/app.js
 
 import { useSession } from 'next-auth/react';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import styles from '../styles/Study.module.css';
+import styles from '../styles/app.module.css';
 import MusicPlayer from '../components/MusicPlayer';
 import CustomHeader from '../components/CustomHeader';
 import PomodoroTimer from '../components/PomodoroTimer';

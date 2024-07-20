@@ -1,11 +1,21 @@
 [
     {
         "id": 1,
-        "title": "Login System Updated",
-        "date": "2024-07-20",
+        "title": "Login System Updated & Visual Updates",
+        "date": "2024-07-19",
         "description": "Now possible to signup with email and Discord. Visual changes to fit the style more. Fixed a bug in the study app for the header not displaying correctly.",
         "knownBugs": [
             "Pomodoro stopping doesn't work sometimes",
+            "Names in chat not showing up",
+            "Musik player crashes site when skipping songs to fast"
+        ]
+    },
+    {
+        "id": 2,
+        "title": " Landing Page Updated & Smaller fixes",
+        "date": "2024-07-20",
+        "description": "Improved the landing page with a new design. Fixed a bug in the study app: Musik player crashes site when skipping songs to fast.",
+        "knownBugs": [   "Pomodoro stopping doesn't work sometimes",
             "Names in chat not showing up"
         ]
     }

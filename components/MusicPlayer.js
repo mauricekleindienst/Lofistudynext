@@ -1,10 +1,11 @@
-import { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import YouTube from 'react-youtube';
+import { debounce } from 'lodash';
 import styles from '../styles/MusicPlayer.module.css';
 
 const initialTracks = [
-  { id: 1, title: 'Wave Music', videoId: 'S_MOd40zlYU' },
-  { id: 2, title: 'Deep Ambience Music', videoId: '4xDzrJKXOOY' },
+  { id: 1, title: 'SynthWave', videoId: 'S_MOd40zlYU' },
+  { id: 2, title: 'Deep Ambience', videoId: '4xDzrJKXOOY' },
   { id: 3, title: 'Classic Chill', videoId: '4oStw0r33so' },
   { id: 4, title: 'Lofi', videoId: 'jfKfPfyJRdk' },
   { id: 5, title: 'Jazz', videoId: 'xVSlZWkjI94' },
@@ -20,25 +21,41 @@ export default function MusicPlayer({ onMinimize }) {
   const [isFormVisible, setIsFormVisible] = useState(false);
   const [newTrackTitle, setNewTrackTitle] = useState('');
   const [newTrackUrl, setNewTrackUrl] = useState('');
+  const [apiReady, setApiReady] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const playerRef = useRef(null);
 
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = 'https://www.youtube.com/iframe_api';
+    script.async = true;
+    document.body.appendChild(script);
+
+    window.onYouTubeIframeAPIReady = () => setApiReady(true);
+
+    return () => {
+      document.body.removeChild(script);
+      delete window.onYouTubeIframeAPIReady;
+    };
+  }, []);
+
   const playPause = () => {
-    if (isPlaying) {
-      playerRef.current.pauseVideo();
-    } else {
-      playerRef.current.playVideo();
+    if (playerRef.current) {
+      if (isPlaying) {
+        playerRef.current.pauseVideo();
+      } else {
+        playerRef.current.playVideo();
+      }
+      setIsPlaying(!isPlaying);
     }
-    setIsPlaying(!isPlaying);
   };
 
   const nextTrack = () => {
-    setCurrentTrackIndex((currentTrackIndex + 1) % tracks.length);
-    setIsPlaying(false);
+    selectTrack((currentTrackIndex + 1) % tracks.length);
   };
 
   const prevTrack = () => {
-    setCurrentTrackIndex((currentTrackIndex - 1 + tracks.length) % tracks.length);
-    setIsPlaying(false);
+    selectTrack((currentTrackIndex - 1 + tracks.length) % tracks.length);
   };
 
   const onReady = (event) => {
@@ -50,8 +67,12 @@ export default function MusicPlayer({ onMinimize }) {
   };
 
   const onStateChange = (event) => {
-    if (event.data === 0) { // Video ended
+    if (event.data === YouTube.PlayerState.ENDED) {
       nextTrack();
+    } else if (event.data === YouTube.PlayerState.PLAYING) {
+      setIsPlaying(true);
+    } else if (event.data === YouTube.PlayerState.PAUSED) {
+      setIsPlaying(false);
     }
   };
 
@@ -62,13 +83,35 @@ export default function MusicPlayer({ onMinimize }) {
   }, [volume]);
 
   useEffect(() => {
-    if (playerRef.current) {
-      playerRef.current.loadVideoById(tracks[currentTrackIndex].videoId);
-      if (isPlaying) {
-        playerRef.current.playVideo();
+    let isMounted = true;
+
+    const loadVideo = async () => {
+      if (playerRef.current && playerRef.current.loadVideoById) {
+        try {
+          await playerRef.current.loadVideoById(tracks[currentTrackIndex].videoId);
+          if (isMounted) {
+            if (isPlaying) {
+              playerRef.current.playVideo();
+            } else {
+              playerRef.current.pauseVideo();
+            }
+            setIsLoading(false);
+          }
+        } catch (error) {
+          console.error("Error loading video:", error);
+          if (isMounted) {
+            setIsLoading(false);
+          }
+        }
       }
-    }
-  }, [currentTrackIndex]);
+    };
+
+    loadVideo();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [currentTrackIndex, tracks, isPlaying]);
 
   const addNewTrack = (title, url) => {
     const videoId = url.split('v=')[1].split('&')[0];
@@ -83,13 +126,24 @@ export default function MusicPlayer({ onMinimize }) {
     setIsFormVisible(false);
   };
 
-  const selectTrack = (index) => {
+  const debouncedSelectTrack = debounce((index) => {
+    if (isLoading) return;
+    setIsLoading(true);
     setCurrentTrackIndex(index);
     setIsPlaying(true);
-    setTimeout(() => {
-      playerRef.current.playVideo();
-    }, 100);
+  }, 300);
+
+  const selectTrack = (index) => {
+    debouncedSelectTrack(index);
   };
+
+  useEffect(() => {
+    return () => {
+      if (playerRef.current) {
+        playerRef.current.destroy();
+      }
+    };
+  }, []);
 
   return (
     <div className={styles.musicPlayerContainer}>
@@ -122,30 +176,36 @@ export default function MusicPlayer({ onMinimize }) {
         <div className={styles.trackInfo}>
           <h3>{tracks[currentTrackIndex].title}</h3>
         </div>
-        <YouTube
-          videoId={tracks[currentTrackIndex].videoId}
-          opts={{
-            height: '0',
-            width: '0',
-            playerVars: {
-              autoplay: isPlaying ? 1 : 0,
-              controls: 0,
-              disablekb: 1,
-              rel: 0,
-              showinfo: 0
-            },
-          }}
-          onReady={onReady}
-          onStateChange={onStateChange}
-        />
+        {apiReady && (
+          <YouTube
+            videoId={tracks[currentTrackIndex].videoId}
+            opts={{
+              height: '0',
+              width: '0',
+              playerVars: {
+                autoplay: isPlaying ? 1 : 0,
+                controls: 0,
+                disablekb: 1,
+                rel: 0,
+                showinfo: 0
+              },
+            }}
+            onReady={onReady}
+            onStateChange={onStateChange}
+            onError={(error) => {
+              console.error("YouTube player error:", error);
+              setIsLoading(false);
+            }}
+          />
+        )}
         <div className={styles.controls}>
-          <button onClick={prevTrack} className={styles.controlButton}>
+          <button onClick={prevTrack} className={styles.controlButton} disabled={isLoading}>
             <span className="material-icons">skip_previous</span>
           </button>
-          <button onClick={playPause} className={styles.controlButton}>
+          <button onClick={playPause} className={styles.controlButton} disabled={isLoading}>
             <span className="material-icons">{isPlaying ? 'pause' : 'play_arrow'}</span>
           </button>
-          <button onClick={nextTrack} className={styles.controlButton}>
+          <button onClick={nextTrack} className={styles.controlButton} disabled={isLoading}>
             <span className="material-icons">skip_next</span>
           </button>
         </div>

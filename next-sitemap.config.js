@@ -20,7 +20,7 @@ module.exports = {
         lastmod: date,
       },
       {
-        loc: '/study', // This will be https://www.lo-fi.study/study
+        loc: '/app', // This will be https://www.lo-fi.study/app
         changefreq: 'daily',
         priority: 0.8,
         lastmod: date,

@@ -1,8 +1,7 @@
-// pages/index.js (or pages/landing.js, depending on your setup)
-
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import Head from 'next/head';
 import Typed from 'typed.js';
+import { motion } from 'framer-motion';
 import { Carousel } from 'react-responsive-carousel';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
 import Header from '../components/Header';
@@ -71,7 +70,10 @@ export default function Landing() {
             typed.destroy();
         };
     }, []);
-
+    const fadeInUp = {
+        hidden: { opacity: 0, y: 20 },
+        visible: { opacity: 1, y: 0 }
+    };
     return (
         <div className={styles.container}>
             <Head>
@@ -82,17 +84,36 @@ export default function Landing() {
             <Header/>
 
             <main className={styles.main}>
-                <div className={styles.welcomeWrapper}>
+                <motion.div 
+                    className={styles.welcomeWrapper}
+                    initial="hidden"
+                    animate="visible"
+                    variants={fadeInUp}
+                    transition={{ duration: 0.5 }}
+                >
                     <section className={styles.welcomeSection}>
                         <h1 className={styles.title}>Welcome to Lo-Fi.Study</h1>
                         <p className={styles.description}>
                             With Lo-Fi.Study, you can create the perfect atmosphere to <span id="typedtext"></span>.
                         </p>
-                        <button onClick={() => router.push('/auth/signin')} className={styles.ctaButton}>Get Started</button>
+                        <motion.button 
+                            onClick={() => router.push('/auth/signin')} 
+                            className={styles.ctaButton}
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                        >
+                            Get Started
+                        </motion.button>
                     </section>
-                </div>
+                </motion.div>
 
-                <section className={styles.overviewSection}>
+                <motion.section 
+                    className={styles.overviewSection}
+                    initial="hidden"
+                    animate="visible"
+                    variants={fadeInUp}
+                    transition={{ duration: 0.5, delay: 0.2 }}
+                >
                     <h2 className={styles.sectionTitle}>Why Choose Lo-Fi.Study?</h2>
                     <div className={styles.overviewGrid}>
                         <div className={styles.overviewItem}>
@@ -110,14 +131,26 @@ export default function Landing() {
                             <h3>Collaborative Rooms</h3>
                             <p>Study with friends in virtual Chatrooms</p>
                         </div>
-                    </div>
-                </section>
+                        </div>
+                        </motion.section>
+                
 
-                <div>
+                        <motion.div
+                    initial="hidden"
+                    animate="visible"
+                    variants={fadeInUp}
+                    transition={{ duration: 0.5, delay: 0.4 }}
+                >
                     <ImageCarousel />
-                </div>
+                </motion.div>
 
-                <section className={styles.featureSection}>
+                <motion.section 
+                    className={styles.featureSection}
+                    initial="hidden"
+                    animate="visible"
+                    variants={fadeInUp}
+                    transition={{ duration: 0.5, delay: 0.6 }}
+                >
                     <h2 className={styles.sectionTitle}>Features</h2>
                     <div className={styles.featureGrid}>
                         <div className={styles.featureItem}>
@@ -140,8 +173,9 @@ export default function Landing() {
                             <h3>Scoreboard</h3>
                             <p>Get motivated by tracking your study progress and competing with friends on the leaderboard.</p>
                         </div>
+                    
                     </div>
-                </section>
+                </motion.section>
             </main>
 
             <Footer />
