@@ -11,8 +11,8 @@ export default function Header() {
             </div>
             <div className={styles.buttonContainer}>
                 <button onClick={() => router.push('/dev-updates')} className={styles.contactButton}>Updates</button>
-                <button onClick={() => router.push('/contact')} className={styles.contactButton}>Contact</button>
-                <button onClick={() => router.push('/faq')} className={styles.faqButton}>FAQ</button>
+                <button onClick={() => router.push('/Contact')} className={styles.contactButton}>Contact</button>
+                <button onClick={() => router.push('/FAQ')} className={styles.faqButton}>FAQ</button>
                 <button onClick={() => router.push('/auth/signin')} className={styles.loginButton}>Sign In</button>
             </div>
         </header>
