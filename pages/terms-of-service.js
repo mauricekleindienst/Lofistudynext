@@ -1,4 +1,4 @@
-// pages/terms.js
+// pages/terms-of-service.js
 
 import { useRouter } from 'next/router';
 import Header from '../components/Header';
@@ -44,10 +44,10 @@ export default function Terms() {
                 <meta name="description" content="Read our terms of service at Lo-Fi Study" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-            <Header/>
+            <Header />
             <main className={styles.main}>
                 <section className={styles.contactSection}>
-                <h1 className={styles.title}>Terms of Service</h1>
+                    <h1 className={styles.title}>Terms of Service</h1>
 
                     <p><strong>Effective Date:</strong> 20/07/2024</p>
                     <p><strong>lo-fi.study</strong></p>
@@ -71,7 +71,7 @@ export default function Terms() {
                     <p>We reserve the right to terminate or suspend your access to our website at any time, without notice, for conduct that we believe violates these Terms of Service or is harmful to other users of the website, us, or third parties, or for any other reason.</p>
 
                     <h2>7. DISCLAIMER OF WARRANTIES</h2>
-                    <p>Our website is provided "as is" and "as available" without any warranties of any kind, either express or implied. We do not warrant that the website will be uninterrupted or error-free.</p>
+                    <p>Our website is provided &quot;as is&quot; and &quot;as available&quot; without any warranties of any kind, either express or implied. We do not warrant that the website will be uninterrupted or error-free.</p>
 
                     <h2>8. LIMITATION OF LIABILITY</h2>
                     <p>In no event shall we be liable for any indirect, incidental, special, consequential, or punitive damages arising out of or related to your use of the website.</p>
