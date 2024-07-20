@@ -26,7 +26,7 @@ export default function LiveChat({ onMinimize, userName }) {
       socket.off('chat history');
       socket.off('chat message');
     };
-  }, []);
+  }, [userName]);
 
   const sendMessage = () => {
     if (newMessage.trim() !== '') {

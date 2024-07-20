@@ -16,13 +16,14 @@ export default function Sounds({ onMinimize }) {
   const audioRefs = useRef(sounds.map(() => new Audio()));
 
   useEffect(() => {
-    audioRefs.current.forEach((audio, index) => {
+    const currentAudioRefs = audioRefs.current;
+    currentAudioRefs.forEach((audio, index) => {
       audio.src = sounds[index].file;
       audio.loop = true;
     });
 
     return () => {
-      audioRefs.current.forEach(audio => audio.pause());
+      currentAudioRefs.forEach(audio => audio.pause());
     };
   }, []);
 
