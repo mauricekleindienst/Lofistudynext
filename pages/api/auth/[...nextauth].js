@@ -1,9 +1,10 @@
+// pages/api/auth/[...nextauth].js
 import NextAuth from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
 import DiscordProvider from 'next-auth/providers/discord';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithCredential } from 'firebase/auth';
-import { auth } from '../../../firebaseConfig';  // Adjust the path according to your folder structure
+import { auth } from '../../../firebaseConfig';
 
 const MAX_RETRIES = 3;
 
@@ -26,14 +27,14 @@ export default NextAuth({
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
       httpOptions: {
-        timeout: 20000, // 20 seconds
+        timeout: 20000,
       },
     }),
     DiscordProvider({
       clientId: process.env.DISCORD_CLIENT_ID,
       clientSecret: process.env.DISCORD_CLIENT_SECRET,
       httpOptions: {
-        timeout: 10000, // Set the timeout to 10 seconds
+        timeout: 10000,
       },
     }),
     CredentialsProvider({
@@ -46,7 +47,6 @@ export default NextAuth({
         if (!credentials.email || !credentials.password) {
           throw new Error('Please enter an email and password');
         }
-        
         try {
           const userCredential = await signInWithEmailAndPassword(auth, credentials.email, credentials.password);
           const user = userCredential.user;
@@ -64,9 +64,6 @@ export default NextAuth({
   ],
   callbacks: {
     async signIn({ account, profile }) {
-      console.log('Account:', account);
-      console.log('Profile:', profile);
-
       if (account.provider === 'google') {
         const credential = GoogleAuthProvider.credential(account.id_token);
         try {
