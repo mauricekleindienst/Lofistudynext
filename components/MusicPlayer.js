@@ -4,10 +4,10 @@ import { debounce } from 'lodash';
 import styles from '../styles/MusicPlayer.module.css';
 
 const initialTracks = [
-  { id: 1, title: 'SynthWave', videoId: 'S_MOd40zlYU' },
-  { id: 2, title: 'Deep Ambience', videoId: '4xDzrJKXOOY' },
-  { id: 3, title: 'Classic Chill', videoId: '4oStw0r33so' },
-  { id: 4, title: 'Lofi', videoId: 'jfKfPfyJRdk' },
+  { id: 1, title: 'Lofi', videoId: 'jfKfPfyJRdk' },
+  { id: 2, title: 'Classic Chill', videoId: '4oStw0r33so' },
+  { id: 3, title: 'SynthWave', videoId: '4xDzrJKXOOY' },
+  { id: 4, title: 'Deep Ambience', videoId: 'S_MOd40zlYU' },
   { id: 5, title: 'Jazz', videoId: 'xVSlZWkjI94' },
   { id: 6, title: 'Skyrim', videoId: '_Z1VzsE1GVg' },
   { id: 7, title: 'Medieval lofi', videoId: '_uMuuHk_KkQ' }
