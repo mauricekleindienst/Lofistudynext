@@ -219,7 +219,7 @@
 }
 
 .footer {
-  z-index: 10;
+  z-index: 20 !important;
   padding: 2rem;
   text-align: center;
   background: rgba(0, 0, 0, 0.5);
