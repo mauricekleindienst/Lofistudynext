@@ -159,3 +159,21 @@
   margin-top: 2px;
   text-align: right;
 }
+
+.emojiButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.5rem;
+  margin-right: 5px;
+}
+
+.emojiPicker {
+  position: absolute;
+  bottom: 60px; /* Adjust this value based on your layout */
+  left: 10px;
+  z-index: 1000;
+}
+
+
+

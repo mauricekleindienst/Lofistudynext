@@ -117,7 +117,24 @@
   background: #ff7b00;
   cursor: pointer;
 }
+/* Custom scrollbar styles */
+.trackSelection::-webkit-scrollbar {
+  width: 8px;
+}
 
+.trackSelection::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+}
+
+.trackSelection::-webkit-scrollbar-thumb {
+  background: #ff7b00;
+  border-radius: 10px;
+}
+
+.trackSelection::-webkit-scrollbar-thumb:hover {
+  background: #ff9900;
+}
 .trackSelection {
   margin-top: 30px;
   max-height: 150px;

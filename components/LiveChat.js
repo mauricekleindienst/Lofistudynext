@@ -1,6 +1,7 @@
 import Draggable from 'react-draggable';
 import { useState, useEffect, useRef } from 'react';
 import io from 'socket.io-client';
+import Picker from 'emoji-picker-react';
 import styles from '../styles/LiveChat.module.css';
 
 const socket = io();
@@ -8,6 +9,7 @@ const socket = io();
 export default function LiveChat({ onMinimize, userName, onNewMessage }) {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
@@ -60,6 +62,23 @@ export default function LiveChat({ onMinimize, userName, onNewMessage }) {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
+  const formatMessageText = (text) => {
+    const urlRegex = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
+    return text.split(urlRegex).map((part, index) => {
+      if (part.match(urlRegex)) {
+        return <a key={index} href={part} target="_blank" rel="noopener noreferrer">{part}</a>;
+      }
+      return part;
+    });
+  };
+
+  const onEmojiClick = (event, emojiObject) => {
+    console.log("Emoji object:", emojiObject);
+    // Adjust this line based on the structure of emojiObject
+    setNewMessage(newMessage + emojiObject.emoji);
+    setShowEmojiPicker(false);
+  };
+
   return (
     <Draggable>
       <div className={styles.chatContainer}>
@@ -67,20 +86,32 @@ export default function LiveChat({ onMinimize, userName, onNewMessage }) {
           <h2>Live Chat</h2>
           <div className={styles.tooltip}>
             <span className="material-icons">help</span>
-            <span className={styles.tooltiptext}>Chat with other users.</span>
+            <span className={styles.tooltiptext}>Your tooltip text here</span>
           </div>
           <button onClick={onMinimize} className="material-icons">remove</button>
         </div>
         <div className={styles.messages}>
           {messages.map((message) => (
             <div key={message.id} className={styles.message}>
-              <strong>{message.userName || 'Unknown'}:</strong> {message.text}
+              <strong>{message.userName || 'Unknown'}:</strong> {formatMessageText(message.text)}
               <div className={styles.timestamp}>{message.time}</div>
             </div>
           ))}
           <div ref={messagesEndRef}></div>
         </div>
         <div className={styles.inputContainer}>
+          <button
+            type="button"
+            className={styles.emojiButton}
+            onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+          >
+            😊
+          </button>
+          {showEmojiPicker && (
+            <div className={styles.emojiPicker}>
+              <Picker onEmojiClick={onEmojiClick} />
+            </div>
+          )}
           <input
             type="text"
             value={newMessage}
