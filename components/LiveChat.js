@@ -80,8 +80,9 @@ export default function LiveChat({ onMinimize, userName, onNewMessage }) {
   };
 
   return (
-    <Draggable>
+    <Draggable handle=".drag-handle">
       <div className={styles.chatContainer}>
+        <div className={`${styles.dragHandle} drag-handle`}></div>
         <div className={styles.header}>
           <h2>Live Chat</h2>
           <div className={styles.tooltip}>

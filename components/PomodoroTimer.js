@@ -136,8 +136,9 @@ export default function PomodoroTimer({ onMinimize }) {
   };
 
   return (
-    <Draggable>
+    <Draggable handle=".drag-handle">
       <div className={styles.timerContainer}>
+        <div className={`${styles.dragHandle} drag-handle`}></div>
         <div className={styles.header}>
           <h2>Pomodoro Timer</h2>
           <div className={styles.tooltip}>

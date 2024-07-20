@@ -40,9 +40,10 @@ export default function Sounds({ onMinimize }) {
   };
 
   return (
-    <Draggable handle=".draggable-header">
+    <Draggable handle=".drag-handle">
       <div className={styles.soundsContainer}>
-        <div className={`${styles.header} draggable-header`}>
+        <div className={`${styles.dragHandle} drag-handle`}></div>
+        <div className={styles.header}>
           <h2>Ambient Sounds</h2>
           <div className={styles.tooltip}>
             <span className="material-icons">help</span>

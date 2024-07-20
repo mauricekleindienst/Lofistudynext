@@ -102,18 +102,20 @@ export default function Todo({ onMinimize }) {
   };
 
   return (
-    <Draggable handle=".draggable-header">
-      <div className={styles.todoContainer}>
-        <div className={`${styles.header} draggable-header`}>
-          <h2>Todo List</h2>
-          <div className={styles.tooltip}>
-            <span className="material-icons">help</span>
-            <span className={styles.tooltiptext}>Organize tasks.</span>
-          </div>
-          <button onClick={onMinimize} className={styles.closeButton}>
-            <span className="material-icons">remove</span>
-          </button>
+    <Draggable handle=".drag-handle">
+    <div className={styles.todoContainer}>
+      <div className={`${styles.dragHandle} drag-handle`}>
+      </div>
+      <div className={styles.header}>
+        <h2>Todo List</h2>
+        <div className={styles.tooltip}>
+          <span className="material-icons">help</span>
+          <span className={styles.tooltiptext}>Organize tasks.</span>
         </div>
+        <button onClick={onMinimize} className={styles.closeButton}>
+          <span className="material-icons">remove</span>
+        </button>
+      </div>
         {status === 'authenticated' ? (
           <>
             <div className={styles.addTodo}>
