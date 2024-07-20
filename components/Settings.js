@@ -11,14 +11,15 @@ const settings = [
   { name: 'Language', icon: <FaLanguage /> },
 ];
 
-export default function Settings({ onClose }) {
+export default function Settings({ onMinimize }) {
   return (
     <Draggable handle=".draggable-header">
       <div className={styles.settingsContainer}>
         <div className={`${styles.header} draggable-header`}>
-          <h2>Settings</h2>
-          <button onClick={onClose} className={styles.closeButton}>
-            <span className="material-icons">close</span>
+          <h2>Settings-Placeholder</h2>
+          <span className="material-icons">question_mark</span>
+          <button onClick={onMinimize} className={styles.closeButton}>
+            <span className="material-icons">remove</span>
           </button>
         </div>
         <div className={styles.settingsList}>
