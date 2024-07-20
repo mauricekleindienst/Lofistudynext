@@ -29,7 +29,7 @@ export default function Scoreboard({ onMinimize }) {
           <h2> Pomo Scoreboard</h2>
           <div className={styles.tooltip}>
             <span className="material-icons">help</span>
-            <span className={styles.tooltiptext}>Track Pomodoro sessions.</span>
+            <span className={styles.tooltiptext}>Track Pomodoro sessions (weekly reset).</span>
           </div>
           <button onClick={onMinimize} className={styles.minimizeButton}>
   <span className="material-icons">remove</span>
