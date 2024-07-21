@@ -25,24 +25,29 @@ export default function PomodoroTimer({ onMinimize }) {
 
   const categories = ['Studying', 'Coding', 'Writing', 'Working', 'Other'];
 
-  const pomodoroStartSound = useRef(new Audio('/sounds/alert-work.mp3'));
-  const pomodoroEndSound = useRef(new Audio('/sounds/alert-short-break.mp3'));
-  const longPauseSound = useRef(new Audio('/sounds/alert-long-break.mp3'));
+  const pomodoroStartSound = useRef(null);
+  const pomodoroEndSound = useRef(null);
+  const longPauseSound = useRef(null);
 
   const requestNotificationPermission = useCallback(() => {
-    if (Notification.permission !== 'granted') {
+    if (typeof window !== 'undefined' && Notification.permission !== 'granted') {
       Notification.requestPermission();
     }
   }, []);
 
   const showNotification = useCallback((title, message) => {
-    if (Notification.permission === 'granted') {
+    if (typeof window !== 'undefined' && Notification.permission === 'granted') {
       new Notification(title, { body: message });
     }
   }, []);
 
   useEffect(() => {
     requestNotificationPermission();
+    if (typeof window !== 'undefined') {
+      pomodoroStartSound.current = new Audio('/sounds/alert-work.mp3');
+      pomodoroEndSound.current = new Audio('/sounds/alert-short-break.mp3');
+      longPauseSound.current = new Audio('/sounds/alert-long-break.mp3');
+    }
   }, [requestNotificationPermission]);
 
   const handleTimerEnd = useCallback(async () => {
@@ -85,7 +90,7 @@ export default function PomodoroTimer({ onMinimize }) {
       restart(getExpiryTimestamp(pomodoroDurations.pomodoro), false);
     }
     setIsTimerRunning(false);
-  }, [currentMode, pomodoroCount, session, showNotification, category, restart, pomodoroDurations]);
+  }, [currentMode, pomodoroCount, session, showNotification, category, pomodoroDurations]);
 
   const { seconds, minutes, isRunning, start, pause, restart } = useTimer({
     expiryTimestamp: getExpiryTimestamp(pomodoroDurations[currentMode]),
