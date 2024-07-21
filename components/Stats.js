@@ -94,8 +94,8 @@ export default function Stats({ onMinimize }) {
       {
         label: 'Pomodoros',
         data: weeklyData.map(value => value || 0),
-        backgroundColor: 'rgba(75, 192, 192, 0.6)',
-        borderColor: 'rgba(75, 192, 192, 1)',
+        backgroundColor: 'rgba(255, 123, 0, 0.6)',
+        borderColor: 'rgba(255, 123, 0, 1)',
         borderWidth: 1,
       },
     ],
