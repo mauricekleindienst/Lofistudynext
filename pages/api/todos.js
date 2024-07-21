@@ -1,5 +1,3 @@
-// pages/api/todos.js
-
 import { Pool } from 'pg';
 
 const pool = new Pool({
@@ -41,7 +39,17 @@ const getTodosHandler = async (req, res) => {
 
   try {
     const client = await pool.connect();
-    const result = await client.query('SELECT id, text, completed FROM todos WHERE email = $1', [email]);
+    const result = await client.query(`
+      SELECT t.id, t.text, t.completed, 
+             COALESCE(t.color, '#ff7b00') as color, 
+             COALESCE(t.position, t.id) as position,
+             json_agg(json_build_object('id', s.id, 'text', s.text, 'completed', s.completed)) as subtasks
+      FROM public.todos t
+      LEFT JOIN public.subtasks s ON t.id = s.todo_id
+      WHERE t.email = $1
+      GROUP BY t.id
+      ORDER BY COALESCE(t.position, t.id)
+    `, [email]);
     client.release();
 
     res.status(200).json(result.rows);
@@ -52,7 +60,7 @@ const getTodosHandler = async (req, res) => {
 };
 
 const saveTodoHandler = async (req, res) => {
-  const { email, text } = req.body;
+  const { email, text, color = '#ff7b00' } = req.body;
 
   if (!email || !text) {
     return res.status(400).json({ error: 'Email and text are required' });
@@ -60,9 +68,12 @@ const saveTodoHandler = async (req, res) => {
 
   try {
     const client = await pool.connect();
-    await client.query('INSERT INTO todos (email, text, completed) VALUES ($1, $2, $3)', [email, text, false]);
+    const result = await client.query(
+      'INSERT INTO public.todos (email, text, completed, color, position) VALUES ($1, $2, $3, $4, (SELECT COALESCE(MAX(position), 0) + 1 FROM public.todos WHERE email = $1)) RETURNING id',
+      [email, text, false, color]
+    );
     client.release();
-    res.status(200).json({ message: 'Todo saved successfully' });
+    res.status(200).json({ message: 'Todo saved successfully', id: result.rows[0].id });
   } catch (error) {
     console.error('Error saving todo:', error);
     res.status(500).json({ error: 'Internal server error' });
@@ -70,7 +81,7 @@ const saveTodoHandler = async (req, res) => {
 };
 
 const updateTodoHandler = async (req, res) => {
-  const { id, email, completed } = req.body;
+  const { id, email, text, completed, color } = req.body;
 
   if (!id || !email) {
     return res.status(400).json({ error: 'Id and email are required' });
@@ -78,7 +89,29 @@ const updateTodoHandler = async (req, res) => {
 
   try {
     const client = await pool.connect();
-    await client.query('UPDATE todos SET completed = $1 WHERE id = $2 AND email = $3', [completed, id, email]);
+    let query = 'UPDATE todos SET ';
+    const updateFields = [];
+    const values = [id, email];
+    let paramCount = 3;
+
+    if (text !== undefined) {
+      updateFields.push(`text = $${paramCount}`);
+      values.push(text);
+      paramCount++;
+    }
+    if (completed !== undefined) {
+      updateFields.push(`completed = $${paramCount}`);
+      values.push(completed);
+      paramCount++;
+    }
+    if (color !== undefined) {
+      updateFields.push(`color = $${paramCount}`);
+      values.push(color);
+    }
+
+    query += updateFields.join(', ') + ' WHERE id = $1 AND email = $2';
+    
+    await client.query(query, values);
     client.release();
     res.status(200).json({ message: 'Todo updated successfully' });
   } catch (error) {
@@ -96,6 +129,7 @@ const deleteTodoHandler = async (req, res) => {
 
   try {
     const client = await pool.connect();
+    await client.query('DELETE FROM subtasks WHERE todo_id = $1', [id]);
     await client.query('DELETE FROM todos WHERE id = $1 AND email = $2', [id, email]);
     client.release();
     res.status(200).json({ message: 'Todo deleted successfully' });
