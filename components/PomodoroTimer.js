@@ -12,11 +12,11 @@ const initialState = {
   showSettings: false,
   category: 'Other',
   pomodoroDurations: {
-    pomodoro: 1 * 10,
-    shortBreak: 1 * 10,
-    longBreak: 1 * 10,
+    pomodoro: 25 * 60,
+    shortBreak: 5 * 60,
+    longBreak: 15 * 60,
   },
-  timeLeft: 1 * 10,
+  timeLeft: 25 * 60,
 };
 
 function reducer(state, action) {
