@@ -1,6 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;700&display=swap');
 
-
 .container {
   padding-top: 140px;
   min-height: 100vh;
@@ -62,6 +61,12 @@
   font-weight: 700;
   color: #ff7b00;
 }
+
+.buttonContainer {
+  display: flex;
+  gap: 10px;
+}
+
 .loginButton, .contactButton, .faqButton {
   padding: 0.5rem 1rem;
   font-size: 1rem;
@@ -70,7 +75,6 @@
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
-
 
 .loginButton {
   font-size: 1.5rem;
@@ -83,8 +87,8 @@
 }
 
 .contactButton, .faqButton {
-  padding: 0.4rem 0.8rem; /* Kleineres Padding */
-  font-size: 1rem; /* Kleinere Schriftgröße */
+  padding: 0.4rem 0.8rem;
+  font-size: 1rem;
   border: 1px solid #ff7b00;
   color: #ff7b00;
 }
@@ -92,11 +96,7 @@
 .contactButton:hover, .faqButton:hover {
   color: #ffffff;
 }
-.buttonContainer {
-  display: flex;
-  gap: 10px; /* Abstand zwischen den Buttons */
-  /* Weitere Stildefinitionen nach Bedarf */
-}
+
 .main {
   z-index: 1;
   flex: 1;
@@ -253,6 +253,10 @@
 
   .overviewGrid, .featureGrid {
     grid-template-columns: 1fr;
+  }
+  .buttonContainer {
+    flex-direction: column;
+    gap: 5px;
   }
 }
 .carouselItem {
