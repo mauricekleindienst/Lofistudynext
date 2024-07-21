@@ -73,15 +73,19 @@ export default function PomodoroTimer({ onMinimize }) {
       if (newPomodoroCount % 4 === 0) {
         showNotification('Pomodoro Timer', 'Pomodoro session ended. Time for a long break! ☕️');
         setCurrentMode('longBreak');
+        restart(getExpiryTimestamp(pomodoroDurations.longBreak), false);
       } else {
         showNotification('Pomodoro Timer', 'Pomodoro session ended. Take a short break! ☕️');
         setCurrentMode('shortBreak');
+        restart(getExpiryTimestamp(pomodoroDurations.shortBreak), false);
       }
     } else {
       showNotification('Pomodoro Timer', 'Break ended. Get back to work! 🚀');
       setCurrentMode('pomodoro');
+      restart(getExpiryTimestamp(pomodoroDurations.pomodoro), false);
     }
-  }, [currentMode, pomodoroCount, session, showNotification, category]);
+    setIsTimerRunning(false);
+  }, [currentMode, pomodoroCount, session, showNotification, category, restart, pomodoroDurations]);
 
   const { seconds, minutes, isRunning, start, pause, restart } = useTimer({
     expiryTimestamp: getExpiryTimestamp(pomodoroDurations[currentMode]),
