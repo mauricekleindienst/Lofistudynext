@@ -102,5 +102,5 @@ export default NextAuth({
     verifyRequest: '/auth/verify-request',
     newUser: '/auth/register',
   },
-  debug: true,
+  debug: false,
 });
