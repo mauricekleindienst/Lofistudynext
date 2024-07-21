@@ -12,28 +12,21 @@ export default function Scoreboard({ onMinimize }) {
       setScoreboard(data);
     };
 
-    // Initial fetch
     fetchScoreboard();
-
-    // Polling every 30 seconds
-    const intervalId = setInterval(fetchScoreboard, 3000);
-
-    // Cleanup interval on component unmount
+    const intervalId = setInterval(fetchScoreboard, 30000);
     return () => clearInterval(intervalId);
   }, []);
 
   return (
-    <Draggable handle=".drag-handle">
+    <Draggable handle={`.${styles.dragHandle}`}>
       <div className={styles.scoreboardContainer}>
-        <div className={`${styles.header} drag-handle`}>
-          <h2> Pomo Scoreboard</h2>
-          <div className={styles.tooltip}>
-            <span className="material-icons">help</span>
-            <span className={styles.tooltiptext}>Track Pomodoro sessions (weekly reset).</span>
-          </div>
-          <button onClick={onMinimize} className={styles.minimizeButton}>
-  <span className="material-icons">remove</span>
-</button>
+        <div className={styles.dragHandle}></div>
+        <div className={styles.header}>
+          <h2>Pomo Scoreboard</h2>
+          <button onClick={onMinimize} className={styles.closeButton}>
+          <span className="material-icons">remove</span>
+        </button>
+         
         </div>
         <div className={styles.scoreboard}>
           {scoreboard.map((user, index) => (
