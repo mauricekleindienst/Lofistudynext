@@ -1,5 +1,3 @@
-// pages/api/todos/reorder.js
-
 import { Pool } from 'pg';
 
 const pool = new Pool({
@@ -44,4 +42,4 @@ const reorderTodosHandler = async (req, res) => {
       console.error('Error reordering todos:', error);
       res.status(500).json({ error: 'Internal server error' });
     }
-  };
+};

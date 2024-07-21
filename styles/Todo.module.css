@@ -74,7 +74,7 @@
   font-size: 16px;
   border: none;
   border-radius: 10px 0 0 10px;
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: #333;
   color: #fff;
 }
 
@@ -101,16 +101,31 @@
 
 .todoItem {
   display: flex;
-  align-items: center;
+  flex-direction: column;
   margin-bottom: 10px;
   padding: 10px;
-  background: rgba(255, 255, 255, 0.1);
+  background-color: #333;
   border-radius: 10px;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.todoItem.dragging {
+  background-color: #444;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .todoItem:hover {
-  background-color: rgba(255, 255, 255, 0.2);
+  background-color: #444;
+}
+
+.mainTodo {
+  display: flex;
+  flex-direction: column;
+}
+
+.todoHeader {
+  display: flex;
+  align-items: center;
 }
 
 .todoCheckbox {
@@ -121,11 +136,46 @@
   flex: 1;
   font-size: 16px;
   font-weight: 400;
+  color: #fff;
 }
 
 .completed {
   text-decoration: line-through;
   opacity: 0.6;
+  color: #ccc;
+}
+
+.toggleSubTodosButton {
+  background-color: transparent;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  font-size: 16px;
+  margin-left: 10px;
+  transition: color 0.3s ease;
+}
+
+.toggleSubTodosButton:hover {
+  color: #ff9900;
+}
+
+.todoActions {
+  display: flex;
+  gap: 5px;
+  margin-left: auto;
+}
+
+.editButton {
+  background-color: transparent;
+  border: none;
+  color: #00bfff;
+  cursor: pointer;
+  font-size: 16px;
+  transition: color 0.3s ease;
+}
+
+.editButton:hover {
+  color: #1e90ff;
 }
 
 .deleteButton {
@@ -147,7 +197,7 @@
 }
 
 .todoList::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.1);
+  background: #333;
   border-radius: 10px;
 }
 
@@ -186,4 +236,66 @@
 .tooltip:hover .tooltiptext {
   visibility: visible;
   opacity: 1;
+}
+
+.colorPicker {
+  display: flex;
+  gap: 3px;
+  margin-top: 5px;
+}
+
+.colorButton {
+  width: 15px;
+  height: 15px;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s;
+  border-radius: 50%;
+}
+
+.colorButton:hover {
+  transform: scale(1.1);
+}
+
+.selectedColor {
+  border: 2px solid #fff;
+}
+
+.subTodos {
+  margin-top: 10px;
+  width: 100%;
+}
+
+.divider {
+  border: 0;
+  height: 1px;
+  background: #ff7b00;
+  margin: 10px 0;
+}
+
+.subTodo {
+  display: flex;
+  align-items: center;
+  margin-top: 5px;
+}
+
+.subTodoCheckbox {
+  margin-right: 10px;
+}
+
+.subTodoText {
+  flex: 1;
+  font-size: 14px;
+  color: #fff;
+}
+
+.subTodoInput {
+  margin-top: 5px;
+  width: 100%;
+  padding: 5px;
+  border: none;
+  border-radius: 5px;
+  background-color: #444;
+  color: #fff;
+  font-size: 14px;
 }

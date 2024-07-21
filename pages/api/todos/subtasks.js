@@ -1,5 +1,3 @@
-// pages/api/todos/subtasks.js
-
 import { Pool } from 'pg';
 
 const pool = new Pool({

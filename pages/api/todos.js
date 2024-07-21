@@ -5,10 +5,12 @@ const pool = new Pool({
   ssl: {
     rejectUnauthorized: false,
   },
+  max: 20, // Adjust pool size based on your server capacity
+  idleTimeoutMillis: 30000, // 30 seconds
+  connectionTimeoutMillis: 5000, // 5 seconds
 });
 
 export default async function handler(req, res) {
-  console.log('Todos API route hit:', req.method);
   const { method } = req;
 
   switch (method) {
@@ -25,7 +27,7 @@ export default async function handler(req, res) {
       await deleteTodoHandler(req, res);
       break;
     default:
-      res.setHeader('Allow', ['GET', 'POST', 'PUT', 'DELETE']);
+      res.setHeader('Allow', ['GET', 'POST', PUT, 'DELETE']);
       res.status(405).end(`Method ${method} Not Allowed`);
   }
 }
@@ -66,17 +68,21 @@ const saveTodoHandler = async (req, res) => {
     return res.status(400).json({ error: 'Email and text are required' });
   }
 
+  let client;
   try {
-    const client = await pool.connect();
+    client = await pool.connect();
     const result = await client.query(
-      'INSERT INTO public.todos (email, text, completed, color, position) VALUES ($1, $2, $3, $4, (SELECT COALESCE(MAX(position), 0) + 1 FROM public.todos WHERE email = $1)) RETURNING id',
+      'INSERT INTO public.todos (email, text, completed, color, position) VALUES ($1::varchar, $2::varchar, $3::boolean, $4::varchar, (SELECT COALESCE(MAX(position), 0) + 1 FROM public.todos WHERE email = $1)) RETURNING id',
       [email, text, false, color]
     );
-    client.release();
     res.status(200).json({ message: 'Todo saved successfully', id: result.rows[0].id });
   } catch (error) {
     console.error('Error saving todo:', error);
     res.status(500).json({ error: 'Internal server error' });
+  } finally {
+    if (client) {
+      client.release();
+    }
   }
 };
 
@@ -87,36 +93,40 @@ const updateTodoHandler = async (req, res) => {
     return res.status(400).json({ error: 'Id and email are required' });
   }
 
+  let client;
   try {
-    const client = await pool.connect();
-    let query = 'UPDATE todos SET ';
+    client = await pool.connect();
+    let query = 'UPDATE public.todos SET ';
     const updateFields = [];
     const values = [id, email];
     let paramCount = 3;
 
     if (text !== undefined) {
-      updateFields.push(`text = $${paramCount}`);
+      updateFields.push(`text = $${paramCount}::varchar`);
       values.push(text);
       paramCount++;
     }
     if (completed !== undefined) {
-      updateFields.push(`completed = $${paramCount}`);
+      updateFields.push(`completed = $${paramCount}::boolean`);
       values.push(completed);
       paramCount++;
     }
     if (color !== undefined) {
-      updateFields.push(`color = $${paramCount}`);
+      updateFields.push(`color = $${paramCount}::varchar`);
       values.push(color);
     }
 
     query += updateFields.join(', ') + ' WHERE id = $1 AND email = $2';
     
     await client.query(query, values);
-    client.release();
     res.status(200).json({ message: 'Todo updated successfully' });
   } catch (error) {
     console.error('Error updating todo:', error);
     res.status(500).json({ error: 'Internal server error' });
+  } finally {
+    if (client) {
+      client.release();
+    }
   }
 };
 
@@ -127,14 +137,18 @@ const deleteTodoHandler = async (req, res) => {
     return res.status(400).json({ error: 'Id and email are required' });
   }
 
+  let client;
   try {
-    const client = await pool.connect();
-    await client.query('DELETE FROM subtasks WHERE todo_id = $1', [id]);
-    await client.query('DELETE FROM todos WHERE id = $1 AND email = $2', [id, email]);
-    client.release();
+    client = await pool.connect();
+    await client.query('DELETE FROM public.subtasks WHERE todo_id = $1', [id]);
+    await client.query('DELETE FROM public.todos WHERE id = $1 AND email = $2', [id, email]);
     res.status(200).json({ message: 'Todo deleted successfully' });
   } catch (error) {
     console.error('Error deleting todo:', error);
     res.status(500).json({ error: 'Internal server error' });
+  } finally {
+    if (client) {
+      client.release();
+    }
   }
 };
