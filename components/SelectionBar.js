@@ -6,7 +6,8 @@ import Calendar from './Calendar';
 import LiveChat from './LiveChat';
 import Scoreboard from './Scoreboard';
 import Settings from './Settings';
-import Todo from './Todo';  // Import the new Todo component
+import Todo from './Todo';
+import Stats from './Stats';  // Import the new Stats component
 import styles from '../styles/SelectionBar.module.css';
 
 export default function SelectionBar({ userEmail, userName }) {
@@ -19,18 +20,20 @@ export default function SelectionBar({ userEmail, userName }) {
     settings: false,
     music: false,
     scoreboard: false,
-    todo: false  // Add todo to the state
+    todo: false,
+    stats: false  // Add stats to the state
   });
 
   const [newChatMessage, setNewChatMessage] = useState(false);
 
   const handleIconClick = (component) => {
+    console.log(`Toggling component: ${component}`);
     setVisibleComponents({
       ...visibleComponents,
       [component]: !visibleComponents[component]
     });
     if (component === 'chat') {
-      setNewChatMessage(false); // Reset new message indicator when chat is opened
+      setNewChatMessage(false);
     }
   };
 
@@ -66,6 +69,10 @@ export default function SelectionBar({ userEmail, userName }) {
           <span className="material-icons">checklist</span>
           <div className={styles.tooltip}>Todo</div>
         </button>
+        <button className={styles.iconButton} onClick={() => handleIconClick('stats')}>
+          <span className="material-icons">bar_chart</span>
+          <div className={styles.tooltip}>Stats</div>
+        </button>
         <button className={styles.iconButton} onClick={() => handleIconClick('settings')}>
           <span className="material-icons">settings</span>
           <div className={styles.tooltip}>Settings</div>
@@ -94,6 +101,9 @@ export default function SelectionBar({ userEmail, userName }) {
       </div>
       <div className={`${visibleComponents.todo ? '' : styles.hidden}`}>
         <Todo onMinimize={() => handleIconClick('todo')} userEmail={userEmail} />
+      </div>
+      <div className={`${visibleComponents.stats ? '' : styles.hidden}`}>
+        <Stats onMinimize={() => handleIconClick('stats')} userEmail={userEmail} />
       </div>
     </div>
   );

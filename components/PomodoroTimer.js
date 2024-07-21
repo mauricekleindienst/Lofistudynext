@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useSession } from 'next-auth/react';
 import { useTimer } from 'react-timer-hook';
 import Draggable from 'react-draggable';
@@ -16,88 +16,86 @@ export default function PomodoroTimer({ onMinimize }) {
   const [isTimerRunning, setIsTimerRunning] = useState(false);
   const [pomodoroCount, setPomodoroCount] = useState(0);
   const [showSettings, setShowSettings] = useState(false);
-  const [isInitialRender, setIsInitialRender] = useState(true);
-  const [expiryTimestamp, setExpiryTimestamp] = useState(getExpiryTimestamp(25 * 60));
-
+  const [category, setCategory] = useState('Other');
   const [pomodoroDurations, setPomodoroDurations] = useState({
     pomodoro: 25 * 60,
     shortBreak: 5 * 60,
     longBreak: 15 * 60,
   });
 
+  const categories = ['Studying', 'Coding', 'Writing', 'Working', 'Other'];
+
   const pomodoroStartSound = useRef(new Audio('/sounds/alert-work.mp3'));
   const pomodoroEndSound = useRef(new Audio('/sounds/alert-short-break.mp3'));
   const longPauseSound = useRef(new Audio('/sounds/alert-long-break.mp3'));
 
-  const requestNotificationPermission = () => {
+  const requestNotificationPermission = useCallback(() => {
     if (Notification.permission !== 'granted') {
       Notification.requestPermission();
     }
-  };
+  }, []);
 
-  const showNotification = (title, message) => {
+  const showNotification = useCallback((title, message) => {
     if (Notification.permission === 'granted') {
       new Notification(title, { body: message });
     }
-  };
+  }, []);
 
   useEffect(() => {
     requestNotificationPermission();
-  }, []);
+  }, [requestNotificationPermission]);
 
-  const handleTimerEnd = async () => {
+  const handleTimerEnd = useCallback(async () => {
     if (currentMode === 'pomodoro') {
       pomodoroEndSound.current.play();
       const newPomodoroCount = pomodoroCount + 1;
       setPomodoroCount(newPomodoroCount);
 
-      // Update Pomodoro state in the database for each Pomodoro session completed
       if (session?.user?.email) {
-        await fetch('/api/updatePomodoroCount', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            email: session.user.email,
-            firstname: session.user.name.split(' ')[0],
-            increment: 1, // increment by 1 for each Pomodoro session
-          }),
-        });
+        try {
+          await fetch('/api/updatePomodoroCount', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              email: session.user.email,
+              firstname: session.user.name.split(' ')[0],
+              increment: 1,
+              category: category || 'Other',
+            }),
+          });
+        } catch (error) {
+          console.error('Failed to update Pomodoro count:', error);
+        }
       }
 
-      if ((newPomodoroCount) % 4 === 0) {
+      if (newPomodoroCount % 4 === 0) {
         showNotification('Pomodoro Timer', 'Pomodoro session ended. Time for a long break! ☕️');
         setCurrentMode('longBreak');
       } else {
         showNotification('Pomodoro Timer', 'Pomodoro session ended. Take a short break! ☕️');
         setCurrentMode('shortBreak');
       }
-    } else if (currentMode === 'shortBreak' || currentMode === 'longBreak') {
+    } else {
       showNotification('Pomodoro Timer', 'Break ended. Get back to work! 🚀');
       setCurrentMode('pomodoro');
     }
-  };
+  }, [currentMode, pomodoroCount, session, showNotification, category]);
 
-  const { seconds, minutes, isRunning, start, pause, resume, restart } = useTimer({
-    expiryTimestamp,
-    autoStart: false, // Make sure this is false
+  const { seconds, minutes, isRunning, start, pause, restart } = useTimer({
+    expiryTimestamp: getExpiryTimestamp(pomodoroDurations[currentMode]),
+    autoStart: false,
     onExpire: handleTimerEnd,
-    key: currentMode,
   });
 
   useEffect(() => {
-    if (isInitialRender) {
-      setIsInitialRender(false);
-    } else {
-      const newExpiryTimestamp = getExpiryTimestamp(pomodoroDurations[currentMode]);
-      setExpiryTimestamp(newExpiryTimestamp);
-      restart(newExpiryTimestamp, true);
-      setIsTimerRunning(true);
-    }
-  }, [currentMode]);
+    const newExpiryTimestamp = getExpiryTimestamp(pomodoroDurations[currentMode]);
+    restart(newExpiryTimestamp, false);
+    setIsTimerRunning(false);
+  }, [currentMode, pomodoroDurations, restart]);
 
-  const toggleTimer = () => {
+  const toggleTimer = useCallback(() => {
     if (isRunning) {
       pause();
       setIsTimerRunning(false);
@@ -109,31 +107,31 @@ export default function PomodoroTimer({ onMinimize }) {
         showNotification('Pomodoro Timer', 'Stay focused for the next 25 minutes! 🚀');
       }
     }
-  };
+  }, [isRunning, pause, start, currentMode, showNotification]);
 
-  const resetTimer = () => {
+  const resetTimer = useCallback(() => {
     restart(getExpiryTimestamp(pomodoroDurations[currentMode]), false);
     setIsTimerRunning(false);
-  };
+  }, [restart, pomodoroDurations, currentMode]);
 
-  const changeMode = (mode) => {
+  const changeMode = useCallback((mode) => {
     setCurrentMode(mode);
     if (mode === 'pomodoro') {
       setPomodoroCount(0);
     }
-  };
+  }, []);
 
   const formatTime = (minutes, seconds) => {
     return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
   };
 
-  const handleSettingsChange = (e) => {
+  const handleSettingsChange = useCallback((e) => {
     const { name, value } = e.target;
     setPomodoroDurations((prev) => ({
       ...prev,
       [name]: parseInt(value) * 60,
     }));
-  };
+  }, []);
 
   return (
     <Draggable handle=".drag-handle">
@@ -177,6 +175,22 @@ export default function PomodoroTimer({ onMinimize }) {
           >
             Long Break
           </div>
+        </div>
+        <div className={styles.pomodoroinfo}>category</div>
+        <div className={styles.categorySelection}>
+          <select
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            className={styles.categorySelect}
+          >
+               
+            <option value="">Select a category</option>
+            {categories.map((cat) => (
+              <option key={cat} value={cat}>
+                {cat}
+              </option>
+            ))}
+          </select>
         </div>
         <div className={styles.timerDisplay}>
           <h3>{formatTime(minutes, seconds)}</h3>

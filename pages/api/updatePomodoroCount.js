@@ -8,9 +8,9 @@ const pool = new Pool({
 });
 
 export default async function handler(req, res) {
-  const { email, firstname, increment } = req.body;
+  const { email, firstname, increment, category } = req.body;
 
-  if (!email || !firstname || typeof increment !== 'number') {
+  if (!email || !firstname || typeof increment !== 'number' || !category) {
     return res.status(400).json({ error: 'Invalid request' });
   }
 
@@ -19,10 +19,34 @@ export default async function handler(req, res) {
 
     const userResult = await client.query('SELECT * FROM user_pomodoros WHERE email = $1', [email]);
 
+    const today = new Date().toISOString().split('T')[0]; // Get the current date in YYYY-MM-DD format
+
     if (userResult.rows.length > 0) {
-      await client.query('UPDATE user_pomodoros SET pomodoro_count = pomodoro_count + $1 WHERE email = $2', [increment, email]);
+      const user = userResult.rows[0];
+      const dailyCounts = user.daily_counts || {};
+
+      if (!dailyCounts[today]) {
+        dailyCounts[today] = 0;
+      }
+
+      dailyCounts[today] += increment;
+
+      await client.query(
+        `UPDATE user_pomodoros
+         SET pomodoro_count = pomodoro_count + $1,
+             ${category.toLowerCase()} = ${category.toLowerCase()} + $1,
+             daily_counts = $2
+         WHERE email = $3`,
+        [increment, dailyCounts, email]
+      );
     } else {
-      await client.query('INSERT INTO user_pomodoros (email, firstname, pomodoro_count) VALUES ($1, $2, $3)', [email, firstname, increment]);
+      const dailyCounts = { [today]: increment };
+
+      await client.query(
+        `INSERT INTO user_pomodoros (email, firstname, pomodoro_count, ${category.toLowerCase()}, daily_counts)
+         VALUES ($1, $2, $3, $3, $4)`,
+        [email, firstname, increment, dailyCounts]
+      );
     }
 
     client.release();
