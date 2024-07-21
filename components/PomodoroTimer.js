@@ -176,14 +176,13 @@ export default function PomodoroTimer({ onMinimize }) {
             Long Break
           </div>
         </div>
-        <div className={styles.pomodoroinfo}>category</div>
+        <div className={styles.pomodoroinfo}>Category</div>
         <div className={styles.categorySelection}>
           <select
             value={category}
             onChange={(e) => setCategory(e.target.value)}
             className={styles.categorySelect}
           >
-               
             <option value="">Select a category</option>
             {categories.map((cat) => (
               <option key={cat} value={cat}>
