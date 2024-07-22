@@ -5,7 +5,7 @@ import { FaUmbrella, FaWind, FaWater, FaKeyboard, FaSnowflake } from 'react-icon
 
 const sounds = [
   { name: 'Rain', icon: <FaUmbrella />, file: '/sounds/rain.mp3' },
-  { name: 'Wind', icon: <FaWind />, file: '/sounds/wind.mp3' },
+  { name: 'Fire', icon: <FaFire />, file: '/sounds/fire.mp3' },
   { name: 'Ocean', icon: <FaWater />, file: '/sounds/ocean.mp3' },
   { name: 'Keyboard', icon: <FaKeyboard />, file: '/sounds/keyboard.mp3' },
   { name: 'Blizzard', icon: <FaSnowflake />, file: '/sounds/blizzard.mp3' },
