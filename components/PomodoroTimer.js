@@ -230,7 +230,7 @@ export default function PomodoroTimer({ onMinimize }) {
           <h3>{formatTime}</h3>
           <div className={styles.buttonContainer}>
             <button className={styles.startButton} onClick={toggleTimer}>
-              {state.isTimerRunning ? 'Stop' : 'Start'}
+              {state.isTimerRunning ?  <span className="material-icons">pause</span> :  <span className="material-icons">play_arrow</span>}
             </button>
             <button className={styles.resetButton} onClick={resetTimer} aria-label="Reset Timer">
               <span className="material-icons">refresh</span>
