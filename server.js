@@ -3,12 +3,38 @@ const http = require('http');
 const next = require('next');
 const { Server } = require('socket.io');
 const MobileDetect = require('mobile-detect');
+const cron = require('node-cron'); // for scheduling tasks
+const { Pool } = require('pg'); // for database interaction
 
 const dev = process.env.NODE_ENV !== 'production';
 const app = next({ dev });
 const handle = app.getRequestHandler();
 
 const messages = []; // In-memory storage for messages
+
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false
+  }
+});
+
+async function resetWeeklyCount() {
+  try {
+    const client = await pool.connect();
+    await client.query('UPDATE user_pomodoros SET pomodoro_count_weekly = 0');
+    client.release();
+    console.log('Weekly Pomodoro count reset successfully.');
+  } catch (error) {
+    console.error('Error resetting weekly Pomodoro count:', error);
+  }
+}
+
+// Schedule the task to run every Sunday at 23:59
+cron.schedule('59 23 * * 0', () => {
+  console.log('Running the weekly reset task...');
+  resetWeeklyCount().catch(error => console.error(error));
+});
 
 app.prepare().then(() => {
   const server = express();
