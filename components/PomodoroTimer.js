@@ -98,6 +98,14 @@ export default function PomodoroTimer({ onMinimize }) {
     }
   }, [state.timeLeft]);
 
+  useEffect(() => {
+    if (state.isTimerRunning) {
+      document.title = `${formatTime} - ${state.currentMode === 'pomodoro' ? 'Focus Time' : 'Break Time'}`;
+    } else {
+      document.title = 'Pomodoro Timer';
+    }
+  }, [state.timeLeft, state.currentMode, state.isTimerRunning]);
+
   const handleTimerEnd = useCallback(() => {
     console.log('Timer ended');
     dispatch({ type: 'TOGGLE_TIMER' });
