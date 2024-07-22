@@ -12,7 +12,7 @@ const pool = new Pool({
 export default async function handler(req, res) {
   try {
     const client = await pool.connect();
-    const result = await client.query('SELECT firstname, pomodoro_count FROM user_pomodoros ORDER BY pomodoro_count DESC');
+    const result = await client.query('SELECT firstname, pomodoro_count_weekly FROM user_pomodoros ORDER BY pomodoro_count_weekly DESC');
     client.release();
     res.status(200).json(result.rows);
   } catch (error) {

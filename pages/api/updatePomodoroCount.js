@@ -34,6 +34,7 @@ export default async function handler(req, res) {
       await client.query(
         `UPDATE user_pomodoros
          SET pomodoro_count = pomodoro_count + $1,
+             pomodoro_count_weekly = pomodoro_count_weekly + $1,
              ${category.toLowerCase()} = ${category.toLowerCase()} + $1,
              daily_counts = $2
          WHERE email = $3`,
@@ -43,8 +44,8 @@ export default async function handler(req, res) {
       const dailyCounts = { [today]: increment };
 
       await client.query(
-        `INSERT INTO user_pomodoros (email, firstname, pomodoro_count, ${category.toLowerCase()}, daily_counts)
-         VALUES ($1, $2, $3, $3, $4)`,
+        `INSERT INTO user_pomodoros (email, firstname, pomodoro_count, pomodoro_count_weekly, ${category.toLowerCase()}, daily_counts)
+         VALUES ($1, $2, $3, $3, $3, $4)`,
         [email, firstname, increment, dailyCounts]
       );
     }
