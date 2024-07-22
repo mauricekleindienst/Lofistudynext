@@ -1,27 +1,30 @@
-import React, { useState } from 'react';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-import PomodoroTimer from './PomodoroTimer';
-import Sounds from './Sounds';
-import Notes from './Notes';
-import Calendar from './Calendar';
-import LiveChat from './LiveChat';
-import Scoreboard from './Scoreboard';
-import Settings from './Settings';
-import Todo from './Todo';
-import CustomCursor from '../components/CustomCursor';
-import Stats from './Stats';
-import styles from '../styles/SelectionBar.module.css';
+import React, { useState } from "react";
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import PomodoroTimer from "./PomodoroTimer";
+import Sounds from "./Sounds";
+import Notes from "./Notes";
+import Calendar from "./Calendar";
+import LiveChat from "./LiveChat";
+import Scoreboard from "./Scoreboard";
+import Settings from "./Settings";
+
+import Todo from "./Todo";
+import CustomCursor from "../components/CustomCursor";
+import Stats from "./Stats";
+import styles from "../styles/SelectionBar.module.css";
+import YouTubePlayer from "./YouTubePlayer";
 
 const initialIcons = [
-  { id: 'pomodoro', label: 'Pomodoro', icon: 'alarm' },
-  { id: 'sounds', label: 'Sounds', icon: 'graphic_eq' },
-  { id: 'note', label: 'Note', icon: 'edit' },
-  { id: 'calendar', label: 'Calendar', icon: 'event' },
-  { id: 'chat', label: 'Chat', icon: 'chat' },
-  { id: 'scoreboard', label: 'Scoreboard', icon: 'stairs' },
-  { id: 'todo', label: 'Todo', icon: 'checklist' },
-  { id: 'stats', label: 'Stats', icon: 'bar_chart' },
-  { id: 'settings', label: 'Settings', icon: 'settings' },
+  { id: "pomodoro", label: "Pomodoro", icon: "alarm" },
+  { id: "sounds", label: "Sounds", icon: "graphic_eq" },
+  { id: "youtubePlayer", label: "YouTube", icon: "smart_display" },
+  { id: "chat", label: "Chat", icon: "chat" },
+  { id: "calendar", label: "Calendar", icon: "event" },
+  { id: "todo", label: "Todo", icon: "checklist" },
+  { id: "note", label: "Note", icon: "edit" },
+  { id: "stats", label: "Stats", icon: "bar_chart" },
+  { id: "scoreboard", label: "Scoreboard", icon: "stairs" },
+  { id: "settings", label: "Settings", icon: "settings" },
 ];
 
 const components = {
@@ -31,6 +34,7 @@ const components = {
   calendar: Calendar,
   chat: LiveChat,
   scoreboard: Scoreboard,
+  youtubePlayer: YouTubePlayer,
   todo: Todo,
   stats: Stats,
   settings: Settings,
@@ -47,7 +51,7 @@ export default function SelectionBar({ userEmail, userName }) {
         ? prevVisibleComponents.filter((c) => c !== component)
         : [...prevVisibleComponents, component]
     );
-    if (component === 'chat') {
+    if (component === "chat") {
       setNewChatMessage(false);
     }
   };
@@ -79,12 +83,14 @@ export default function SelectionBar({ userEmail, userName }) {
                       ref={provided.innerRef}
                       {...provided.draggableProps}
                       {...provided.dragHandleProps}
-                      className={`${styles.iconButton} ${snapshot.isDragging ? styles.dragging : ''}`}
+                      className={`${styles.iconButton} ${
+                        snapshot.isDragging ? styles.dragging : ""
+                      }`}
                       onClick={() => handleIconClick(icon.id)}
                       aria-label={icon.label}
                     >
                       <span className="material-icons">{icon.icon}</span>
-                      {icon.id === 'chat' && newChatMessage && (
+                      {icon.id === "chat" && newChatMessage && (
                         <span className={styles.notificationDot}></span>
                       )}
                       <div className={styles.tooltip}>{icon.label}</div>
@@ -99,7 +105,10 @@ export default function SelectionBar({ userEmail, userName }) {
         <CustomCursor />
       </DragDropContext>
       {Object.entries(components).map(([name, Component]) => (
-        <div key={name} className={visibleComponents.includes(name) ? '' : styles.hidden}>
+        <div
+          key={name}
+          className={visibleComponents.includes(name) ? "" : styles.hidden}
+        >
           <Component
             onMinimize={() => handleIconClick(name)}
             userEmail={userEmail}
