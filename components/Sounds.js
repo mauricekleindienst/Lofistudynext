@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import Draggable from 'react-draggable';
 import styles from '../styles/Sounds.module.css';
-import { FaUmbrella, FaWind, FaWater, FaKeyboard, FaSnowflake } from 'react-icons/fa';
+import { FaUmbrella, FaFire, FaWater, FaKeyboard, FaSnowflake } from 'react-icons/fa';
 
 const sounds = [
   { name: 'Rain', icon: <FaUmbrella />, file: '/sounds/rain.mp3' },
