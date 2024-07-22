@@ -123,14 +123,14 @@ export default function Stats({ onMinimize }) {
                 data={categoryData} 
                 options={{
                   plugins: {
-                    legend: {
-                      display: false
-                    }
+                    legend: { display: false },
+                    tooltip: { enabled: true }
                   },
                   responsive: true,
                   maintainAspectRatio: false
                 }}
-                style={{ height: '100%', width: '100%' }}
+                height={200}
+                width={200}
               />
             </div>
             <div className={styles.chartWrapper}>
@@ -139,22 +139,25 @@ export default function Stats({ onMinimize }) {
                 data={weeklyChartData}
                 options={{
                   plugins: {
-                    legend: {
-                      display: false
-                    }
+                    legend: { display: false },
+                    tooltip: { enabled: true }
                   },
+
                   scales: {
                     y: {
                       beginAtZero: true,
-                      ticks: {
-                        stepSize: 1
-                      }
+                      ticks: { stepSize: 1 },
+                      grid: { display: false }
+                    },
+                    x: {
+                      grid: { display: false }
                     }
                   },
-                  responsive: true,
-                  maintainAspectRatio: false
+                 responsive: true,
+  maintainAspectRatio: true
                 }}
-                style={{ height: '100%', width: '100%' }}
+                height={200}
+                width={300}
               />
             </div>
           </div>
