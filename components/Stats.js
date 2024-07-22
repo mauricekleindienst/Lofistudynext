@@ -124,7 +124,7 @@ export default function Stats({ onMinimize }) {
                 data={categoryData} 
                 options={{
                   plugins: {
-                    legend: { display: false },
+                    legend: { display: true },
                     tooltip: { enabled: true }
                   },
                   responsive: true,
