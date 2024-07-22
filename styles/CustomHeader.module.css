@@ -11,7 +11,7 @@
 .iconButton {
   background-color: transparent;
   border: none;
-  cursor: pointer;
+  cursor: none!important;
   color: #fff;
   margin: 0 10px;
   width: 50px;
@@ -159,7 +159,7 @@
   display: inline-block;
   font-size: 14px;
   margin: 4px 2px;
-  cursor: pointer;
+  
   border-radius: 3px;
 }
 
@@ -180,7 +180,7 @@
 .tooltip {
   position: relative;
   display: inline-block;
-  cursor: pointer;
+  
 }
 
 .tooltip .tooltiptext {

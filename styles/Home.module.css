@@ -72,7 +72,7 @@
   font-size: 1rem;
   border-radius: 5px;
   border: none;
-  cursor: pointer;
+  
   transition: background-color 0.3s ease;
 }
 
@@ -154,7 +154,7 @@
   border: none;
   background-color: #ff7b00;
   color: #ffffff;
-  cursor: pointer;
+  
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
@@ -350,7 +350,7 @@
   border: none;
   background-color: #ff7b00;
   color: #ffffff;
-  cursor: pointer;
+  
   transition: background-color 0.3s ease;
 }
 
@@ -398,7 +398,7 @@
   padding: 1.5rem;
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  cursor: pointer;
+  
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 

@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from 'react';
 import io from 'socket.io-client';
 import Picker from 'emoji-picker-react';
 import styles from '../styles/LiveChat.module.css';
+import CustomCursor from '../components/CustomCursor';
 
 const socket = io();
 

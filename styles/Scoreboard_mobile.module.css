@@ -23,7 +23,6 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  cursor: move;
   border-bottom: 2px solid #ff7b00;
 }
 
@@ -53,7 +52,7 @@
   background-color: transparent;
   border: none;
   color: #ff7b00;
-  cursor: pointer;
+  
   font-size: 24px;
   transition: color 0.3s ease;
 }

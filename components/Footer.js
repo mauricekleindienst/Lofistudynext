@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import styles from '../styles/Footer.module.css';
+import CustomCursor from '../components/CustomCursor';
 
 export default function Footer() {
     return (

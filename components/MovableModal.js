@@ -2,6 +2,7 @@ import Draggable from 'react-draggable';
 import { ResizableBox } from 'react-resizable';
 import styles from '../styles/MovableModal.module.css';
 import 'react-resizable/css/styles.css'; // Import resizable styles
+import CustomCursor from '../components/CustomCursor';
 
 export default function MovableModal({ children, onClose }) {
   return (

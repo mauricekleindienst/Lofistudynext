@@ -4,7 +4,7 @@ import Head from 'next/head';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import styles from '../styles/Home.module.css';
-
+import CustomCursor from '../components/CustomCursor';
 export default function FAQ() {
     const faqs = [
         {
@@ -32,7 +32,7 @@ export default function FAQ() {
                 <meta name="description" content="Frequently Asked Questions about Lo-Fi Study" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-            
+            <CustomCursor />
             <Header />
 
             <main className={styles.main}>

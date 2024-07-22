@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { Doughnut, Bar } from 'react-chartjs-2';
 import Draggable from 'react-draggable';
+import CustomCursor from '../components/CustomCursor';
 import {
   Chart as ChartJS,
   CategoryScale,

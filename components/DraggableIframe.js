@@ -1,6 +1,7 @@
 // components/DraggableIframe.js
 import { useRef, useState } from 'react';
 import styles from '../styles/DraggableIframe.module.css';
+import CustomCursor from '../components/CustomCursor';
 
 export default function DraggableIframe({ src, onClose }) {
   const iframeRef = useRef(null);

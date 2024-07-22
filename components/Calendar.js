@@ -5,6 +5,7 @@ import { Calendar as BigCalendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
 import styles from '../styles/Calendar.module.css';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
+import CustomCursor from '../components/CustomCursor';
 
 const localizer = momentLocalizer(moment);
 
@@ -81,6 +82,7 @@ export default function Calendar({ onMinimize }) {
   };
 
   return (
+    
     <Draggable handle=".draggable-header">
       <div className={styles.calendarContainer}>
         <div className={`${styles.header} draggable-header`}>

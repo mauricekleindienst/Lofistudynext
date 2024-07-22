@@ -76,7 +76,7 @@
   background-color: #ff7b00;
   border: none;
   padding: 12px 24px;
-  cursor: pointer;
+  
   color: #fff;
   border-radius: 50px;
   font-size: 1.2rem;
@@ -149,7 +149,7 @@
   color: #fff;
   border: none;
   padding: 12px 24px;
-  cursor: pointer;
+  
   border-radius: 4px;
   font-size: 1rem;
   transition: background-color 0.3s ease-in-out;
@@ -253,7 +253,7 @@
   background-color: #ff7b00;
   border: none;
   padding: 12px 24px;
-  cursor: pointer;
+  
   color: #fff;
   border-radius: 50px;
   font-size: 1.2rem;
@@ -303,7 +303,7 @@
   background-color: #FFFFFF;
   border: none;
   padding: 12px 24px;
-  cursor: pointer;
+  
   color: #000000;
   border-radius: 50px;
   font-size: 14px;
@@ -324,7 +324,7 @@
   background-color: #7289da;
   border: none;
   padding: 12px 24px;
-  cursor: pointer;
+  
   color: #fff;
   border-radius: 50px;
   font-size: 14px;

@@ -3,6 +3,7 @@ import { useSession } from 'next-auth/react';
 import Draggable from 'react-draggable';
 import { DragDropContext, Droppable, Draggable as DndDraggable } from 'react-beautiful-dnd';
 import styles from '../styles/Todo.module.css';
+import CustomCursor from '../components/CustomCursor';
 import { FaPlus, FaTrash, FaEdit, FaChevronDown, FaChevronRight } from 'react-icons/fa';
 
 export default function Todo({ onMinimize }) {

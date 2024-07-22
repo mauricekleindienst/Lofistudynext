@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import Draggable from 'react-draggable';
 import styles from '../styles/Settings.module.css';
 import { FaCog, FaBell, FaMoon, FaSun, FaLanguage } from 'react-icons/fa';
-
+import CustomCursor from '../components/CustomCursor';
 const settings = [
   { name: 'General', icon: <FaCog /> },
   { name: 'Notifications', icon: <FaBell /> },

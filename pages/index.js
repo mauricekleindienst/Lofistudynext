@@ -7,6 +7,7 @@ import 'react-responsive-carousel/lib/styles/carousel.min.css';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import styles from '../styles/Home.module.css';
+import CustomCursor from '../components/CustomCursor';
 
 export default function Landing() {
     const images = [
@@ -82,7 +83,7 @@ export default function Landing() {
                 <link rel="icon" href="/favicon.ico" />
             </Head>
             <Header/>
-
+            <CustomCursor />
             <main className={styles.main}>
                 <motion.div 
                     className={styles.welcomeWrapper}

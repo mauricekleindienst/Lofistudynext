@@ -47,7 +47,7 @@
 
 .backgroundOption {
   border: 2px solid transparent;
-  cursor: pointer;
+  
   transition: all 0.3s ease;
   border-radius: 5px;
   overflow: hidden;

@@ -1,12 +1,14 @@
 import { SessionProvider } from 'next-auth/react';
 import { UserProvider } from '../context/UserContext';
 import '../styles/globals.css';
+import CustomCursor from '../components/CustomCursor';
 import Head from 'next/head';
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }) {
   return (
     <SessionProvider session={session}>
       <UserProvider>
+      <CustomCursor />
         <Head>
           <title>Lo-Fi.Study</title>
           <link rel="shortcut icon" href="/favicon.ico" />
