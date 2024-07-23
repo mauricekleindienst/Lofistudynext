@@ -22,7 +22,6 @@ export default function Todo({ onMinimize }) {
   const [newTodo, setNewTodo] = useState("");
   const [editingTodo, setEditingTodo] = useState(null);
   const [selectedColor, setSelectedColor] = useState("#ff7b00");
-  const [subTodos, setSubTodos] = useState({});
   const [collapsed, setCollapsed] = useState({});
 
   const fetchTodosFromServer = useCallback(async () => {
@@ -77,51 +76,6 @@ export default function Todo({ onMinimize }) {
       } catch (error) {
         console.error("Error adding todo:", error);
         setTodos((prev) => prev.filter((todo) => todo.id !== newTodoItem.id));
-      }
-    }
-  };
-
-  const addSubTodo = async (parentId, subTodoText) => {
-    if (subTodoText.trim() !== "" && session?.user?.email) {
-      const newSubTodoItem = {
-        id: Date.now(),
-        text: subTodoText,
-        completed: false,
-      };
-
-      setSubTodos((prev) => ({
-        ...prev,
-        [parentId]: [...(prev[parentId] || []), newSubTodoItem],
-      }));
-
-      try {
-        const response = await fetch("/api/todos/subtasks", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            email: session.user.email,
-            todoId: parentId,
-            text: subTodoText,
-          }),
-        });
-
-        if (!response.ok) {
-          console.error("Failed to add sub-todo");
-          setSubTodos((prev) => ({
-            ...prev,
-            [parentId]: prev[parentId].filter(
-              (sub) => sub.id !== newSubTodoItem.id
-            ),
-          }));
-        }
-      } catch (error) {
-        console.error("Error adding sub-todo:", error);
-        setSubTodos((prev) => ({
-          ...prev,
-          [parentId]: prev[parentId].filter(
-            (sub) => sub.id !== newSubTodoItem.id
-          ),
-        }));
       }
     }
   };
@@ -213,13 +167,6 @@ export default function Todo({ onMinimize }) {
       console.error("Error reordering todos:", error);
       fetchTodosFromServer();
     }
-  };
-
-  const toggleSubTodos = (todoId) => {
-    setCollapsed((prev) => ({
-      ...prev,
-      [todoId]: !prev[todoId],
-    }));
   };
 
   return (
@@ -328,16 +275,6 @@ export default function Todo({ onMinimize }) {
                                     {todo.text}
                                   </span>
                                 )}
-                                <button
-                                  onClick={() => toggleSubTodos(todo.id)}
-                                  className={styles.toggleSubTodosButton}
-                                >
-                                  {collapsed[todo.id] ? (
-                                    <FaChevronRight />
-                                  ) : (
-                                    <FaChevronDown />
-                                  )}
-                                </button>
                                 <div className={styles.todoActions}>
                                   <button
                                     onClick={() => setEditingTodo(todo.id)}
@@ -354,55 +291,6 @@ export default function Todo({ onMinimize }) {
                                 </div>
                               </div>
                             </div>
-                            {!collapsed[todo.id] && (
-                              <>
-                                <hr className={styles.divider} />
-                                <div className={styles.subTodos}>
-                                  {(subTodos[todo.id] || []).map((subTodo) => (
-                                    <div
-                                      key={subTodo.id}
-                                      className={styles.subTodo}
-                                    >
-                                      <input
-                                        type="checkbox"
-                                        checked={subTodo.completed}
-                                        onChange={() => {
-                                          const updatedSubTodos = (
-                                            subTodos[todo.id] || []
-                                          ).map((st) =>
-                                            st.id === subTodo.id
-                                              ? {
-                                                  ...st,
-                                                  completed: !st.completed,
-                                                }
-                                              : st
-                                          );
-                                          setSubTodos({
-                                            ...subTodos,
-                                            [todo.id]: updatedSubTodos,
-                                          });
-                                        }}
-                                        className={styles.subTodoCheckbox}
-                                      />
-                                      <span className={styles.subTodoText}>
-                                        {subTodo.text}
-                                      </span>
-                                    </div>
-                                  ))}
-                                  <input
-                                    type="text"
-                                    placeholder="Add sub-todo..."
-                                    onKeyDown={(e) => {
-                                      if (e.key === "Enter") {
-                                        addSubTodo(todo.id, e.target.value);
-                                        e.target.value = "";
-                                      }
-                                    }}
-                                    className={styles.subTodoInput}
-                                  />
-                                </div>
-                              </>
-                            )}
                           </div>
                         )}
                       </DndDraggable>
