@@ -119,13 +119,11 @@ export default function CustomHeader() {
         id="pdfInput"
         onChange={handleFileChange}
       />
-
       <div className={styles.iconButton}>
         <button onClick={() => signOut()} className={styles.iconButton}>
           <span className="material-icons">logout</span>
         </button>
       </div>
-
       {isPdfOpen && pdfBlobUrl && (
         <MovableModal onClose={closePdf}>
           <Worker
