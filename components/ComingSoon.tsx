@@ -1,9 +1,10 @@
 import styles from '../styles/ComingSoon.module.css';
+import Image from 'next/image';
 
 const ComingSoon = () => {
   return (
     <div className={styles.banner}>
-      <img src="/lo-fi.study.svg" alt="Lo-Fi.Study Logo" className={styles.logo} />
+      <Image src="/lo-fi.study.svg" alt="Lo-Fi.Study Logo" className={styles.logo} />
       <h1>Lo-Fi.Study for Mobile Coming Soon</h1>
       <div className={styles['loader-container']}>
         <div className={styles.loader}>

@@ -8,6 +8,7 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import styles from "../styles/Home.module.css";
 import CustomCursor from "../components/CustomCursor";
+import Image from "next/image";
 
 export default function Landing() {
   const images = [
@@ -50,7 +51,7 @@ export default function Landing() {
           >
             {images.map((image, index) => (
               <div key={index} className={styles.carouselItem}>
-                <img
+                <Image
                   className={styles.carouselImage}
                   src={image.src}
                   alt={image.alt}

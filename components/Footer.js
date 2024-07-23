@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import styles from '../styles/Footer.module.css';
 import CustomCursor from '../components/CustomCursor';
+import Image from 'next/image';
 
 export default function Footer() {
     return (
@@ -10,7 +11,7 @@ export default function Footer() {
             <div className={styles.footerContent}>
                 <div className={styles.logo}>
                     <Link href="/">
-                        <img src="/lo-fi.study.svg" alt="Atla" />
+                    <Image src="/lo-fi.study.svg" alt="Atla" />
                     </Link>
                     <p>Creating A Study Space with LoFi</p>
                     <button className={styles.signUpButton}>Sign Up</button>

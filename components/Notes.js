@@ -22,7 +22,7 @@ export default function Notes({ onMinimize }) {
     if (session && status === "authenticated") {
       fetchNotesFromServer();
     }
-  }, [session, status]);
+  }, [session, status, fetchNotesFromServer]);
 
   useEffect(() => {
     if (selectedPage) {
@@ -31,7 +31,7 @@ export default function Notes({ onMinimize }) {
         console.error("Failed to initialize editor:", error);
       });
     }
-  }, [selectedPage?.id]);
+  }, [selectedPage?.id, initializeEditor]);
 
   const getFirstSevenWords = (blocks) => {
     let words = [];

@@ -1,6 +1,7 @@
 import { useRouter } from "next/router";
 import styles from "../styles/Home.module.css";
 import CustomCursor from "../components/CustomCursor";
+import Image from "next/image";
 
 export default function Header() {
   const router = useRouter();
@@ -8,7 +9,7 @@ export default function Header() {
   return (
     <header className={styles.header}>
       <div className={styles.logo} onClick={() => router.push("/")}>
-        <img src="/lo-fi.study.svg" alt="lo-fi.study" />
+      <Image src="/lo-fi.study.svg" alt="lo-fi.study" />
       </div>
       <div className={styles.buttonContainer}>
         <button

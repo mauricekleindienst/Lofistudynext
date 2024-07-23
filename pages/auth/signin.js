@@ -4,6 +4,7 @@ import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import styles from "../../styles/Login.module.css";
+import Image from "next/image";
 
 const backgrounds = [
   { id: 1, src: "/backgrounds/Night.mp4", alt: "Night", note: "Night" },
@@ -103,7 +104,7 @@ export default function SignIn() {
           onClick={() => signIn("google")}
           className={styles.authButtonGoogle}
         >
-          <img
+         <Image
             src="/icons/google.svg"
             alt="Google icon"
             className={styles.authButtonIcon}
@@ -114,7 +115,7 @@ export default function SignIn() {
           onClick={() => signIn("discord")}
           className={styles.authButtonDiscord}
         >
-          <img
+         <Image
             src="/icons/discord.svg"
             alt="Discord icon"
             className={styles.authButtonIcon}
