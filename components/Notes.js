@@ -1,3 +1,4 @@
+
 import { useEffect, useRef, useState } from "react";
 import Draggable from "react-draggable";
 import { ResizableBox } from "react-resizable";
@@ -22,7 +23,7 @@ export default function Notes({ onMinimize }) {
     if (session && status === "authenticated") {
       fetchNotesFromServer();
     }
-  }, [session, status, fetchNotesFromServer]);
+  }, [session, status]);
 
   useEffect(() => {
     if (selectedPage) {
@@ -31,7 +32,7 @@ export default function Notes({ onMinimize }) {
         console.error("Failed to initialize editor:", error);
       });
     }
-  }, [selectedPage?.id, initializeEditor]);
+  }, [selectedPage?.id]);
 
   const getFirstSevenWords = (blocks) => {
     let words = [];
