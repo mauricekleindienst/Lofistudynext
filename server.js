@@ -1,26 +1,39 @@
-require('dotenv').config();
 const express = require('express');
 const http = require('http');
 const next = require('next');
 const { Server } = require('socket.io');
 const MobileDetect = require('mobile-detect');
-const cron = require('node-cron');
-const { Pool } = require('pg');
-const helmet = require('helmet');
-const rateLimit = require('express-rate-limit');
-const cors = require('cors');
-const logger = require('./utils/logger');
-const db = require('./database');
-const socketHandler = require('./socketHandler');
-const cronJobs = require('./cronJobs');
+const cron = require('node-cron'); // for scheduling tasks
+const { Pool } = require('pg'); // for database interaction
 
 const dev = process.env.NODE_ENV !== 'production';
 const app = next({ dev });
 const handle = app.getRequestHandler();
 
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100 // limit each IP to 100 requests per windowMs
+const messages = []; // In-memory storage for messages
+
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false
+  }
+});
+
+async function resetWeeklyCount() {
+  try {
+    const client = await pool.connect();
+    await client.query('UPDATE user_pomodoros SET pomodoro_count_weekly = 0');
+    client.release();
+    console.log('Weekly Pomodoro count reset successfully.');
+  } catch (error) {
+    console.error('Error resetting weekly Pomodoro count:', error);
+  }
+}
+
+// Schedule the task to run every Sunday at 23:59
+cron.schedule('59 23 * * 0', () => {
+  console.log('Running the weekly reset task...');
+  resetWeeklyCount().catch(error => console.error(error));
 });
 
 app.prepare().then(() => {
@@ -28,21 +41,39 @@ app.prepare().then(() => {
   const httpServer = http.createServer(server);
   const io = new Server(httpServer);
 
-  // Middleware
-  server.use(helmet());
-  server.use(cors());
-  server.use(limiter);
+  io.on('connection', (socket) => {
+    console.log('a user connected');
 
-  // Socket handling
-  socketHandler(io);
+    // Send all stored messages to the new client
+    socket.emit('chat history', messages);
 
-  // Routes
+    socket.on('disconnect', () => {
+      console.log('user disconnected');
+    });
+
+    socket.on('chat message', (msg) => {
+      console.log('Received chat message:', msg);
+      messages.push(msg);
+      io.emit('chat message', msg);
+    });
+  });
+
   server.get('/hello', (req, res) => {
     return res.send('Hello World');
   });
 
   server.get('/app', (req, res) => {
     const md = new MobileDetect(req.headers['user-agent']);
+
+    if (md.mobile()) {
+      res.redirect('/app_mobile');
+    } else {
+      handle(req, res);
+    }
+  });
+  server.get('/auth/signing', (req, res) => {
+    const md = new MobileDetect(req.headers['user-agent']);
+
     if (md.mobile()) {
       res.redirect('/app_mobile');
     } else {
@@ -54,24 +85,10 @@ app.prepare().then(() => {
     return handle(req, res);
   });
 
-  // Start cron jobs
-  cronJobs.start();
-
-  // Graceful shutdown
-  process.on('SIGTERM', () => {
-    logger.info('SIGTERM signal received: closing HTTP server');
-    httpServer.close(() => {
-      logger.info('HTTP server closed');
-      db.end(() => {
-        logger.info('Database connection closed');
-        process.exit(0);
-      });
-    });
-  });
-
+  // Use the PORT environment variable provided by Heroku
   const port = process.env.PORT || 3000;
   httpServer.listen(port, (err) => {
     if (err) throw err;
-    logger.info(`> Ready on http://localhost:${port}`);
+    console.log(> Ready on http://localhost:${port});
   });
 });

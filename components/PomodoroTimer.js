@@ -66,14 +66,10 @@ export default function PomodoroTimer({ onMinimize }) {
   const { data: session } = useSession();
   const timerRef = useRef(null);
 
-  const pomodoroStartRef = useRef(null);
-  const pomodoroEndRef = useRef(null);
-  const longPauseRef = useRef(null);
-
   const soundRefs = {
-    pomodoroStart: pomodoroStartRef,
-    pomodoroEnd: pomodoroEndRef,
-    longPause: longPauseRef,
+    pomodoroStart: useRef(null),
+    pomodoroEnd: useRef(null),
+    longPause: useRef(null),
   };
 
   const playSound = useCallback((soundRef) => {
@@ -129,7 +125,7 @@ export default function PomodoroTimer({ onMinimize }) {
     if (state.timeLeft === 0) {
       handleTimerEnd();
     }
-  }, [state.timeLeft, handleTimerEnd]);
+  }, [state.timeLeft]);
 
   useEffect(() => {
     if (state.isTimerRunning) {
@@ -139,7 +135,7 @@ export default function PomodoroTimer({ onMinimize }) {
     } else {
       document.title = "Pomodoro Timer";
     }
-  }, [state.timeLeft, state.currentMode, state.isTimerRunning, formatTime]);
+  }, [state.timeLeft, state.currentMode, state.isTimerRunning]);
 
   const handleTimerEnd = useCallback(() => {
     console.log("Timer ended");
