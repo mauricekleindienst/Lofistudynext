@@ -1,13 +1,13 @@
-import { useEffect, useRef, useState } from 'react';
-import Draggable from 'react-draggable';
-import { ResizableBox } from 'react-resizable';
-import dynamic from 'next/dynamic';
-import { useSession } from 'next-auth/react';
-import CustomCursor from '../components/CustomCursor';
-import styles from '../styles/Notes.module.css';
+import { useEffect, useRef, useState } from "react";
+import Draggable from "react-draggable";
+import { ResizableBox } from "react-resizable";
+import dynamic from "next/dynamic";
+import { useSession } from "next-auth/react";
+import CustomCursor from "../components/CustomCursor";
+import styles from "../styles/Notes.module.css";
 
-const EditorJS = dynamic(() => import('@editorjs/editorjs'), { ssr: false });
-const Header = dynamic(() => import('@editorjs/header'), { ssr: false });
+const EditorJS = dynamic(() => import("@editorjs/editorjs"), { ssr: false });
+const Header = dynamic(() => import("@editorjs/header"), { ssr: false });
 
 export default function Notes({ onMinimize }) {
   const { data: session, status } = useSession();
@@ -15,10 +15,10 @@ export default function Notes({ onMinimize }) {
   const editorInstance = useRef(null);
   const [pages, setPages] = useState([]);
   const [selectedPage, setSelectedPage] = useState(null);
-  const [content, setContent] = useState('');
+  const [content, setContent] = useState("");
 
   useEffect(() => {
-    if (session && status === 'authenticated') {
+    if (session && status === "authenticated") {
       fetchNotesFromServer();
     }
   }, [session, status]);
@@ -31,8 +31,8 @@ export default function Notes({ onMinimize }) {
   }, [selectedPage]);
 
   const initializeEditor = async (data) => {
-    const EditorJSModule = (await import('@editorjs/editorjs')).default;
-    const HeaderModule = (await import('@editorjs/header')).default;
+    const EditorJSModule = (await import("@editorjs/editorjs")).default;
+    const HeaderModule = (await import("@editorjs/header")).default;
 
     if (editorInstance.current) {
       await editorInstance.current.isReady;
@@ -62,19 +62,19 @@ export default function Notes({ onMinimize }) {
           setSelectedPage(notes[0]);
         }
       } else {
-        console.error('Failed to fetch notes:', await response.json());
+        console.error("Failed to fetch notes:", await response.json());
       }
     } catch (error) {
-      console.error('Error fetching notes:', error);
+      console.error("Error fetching notes:", error);
     }
   };
 
   const saveNoteToServer = async (savedData) => {
     try {
-      const response = await fetch('/api/notes', {
-        method: 'POST',
+      const response = await fetch("/api/notes", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           id: selectedPage?.id,
@@ -84,10 +84,10 @@ export default function Notes({ onMinimize }) {
         }),
       });
       if (!response.ok) {
-        console.error('Failed to save note:', await response.json());
+        console.error("Failed to save note:", await response.json());
       }
     } catch (error) {
-      console.error('Error saving note:', error);
+      console.error("Error saving note:", error);
     }
   };
 
@@ -95,20 +95,20 @@ export default function Notes({ onMinimize }) {
     const newPage = {
       id: null,
       email: session.user.email,
-      title: 'New Page',
-      content: '{}',
+      title: "New Page",
+      content: "{}",
     };
     setPages([...pages, newPage]);
     setSelectedPage(newPage);
-    initializeEditor('{}');
+    initializeEditor("{}");
   };
 
   const deletePage = async (pageId) => {
     try {
-      const response = await fetch('/api/notes', {
-        method: 'DELETE',
+      const response = await fetch("/api/notes", {
+        method: "DELETE",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ id: pageId, email: session.user.email }),
       });
@@ -117,10 +117,10 @@ export default function Notes({ onMinimize }) {
         setPages(updatedPages);
         setSelectedPage(updatedPages.length > 0 ? updatedPages[0] : null);
       } else {
-        console.error('Failed to delete note:', await response.json());
+        console.error("Failed to delete note:", await response.json());
       }
     } catch (error) {
-      console.error('Error deleting note:', error);
+      console.error("Error deleting note:", error);
     }
   };
 
@@ -137,10 +137,12 @@ export default function Notes({ onMinimize }) {
           <div className={styles.header}>
             <h2>Notes</h2>
             <div className={styles.tooltip}>
-            <span className="material-icons">help</span>
-            <span className={styles.tooltiptext}>Jot down ideas.</span>
-          </div>
-            <button onClick={onMinimize} className="material-icons">remove</button>
+              <span className="material-icons">help</span>
+              <span className={styles.tooltiptext}>Jot down ideas.</span>
+            </div>
+            <button onClick={onMinimize} className="material-icons">
+              remove
+            </button>
           </div>
           <div className={styles.content}>
             <div className={styles.pageList}>
@@ -148,7 +150,7 @@ export default function Notes({ onMinimize }) {
                 <div
                   key={page.id}
                   className={`${styles.pageItem} ${
-                    selectedPage?.id === page.id ? styles.active : ''
+                    selectedPage?.id === page.id ? styles.active : ""
                   }`}
                   onClick={() => setSelectedPage(page)}
                 >

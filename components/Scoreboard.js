@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import Draggable from 'react-draggable';
-import styles from '../styles/Scoreboard.module.css';
-import CustomCursor from '../components/CustomCursor';
+import React, { useState, useEffect } from "react";
+import Draggable from "react-draggable";
+import styles from "../styles/Scoreboard.module.css";
+import CustomCursor from "../components/CustomCursor";
 
 export default function Scoreboard({ onMinimize }) {
   const [scoreboard, setScoreboard] = useState([]);
@@ -9,7 +9,7 @@ export default function Scoreboard({ onMinimize }) {
 
   useEffect(() => {
     const fetchScoreboard = async () => {
-      const response = await fetch('/api/getScoreboard');
+      const response = await fetch("/api/getScoreboard");
       const data = await response.json();
       setScoreboard(data);
       setLoading(false);
@@ -35,7 +35,12 @@ export default function Scoreboard({ onMinimize }) {
             <div>Loading...</div>
           ) : (
             scoreboard.map((user, index) => (
-              <div key={index} className={`${styles.user} ${index === 0 ? styles.firstPlace : ''}`}>
+              <div
+                key={index}
+                className={`${styles.user} ${
+                  index === 0 ? styles.firstPlace : ""
+                }`}
+              >
                 <span>{user.firstname}</span>
                 <span>{user.pomodoro_count_weekly} Pomodoros</span>
                 {index === 0 && <span className={styles.crown}>👑</span>}

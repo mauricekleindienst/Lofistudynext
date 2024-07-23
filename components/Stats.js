@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { useSession } from 'next-auth/react';
-import { Doughnut, Bar } from 'react-chartjs-2';
-import Draggable from 'react-draggable';
-import CustomCursor from '../components/CustomCursor';
+import React, { useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
+import { Doughnut, Bar } from "react-chartjs-2";
+import Draggable from "react-draggable";
+import CustomCursor from "../components/CustomCursor";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -12,8 +12,8 @@ import {
   Tooltip,
   Legend,
   ArcElement,
-} from 'chart.js';
-import styles from '../styles/Stats.module.css';
+} from "chart.js";
+import styles from "../styles/Stats.module.css";
 
 ChartJS.register(
   CategoryScale,
@@ -37,10 +37,10 @@ export default function Stats({ onMinimize }) {
 
   const fetchStats = async () => {
     try {
-      const response = await fetch('/api/getPomodoroStats', {
-        method: 'POST',
+      const response = await fetch("/api/getPomodoroStats", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           email: session.user.email,
@@ -49,7 +49,7 @@ export default function Stats({ onMinimize }) {
       const data = await response.json();
       setStats(data);
     } catch (error) {
-      console.error('Failed to fetch Pomodoro stats:', error);
+      console.error("Failed to fetch Pomodoro stats:", error);
     }
   };
 
@@ -58,7 +58,7 @@ export default function Stats({ onMinimize }) {
   }
 
   const categoryData = {
-    labels: ['Studying', 'Coding', 'Writing', 'Working', 'Other'],
+    labels: ["Studying", "Coding", "Writing", "Working", "Other"],
     datasets: [
       {
         data: [
@@ -67,20 +67,20 @@ export default function Stats({ onMinimize }) {
           stats.writing,
           stats.working,
           stats.other,
-        ].map(value => value || 0),
+        ].map((value) => value || 0),
         backgroundColor: [
-          '#FF6384',
-          '#36A2EB',
-          '#FFCE56',
-          '#4BC0C0',
-          '#9966FF',
+          "#FF6384",
+          "#36A2EB",
+          "#FFCE56",
+          "#4BC0C0",
+          "#9966FF",
         ],
         hoverBackgroundColor: [
-          '#FF6384',
-          '#36A2EB',
-          '#FFCE56',
-          '#4BC0C0',
-          '#9966FF',
+          "#FF6384",
+          "#36A2EB",
+          "#FFCE56",
+          "#4BC0C0",
+          "#9966FF",
         ],
       },
     ],
@@ -93,10 +93,10 @@ export default function Stats({ onMinimize }) {
     labels: weeklyLabels,
     datasets: [
       {
-        label: 'Pomodoros',
-        data: weeklyData.map(value => value || 0),
-        backgroundColor: 'rgba(255, 123, 0, 0.6)',
-        borderColor: 'rgba(255, 123, 0, 1)',
+        label: "Pomodoros",
+        data: weeklyData.map((value) => value || 0),
+        backgroundColor: "rgba(255, 123, 0, 0.6)",
+        borderColor: "rgba(255, 123, 0, 1)",
         borderWidth: 1,
       },
     ],
@@ -108,7 +108,11 @@ export default function Stats({ onMinimize }) {
         <div className={`${styles.dragHandle} dragHandle`}></div>
         <div className={styles.header}>
           <h2>Pomodoro Stats</h2>
-          <button onClick={onMinimize} className="material-icons" aria-label="Minimize">
+          <button
+            onClick={onMinimize}
+            className="material-icons"
+            aria-label="Minimize"
+          >
             remove
           </button>
         </div>
@@ -120,15 +124,15 @@ export default function Stats({ onMinimize }) {
           <div className={styles.chartsContainer}>
             <div className={styles.chartWrapper}>
               <h3>Categories</h3>
-              <Doughnut 
-                data={categoryData} 
+              <Doughnut
+                data={categoryData}
                 options={{
                   plugins: {
                     legend: { display: true },
-                    tooltip: { enabled: true }
+                    tooltip: { enabled: true },
                   },
                   responsive: true,
-                  maintainAspectRatio: false
+                  maintainAspectRatio: false,
                 }}
                 height={200}
                 width={200}
@@ -141,21 +145,21 @@ export default function Stats({ onMinimize }) {
                 options={{
                   plugins: {
                     legend: { display: false },
-                    tooltip: { enabled: true }
+                    tooltip: { enabled: true },
                   },
 
                   scales: {
                     y: {
                       beginAtZero: true,
                       ticks: { stepSize: 1 },
-                      grid: { display: false }
+                      grid: { display: false },
                     },
                     x: {
-                      grid: { display: false }
-                    }
+                      grid: { display: false },
+                    },
                   },
-                 responsive: true,
-  maintainAspectRatio: true
+                  responsive: true,
+                  maintainAspectRatio: true,
                 }}
                 height={200}
                 width={300}

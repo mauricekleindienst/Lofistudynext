@@ -1,10 +1,14 @@
 // pages/api/auth/[...nextauth].js
-import NextAuth from 'next-auth';
-import GoogleProvider from 'next-auth/providers/google';
-import DiscordProvider from 'next-auth/providers/discord';
-import CredentialsProvider from 'next-auth/providers/credentials';
-import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithCredential } from 'firebase/auth';
-import { auth } from '../../../firebaseConfig';
+import NextAuth from "next-auth";
+import GoogleProvider from "next-auth/providers/google";
+import DiscordProvider from "next-auth/providers/discord";
+import CredentialsProvider from "next-auth/providers/credentials";
+import {
+  signInWithEmailAndPassword,
+  GoogleAuthProvider,
+  signInWithCredential,
+} from "firebase/auth";
+import { auth } from "../../../firebaseConfig";
 
 const MAX_RETRIES = 3;
 
@@ -38,17 +42,21 @@ export default NextAuth({
       },
     }),
     CredentialsProvider({
-      name: 'Credentials',
+      name: "Credentials",
       credentials: {
         email: { label: "Email", type: "text" },
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
         if (!credentials.email || !credentials.password) {
-          throw new Error('Please enter an email and password');
+          throw new Error("Please enter an email and password");
         }
         try {
-          const userCredential = await signInWithEmailAndPassword(auth, credentials.email, credentials.password);
+          const userCredential = await signInWithEmailAndPassword(
+            auth,
+            credentials.email,
+            credentials.password
+          );
           const user = userCredential.user;
           return {
             id: user.uid,
@@ -56,21 +64,21 @@ export default NextAuth({
             name: user.displayName,
           };
         } catch (error) {
-          console.error('CredentialsProvider error:', error);
-          throw new Error('Invalid email or password');
+          console.error("CredentialsProvider error:", error);
+          throw new Error("Invalid email or password");
         }
       },
     }),
   ],
   callbacks: {
     async signIn({ account, profile }) {
-      if (account.provider === 'google') {
+      if (account.provider === "google") {
         const credential = GoogleAuthProvider.credential(account.id_token);
         try {
           await retrySignInWithCredential(credential);
           return true;
         } catch (error) {
-          console.error('Firebase signInWithCredential error:', error);
+          console.error("Firebase signInWithCredential error:", error);
           return false;
         }
       }
@@ -89,18 +97,18 @@ export default NextAuth({
   },
   events: {
     async signIn(message) {
-      console.log('SignIn Event:', message);
+      console.log("SignIn Event:", message);
     },
     async error(message) {
-      console.error('NextAuth Error:', message);
-    }
+      console.error("NextAuth Error:", message);
+    },
   },
   pages: {
-    signIn: '/auth/signin',
-    signOut: '/auth/signout',
-    error: '/auth/error',
-    verifyRequest: '/auth/verify-request',
-    newUser: '/auth/register',
+    signIn: "/auth/signin",
+    signOut: "/auth/signout",
+    error: "/auth/error",
+    verifyRequest: "/auth/verify-request",
+    newUser: "/auth/register",
   },
   debug: false,
 });

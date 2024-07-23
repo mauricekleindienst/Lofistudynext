@@ -1,5 +1,5 @@
-import styles from '../styles/Notes_mobile.module.css';
-import CustomCursor from '../components/CustomCursor';
+import styles from "../styles/Notes_mobile.module.css";
+import CustomCursor from "../components/CustomCursor";
 const NotesMobile = ({ onMinimize }) => {
   return (
     <div className={styles.container}>
@@ -10,7 +10,10 @@ const NotesMobile = ({ onMinimize }) => {
           <span className="material-icons">close</span>
         </button>
       </div>
-      <textarea className={styles.textarea} placeholder="Type your notes here..."></textarea>
+      <textarea
+        className={styles.textarea}
+        placeholder="Type your notes here..."
+      ></textarea>
     </div>
   );
 };

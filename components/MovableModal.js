@@ -1,8 +1,8 @@
-import Draggable from 'react-draggable';
-import { ResizableBox } from 'react-resizable';
-import styles from '../styles/MovableModal.module.css';
-import 'react-resizable/css/styles.css'; // Import resizable styles
-import CustomCursor from '../components/CustomCursor';
+import Draggable from "react-draggable";
+import { ResizableBox } from "react-resizable";
+import styles from "../styles/MovableModal.module.css";
+import "react-resizable/css/styles.css"; // Import resizable styles
+import CustomCursor from "../components/CustomCursor";
 
 export default function MovableModal({ children, onClose }) {
   return (
@@ -13,7 +13,7 @@ export default function MovableModal({ children, onClose }) {
           height={400}
           minConstraints={[300, 200]}
           maxConstraints={[window.innerWidth - 50, window.innerHeight - 50]}
-          resizeHandles={['se']}
+          resizeHandles={["se"]}
         >
           <div className={styles.modal}>
             <div className={`handle ${styles.header}`}>

@@ -1,14 +1,20 @@
-import { useState, useRef, useEffect } from 'react';
-import Draggable from 'react-draggable';
-import styles from '../styles/Sounds.module.css';
-import { FaUmbrella, FaFire, FaWater, FaKeyboard, FaSnowflake } from 'react-icons/fa';
-import CustomCursor from '../components/CustomCursor';
+import { useState, useRef, useEffect } from "react";
+import Draggable from "react-draggable";
+import styles from "../styles/Sounds.module.css";
+import {
+  FaUmbrella,
+  FaFire,
+  FaWater,
+  FaKeyboard,
+  FaSnowflake,
+} from "react-icons/fa";
+import CustomCursor from "../components/CustomCursor";
 const sounds = [
-  { name: 'Rain', icon: <FaUmbrella />, file: '/sounds/rain.mp3' },
-  { name: 'Fire', icon: <FaFire />, file: '/sounds/fire.mp3' },
-  { name: 'Ocean', icon: <FaWater />, file: '/sounds/ocean.mp3' },
-  { name: 'Keyboard', icon: <FaKeyboard />, file: '/sounds/keyboard.mp3' },
-  { name: 'Blizzard', icon: <FaSnowflake />, file: '/sounds/blizzard.mp3' },
+  { name: "Rain", icon: <FaUmbrella />, file: "/sounds/rain.mp3" },
+  { name: "Fire", icon: <FaFire />, file: "/sounds/fire.mp3" },
+  { name: "Ocean", icon: <FaWater />, file: "/sounds/ocean.mp3" },
+  { name: "Keyboard", icon: <FaKeyboard />, file: "/sounds/keyboard.mp3" },
+  { name: "Blizzard", icon: <FaSnowflake />, file: "/sounds/blizzard.mp3" },
 ];
 
 export default function Sounds({ onMinimize }) {
@@ -23,7 +29,7 @@ export default function Sounds({ onMinimize }) {
     });
 
     return () => {
-      currentAudioRefs.forEach(audio => audio.pause());
+      currentAudioRefs.forEach((audio) => audio.pause());
     };
   }, []);
 
@@ -47,7 +53,9 @@ export default function Sounds({ onMinimize }) {
           <h2>Ambient Sounds</h2>
           <div className={styles.tooltip}>
             <span className="material-icons">help</span>
-            <span className={styles.tooltiptext}>Play ambient sounds for focus.</span>
+            <span className={styles.tooltiptext}>
+              Play ambient sounds for focus.
+            </span>
           </div>
           <button onClick={onMinimize} className={styles.minimizeButton}>
             <span className="material-icons">remove</span>
@@ -63,7 +71,9 @@ export default function Sounds({ onMinimize }) {
                 min="0"
                 max="100"
                 value={volumes[index]}
-                onChange={(e) => handleVolumeChange(index, parseInt(e.target.value))}
+                onChange={(e) =>
+                  handleVolumeChange(index, parseInt(e.target.value))
+                }
                 className={styles.slider}
               />
             </div>

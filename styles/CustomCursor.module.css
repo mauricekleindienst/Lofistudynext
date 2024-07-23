@@ -23,3 +23,9 @@
 .cursor.grabbing {
   cursor: grabbing;
 }
+
+@media (max-width: 650px) {
+  .cursor {
+    display: none;
+  }
+}

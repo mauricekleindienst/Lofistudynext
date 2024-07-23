@@ -1,25 +1,28 @@
-import { Pool } from 'pg';
+import { Pool } from "pg";
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: {
-    rejectUnauthorized: false
-  }
+    rejectUnauthorized: false,
+  },
 });
 
 export default async function handler(req, res) {
   const { email, firstname, increment, category } = req.body;
 
-  if (!email || !firstname || typeof increment !== 'number' || !category) {
-    return res.status(400).json({ error: 'Invalid request' });
+  if (!email || !firstname || typeof increment !== "number" || !category) {
+    return res.status(400).json({ error: "Invalid request" });
   }
 
   try {
     const client = await pool.connect();
 
-    const userResult = await client.query('SELECT * FROM user_pomodoros WHERE email = $1', [email]);
+    const userResult = await client.query(
+      "SELECT * FROM user_pomodoros WHERE email = $1",
+      [email]
+    );
 
-    const today = new Date().toISOString().split('T')[0]; // Get the current date in YYYY-MM-DD format
+    const today = new Date().toISOString().split("T")[0]; // Get the current date in YYYY-MM-DD format
 
     if (userResult.rows.length > 0) {
       const user = userResult.rows[0];
@@ -51,9 +54,9 @@ export default async function handler(req, res) {
     }
 
     client.release();
-    res.status(200).json({ message: 'Pomodoro count updated' });
+    res.status(200).json({ message: "Pomodoro count updated" });
   } catch (error) {
-    console.error('Error updating Pomodoro count:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    console.error("Error updating Pomodoro count:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
 }

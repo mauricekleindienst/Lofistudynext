@@ -71,6 +71,15 @@ app.prepare().then(() => {
       handle(req, res);
     }
   });
+  server.get('/auth/signing', (req, res) => {
+    const md = new MobileDetect(req.headers['user-agent']);
+
+    if (md.mobile()) {
+      res.redirect('/app_mobile');
+    } else {
+      handle(req, res);
+    }
+  });
 
   server.all('*', (req, res) => {
     return handle(req, res);
