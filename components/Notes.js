@@ -16,6 +16,7 @@ export default function Notes({ onMinimize }) {
   const [pages, setPages] = useState([]);
   const [selectedPage, setSelectedPage] = useState(null);
   const [content, setContent] = useState("");
+  const [error, setError] = useState("");
 
   useEffect(() => {
     if (session && status === "authenticated") {
@@ -26,30 +27,70 @@ export default function Notes({ onMinimize }) {
   useEffect(() => {
     if (selectedPage) {
       setContent(selectedPage.content);
-      initializeEditor(selectedPage.content);
+      initializeEditor(selectedPage.content).catch(error => {
+        console.error("Failed to initialize editor:", error);
+      });
     }
-  }, [selectedPage]);
+  }, [selectedPage?.id]);
+
+  const getFirstSevenWords = (blocks) => {
+    let words = [];
+    for (let block of blocks) {
+      if (block.type === 'paragraph' || block.type === 'header') {
+        words = words.concat(block.data.text.split(' '));
+        if (words.length >= 7) break;
+      }
+    }
+    return words.slice(0, 7).join(' ');
+  };
 
   const initializeEditor = async (data) => {
     const EditorJSModule = (await import("@editorjs/editorjs")).default;
     const HeaderModule = (await import("@editorjs/header")).default;
 
     if (editorInstance.current) {
-      await editorInstance.current.isReady;
-      editorInstance.current.destroy();
+      try {
+        await editorInstance.current.isReady;
+        if (typeof editorInstance.current.destroy === 'function') {
+          await editorInstance.current.destroy();
+        }
+      } catch (error) {
+        console.warn("Error destroying previous EditorJS instance:", error);
+      }
     }
 
-    editorInstance.current = new EditorJSModule({
-      holder: editorRef.current,
-      tools: {
-        header: HeaderModule,
-      },
-      data: data ? JSON.parse(data) : {},
-      onChange: async () => {
-        const savedData = await editorInstance.current.save();
-        saveNoteToServer(savedData);
-      },
-    });
+    try {
+      editorInstance.current = new EditorJSModule({
+        holder: editorRef.current,
+        tools: {
+          header: HeaderModule,
+        },
+        data: data ? JSON.parse(data) : {},
+        onChange: async () => {
+          if (editorInstance.current) {
+            const savedData = await editorInstance.current.save();
+            const newTitle = getFirstSevenWords(savedData.blocks);
+            
+            // Update the local state
+            setSelectedPage(prevPage => ({
+              ...prevPage,
+              title: newTitle,
+              content: JSON.stringify(savedData)
+            }));
+
+            // Save to server
+            saveNoteToServer({
+              ...savedData,
+              title: newTitle
+            });
+          }
+        },
+      });
+
+      await editorInstance.current.isReady;
+    } catch (error) {
+      console.error("Error initializing EditorJS:", error);
+    }
   };
 
   const fetchNotesFromServer = async () => {
@@ -62,10 +103,13 @@ export default function Notes({ onMinimize }) {
           setSelectedPage(notes[0]);
         }
       } else {
-        console.error("Failed to fetch notes:", await response.json());
+        const errorData = await response.json();
+        console.error("Failed to fetch notes:", errorData);
+        setError(`Failed to fetch notes: ${errorData.message || "Unknown error"}`);
       }
     } catch (error) {
       console.error("Error fetching notes:", error);
+      setError("An unexpected error occurred while fetching notes. Please try again.");
     }
   };
 
@@ -79,11 +123,19 @@ export default function Notes({ onMinimize }) {
         body: JSON.stringify({
           id: selectedPage?.id,
           email: session.user.email,
-          title: selectedPage?.title,
+          title: savedData.title,
           content: JSON.stringify(savedData),
         }),
       });
-      if (!response.ok) {
+      if (response.ok) {
+        const updatedNote = await response.json();
+        setPages(prevPages =>
+          prevPages.map(page =>
+            page.id === updatedNote.id ? updatedNote : page
+          )
+        );
+        setSelectedPage(updatedNote);
+      } else {
         console.error("Failed to save note:", await response.json());
       }
     } catch (error) {
@@ -104,6 +156,11 @@ export default function Notes({ onMinimize }) {
   };
 
   const deletePage = async (pageId) => {
+    if (pages[0].id === pageId) {
+      alert("The first page cannot be deleted.");
+      return;
+    }
+
     try {
       const response = await fetch("/api/notes", {
         method: "DELETE",
@@ -146,7 +203,7 @@ export default function Notes({ onMinimize }) {
           </div>
           <div className={styles.content}>
             <div className={styles.pageList}>
-              {pages.map((page) => (
+              {pages.map((page, index) => (
                 <div
                   key={page.id}
                   className={`${styles.pageItem} ${
@@ -155,15 +212,17 @@ export default function Notes({ onMinimize }) {
                   onClick={() => setSelectedPage(page)}
                 >
                   {page.title}
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      deletePage(page.id);
-                    }}
-                    className="material-icons"
-                  >
-                    delete
-                  </button>
+                  {index !== 0 && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        deletePage(page.id);
+                      }}
+                      className="material-icons"
+                    >
+                      delete
+                    </button>
+                  )}
                 </div>
               ))}
               <button onClick={createNewPage} className={styles.addPageButton}>

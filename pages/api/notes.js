@@ -57,23 +57,24 @@ const saveNoteHandler = async (req, res) => {
 
   try {
     const client = await pool.connect();
+    let result;
 
     if (id) {
       // Update existing note
-      await client.query(
-        "UPDATE notes SET title = $1, content = $2 WHERE id = $3 AND email = $4",
+      result = await client.query(
+        "UPDATE notes SET title = $1, content = $2 WHERE id = $3 AND email = $4 RETURNING *",
         [title, content, id, email]
       );
     } else {
       // Insert new note
-      await client.query(
-        "INSERT INTO notes (email, title, content) VALUES ($1, $2, $3)",
+      result = await client.query(
+        "INSERT INTO notes (email, title, content) VALUES ($1, $2, $3) RETURNING *",
         [email, title, content]
       );
     }
 
     client.release();
-    res.status(200).json({ message: "Note saved successfully" });
+    res.status(200).json(result.rows[0]);
   } catch (error) {
     console.error("Error saving note:", error);
     res.status(500).json({ error: "Internal server error" });
