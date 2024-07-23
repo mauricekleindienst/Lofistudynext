@@ -11,7 +11,7 @@ export default function Footer() {
             <div className={styles.footerContent}>
                 <div className={styles.logo}>
                     <Link href="/">
-                    <Image src="/lo-fi.study.svg" alt="Atla" />
+                    <Image src="/lo-fi.study.svg" alt="LoFi" width={100} height={100}/>
                     </Link>
                     <p>Creating A Study Space with LoFi</p>
                     <button className={styles.signUpButton}>Sign Up</button>

@@ -54,6 +54,7 @@
 .logo image {
   height: 80px;
   margin-right: 10px;
+  width: auto;
 }
 
 .logo span {

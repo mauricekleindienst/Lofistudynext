@@ -107,6 +107,7 @@ export default function SignIn() {
          <Image
             src="/icons/google.svg"
             alt="Google icon"
+            width={100} height={100}
             className={styles.authButtonIcon}
           />
           Sign in with Google
@@ -118,6 +119,7 @@ export default function SignIn() {
          <Image
             src="/icons/discord.svg"
             alt="Discord icon"
+            width={100} height={100}
             className={styles.authButtonIcon}
           />
           Sign in with Discord

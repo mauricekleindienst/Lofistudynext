@@ -9,7 +9,7 @@ export default function Header() {
   return (
     <header className={styles.header}>
       <div className={styles.logo} onClick={() => router.push("/")}>
-      <Image src="/lo-fi.study.svg" alt="lo-fi.study" />
+      <Image src="/lo-fi.study.svg" alt="lo-fi.study" width={100} height={100} />
       </div>
       <div className={styles.buttonContainer}>
         <button
