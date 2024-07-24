@@ -72,6 +72,15 @@ export default function PomodoroTimer({ onMinimize }) {
     longPause: useRef(null),
   };
 
+  // Load sounds on mount and ensure they play on user interaction
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      soundRefs.pomodoroStart.current = new Audio("/sounds/alert-work.mp3");
+      soundRefs.pomodoroEnd.current = new Audio("/sounds/alert-short-break.mp3");
+      soundRefs.longPause.current = new Audio("/sounds/alert-long-break.mp3");
+    }
+  }, []);
+
   const playSound = useCallback((soundRef) => {
     if (soundRef.current) {
       soundRef.current
@@ -100,13 +109,6 @@ export default function PomodoroTimer({ onMinimize }) {
 
   useEffect(() => {
     requestNotificationPermission();
-    if (typeof window !== "undefined") {
-      soundRefs.pomodoroStart.current = new Audio("/sounds/alert-work.mp3");
-      soundRefs.pomodoroEnd.current = new Audio(
-        "/sounds/alert-short-break.mp3"
-      );
-      soundRefs.longPause.current = new Audio("/sounds/alert-long-break.mp3");
-    }
   }, [requestNotificationPermission]);
 
   useEffect(() => {
