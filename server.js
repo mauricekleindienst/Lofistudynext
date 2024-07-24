@@ -65,7 +65,7 @@ app.prepare().then(() => {
   server.get('/app', (req, res) => {
     const md = new MobileDetect(req.headers['user-agent']);
 
-    if (md.mobile()) {
+    if (md.phone()) {
       res.redirect('/app_mobile');
     } else {
       handle(req, res);
@@ -74,7 +74,7 @@ app.prepare().then(() => {
   server.get('/auth/signing', (req, res) => {
     const md = new MobileDetect(req.headers['user-agent']);
 
-    if (md.mobile()) {
+    if (md.phone()) {
       res.redirect('/app_mobile');
     } else {
       handle(req, res);
