@@ -6,7 +6,11 @@ module.exports = {
     './styles/**/*.css', // Include all CSS files in the styles directory
   ],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        comfortaa: ['Comfortaa', 'Helvetica Neue', 'Arial', 'sans-serif'],
+      },
+    },
   },
   variants: {
     extend: {

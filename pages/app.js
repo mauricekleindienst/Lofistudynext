@@ -133,8 +133,7 @@ export default function Study() {
         userName={getFirstName(session.user.name)}
         onIconClick={handleIconClick}
       />
-      <div className={styles.container}>
-        <video
+       <video
           className={styles.videoBackground}
           autoPlay
           loop
@@ -142,6 +141,8 @@ export default function Study() {
           playsInline
           src={selectedBackground}
         ></video>
+      <div className={styles.container}>
+       
         <main className={styles.main}>
           <aside
             className={`${styles.sidebar} ${

@@ -1,23 +1,46 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
 @import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;700&display=swap');
+
+/* Add the @font-face rule */
+@font-face {
+  font-family: 'Comfortaa';
+  src: url('https://fonts.gstatic.com/s/comfortaa/v30/1Ptsg8LJRfWJmhDAuUs4TYFf.ttf') format('truetype');
+  font-weight: 300;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Comfortaa';
+  src: url('https://fonts.gstatic.com/s/comfortaa/v30/1Ptsg8LJRfWJmhDAuUs4TGFf.ttf') format('truetype');
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Comfortaa';
+  src: url('https://fonts.gstatic.com/s/comfortaa/v30/1Ptsg8LJRfWJmhDAuUs4TWFf.ttf') format('truetype');
+  font-weight: 700;
+  font-display: swap;
+}
+
 body, html, #__next {
   height: 100%;
   margin: 0;
 }
+
 * {
- -webkit-user-select:  none;   /* Safari */
-  -moz-user-select: none;    /* Firefox */
-  -ms-user-select: none;     /* Internet Explorer/Edge */
-  user-select: none;         /* Non-prefixed version, currently supported by Chrome, Opera and Edge */
+  -webkit-user-select: none;   /* Safari */
+  -moz-user-select: none;      /* Firefox */
+  -ms-user-select: none;       /* Internet Explorer/Edge */
+  user-select: none;           /* Non-prefixed version, currently supported by Chrome, Opera and Edge */
 }
+
 body {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: 'Comfortaa', cursive;
+  font-family: 'Comfortaa', 'Helvetica Neue', Arial, sans-serif;
   background-color: #111;
   color: #fff;
   cursor: none !important;
@@ -30,7 +53,7 @@ a {
 
 * {
   box-sizing: border-box;
-  cursor: none!important;
+  cursor: none !important;
 }
 
 /* Custom scrollbar styles */
@@ -52,8 +75,8 @@ a {
   background-color: #555; /* Color of the scrollbar thumb on hover */
 }
 
-@media (max-width: 650px) {
+@media (max-width: 1000px) {
   .cursor {
-    display: flex!important;
+    display: flex !important;
   }
 }
