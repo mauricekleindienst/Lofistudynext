@@ -90,19 +90,13 @@ export default function PomodoroTimer({ onMinimize }) {
   }, []);
 
   const requestNotificationPermission = useCallback(() => {
-    if (
-      typeof window !== "undefined" &&
-      Notification.permission !== "granted"
-    ) {
+    if (typeof window !== "undefined" && "Notification" in window && Notification.permission !== "granted") {
       Notification.requestPermission();
     }
   }, []);
 
   const showNotification = useCallback((title, message) => {
-    if (
-      typeof window !== "undefined" &&
-      Notification.permission === "granted"
-    ) {
+    if (typeof window !== "undefined" && "Notification" in window && Notification.permission === "granted") {
       new Notification(title, { body: message });
     }
   }, []);
