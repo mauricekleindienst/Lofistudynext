@@ -75,7 +75,7 @@ a {
   background-color: #555; /* Color of the scrollbar thumb on hover */
 }
 
-@media (max-width: 1000px) {
+@media (max-width: 1200px) {
   .cursor {
     display: flex !important;
   }
