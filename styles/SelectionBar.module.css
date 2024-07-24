@@ -84,3 +84,11 @@
   transform: scale(1.1);
   position: absolute;
 }
+
+@media (max-width: 1180px) {
+  .container {
+    transform: scale(0.7);
+    transform-origin: top left;
+    padding: 10px;
+  }
+}

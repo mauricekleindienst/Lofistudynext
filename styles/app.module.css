@@ -341,5 +341,7 @@
     transform: scale(0.8);
     transform-origin: top left;
     padding: 10px;
+    z-index: 9999;
   }
 }
+
