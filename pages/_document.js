@@ -1,4 +1,5 @@
 import { Html, Head, Main, NextScript } from "next/document";
+import CookieBanner from "../components/CookieBanner";
 
 export default function Document() {
   const jsonLdData = {
@@ -23,6 +24,7 @@ export default function Document() {
   return (
     <Html lang="en">
       <Head>
+      <CookieBanner />
         <link rel="shortcut icon" href="/favicon.ico" />
         <link
           href="https://fonts.googleapis.com/icon?family=Material+Icons"

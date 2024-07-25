@@ -3,15 +3,14 @@ import { UserProvider } from "../context/UserContext";
 import "../styles/globals.css";
 
 import Head from "next/head";
-import '../public/pdfjs-worker.js';
+import "../public/pdfjs-worker.js";
 import CookieBanner from "../components/CookieBanner";
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }) {
   return (
     <SessionProvider session={session}>
       <UserProvider>
-        
-      <CookieBanner />
+        <CookieBanner />
         <Head>
           <title>Lo-Fi.Study</title>
           <link rel="shortcut icon" href="/favicon.ico" />
