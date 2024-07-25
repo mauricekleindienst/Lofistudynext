@@ -43,7 +43,6 @@ body {
   font-family: 'Comfortaa', 'Helvetica Neue', Arial, sans-serif;
   background-color: #111;
   color: #fff;
-  cursor: none !important;
 }
 
 a {
@@ -53,7 +52,7 @@ a {
 
 * {
   box-sizing: border-box;
-  cursor: none !important;
+
 }
 
 /* Custom scrollbar styles */
