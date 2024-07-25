@@ -7,7 +7,7 @@ import "react-responsive-carousel/lib/styles/carousel.min.css";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import styles from "../styles/Home.module.css";
-
+import CookieBanner from "../components/CookieBanner";
 import Image from "next/image";
 
 export default function Landing() {
@@ -93,7 +93,7 @@ export default function Landing() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Header />
-      
+      <CookieBanner />	
       <main className={styles.main}>
         <motion.div
           className={styles.welcomeWrapper}
