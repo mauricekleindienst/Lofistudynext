@@ -35,9 +35,9 @@ export default function Terms() {
 
           <h2>Operator Information (Impressum)</h2>
           <p>
-            <strong>Operator:</strong> [Maurice Kleindienst]<br />
-            <strong>Address:</strong> [Oberzwehrenerstraße 62b]<br />
-            <strong>Email:</strong> [support@lo-fi.study]<br />
+            <strong>Operator:</strong> Maurice Kleindienst<br />
+            <strong>Address:</strong>Oberzwehrenerstraße 62b, Kassel<br />
+            <strong>Email:</strong> support@lo-fi.study<br />
           </p>
 
           <h2>1. Scope of Application</h2>
@@ -47,22 +47,22 @@ export default function Terms() {
 
           <h2>2. Contract Formation</h2>
           <p>
-            The presentation of products and services on our website does not constitute a legally binding offer, but rather a non-binding online catalog. By clicking the [Buy/Order] button, you submit a binding order.
+            The presentation of products and services on our website does not constitute a legally binding offer, but rather a non-binding online catalog. By clicking the Buy/Order button, you submit a binding order.
           </p>
 
           <h2>3. Right of Withdrawal</h2>
           <p>
-            As a consumer, you have the right to withdraw from this contract within fourteen days without giving any reason. The withdrawal period will expire after 14 days from the day of the conclusion of the contract. [Detailed information about the right of withdrawal to follow]
+            As a consumer, you have the right to withdraw from this contract within fourteen days without giving any reason. The withdrawal period will expire after 14 days from the day of the conclusion of the contract.
           </p>
 
           <h2>4. Prices and Payment</h2>
           <p>
-            All prices are final prices and include statutory VAT. Payment is made via [payment methods].
+            All prices are final prices and include statutory VAT. Payment methods will be specified at checkout.
           </p>
 
           <h2>5. Delivery</h2>
           <p>
-            Delivery will be made within [delivery time] after receipt of payment. [Further details on delivery]
+            As we provide digital services, delivery is typically immediate upon successful payment processing.
           </p>
 
           <h2>6. Warranty</h2>
@@ -87,7 +87,7 @@ export default function Terms() {
 
           <h2>10. Applicable Law and Jurisdiction</h2>
           <p>
-            The law of the Federal Republic of Germany applies, excluding the UN Convention on Contracts for the International Sale of Goods. For consumers with habitual residence in the EU, the mandatory provisions of the law of the country of residence shall also apply. The place of jurisdiction for merchants within the meaning of the German Commercial Code is [your jurisdiction].
+            The law of the Federal Republic of Germany applies, excluding the UN Convention on Contracts for the International Sale of Goods. For consumers with habitual residence in the EU, the mandatory provisions of the law of the country of residence shall also apply. The place of jurisdiction for merchants within the meaning of the German Commercial Code is Kassel, Germany.
           </p>
 
           <h2>11. Dispute Resolution</h2>
@@ -105,10 +105,9 @@ export default function Terms() {
             If you have any questions about these Terms and Conditions, please contact us at:
           </p>
           <p>
-            [Your Full Name or Company Name]<br />
-            [Your Full Address]<br />
-            Email: [Your Email]<br />
-            Phone: [Your Phone Number]
+            Maurice Kleindienst<br />
+            Oberzwehrenerstraße 62b, Kassel<br />
+            Email: support@lo-fi.study
           </p>
 
           <p>

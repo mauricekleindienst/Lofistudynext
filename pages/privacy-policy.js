@@ -31,8 +31,8 @@ export default function PrivacyPolicy() {
 
           <h2>1. Introduction</h2>
           <p>
-            Lo-Fi Study ("we", "us", or "our") respects your privacy and is committed to protecting your personal data. This privacy policy will inform you about how we look after your personal data when you visit our website and tell you about your privacy rights and how the law protects you.
-          </p>
+  Lo-Fi Study (&ldquo;we&rdquo;, &ldquo;us&rdquo;, or &ldquo;our&rdquo;) respects your privacy and is committed to protecting your personal data. This privacy policy will inform you about how we look after your personal data when you visit our website and tell you about your privacy rights and how the law protects you.
+</p>
 
           <h2>2. Data Controller</h2>
           <p>
