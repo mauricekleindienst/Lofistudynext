@@ -4,12 +4,14 @@ import "../styles/globals.css";
 import CustomCursor from "../components/CustomCursor";
 import Head from "next/head";
 import '../public/pdfjs-worker.js';
+import CookieBanner from "../components/CookieBanner";
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }) {
   return (
     <SessionProvider session={session}>
       <UserProvider>
         <CustomCursor />
+      <CookieBanner />
         <Head>
           <title>Lo-Fi.Study</title>
           <link rel="shortcut icon" href="/favicon.ico" />
