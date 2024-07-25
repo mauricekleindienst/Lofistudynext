@@ -84,7 +84,7 @@ export default function PrivacyPolicy() {
           <p>If you wish to exercise any of these rights, please contact us at support@lo-fi.study.</p>
 
           <h2>9. Changes to This Privacy Policy</h2>
-          <p>We may update our Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page and updating the "Effective Date" at the top of this Privacy Policy.</p>
+          <p>We may update our Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page and updating the Effective Date at the top of this Privacy Policy.</p>
 
           <h2>10. Contact Us</h2>
           <p>If you have any questions about this Privacy Policy, you can contact us at support@lo-fi.study.</p>
