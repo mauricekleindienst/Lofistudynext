@@ -5,7 +5,7 @@ import Head from "next/head";
 import { useState } from "react";
 import Link from "next/link";
 import styles from "../styles/Home.module.css";
-import CustomCursor from "../components/CustomCursor";
+
 export default function Contact() {
   const router = useRouter();
   const [name, setName] = useState("");

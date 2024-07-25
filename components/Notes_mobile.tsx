@@ -1,5 +1,5 @@
 import styles from "../styles/Notes_mobile.module.css";
-import CustomCursor from "../components/CustomCursor";
+
 const NotesMobile = ({ onMinimize }) => {
   return (
     <div className={styles.container}>

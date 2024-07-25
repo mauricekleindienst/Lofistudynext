@@ -7,7 +7,7 @@ import Link from "next/link";
 import Footer from "../components/Footer";
 import { useState } from "react";
 import styles from "../styles/Home.module.css";
-import CustomCursor from "../components/CustomCursor";
+
 export default function Terms() {
   const router = useRouter();
   const [name, setName] = useState("");
@@ -48,7 +48,7 @@ export default function Terms() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Header />
-      <CustomCursor />
+      
       <main className={styles.main}>
         <section className={styles.contactSection}>
           <h1 className={styles.title}>Terms of Service</h1>

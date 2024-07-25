@@ -5,7 +5,7 @@ import { useState } from "react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import styles from "../styles/Home.module.css";
-import CustomCursor from "../components/CustomCursor";
+
 export default function Contact() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -44,7 +44,7 @@ export default function Contact() {
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <CustomCursor />
+      
       <Header />
       terms-of-service.js privacy-policy.js
       <main className={styles.main}>

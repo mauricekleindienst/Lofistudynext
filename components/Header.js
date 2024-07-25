@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 import styles from "../styles/Home.module.css";
-import CustomCursor from "../components/CustomCursor";
+
 import Image from "next/image";
 
 export default function Header() {

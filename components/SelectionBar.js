@@ -9,7 +9,7 @@ import Scoreboard from "./Scoreboard";
 import Settings from "./Settings";
 
 import Todo from "./Todo";
-import CustomCursor from "../components/CustomCursor";
+
 import Stats from "./Stats";
 import styles from "../styles/SelectionBar.module.css";
 import YouTubePlayer from "./YouTubePlayer";
@@ -102,7 +102,7 @@ export default function SelectionBar({ userEmail, userName }) {
             </div>
           )}
         </Droppable>
-        <CustomCursor />
+        
       </DragDropContext>
       {Object.entries(components).map(([name, Component]) => (
         <div

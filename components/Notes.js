@@ -4,7 +4,7 @@ import Draggable from "react-draggable";
 import { ResizableBox } from "react-resizable";
 import dynamic from "next/dynamic";
 import { useSession } from "next-auth/react";
-import CustomCursor from "../components/CustomCursor";
+
 import styles from "../styles/Notes.module.css";
 
 const EditorJS = dynamic(() => import("@editorjs/editorjs"), { ssr: false });

@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import styles from '../styles/Footer.module.css';
-import CustomCursor from '../components/CustomCursor';
+
 import Image from 'next/image';
 
 export default function Footer() {

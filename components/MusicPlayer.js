@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import YouTube from 'react-youtube';
 import { debounce } from 'lodash';
 import styles from '../styles/MusicPlayer.module.css';
-import CustomCursor from '../components/CustomCursor';
+
 
 const initialTracks = [
   { id: 1, title: 'LoFi', videoId: 'jfKfPfyJRdk' },

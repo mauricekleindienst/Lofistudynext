@@ -8,7 +8,7 @@ import { toolbarPlugin, zoomPlugin } from "@react-pdf-viewer/toolbar";
 import "@react-pdf-viewer/core/lib/styles/index.css";
 import "@react-pdf-viewer/toolbar/lib/styles/index.css";
 import "../styles/react-pdf-viewer-overrides.css";
-import CustomCursor from "../components/CustomCursor";
+
 import pdfjs from "pdfjs-dist/package.json"; // Import the entire module
 
 export default function CustomHeader() {
