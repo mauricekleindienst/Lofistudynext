@@ -3,7 +3,7 @@ import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import PomodoroTimer from "./PomodoroTimer";
 import Sounds from "./Sounds";
 import Notes from "./Notes";
-import Calendar from "./Calendar";
+//import Calendar from "./Calendar";
 import LiveChat from "./LiveChat";
 import Scoreboard from "./Scoreboard";
 import Settings from "./Settings";
@@ -19,7 +19,7 @@ const initialIcons = [
   { id: "sounds", label: "Sounds", icon: "graphic_eq" },
   { id: "youtubePlayer", label: "YouTube", icon: "smart_display" },
   { id: "chat", label: "Chat", icon: "chat" },
-  { id: "calendar", label: "Calendar", icon: "event" },
+ // { id: "calendar", label: "Calendar", icon: "event" },
   { id: "todo", label: "Todo", icon: "checklist" },
   { id: "note", label: "Note", icon: "edit" },
   { id: "stats", label: "Stats", icon: "bar_chart" },
@@ -31,7 +31,7 @@ const components = {
   pomodoro: PomodoroTimer,
   sounds: Sounds,
   note: Notes,
-  calendar: Calendar,
+  //calendar: Calendar,
   chat: LiveChat,
   scoreboard: Scoreboard,
   youtubePlayer: YouTubePlayer,
