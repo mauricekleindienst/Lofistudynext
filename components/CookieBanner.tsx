@@ -7,12 +7,18 @@ const CookieBanner = () => {
   const [preferences, setPreferences] = useState({
     analytics: false,
     marketing: false,
-    functional: false,
+    functional: true, // Functional cookies are usually necessary
   });
 
   useEffect(() => {
     const cookieConsent = Cookies.get('cookie_consent');
-    if (!cookieConsent) {
+    if (cookieConsent) {
+      setIsBannerVisible(false);
+      const savedPreferences = Cookies.get('cookie_preferences');
+      if (savedPreferences) {
+        setPreferences(JSON.parse(savedPreferences));
+      }
+    } else {
       setIsBannerVisible(true);
     }
   }, []);
@@ -29,6 +35,11 @@ const CookieBanner = () => {
 
   const handleRejectCookies = () => {
     Cookies.set('cookie_consent', 'false', { expires: 365 });
+    Cookies.set('cookie_preferences', JSON.stringify({
+      analytics: false,
+      marketing: false,
+      functional: true,
+    }), { expires: 365 });
     setIsBannerVisible(false);
   };
 
@@ -58,10 +69,9 @@ const CookieBanner = () => {
   return (
     <div>
       {isBannerVisible && (
-        <div className="cookie-banner">
+        <div className="cookie-banner" role="alert" aria-live="polite">
           <p>We use cookies to ensure you get the best experience on our website.</p>
           <div>
-           
             <button onClick={handleRejectCookies}>Reject Cookies</button>
             <button onClick={handleCustomizeCookies}>Customize</button>
             <button onClick={handleAcceptCookies}>Accept Cookies</button>
@@ -70,9 +80,9 @@ const CookieBanner = () => {
       )}
 
       {isModalVisible && (
-        <div className="modal">
+        <div className="modal" role="dialog" aria-labelledby="modal-title">
           <div className="modal-content">
-            <h2>Customize Cookie Preferences</h2>
+            <h2 id="modal-title">Customize Cookie Preferences</h2>
             <div className="preferences">
               <label>
                 <input
@@ -100,6 +110,7 @@ const CookieBanner = () => {
                   name="functional"
                   checked={preferences.functional}
                   onChange={handlePreferenceChange}
+                  disabled
                 />
                 <span className="label-text">Functional Cookies</span>
                 <span className="description">Necessary for the basic functionality of the site.</span>
@@ -173,12 +184,16 @@ const CookieBanner = () => {
         }
         .preferences label {
           display: flex;
-          align-items: center;
+          align-items: flex-start;
           margin-bottom: 1rem;
         }
-        .label-text {
+            input[type="checkbox"] {
+          margin-top: 0.25rem;
+        }
+         .label-text {
           flex: 1;
           color: #ff9900;
+          margin-left: 0.5rem;
         }
         .description {
           flex: 2;
