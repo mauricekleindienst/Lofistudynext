@@ -37,6 +37,7 @@ const CookieBanner = () => {
           display: flex;
           justify-content: space-between;
           align-items: center;
+          z-index: 9999;
         }
         button {
           background: #fff;
