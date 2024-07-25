@@ -78,6 +78,7 @@
     "typed.js": "^2.1.0",
     "typescript": "^5.5.3",
     "winston": "^3.13.1"
+    "js-cookie": "^3.0.1"
   },
   "engines": {
     "node": ">=16.0.0"
