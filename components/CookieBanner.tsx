@@ -70,7 +70,7 @@ const CookieBanner = () => {
     <div>
       {isBannerVisible && (
         <div className="cookie-banner" role="alert" aria-live="polite">
-          <p>We use cookies to ensure you get the best experience on our website.</p>
+          <p>We use cookies to ensure you get the best experience on while Studying on Lo-Fi.Study.</p>
           <div>
             <button onClick={handleRejectCookies}>Reject Cookies</button>
             <button onClick={handleCustomizeCookies}>Customize</button>
