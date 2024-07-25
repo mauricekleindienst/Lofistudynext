@@ -6,6 +6,7 @@ import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+
 import styles from "../styles/Home.module.css";
 import CookieBanner from "../components/CookieBanner";
 import Image from "next/image";
@@ -55,6 +56,8 @@ export default function Landing() {
                   className={styles.carouselImage}
                   src={image.src}
                   alt={image.alt}
+                  width={800}
+                  height={600}
                 />
               </div>
             ))}
