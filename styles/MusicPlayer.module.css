@@ -201,283 +201,41 @@
   background-color: #ff9900;
 }
 
-/* Responsive CSS for iPads */
-
-/* iPad Pro 12.9" (2048x2732) */
-@media only screen and (min-device-width: 1024px) and (max-device-width: 1366px) and (-webkit-min-device-pixel-ratio: 2) and (orientation: portrait) {
+@media (max-width: 1024px) {
   .musicPlayerContainer {
-    max-width: 500px;
-  }
-
-  .header h2 {
-    font-size: 28px;
-  }
-
-  .trackInfo h3 {
-    font-size: 20px;
-  }
-
-  .controlButton {
-    padding: 18px;
-    font-size: 26px;
-  }
-
-  .volumeControl {
-    margin-top: 25px;
-  }
-
-  .slider {
-    width: 250px;
-  }
-
-  .trackSelection {
-    max-height: 200px;
-  }
-
-  .addButton,
-  .removeButton {
-    padding: 12px;
-    font-size: 16px;
-  }
-
-  .formContainer {
-    top: -270px;
-    padding: 25px;
-  }
-
-  .form input {
-    width: 85%;
-  }
-}
-
-@media only screen and (min-device-width: 1024px) and (max-device-width: 1366px) and (-webkit-min-device-pixel-ratio: 2) and (orientation: landscape) {
-  .musicPlayerContainer {
-    max-width: 450px;
-  }
-
-  .header h2 {
-    font-size: 26px;
-  }
-
-  .trackInfo h3 {
-    font-size: 19px;
-  }
-
-  .controlButton {
-    padding: 17px;
-    font-size: 25px;
-  }
-
-  .volumeControl {
-    margin-top: 22px;
-  }
-
-  .slider {
-    width: 230px;
-  }
-
-  .trackSelection {
-    max-height: 180px;
-  }
-
-  .addButton,
-  .removeButton {
-    padding: 11px;
-    font-size: 15px;
-  }
-
-  .formContainer {
-    top: -260px;
-    padding: 22px;
-  }
-
-  .form input {
-    width: 82%;
-  }
-}
-
-/* iPad Air & iPad Mini (834x1112, 810x1080) */
-@media only screen and (min-device-width: 768px) and (max-device-width: 1024px) and (-webkit-min-device-pixel-ratio: 2) and (orientation: portrait) {
-  .musicPlayerContainer {
-    max-width: 450px;
-  }
-
-  .header h2 {
-    font-size: 24px;
-  }
-
-  .trackInfo h3 {
-    font-size: 18px;
-  }
-
-  .controlButton {
-    padding: 16px;
-    font-size: 24px;
-  }
-
-  .volumeControl {
-    margin-top: 20px;
-  }
-
-  .slider {
-    width: 220px;
-  }
-
-  .trackSelection {
-    max-height: 160px;
-  }
-
-  .addButton,
-  .removeButton {
-    padding: 10px;
-    font-size: 14px;
-  }
-
-  .formContainer {
-    top: -250px;
+    width: 100%;
     padding: 20px;
   }
-
-  .form input {
-    width: 80%;
+  
+  .controls {
+    margin: 20px 0;
   }
-}
-
-@media only screen and (min-device-width: 768px) and (max-device-width: 1024px) and (-webkit-min-device-pixel-ratio: 2) and (orientation: landscape) {
-  .musicPlayerContainer {
-    max-width: 400px;
-  }
-
-  .header h2 {
-    font-size: 22px;
-  }
-
-  .trackInfo h3 {
-    font-size: 17px;
-  }
-
+  
   .controlButton {
+    width: 60px;
+    height: 60px;
+    font-size: 24px;
+  }
+  
+  .volumeControl {
+    margin: 20px 0;
+  }
+  
+  .slider {
+    height: 20px;
+  }
+  
+  .trackSelection {
+    margin-top: 20px;
+  }
+  
+  .trackItem {
     padding: 15px;
-    font-size: 23px;
+    font-size: 18px;
   }
-
-  .volumeControl {
-    margin-top: 18px;
-  }
-
-  .slider {
-    width: 210px;
-  }
-
-  .trackSelection {
-    max-height: 150px;
-  }
-
-  .addButton,
-  .removeButton {
-    padding: 9px;
-    font-size: 13px;
-  }
-
-  .formContainer {
-    top: -240px;
-    padding: 18px;
-  }
-
-  .form input {
-    width: 78%;
-  }
-}
-
-/* iPad Mini (744x1133) */
-@media only screen and (min-device-width: 744px) and (max-device-width: 1133px) and (-webkit-min-device-pixel-ratio: 2) and (orientation: portrait) {
-  .musicPlayerContainer {
-    max-width: 400px;
-  }
-
-  .header h2 {
-    font-size: 22px;
-  }
-
-  .trackInfo h3 {
-    font-size: 17px;
-  }
-
-  .controlButton {
-    padding: 15px;
-    font-size: 23px;
-  }
-
-  .volumeControl {
-    margin-top: 18px;
-  }
-
-  .slider {
-    width: 210px;
-  }
-
-  .trackSelection {
-    max-height: 150px;
-  }
-
-  .addButton,
-  .removeButton {
-    padding: 9px;
-    font-size: 13px;
-  }
-
-  .formContainer {
-    top: -240px;
-    padding: 18px;
-  }
-
-  .form input {
-    width: 78%;
-  }
-}
-
-@media only screen and (min-device-width: 744px) and (max-device-width: 1133px) and (-webkit-min-device-pixel-ratio: 2) and (orientation: landscape) {
-  .musicPlayerContainer {
-    max-width: 380px;
-  }
-
-  .header h2 {
-    font-size: 20px;
-  }
-
-  .trackInfo h3 {
-    font-size: 16px;
-  }
-
-  .controlButton {
-    padding: 14px;
-    font-size: 22px;
-  }
-
-  .volumeControl {
-    margin-top: 16px;
-  }
-
-  .slider {
-    width: 200px;
-  }
-
-  .trackSelection {
-    max-height: 140px;
-  }
-
-  .addButton,
-  .removeButton {
-    padding: 8px;
-    font-size: 12px;
-  }
-
-  .formContainer {
-    top: -230px;
-    padding: 16px;
-  }
-
-  .form input {
-    width: 75%;
+  
+  .addButton {
+    padding: 15px 30px;
+    font-size: 18px;
   }
 }

@@ -51,6 +51,11 @@ export default function MusicPlayer({ onMinimize }) {
         playerRef.current.playVideo();
       }
       setIsPlaying(!isPlaying);
+    } else if (isIOS && !isPlaying) {
+      // For iOS, we need to load the video first
+      playerRef.current.loadVideoById(tracks[currentTrackIndex].videoId);
+      playerRef.current.playVideo();
+      setIsPlaying(true);
     }
   };
 
