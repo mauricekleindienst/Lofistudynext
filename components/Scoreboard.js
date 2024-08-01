@@ -11,21 +11,21 @@ export default function Scoreboard({ onMinimize }) {
     const fetchScoreboard = async () => {
       try {
         const response = await fetch("https://lo-fi.study/api/getScoreboard");
-    
+
         // Log response for debugging
         console.log("API response:", response);
-    
+
         if (!response.ok) {
           throw new Error(`Network response was not ok, status: ${response.status}`);
         }
-    
+
         const data = await response.json();
         console.log("Fetched data:", data);
-    
+
         if (!Array.isArray(data)) {
           throw new Error("Data is not an array");
         }
-    
+
         setScoreboard(data);
         setLoading(false);
       } catch (err) {
@@ -56,18 +56,20 @@ export default function Scoreboard({ onMinimize }) {
           ) : error ? (
             <div>Error: {error}</div>
           ) : (
-            scoreboard.map((user, index) => (
-              <div
-                key={index}
-                className={`${styles.user} ${
-                  index === 0 ? styles.firstPlace : ""
-                }`}
-              >
-                <span>{user.firstname}</span>
-                <span>{user.pomodoro_count_weekly} Pomodoros</span>
-                {index === 0 && <span className={styles.crown}>👑</span>}
-              </div>
-            ))
+            scoreboard
+              .filter(user => user.pomodoro_count_weekly > 0) // Only include users with more than 0 Pomodoros
+              .map((user, index) => (
+                <div
+                  key={index}
+                  className={`${styles.user} ${
+                    index === 0 ? styles.firstPlace : ""
+                  }`}
+                >
+                  <span>{user.firstname}</span>
+                  <span>{user.pomodoro_count_weekly} Pomodoros</span>
+                  {index === 0 && <span className={styles.crown}>👑</span>}
+                </div>
+              ))
           )}
         </div>
       </div>
