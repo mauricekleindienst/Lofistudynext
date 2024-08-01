@@ -3,7 +3,7 @@
 .container {
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+
   color: #ffffff;
   position: relative;
   overflow: hidden;
@@ -14,7 +14,6 @@
   position: absolute;
   top: 0;
   left: 0;
-  overflow: hidden;
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -23,7 +22,6 @@
 }
 
 .main {
-  overflow: hidden;
   display: flex;
   flex: 1;
   padding: 20px;
@@ -31,7 +29,6 @@
 }
 
 .sidebar {
-  overflow: hidden;
   width: 300px;
   background: linear-gradient(145deg, #1e1e1e, #2a2a2a);
   box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
@@ -331,285 +328,5 @@
   100% {
     transform: rotateY(0deg);
     opacity: 0;
-  }
-}
-
-
-/* iPad Pro 12.9" (2048x2732) */
-@media only screen 
-  and (min-device-width: 1024px) 
-  and (max-device-width: 1366px)
-  and (-webkit-min-device-pixel-ratio: 2) 
-  and (orientation: portrait) {
-  
-  .container {
-    font-size: 18px;
-  }
-
-  .sidebar {
-    width: 350px;
-    max-height: 100vh;
-  }
-
-  .toggleButton {
-    left: 350px;
-    padding: 20px;
-  }
-
-  .sidebar h1 {
-    font-size: 28px;
-  }
-
-  .backgroundSelector h2 {
-    font-size: 22px;
-  }
-
-  .sidebarFooter {
-    padding: 0 20px;
-  }
-
-  .sidebarButton {
-    font-size: 16px;
-    padding: 12px 24px;
-  }
-
-  .loader-container {
-    font-family: 'Comfortaa', sans-serif;
-  }
-
-  .loader span {
-    font-size: 16px;
-  }
-}
-
-@media only screen 
-  and (min-device-width: 1024px) 
-  and (max-device-width: 1366px)
-  and (-webkit-min-device-pixel-ratio: 2) 
-  and (orientation: landscape) {
-
-  .container {
-    font-size: 18px;
-  }
-
-  .sidebar {
-    width: 300px;
-    max-height: 100vh;
-  }
-
-  .toggleButton {
-    left: 300px;
-    padding: 18px;
-  }
-
-  .sidebar h1 {
-    font-size: 26px;
-  }
-
-  .backgroundSelector h2 {
-    font-size: 20px;
-  }
-
-  .sidebarFooter {
-    padding: 0 15px;
-  }
-
-  .sidebarButton {
-    font-size: 15px;
-    padding: 11px 22px;
-  }
-
-  .loader-container {
-    font-family: 'Comfortaa', sans-serif;
-  }
-
-  .loader span {
-    font-size: 15px;
-  }
-}
-
-/* iPad Air & iPad Mini (834x1112, 810x1080) */
-@media only screen 
-  and (min-device-width: 768px) 
-  and (max-device-width: 1024px)
-  and (-webkit-min-device-pixel-ratio: 2) 
-  and (orientation: portrait) {
-
-  .container {
-    font-size: 17px;
-  }
-
-  .sidebar {
-    width: 300px;
-    max-height: 100vh;
-  }
-
-  .toggleButton {
-    left: 300px;
-    padding: 16px;
-  }
-
-  .sidebar h1 {
-    font-size: 24px;
-  }
-
-  .backgroundSelector h2 {
-    font-size: 20px;
-  }
-
-  .sidebarFooter {
-    padding: 0 10px;
-  }
-
-  .sidebarButton {
-    font-size: 14px;
-    padding: 10px 20px;
-  }
-
-  .loader-container {
-    font-family: 'Comfortaa', sans-serif;
-  }
-
-  .loader span {
-    font-size: 14px;
-  }
-}
-
-@media only screen 
-  and (min-device-width: 768px) 
-  and (max-device-width: 1024px)
-  and (-webkit-min-device-pixel-ratio: 2) 
-  and (orientation: landscape) {
-
-  .container {
-    font-size: 16px;
-  }
-
-  .sidebar {
-    width: 270px;
-    max-height: 100vh;
-  }
-
-  .toggleButton {
-    left: 270px;
-    padding: 15px;
-  }
-
-  .sidebar h1 {
-    font-size: 22px;
-  }
-
-  .backgroundSelector h2 {
-    font-size: 18px;
-  }
-
-  .sidebarFooter {
-    padding: 0 8px;
-  }
-
-  .sidebarButton {
-    font-size: 13px;
-    padding: 9px 18px;
-  }
-
-  .loader-container {
-    font-family: 'Comfortaa', sans-serif;
-  }
-
-  .loader span {
-    font-size: 13px;
-  }
-}
-
-/* iPad Mini (744x1133) */
-@media only screen 
-  and (min-device-width: 744px) 
-  and (max-device-width: 1133px)
-  and (-webkit-min-device-pixel-ratio: 2) 
-  and (orientation: portrait) {
-
-  .container {
-    font-size: 15px;
-  }
-
-  .sidebar {
-    width: 280px;
-    max-height: 100vh;
-  }
-
-  .toggleButton {
-    left: 280px;
-    padding: 14px;
-  }
-
-  .sidebar h1 {
-    font-size: 20px;
-  }
-
-  .backgroundSelector h2 {
-    font-size: 18px;
-  }
-
-  .sidebarFooter {
-    padding: 0 5px;
-  }
-
-  .sidebarButton {
-    font-size: 12px;
-    padding: 8px 16px;
-  }
-
-  .loader-container {
-    font-family: 'Comfortaa', sans-serif;
-  }
-
-  .loader span {
-    font-size: 12px;
-  }
-}
-
-@media only screen 
-  and (min-device-width: 744px) 
-  and (max-device-width: 1133px)
-  and (-webkit-min-device-pixel-ratio: 2) 
-  and (orientation: landscape) {
-
-  .container {
-    font-size: 14px;
-  }
-
-  .sidebar {
-    width: 260px;
-    max-height: 100vh;
-  }
-
-  .toggleButton {
-    left: 260px;
-    padding: 13px;
-  }
-
-  .sidebar h1 {
-    font-size: 18px;
-  }
-
-  .backgroundSelector h2 {
-    font-size: 16px;
-  }
-
-  .sidebarFooter {
-    padding: 0 5px;
-  }
-
-  .sidebarButton {
-    font-size: 11px;
-    padding: 7px 14px;
-  }
-
-  .loader-container {
-    font-family: 'Comfortaa', sans-serif;
-  }
-
-  .loader span {
-    font-size: 11px;
   }
 }
