@@ -10,23 +10,22 @@ export default function Scoreboard({ onMinimize }) {
   useEffect(() => {
     const fetchScoreboard = async () => {
       try {
-        const response = await fetch("/api/getScoreboard");
-
-        // Check if the response is okay
+        const response = await fetch("https://lo-fi.study/api/getScoreboard");
+    
+        // Log response for debugging
+        console.log("API response:", response);
+    
         if (!response.ok) {
-          throw new Error("Network response was not ok");
+          throw new Error(`Network response was not ok, status: ${response.status}`);
         }
-
+    
         const data = await response.json();
-
-        // Debugging: Log the fetched data
         console.log("Fetched data:", data);
-
-        // Ensure data is an array
+    
         if (!Array.isArray(data)) {
           throw new Error("Data is not an array");
         }
-
+    
         setScoreboard(data);
         setLoading(false);
       } catch (err) {
