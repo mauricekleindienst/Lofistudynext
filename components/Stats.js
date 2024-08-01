@@ -139,7 +139,7 @@ export default function Stats({ onMinimize }) {
               />
             </div>
             <div className={styles.chartWrapper}>
-              <h3>Weekly Progress</h3>
+              <h3>Study Days</h3>
               <Bar
                 data={weeklyChartData}
                 options={{
