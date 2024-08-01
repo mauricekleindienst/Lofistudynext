@@ -6,8 +6,7 @@ import {
   FaFire,
   FaWater,
   FaKeyboard,
-  FaSnowflake,
-  FaWater
+  FaSnowflake
 } from "react-icons/fa";
 import { FaHouseFloodWaterCircleArrowRight } from "react-icons/fa6";
 
