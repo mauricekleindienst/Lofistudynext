@@ -47,16 +47,10 @@ export default function MusicPlayer({ onMinimize }) {
     if (playerRef.current) {
       if (isPlaying) {
         playerRef.current.pauseVideo();
-        setIsPlaying(false);
       } else {
-        try {
-          playerRef.current.playVideo();
-          setIsPlaying(true);
-        } catch (error) {
-          console.error("Playback failed, possibly due to iOS restrictions:", error);
-          alert("Playback may be restricted. Please tap the video to start playing.");
-        }
+        playerRef.current.playVideo();
       }
+      setIsPlaying(!isPlaying);
     }
   };
 
@@ -71,7 +65,10 @@ export default function MusicPlayer({ onMinimize }) {
   const onReady = (event) => {
     playerRef.current = event.target;
     playerRef.current.setVolume(volume);
-    setIsPlaying(false);
+    if (!isIOS) {
+      playerRef.current.playVideo();
+      setIsPlaying(true);
+    }
   };
 
   const onStateChange = (event) => {
@@ -98,10 +95,12 @@ export default function MusicPlayer({ onMinimize }) {
         try {
           await playerRef.current.loadVideoById(tracks[currentTrackIndex].videoId);
           if (isMounted) {
-            if (isPlaying && !isIOS) {
+            if (!isIOS) {
               playerRef.current.playVideo();
+              setIsPlaying(true);
             } else {
               playerRef.current.pauseVideo();
+              setIsPlaying(false);
             }
             setIsLoading(false);
           }
@@ -119,7 +118,7 @@ export default function MusicPlayer({ onMinimize }) {
     return () => {
       isMounted = false;
     };
-  }, [currentTrackIndex, tracks, isPlaying, isIOS]);
+  }, [currentTrackIndex, tracks, isIOS]);
 
   const addNewTrack = (title, url) => {
     const videoId = url.split('v=')[1].split('&')[0];
@@ -138,7 +137,6 @@ export default function MusicPlayer({ onMinimize }) {
     if (isLoading) return;
     setIsLoading(true);
     setCurrentTrackIndex(index);
-    setIsPlaying(true);
   }, 300);
 
   const selectTrack = (index) => {
@@ -199,7 +197,7 @@ export default function MusicPlayer({ onMinimize }) {
               height: '0',
               width: '0',
               playerVars: {
-                autoplay: 0, // Disable autoplay for iOS compatibility
+                autoplay: isIOS ? 0 : 1,
                 controls: 0,
                 disablekb: 1,
                 rel: 0,
