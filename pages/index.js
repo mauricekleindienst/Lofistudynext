@@ -8,10 +8,9 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import styles from "../styles/Home.module.css";
 import CustomCursor from "../components/CustomCursor";
-import Image from "next/image";
 
 export default function Landing() {
-  const images = [
+  const img = [
     {
       src: "https://i.ibb.co/K0qdm4r/lgsarius-cyberpunk-night-study-girl-window-desklight-c1650ad7-776d-470a-a2e0-da9e78140212.webp" ,
       alt: "First slide",
@@ -49,12 +48,12 @@ export default function Landing() {
             autoPlay={true}
             interval={2000}
           >
-            {images.map((image, index) => (
+            {img.map((img, index) => (
               <div key={index} className={styles.carouselItem}>
-                <Image
+                <img
                   className={styles.carouselImage}
-                  src={image.src}
-                  alt={image.alt}
+                  src={img.src}
+                  alt={img.alt}
                 />
               </div>
             ))}

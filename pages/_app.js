@@ -3,7 +3,6 @@ import { UserProvider } from "../context/UserContext";
 import "../styles/globals.css";
 import CustomCursor from "../components/CustomCursor";
 import Head from "next/head";
-import '../public/pdfjs-worker.js';
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }) {
   return (
