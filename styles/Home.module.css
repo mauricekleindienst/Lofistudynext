@@ -9,6 +9,8 @@
   animation: gradientAnimation 10s ease infinite;
   position: relative;
   overflow: hidden;
+
+  
 }
 @keyframes gradientAnimation {
   0% {
