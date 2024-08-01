@@ -2,17 +2,38 @@ import React, { useState, useEffect } from "react";
 import Draggable from "react-draggable";
 import styles from "../styles/Scoreboard.module.css";
 
-
 export default function Scoreboard({ onMinimize }) {
   const [scoreboard, setScoreboard] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchScoreboard = async () => {
-      const response = await fetch("/api/getScoreboard");
-      const data = await response.json();
-      setScoreboard(data);
-      setLoading(false);
+      try {
+        const response = await fetch("/api/getScoreboard");
+
+        // Check if the response is okay
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+
+        const data = await response.json();
+
+        // Debugging: Log the fetched data
+        console.log("Fetched data:", data);
+
+        // Ensure data is an array
+        if (!Array.isArray(data)) {
+          throw new Error("Data is not an array");
+        }
+
+        setScoreboard(data);
+        setLoading(false);
+      } catch (err) {
+        console.error("Fetch error:", err);
+        setError(err.message);
+        setLoading(false);
+      }
     };
 
     fetchScoreboard();
@@ -33,6 +54,8 @@ export default function Scoreboard({ onMinimize }) {
         <div className={styles.scoreboard}>
           {loading ? (
             <div>Loading...</div>
+          ) : error ? (
+            <div>Error: {error}</div>
           ) : (
             scoreboard.map((user, index) => (
               <div
