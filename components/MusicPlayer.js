@@ -3,7 +3,6 @@ import YouTube from 'react-youtube';
 import { debounce } from 'lodash';
 import styles from '../styles/MusicPlayer.module.css';
 
-
 const initialTracks = [
   { id: 1, title: 'LoFi', videoId: 'jfKfPfyJRdk' },
   { id: 2, title: 'Medieval LoFi', videoId: '_uMuuHk_KkQ' },
@@ -25,6 +24,7 @@ export default function MusicPlayer({ onMinimize }) {
   const [newTrackUrl, setNewTrackUrl] = useState('');
   const [apiReady, setApiReady] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isIOS, setIsIOS] = useState(false);
   const playerRef = useRef(null);
 
   useEffect(() => {
@@ -34,6 +34,8 @@ export default function MusicPlayer({ onMinimize }) {
     document.body.appendChild(script);
 
     window.onYouTubeIframeAPIReady = () => setApiReady(true);
+
+    setIsIOS(/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream);
 
     return () => {
       document.body.removeChild(script);
@@ -45,10 +47,16 @@ export default function MusicPlayer({ onMinimize }) {
     if (playerRef.current) {
       if (isPlaying) {
         playerRef.current.pauseVideo();
+        setIsPlaying(false);
       } else {
-        playerRef.current.playVideo();
+        try {
+          playerRef.current.playVideo();
+          setIsPlaying(true);
+        } catch (error) {
+          console.error("Playback failed, possibly due to iOS restrictions:", error);
+          alert("Playback may be restricted. Please tap the video to start playing.");
+        }
       }
-      setIsPlaying(!isPlaying);
     }
   };
 
@@ -63,9 +71,7 @@ export default function MusicPlayer({ onMinimize }) {
   const onReady = (event) => {
     playerRef.current = event.target;
     playerRef.current.setVolume(volume);
-    if (isPlaying) {
-      event.target.playVideo();
-    }
+    setIsPlaying(false);
   };
 
   const onStateChange = (event) => {
@@ -92,7 +98,7 @@ export default function MusicPlayer({ onMinimize }) {
         try {
           await playerRef.current.loadVideoById(tracks[currentTrackIndex].videoId);
           if (isMounted) {
-            if (isPlaying) {
+            if (isPlaying && !isIOS) {
               playerRef.current.playVideo();
             } else {
               playerRef.current.pauseVideo();
@@ -113,7 +119,7 @@ export default function MusicPlayer({ onMinimize }) {
     return () => {
       isMounted = false;
     };
-  }, [currentTrackIndex, tracks, isPlaying]);
+  }, [currentTrackIndex, tracks, isPlaying, isIOS]);
 
   const addNewTrack = (title, url) => {
     const videoId = url.split('v=')[1].split('&')[0];
@@ -137,6 +143,14 @@ export default function MusicPlayer({ onMinimize }) {
 
   const selectTrack = (index) => {
     debouncedSelectTrack(index);
+  };
+
+  const handleTouchStart = (e) => {
+    e.preventDefault();
+  };
+
+  const handleTouchEnd = (e) => {
+    e.preventDefault();
   };
 
   useEffect(() => {
@@ -185,7 +199,7 @@ export default function MusicPlayer({ onMinimize }) {
               height: '0',
               width: '0',
               playerVars: {
-                autoplay: isPlaying ? 1 : 0,
+                autoplay: 0, // Disable autoplay for iOS compatibility
                 controls: 0,
                 disablekb: 1,
                 rel: 0,
@@ -200,7 +214,11 @@ export default function MusicPlayer({ onMinimize }) {
             }}
           />
         )}
-        <div className={styles.controls}>
+        <div 
+          className={styles.controls}
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
+        >
           <button onClick={prevTrack} className={styles.controlButton} disabled={isLoading}>
             <span className="material-icons">skip_previous</span>
           </button>
