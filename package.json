@@ -63,11 +63,6 @@
     "react-timer-hook": "^3.0.7",
     "react-youtube": "^10.1.0",
     "sequelize": "^6.37.3",
-<<<<<<< HEAD
-=======
-    "sharp": "^0.33.4",
-    "simple-react-pdf": "^1.0.9",
->>>>>>> 8e610122c8b3099e26f6855dcf414a70ee252114
     "socket.io": "^4.7.5",
     "socket.io-client": "^4.7.5",
     "sqlite3": "^5.1.7",
@@ -77,12 +72,10 @@
     "timer-for-pomodoro": "^1.0.2",
     "typed.js": "^2.1.0",
     "typescript": "^5.5.3",
-    "winston": "^3.13.1"
+    "winston": "^3.13.1",
+      "copy-webpack-plugin": "^12.0.2"
   },
   "engines": {
     "node": ">=16.0.0"
-  },
-  "devDependencies": {
-    "copy-webpack-plugin": "^12.0.2"
   }
 }
