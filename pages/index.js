@@ -8,8 +8,12 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 
 import styles from "../styles/Home.module.css";
+<<<<<<< HEAD
+import CustomCursor from "../components/CustomCursor";
+=======
 import CookieBanner from "../components/CookieBanner";
 import Image from "next/image";
+>>>>>>> 8e610122c8b3099e26f6855dcf414a70ee252114
 
 export default function Landing() {
   const img = [
@@ -56,7 +60,10 @@ export default function Landing() {
                   className={styles.carouselImage}
                   src={img.src}
                   alt={img.alt}
+<<<<<<< HEAD
+=======
                 
+>>>>>>> 8e610122c8b3099e26f6855dcf414a70ee252114
                 />
               </div>
             ))}

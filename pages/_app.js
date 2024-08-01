@@ -3,8 +3,15 @@ import { UserProvider } from "../context/UserContext";
 import "../styles/globals.css";
 
 import Head from "next/head";
+<<<<<<< HEAD
 
+=======
+<<<<<<< HEAD
+=======
+import "../public/pdfjs-worker.js";
+>>>>>>> 7202a25e9a83ceca2ec10519aa69857a3010feba
 import CookieBanner from "../components/CookieBanner";
+>>>>>>> 8e610122c8b3099e26f6855dcf414a70ee252114
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }) {
   return (
