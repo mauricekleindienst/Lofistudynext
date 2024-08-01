@@ -1,14 +1,19 @@
 import { SessionProvider } from "next-auth/react";
 import { UserProvider } from "../context/UserContext";
 import "../styles/globals.css";
-import CustomCursor from "../components/CustomCursor";
+
 import Head from "next/head";
+<<<<<<< HEAD
+=======
+import "../public/pdfjs-worker.js";
+import CookieBanner from "../components/CookieBanner";
+>>>>>>> 8e610122c8b3099e26f6855dcf414a70ee252114
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }) {
   return (
     <SessionProvider session={session}>
       <UserProvider>
-        <CustomCursor />
+        <CookieBanner />
         <Head>
           <title>Lo-Fi.Study</title>
           <link rel="shortcut icon" href="/favicon.ico" />

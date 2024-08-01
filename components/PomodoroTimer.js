@@ -7,7 +7,7 @@ import React, {
   useMemo,
 } from "react";
 import { useSession } from "next-auth/react";
-import CustomCursor from "../components/CustomCursor";
+
 import Draggable from "react-draggable";
 import styles from "../styles/PomodoroTimer.module.css";
 

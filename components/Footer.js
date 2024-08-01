@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import styles from '../styles/Footer.module.css';
-import CustomCursor from '../components/CustomCursor';
+
 import Image from 'next/image';
 
 export default function Footer() {
@@ -14,7 +14,7 @@ export default function Footer() {
                     <Image src="/lo-fi.study.svg" alt="LoFi" width={100} height={100}/>
                     </Link>
                     <p>Creating A Study Space with LoFi</p>
-                    <button className={styles.signUpButton}>Sign Up</button>
+                    <button className={styles.signUpButton}> <Link href="/auth/signin">Sign Up</Link></button>
                 </div>
                 <div className={styles.navSection}>
                     <h3>Navigation</h3>

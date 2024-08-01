@@ -7,7 +7,7 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import styles from "../styles/Home.module.css";
 import updates from "../data/updates.json";
-import CustomCursor from "../components/CustomCursor";
+
 export default function DevUpdates() {
   const router = useRouter();
 
@@ -25,7 +25,7 @@ export default function DevUpdates() {
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <CustomCursor />
+      
       <Header />
 
       <main className={styles.main}>

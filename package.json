@@ -35,6 +35,7 @@
     "framer-motion": "^11.3.13",
     "helmet": "^7.1.0",
     "http": "^0.0.1-security",
+    "js-cookie": "^3.0.1",
     "lodash": "^4.17.21",
     "mobile-detect": "^1.4.5",
     "moment": "^2.30.1",
@@ -62,6 +63,11 @@
     "react-timer-hook": "^3.0.7",
     "react-youtube": "^10.1.0",
     "sequelize": "^6.37.3",
+<<<<<<< HEAD
+=======
+    "sharp": "^0.33.4",
+    "simple-react-pdf": "^1.0.9",
+>>>>>>> 8e610122c8b3099e26f6855dcf414a70ee252114
     "socket.io": "^4.7.5",
     "socket.io-client": "^4.7.5",
     "sqlite3": "^5.1.7",

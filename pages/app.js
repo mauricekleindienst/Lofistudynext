@@ -10,7 +10,7 @@ import Notes from "../components/Notes";
 import Calendar from "../components/Calendar";
 import LiveChat from "../components/LiveChat";
 import DraggableIframe from "../components/DraggableIframe";
-import CustomCursor from "../components/CustomCursor";
+import CookieBanner from "../components/CookieBanner";
 
 const backgrounds = [
   { id: 1, src: "/backgrounds/Night.mp4", alt: "Night", note: "Night" },
@@ -110,9 +110,9 @@ export default function Study() {
 
   return (
     <>
-      <CustomCursor />
+      
       <CustomHeader />
-
+      <CookieBanner />
       {visibleComponents.pomodoro && (
         <PomodoroTimer onMinimize={() => handleIconClick("pomodoro")} />
       )}

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Draggable from "react-draggable";
 import styles from "../styles/Scoreboard.module.css";
-import CustomCursor from "../components/CustomCursor";
+
 
 export default function Scoreboard({ onMinimize }) {
   const [scoreboard, setScoreboard] = useState([]);

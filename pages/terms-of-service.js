@@ -5,140 +5,116 @@ import Header from "../components/Header";
 import Head from "next/head";
 import Link from "next/link";
 import Footer from "../components/Footer";
-import { useState } from "react";
 import styles from "../styles/Home.module.css";
-import CustomCursor from "../components/CustomCursor";
+
 export default function Terms() {
   const router = useRouter();
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [message, setMessage] = useState("");
-  const [status, setStatus] = useState("");
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const form = e.target;
-    const data = new FormData(form);
-    const response = await fetch(form.action, {
-      method: form.method,
-      body: data,
-      headers: {
-        Accept: "application/json",
-      },
-    });
-
-    if (response.ok) {
-      setStatus("SUCCESS");
-      setName("");
-      setEmail("");
-      setMessage("");
-    } else {
-      setStatus("ERROR");
-    }
-  };
 
   return (
     <div className={styles.container}>
       <Head>
-        <title>Terms of Service - Lo-Fi Study</title>
+        <title>Terms and Conditions - Lo-Fi Study</title>
         <meta
           name="description"
-          content="Read our terms of service at Lo-Fi Study"
+          content="Read our Terms and Conditions at Lo-Fi Study"
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Header />
-      <CustomCursor />
+      
       <main className={styles.main}>
         <section className={styles.contactSection}>
-          <h1 className={styles.title}>Terms of Service</h1>
+          <h1 className={styles.title}>Terms and Conditions</h1>
 
           <p>
-            <strong>Effective Date:</strong> 20/07/2024
+            <strong>Effective Date:</strong> 23/07/2024
           </p>
           <p>
             <strong>lo-fi.study</strong>
           </p>
 
-          <h2>1. ACCEPTANCE OF TERMS</h2>
+          <h2>Operator Information (Impressum)</h2>
           <p>
-            By accessing or using our website, you agree to be bound by these
-            Terms of Service and our Privacy Policy. If you do not agree to
-            these terms, please do not use our website.
+            <strong>Operator:</strong> Maurice Kleindienst<br />
+            <strong>Address:</strong>Oberzwehrenerstraße 62b, Kassel<br />
+            <strong>Email:</strong> support@lo-fi.study<br />
           </p>
 
-          <h2>2. CHANGES TO TERMS</h2>
+          <h2>1. Scope of Application</h2>
           <p>
-            We reserve the right to update or modify these Terms of Service at
-            any time without prior notice. Your continued use of the website
-            following the posting of any changes constitutes acceptance of those
-            changes.
+            These Terms and Conditions (T&C) apply to the use of our website. By using our website, you agree to these T&C.
           </p>
 
-          <h2>3. USER RESPONSIBILITIES</h2>
+          <h2>2. Contract Formation</h2>
           <p>
-            As a user of our website, you agree to use the website in compliance
-            with all applicable laws and regulations. You agree not to use the
-            website for any unlawful or prohibited purpose.
+            The presentation of products and services on our website does not constitute a legally binding offer, but rather a non-binding online catalog. By clicking the Buy/Order button, you submit a binding order.
           </p>
 
-          <h2>4. ACCOUNT REGISTRATION</h2>
+          <h2>3. Right of Withdrawal</h2>
           <p>
-            To access certain features of our website, you may need to register
-            an account. You agree to provide accurate and complete information
-            during the registration process and to keep your account information
-            updated.
+            As a consumer, you have the right to withdraw from this contract within fourteen days without giving any reason. The withdrawal period will expire after 14 days from the day of the conclusion of the contract.
           </p>
 
-          <h2>5. LOGIN SERVICES</h2>
+          <h2>4. Prices and Payment</h2>
           <p>
-            We offer login services via Google and Discord. By using these
-            services, you agree to their respective terms and privacy policies.
-            We collect and store your email address for login and communication
-            purposes.
+            All prices are final prices and include statutory VAT. Payment methods will be specified at checkout.
           </p>
 
-          <h2>6. TERMINATION OF USE</h2>
+          <h2>5. Delivery</h2>
           <p>
-            We reserve the right to terminate or suspend your access to our
-            website at any time, without notice, for conduct that we believe
-            violates these Terms of Service or is harmful to other users of the
-            website, us, or third parties, or for any other reason.
+            As we provide digital services, delivery is typically immediate upon successful payment processing.
           </p>
 
-          <h2>7. DISCLAIMER OF WARRANTIES</h2>
+          <h2>6. Warranty</h2>
           <p>
-            Our website is provided &quot;as is&quot; and &quot;as
-            available&quot; without any warranties of any kind, either express
-            or implied. We do not warrant that the website will be uninterrupted
-            or error-free.
+            The statutory warranty rights apply.
           </p>
 
-          <h2>8. LIMITATION OF LIABILITY</h2>
+          <h2>7. Limitation of Liability</h2>
           <p>
-            In no event shall we be liable for any indirect, incidental,
-            special, consequential, or punitive damages arising out of or
-            related to your use of the website.
+            We are liable without limitation for intent and gross negligence, as well as in accordance with the Product Liability Act. For slight negligence, we are liable for damages resulting from injury to life, body, or health of persons.
           </p>
 
-          <h2>9. INDEMNIFICATION</h2>
+          <h2>8. Data Protection</h2>
           <p>
-            You agree to indemnify and hold us harmless from any claims,
-            damages, or expenses arising out of your use of the website or your
-            violation of these Terms of Service.
+            We process your personal data in accordance with our Privacy Policy and in compliance with the General Data Protection Regulation (GDPR).
           </p>
 
-          <h2>10. CONTACT INFORMATION</h2>
+          <h2>9. Copyright</h2>
           <p>
-            If you have any questions about these Terms of Service, please
-            contact us at support@lo-fi.study.
+            All content on this website is subject to German copyright law. Any form of reproduction, editing, distribution, and any kind of exploitation beyond the limits of copyright law requires the written consent of the respective author or creator.
+          </p>
+
+          <h2>10. Applicable Law and Jurisdiction</h2>
+          <p>
+            The law of the Federal Republic of Germany applies, excluding the UN Convention on Contracts for the International Sale of Goods. For consumers with habitual residence in the EU, the mandatory provisions of the law of the country of residence shall also apply. The place of jurisdiction for merchants within the meaning of the German Commercial Code is Kassel, Germany.
+          </p>
+
+          <h2>11. Dispute Resolution</h2>
+          <p>
+            The European Commission provides a platform for online dispute resolution (OS), which you can find at https://ec.europa.eu/consumers/odr/. We are neither willing nor obligated to participate in dispute resolution proceedings before a consumer arbitration board.
+          </p>
+
+          <h2>12. Severability Clause</h2>
+          <p>
+            Should individual provisions of this contract be invalid or unenforceable or become invalid or unenforceable after conclusion of the contract, the validity of the rest of the contract remains unaffected.
+          </p>
+
+          <h2>13. Contact Information</h2>
+          <p>
+            If you have any questions about these Terms and Conditions, please contact us at:
+          </p>
+          <p>
+            Maurice Kleindienst<br />
+            Oberzwehrenerstraße 62b, Kassel<br />
+            Email: support@lo-fi.study
           </p>
 
           <p>
-            <strong>Lofi Study - All rights reserved.</strong>
+            <strong>Lo-Fi Study - All rights reserved.</strong>
           </p>
           <p>
-            <strong>Last updated:</strong> 20/07/2024
+            <strong>Last updated:</strong> 23/07/2024
           </p>
         </section>
       </main>

@@ -8,7 +8,7 @@ import {
   FaKeyboard,
   FaSnowflake,
 } from "react-icons/fa";
-import CustomCursor from "../components/CustomCursor";
+
 const sounds = [
   { name: "Rain", icon: <FaUmbrella />, file: "/sounds/rain.mp3" },
   { name: "Fire", icon: <FaFire />, file: "/sounds/fire.mp3" },

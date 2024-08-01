@@ -7,7 +7,7 @@ import {
   Draggable as DndDraggable,
 } from "react-beautiful-dnd";
 import styles from "../styles/Todo.module.css";
-import CustomCursor from "../components/CustomCursor";
+
 import {
   FaPlus,
   FaTrash,

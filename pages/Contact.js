@@ -6,7 +6,7 @@ import { useState } from "react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import styles from "../styles/Home.module.css";
-import CustomCursor from "../components/CustomCursor";
+
 export default function Contact() {
   const router = useRouter();
   const [name, setName] = useState("");
@@ -38,7 +38,7 @@ export default function Contact() {
 
   return (
     <div className={styles.container}>
-      <CustomCursor />
+      
       <Head>
         <title>Contact - Lo-Fi Study</title>
         <meta

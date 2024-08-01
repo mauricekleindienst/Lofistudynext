@@ -3,9 +3,19 @@ import styles from "../styles/CustomHeader.module.css";
 import { useState, useCallback, useEffect } from "react";
 import { useRouter } from "next/router";
 import MovableModal from "./MovableModal";
+<<<<<<< HEAD
 
 import CustomCursor from "../components/CustomCursor";
 
+=======
+import { Worker, Viewer } from "@react-pdf-viewer/core";
+import { toolbarPlugin, zoomPlugin } from "@react-pdf-viewer/toolbar";
+import "@react-pdf-viewer/core/lib/styles/index.css";
+import "@react-pdf-viewer/toolbar/lib/styles/index.css";
+import "../styles/react-pdf-viewer-overrides.css";
+
+import pdfjs from "pdfjs-dist/package.json"; // Import the entire module
+>>>>>>> 8e610122c8b3099e26f6855dcf414a70ee252114
 
 export default function CustomHeader() {
   const [isFullscreen, setIsFullscreen] = useState(false);
