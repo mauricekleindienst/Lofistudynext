@@ -32,14 +32,14 @@
 
 .sidebar {
   width: 380px;
-  height: 80%;
+  height: 100%;
   background: linear-gradient(145deg, #1e1e1e, #2a2a2a);
   box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
   padding: 30px;
   border-radius: 0 20px 20px 0;
   transition: transform 0.3s ease;
   position: fixed;
-  top: 10%;
+  top: translateX(-50%);
   left: 0;
   z-index: 9998;
   overflow-y: auto;
@@ -116,6 +116,7 @@
   transition: all 0.3s ease;
   border-radius: 10px;
   overflow: hidden;
+  
 }
 
 .backgroundOption:hover {
@@ -129,15 +130,7 @@
   border-radius: 8px;
 }
 
-.sidebarFooter {
-  position: absolute;
-  bottom: 20px;
-  left: 0;
-  width: 100%;
-  display: flex;
-  justify-content: space-around;
-  padding: 0 10px;
-}
+
 
 .sidebarButton {
   padding: 10px 20px;
