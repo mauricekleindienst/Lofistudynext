@@ -91,6 +91,10 @@ export default function Study() {
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
+    const main = document.querySelector(`.${styles.main}`);
+    if (main) {
+      main.style.marginLeft = sidebarOpen ? '0' : '300px';
+    }
   };
 
   const handleBackgroundSelection = (background) => {
@@ -110,7 +114,6 @@ export default function Study() {
 
   return (
     <>
-      
       <CustomHeader />
       <CookieBanner />
       {visibleComponents.pomodoro && (
@@ -133,55 +136,59 @@ export default function Study() {
         userName={getFirstName(session.user.name)}
         onIconClick={handleIconClick}
       />
-       <video
-          className={styles.videoBackground}
-          autoPlay
-          loop
-          muted
-          playsInline
-          src={selectedBackground}
-        ></video>
+      <video
+        className={styles.videoBackground}
+        autoPlay
+        loop
+        muted
+        playsInline
+        src={selectedBackground}
+      ></video>
       <div className={styles.container}>
-       
-        <main className={styles.main}>
-          <aside
-            className={`${styles.sidebar} ${
-              sidebarOpen ? styles.open : styles.closed
-            }`}
-          >
-            <button className={styles.toggleButton} onClick={toggleSidebar}>
-              {sidebarOpen ? (
-                <span className="material-icons">chevron_left</span>
-              ) : (
-                <span className="material-icons">chevron_right</span>
-              )}
-            </button>
-            <h1>
-              Welcome, {getFirstName(session.user.name)}! {currentTime}
-            </h1>
-            <div className={styles.backgroundSelector}>
-              <h2>Backgrounds</h2>
-              <div className={styles.backgroundGrid}>
-                {backgrounds.map((background) => (
-                  <div
-                    key={background.id}
-                    className={styles.backgroundOption}
-                    title={background.note}
-                    onClick={() => handleBackgroundSelection(background)}
-                  >
-                    <video
-                      src={background.src}
-                      alt={background.alt}
-                      muted
-                      loop
-                      playsInline
-                    ></video>
-                  </div>
-                ))}
-              </div>
+        <aside
+          className={`${styles.sidebar} ${
+            sidebarOpen ? styles.open : styles.closed
+          }`}
+        >
+          <h1>
+            Welcome, {getFirstName(session.user.name)}! {currentTime}
+          </h1>
+          <div className={styles.backgroundSelector}>
+            <h2>Backgrounds</h2>
+            <div className={styles.backgroundGrid}>
+              {backgrounds.map((background) => (
+                <div
+                  key={background.id}
+                  className={styles.backgroundOption}
+                  title={background.note}
+                  onClick={() => handleBackgroundSelection(background)}
+                >
+                  <video
+                    src={background.src}
+                    alt={background.alt}
+                    muted
+                    loop
+                    playsInline
+                  ></video>
+                </div>
+              ))}
             </div>
-            <MusicPlayer />
-          </aside>
+          </div>
+          <MusicPlayer />
+        </aside>
+        <button
+          className={`${styles.toggleButton} ${
+            sidebarOpen ? styles.buttonOpen : styles.buttonClosed
+          }`}
+          onClick={toggleSidebar}
+        >
+          {sidebarOpen ? (
+            <span className="material-icons">chevron_left</span>
+          ) : (
+            <span className="material-icons">chevron_right</span>
+          )}
+        </button>
+        <main className={styles.main}>
           {videoRoomUrl && (
             <DraggableIframe
               src={videoRoomUrl}

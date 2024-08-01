@@ -1,12 +1,9 @@
-
-
 .container {
   display: flex;
-  flex-direction: column;
-
   color: #ffffff;
   position: relative;
   overflow: hidden;
+  height: 100vh; /* Full viewport height */
 }
 
 .videoBackground {
@@ -25,23 +22,32 @@
   flex: 1;
   padding: 20px;
   width: 100%;
+  overflow: hidden;
+  transition: margin-left 0.3s ease;
+  margin-left: 0;
 }
 
 .sidebar {
-  width: 300px;
+  width: 380px;
+  height: 90vh;
   background: linear-gradient(145deg, #1e1e1e, #2a2a2a);
   box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
   padding: 30px;
-  border-radius: 20px;
+  border-radius: 0 20px 20px 0;
   transition: transform 0.3s ease;
-  position: relative;
+  position: fixed;
+  top: 5vh;
+  left: 0;
   z-index: 9998;
-  max-height: 250vh; /* Ensure the sidebar fits within the viewport */
-  overflow: off; /* Allow scrolling if content exceeds viewport height */
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transform: translateX(-270px);
 }
 
 .sidebar.closed {
-  transform: translateX(-100%);
+  transform: translateX(-350px);
 }
 
 .sidebar.open {
@@ -53,12 +59,24 @@
   border: none;
   padding: 15px;
   color: #fff;
-  border-top-right-radius: 20px;
-  border-bottom-right-radius: 20px;
-  position: absolute;
-  top: 20px;
-  left: 300px;
-  transition: background-color 0.3s ease, transform 0.3s ease;
+  border-radius: 0 20px 20px 0;
+  position: fixed;
+  top: 10%;
+  left: 0;
+  transform: translateY(-50%);
+  transition: left 0.3s ease;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.buttonClosed {
+  left: 30px;
+}
+
+.buttonOpen {
+  left: 380px;
 }
 
 .toggleButton:hover {
@@ -139,13 +157,13 @@
   justify-content: center;
   align-items: center;
   background: #282828;
-  font-family: 'Roboto', Arial;
+  font-family: "Roboto", Arial;
 }
 
 .loader {
-  --background: linear-gradient(135deg, #FF7B00, #FF9900);
+  --background: linear-gradient(135deg, #ff7b00, #ff9900);
   --shadow: rgba(255, 123, 0, 0.28);
-  --text: #FF7B00;
+  --text: #ff7b00;
   --page: rgba(255, 255, 255, 0.36);
   --page-fold: rgba(255, 255, 255, 0.52);
   --duration: 3s;
@@ -156,7 +174,7 @@
 
 .loader::before,
 .loader::after {
-  content: '';
+  content: "";
   position: absolute;
   bottom: 8px;
   width: 120px;
