@@ -125,10 +125,8 @@ const CookieBanner = () => {
       )}
 
       <style jsx>{`
-        @import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;700&display=swap');
         
         .cookie-banner {
-          font-family: 'Comfortaa', cursive;
           position: fixed;
           bottom: 0;
           left: 0;

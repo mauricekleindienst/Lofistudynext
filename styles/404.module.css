@@ -1,4 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400&display=swap');
 
 .container {
   display: flex;
@@ -8,7 +7,6 @@
   height: 100vh;
   text-align: center;
   background: #f0e7db;
-  font-family: 'Montserrat', sans-serif;
   color: #333;
   background-image: url('/404.png'); /* Corrected path */
   background-size: cover;

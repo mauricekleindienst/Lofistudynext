@@ -1,4 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;700&display=swap');
 
 .musicPlayerContainer {
   position: relative;
@@ -20,7 +19,6 @@
 }
 
 .musicPlayer {
-  font-family: 'Comfortaa', cursive;
   padding: 30px;
   border-radius: 20px;
   text-align: center;
