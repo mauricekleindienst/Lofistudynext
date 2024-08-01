@@ -14,7 +14,7 @@ const sounds = [
   { name: "Rain", icon: <FaUmbrella />, file: "/sounds/rain.mp3" },
   { name: "Fire", icon: <FaFire />, file: "/sounds/fire.mp3" },
   { name: "Ocean", icon: <FaWater />, file: "/sounds/ocean.mp3" },
-  { name: "Waterstream", icon: <FaHouseFloodWaterCircleArrowRight />, file: "/sounds/waterstream.mp3" },
+  { name: "River", icon: <FaHouseFloodWaterCircleArrowRight />, file: "/sounds/waterstream.mp3" },
   { name: "Keyboard", icon: <FaKeyboard />, file: "/sounds/keyboard.mp3" },
   { name: "Blizzard", icon: <FaSnowflake />, file: "/sounds/blizzard.mp3" }
 ];
