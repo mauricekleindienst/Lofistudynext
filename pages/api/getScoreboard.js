@@ -1,17 +1,12 @@
-import { Pool } from "pg";
+import { PrismaClient } from '@prisma/client';
 import Cors from 'cors';
+
+const prisma = new PrismaClient();
 
 const cors = Cors({
   origin: ['http://localhost:3000', 'https://lo-fi.study'], // Add allowed origins
   methods: ['GET', 'POST'], // Specify allowed methods
-  allowedHeaders: ['Content-Type'] // Specify allowed headers
-});
-
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: {
-    rejectUnauthorized: false,
-  },
+  allowedHeaders: ['Content-Type'], // Specify allowed headers
 });
 
 function runMiddleware(req, res, fn) {
@@ -30,14 +25,21 @@ export default async function handler(req, res) {
   await runMiddleware(req, res, cors);
 
   try {
-    const client = await pool.connect();
-    const result = await client.query(
-      "SELECT firstname, pomodoro_count_weekly FROM user_pomodoros ORDER BY pomodoro_count_weekly DESC"
-    );
-    client.release();
-    res.status(200).json(result.rows);
+    const users = await prisma.user_pomodoros.findMany({
+      orderBy: {
+        pomodoro_count_weekly: 'desc',
+      },
+      select: {
+        firstname: true,
+        pomodoro_count_weekly: true,
+      },
+    });
+
+    res.status(200).json(users);
   } catch (error) {
-    console.error("Error fetching scoreboard data:", error);
-    res.status(500).json({ error: "Internal server error" });
+    console.error('Error fetching scoreboard data:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  } finally {
+    await prisma.$disconnect();
   }
 }

@@ -1,0 +1,63 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model events {
+  id         Int       @id @default(autoincrement())
+  email      String    @db.VarChar(255)
+  title      String    @db.VarChar(255)
+  date       DateTime  @db.Date
+  created_at DateTime? @default(now()) @db.Timestamptz(6)
+}
+
+model notes {
+  id      Int     @id @default(autoincrement())
+  email   String  @db.VarChar(255)
+  title   String? @db.VarChar(255)
+  content String
+
+  @@unique([email, id])
+}
+
+model subtasks {
+  id        Int      @id @default(autoincrement())
+  todo_id   Int?
+  text      String
+  completed Boolean? @default(false)
+  todos     todos?   @relation(fields: [todo_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model todos {
+  id        Int        @id @default(autoincrement())
+  email     String     @db.VarChar(255)
+  text      String
+  completed Boolean    @default(false)
+  position  Int?
+  color     String?    @default("#ff7b00") @db.VarChar(7)
+  subtasks  subtasks[]
+}
+
+model tracks {
+  id         Int    @id @default(autoincrement())
+  user_email String @db.VarChar(255)
+  title      String @db.VarChar(255)
+  video_id   String @db.VarChar(255)
+}
+
+model user_pomodoros {
+  email                 String  @id @db.VarChar(255)
+  pomodoro_count        Int     @default(0)
+  firstname             String? @db.VarChar(255)
+  studying              Int?    @default(0)
+  coding                Int?    @default(0)
+  writing               Int?    @default(0)
+  working               Int?    @default(0)
+  other                 Int?    @default(0)
+  daily_counts          Json?   @default("{}")
+  pomodoro_count_weekly Int     @default(0)
+}

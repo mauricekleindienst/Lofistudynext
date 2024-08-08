@@ -1,50 +1,45 @@
-import { Pool } from "pg";
+import { PrismaClient } from '@prisma/client';
 
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: {
-    rejectUnauthorized: false,
-  },
-});
+const prisma = new PrismaClient();
 
 export default async function handler(req, res) {
   const { method } = req;
 
   switch (method) {
-    case "GET":
+    case 'GET':
       await getNotesHandler(req, res);
       break;
-    case "POST":
+    case 'POST':
       await saveNoteHandler(req, res);
       break;
-    case "DELETE":
+    case 'DELETE':
       await deleteNoteHandler(req, res);
       break;
     default:
-      res.setHeader("Allow", ["GET", "POST", "DELETE"]);
+      res.setHeader('Allow', ['GET', 'POST', 'DELETE']);
       res.status(405).end(`Method ${method} Not Allowed`);
   }
+
+  await prisma.$disconnect();
 }
 
 const getNotesHandler = async (req, res) => {
   const { email } = req.query;
 
   if (!email) {
-    return res.status(400).json({ error: "Email is required" });
+    return res.status(400).json({ error: 'Email is required' });
   }
 
   try {
-    const client = await pool.connect();
-    const result = await client.query(
-      "SELECT id, title, content FROM notes WHERE email = $1",
-      [email]
-    );
-    client.release();
+    const notes = await prisma.notes.findMany({
+      where: { email },
+      select: { id: true, title: true, content: true },
+    });
 
-    res.status(200).json(result.rows);
+    res.status(200).json(notes);
   } catch (error) {
-    console.error("Error fetching notes:", error);
-    res.status(500).json({ error: "Internal server error" });
+    console.error('Error fetching notes:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 };
 
@@ -52,32 +47,28 @@ const saveNoteHandler = async (req, res) => {
   const { id, email, title, content } = req.body;
 
   if (!email || !content) {
-    return res.status(400).json({ error: "Email and content are required" });
+    return res.status(400).json({ error: 'Email and content are required' });
   }
 
   try {
-    const client = await pool.connect();
-    let result;
-
+    let note;
     if (id) {
       // Update existing note
-      result = await client.query(
-        "UPDATE notes SET title = $1, content = $2 WHERE id = $3 AND email = $4 RETURNING *",
-        [title, content, id, email]
-      );
+      note = await prisma.notes.update({
+        where: { id },
+        data: { title, content },
+      });
     } else {
       // Insert new note
-      result = await client.query(
-        "INSERT INTO notes (email, title, content) VALUES ($1, $2, $3) RETURNING *",
-        [email, title, content]
-      );
+      note = await prisma.notes.create({
+        data: { email, title, content },
+      });
     }
 
-    client.release();
-    res.status(200).json(result.rows[0]);
+    res.status(200).json(note);
   } catch (error) {
-    console.error("Error saving note:", error);
-    res.status(500).json({ error: "Internal server error" });
+    console.error('Error saving note:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 };
 
@@ -85,19 +76,14 @@ const deleteNoteHandler = async (req, res) => {
   const { id, email } = req.body;
 
   if (!id || !email) {
-    return res.status(400).json({ error: "Id and email are required" });
+    return res.status(400).json({ error: 'Id and email are required' });
   }
 
   try {
-    const client = await pool.connect();
-    await client.query("DELETE FROM notes WHERE id = $1 AND email = $2", [
-      id,
-      email,
-    ]);
-    client.release();
-    res.status(200).json({ message: "Note deleted successfully" });
+    await prisma.notes.deleteMany({ where: { id, email } });
+    res.status(200).json({ message: 'Note deleted successfully' });
   } catch (error) {
-    console.error("Error deleting note:", error);
-    res.status(500).json({ error: "Internal server error" });
+    console.error('Error deleting note:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 };
