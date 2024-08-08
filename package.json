@@ -21,10 +21,12 @@
     "@fortawesome/free-solid-svg-icons": "^6.5.2",
     "@fortawesome/react-fontawesome": "^0.2.2",
     "@mui/material": "^5.16.1",
+    "@prisma/client": "^5.18.0",
     "@types/node": "^20.14.11",
     "@types/react": "^18.3.3",
     "autoprefixer": "^10.4.19",
     "chart.js": "^4.4.3",
+    "copy-webpack-plugin": "^12.0.2",
     "dotenv": "^16.4.5",
     "emoji-picker-react": "^4.11.1",
     "eslint": "^8",
@@ -48,6 +50,7 @@
     "pg-hstore": "^2.3.4",
     "postcss": "^8.4.39",
     "prettier": "^2.8.8",
+    "prisma": "^5.18.0",
     "react": "^18",
     "react-beautiful-dnd": "^13.1.1",
     "react-big-calendar": "^1.13.1",
@@ -72,8 +75,7 @@
     "timer-for-pomodoro": "^1.0.2",
     "typed.js": "^2.1.0",
     "typescript": "^5.5.3",
-    "winston": "^3.13.1",
-      "copy-webpack-plugin": "^12.0.2"
+    "winston": "^3.13.1"
   },
   "engines": {
     "node": ">=16.0.0"
