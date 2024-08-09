@@ -24,8 +24,8 @@ export default function MusicPlayer({ onMinimize }) {
   const [newTrackUrl, setNewTrackUrl] = useState('');
   const [apiReady, setApiReady] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [isIOS, setIsIOS] = useState(false);
   const playerRef = useRef(null);
+  const autoplayAttemptedRef = useRef(false);
 
   useEffect(() => {
     const script = document.createElement('script');
@@ -34,8 +34,6 @@ export default function MusicPlayer({ onMinimize }) {
     document.body.appendChild(script);
 
     window.onYouTubeIframeAPIReady = () => setApiReady(true);
-
-    setIsIOS(/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream);
 
     return () => {
       document.body.removeChild(script);
@@ -65,9 +63,19 @@ export default function MusicPlayer({ onMinimize }) {
   const onReady = (event) => {
     playerRef.current = event.target;
     playerRef.current.setVolume(volume);
-    if (!isIOS) {
-      playerRef.current.playVideo();
+    if (!autoplayAttemptedRef.current) {
+      autoplayAttemptedRef.current = true;
+      attemptAutoplay();
+    }
+  };
+
+  const attemptAutoplay = async () => {
+    try {
+      await playerRef.current.playVideo();
       setIsPlaying(true);
+    } catch (error) {
+      console.log("Autoplay failed. User interaction required to play.");
+      setIsPlaying(false);
     }
   };
 
@@ -95,13 +103,7 @@ export default function MusicPlayer({ onMinimize }) {
         try {
           await playerRef.current.loadVideoById(tracks[currentTrackIndex].videoId);
           if (isMounted) {
-            if (!isIOS) {
-              playerRef.current.playVideo();
-              setIsPlaying(true);
-            } else {
-              playerRef.current.pauseVideo();
-              setIsPlaying(false);
-            }
+            attemptAutoplay();
             setIsLoading(false);
           }
         } catch (error) {
@@ -118,7 +120,7 @@ export default function MusicPlayer({ onMinimize }) {
     return () => {
       isMounted = false;
     };
-  }, [currentTrackIndex, tracks, isIOS]);
+  }, [currentTrackIndex, tracks]);
 
   const addNewTrack = (title, url) => {
     const videoId = url.split('v=')[1].split('&')[0];
@@ -197,11 +199,12 @@ export default function MusicPlayer({ onMinimize }) {
               height: '0',
               width: '0',
               playerVars: {
-                autoplay: isIOS ? 0 : 1,
+                autoplay: 1,
                 controls: 0,
                 disablekb: 1,
                 rel: 0,
-                showinfo: 0
+                showinfo: 0,
+                playsinline: 1
               },
             }}
             onReady={onReady}
