@@ -7,7 +7,7 @@ const CookieBanner = () => {
   const [preferences, setPreferences] = useState({
     analytics: false,
     marketing: false,
-    functional: true, // Functional cookies are usually necessary
+    functional: true,
   });
 
   useEffect(() => {
@@ -70,11 +70,11 @@ const CookieBanner = () => {
     <div>
       {isBannerVisible && (
         <div className="cookie-banner" role="alert" aria-live="polite">
-          <p>We use cookies to ensure you get the best experience on while Studying on Lo-Fi.Study.</p>
-          <div>
-            <button onClick={handleRejectCookies}>Reject Cookies</button>
+          <p>We use cookies to ensure you get the best experience while Studying on Lo-Fi.Study.</p>
+          <div className="cookie-banner-buttons">
+            <button onClick={handleRejectCookies}>Reject</button>
             <button onClick={handleCustomizeCookies}>Customize</button>
-            <button onClick={handleAcceptCookies}>Accept Cookies</button>
+            <button onClick={handleAcceptCookies}>Accept</button>
           </div>
         </div>
       )}
@@ -91,8 +91,10 @@ const CookieBanner = () => {
                   checked={preferences.analytics}
                   onChange={handlePreferenceChange}
                 />
-                <span className="label-text">Analytics Cookies</span>
-                <span className="description">Helps us understand how our website is used.</span>
+                <div>
+                  <span className="label-text">Analytics Cookies</span>
+                  <span className="description">Helps us understand how our website is used.</span>
+                </div>
               </label>
               <label>
                 <input
@@ -101,8 +103,10 @@ const CookieBanner = () => {
                   checked={preferences.marketing}
                   onChange={handlePreferenceChange}
                 />
-                <span className="label-text">Marketing Cookies</span>
-                <span className="description">Used to deliver personalized ads.</span>
+                <div>
+                  <span className="label-text">Marketing Cookies</span>
+                  <span className="description">Used to deliver personalized ads.</span>
+                </div>
               </label>
               <label>
                 <input
@@ -112,12 +116,14 @@ const CookieBanner = () => {
                   onChange={handlePreferenceChange}
                   disabled
                 />
-                <span className="label-text">Functional Cookies</span>
-                <span className="description">Necessary for the basic functionality of the site.</span>
+                <div>
+                  <span className="label-text">Functional Cookies</span>
+                  <span className="description">Necessary for the basic functionality of the site.</span>
+                </div>
               </label>
             </div>
             <div className="modal-buttons">
-              <button onClick={handleSavePreferences}>Save Preferences</button>
+              <button onClick={handleSavePreferences}>Save</button>
               <button onClick={() => setIsModalVisible(false)}>Cancel</button>
             </div>
           </div>
@@ -125,7 +131,6 @@ const CookieBanner = () => {
       )}
 
       <style jsx>{`
-        
         .cookie-banner {
           position: fixed;
           bottom: 0;
@@ -135,18 +140,27 @@ const CookieBanner = () => {
           color: #fff;
           padding: 1rem;
           display: flex;
-          justify-content: space-between;
+          flex-direction: column;
           align-items: center;
           z-index: 9999;
           box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
           border-radius: 20px 20px 0 0;
+        }
+        .cookie-banner p {
+          margin-bottom: 1rem;
+          text-align: center;
+        }
+        .cookie-banner-buttons {
+          display: flex;
+          justify-content: center;
+          flex-wrap: wrap;
         }
         button {
           background: #ff7b00;
           color: #fff;
           border: none;
           padding: 0.5rem 1rem;
-          margin-left: 0.5rem;
+          margin: 0.25rem;
           cursor: pointer;
           border-radius: 10px;
           transition: background-color 0.3s ease;
@@ -169,11 +183,13 @@ const CookieBanner = () => {
         .modal-content {
           background: #2a2a2a;
           color: #fff;
-          padding: 2rem;
+          padding: 1.5rem;
           border-radius: 10px;
           text-align: center;
-          max-width: 500px;
-          width: 90%;
+          max-width: 90%;
+          width: 100%;
+          max-height: 90vh;
+          overflow-y: auto;
           box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
         }
         .preferences {
@@ -185,19 +201,20 @@ const CookieBanner = () => {
           align-items: flex-start;
           margin-bottom: 1rem;
         }
-            input[type="checkbox"] {
+        input[type="checkbox"] {
           margin-top: 0.25rem;
+          margin-right: 0.5rem;
+          flex-shrink: 0;
         }
-         .label-text {
-          flex: 1;
+        .label-text {
           color: #ff9900;
-          margin-left: 0.5rem;
+          display: block;
+          margin-bottom: 0.25rem;
         }
         .description {
-          flex: 2;
           font-size: 0.9rem;
           color: #ccc;
-          margin-left: 0.5rem;
+          display: block;
         }
         .modal-buttons {
           display: flex;
@@ -206,17 +223,20 @@ const CookieBanner = () => {
         }
         .modal-buttons button {
           flex: 1;
-          margin: 0 0.5rem;
-          background: #ff7b00;
-          border: none;
-          color: #fff;
-          padding: 0.5rem 1rem;
-          cursor: pointer;
-          border-radius: 10px;
-          transition: background-color 0.3s ease;
+          margin: 0 0.25rem;
         }
-        .modal-buttons button:hover {
-          background: #ff9900;
+        @media (min-width: 768px) {
+          .cookie-banner {
+            flex-direction: row;
+            justify-content: space-between;
+          }
+          .cookie-banner p {
+            margin-bottom: 0;
+            margin-right: 1rem;
+          }
+          .modal-content {
+            max-width: 500px;
+          }
         }
       `}</style>
     </div>
