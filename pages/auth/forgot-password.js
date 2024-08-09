@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { getAuth, sendPasswordResetEmail } from "firebase/auth";
+import { sendPasswordResetEmail } from "firebase/auth";
 import styles from "../../styles/Login.module.css";
+import { auth } from "../../firebaseConfig";
+
 
 const backgrounds = [
   { id: 1, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Night.mp4", alt: "Night", note: "Night" },
@@ -22,8 +24,7 @@ export default function ForgotPassword() {
   const [background, setBackground] = useState(null);
 
   useEffect(() => {
-    const randomBackground =
-      backgrounds[Math.floor(Math.random() * backgrounds.length)];
+    const randomBackground = backgrounds[Math.floor(Math.random() * backgrounds.length)];
     setBackground(randomBackground);
   }, []);
 
@@ -33,7 +34,6 @@ export default function ForgotPassword() {
     setMessage("");
 
     try {
-      const auth = getAuth();
       await sendPasswordResetEmail(auth, email);
       setMessage("Password reset email sent. Check your inbox.");
     } catch (error) {
@@ -50,6 +50,7 @@ export default function ForgotPassword() {
           loop
           muted
           src={background.src}
+          alt={background.alt}
         />
       )}
       <div className={styles.gradientOverlay}></div>
