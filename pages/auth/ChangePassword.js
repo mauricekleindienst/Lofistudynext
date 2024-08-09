@@ -1,3 +1,4 @@
+// pages/auth/ChangePassword.js
 import { useState } from "react";
 import { useRouter } from "next/router";
 import { getAuth, confirmPasswordReset, verifyPasswordResetCode } from "firebase/auth";
