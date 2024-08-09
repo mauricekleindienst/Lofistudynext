@@ -344,3 +344,84 @@
   height: 20px;
   margin-right: 8px;
 }
+
+
+.authMessage {
+  display: flex;
+  align-items: center;
+  margin-top: 1rem;
+  padding: 0.75rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  text-align: left;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.authMessageIcon {
+  width: 24px;
+  height: 24px;
+  margin-right: 0.5rem;
+  flex-shrink: 0;
+}
+
+.authError {
+  background-color: rgba(239, 83, 80, 0.1);
+  color: #ef5350;
+  border: 1px solid #ef5350;
+}
+
+.authSuccess {
+  background-color: rgba(76, 175, 80, 0.1);
+  color: #4caf50;
+  border: 1px solid #4caf50;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.passwordInputWrapper {
+  position: relative;
+  width: 100%;
+}
+
+.passwordInput {
+  padding-right: 40px; /* Make room for the icon */
+}
+
+.passwordToggle {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.passwordToggleIcon {
+  width: 20px;
+  height: 20px;
+  color: rgba(255, 255, 255, 0.7);
+  transition: color 0.3s ease;
+}
+
+.passwordToggle:hover .passwordToggleIcon {
+  color: #ff7b00;
+}
+
+/* Ensure all inputs have the same size */
+.authInput {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Remove focus outline from the toggle button */
+.passwordToggle:focus {
+  outline: none;
+}
