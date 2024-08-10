@@ -536,3 +536,72 @@
     margin: 1rem 0;
   }
 }
+
+.welcomeWrapper {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.welcomeSection {
+  min-height: 60vh;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2rem;
+  position: relative;
+  z-index: 1;
+}
+
+.cartoonLeft, .cartoonRight {
+  flex: 0 0 20px; /* Adjust this value based on your image size */
+}
+
+.welcomeContent {
+  flex: 1;
+  text-align: center;
+  padding: 0 2rem;
+}
+
+.title {
+  font-size: 4rem;
+  font-weight: 700;
+  color: #ff7b00;
+  margin-bottom: 1rem;
+  animation: fadeInUp 1s ease-out;
+}
+
+.description {
+  font-size: 1.5rem;
+  max-width: 600px;
+  margin: 0 auto 2rem;
+  animation: fadeIn 1s ease-out 0.5s both;
+}
+
+.ctaButton {
+  padding: 1rem 2rem;
+  font-size: 1.2rem;
+  border-radius: 5px;
+  border: none;
+  background-color: #ff7b00;
+  color: #ffffff;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+@media (max-width: 968px) {
+  .welcomeSection {
+    flex-direction: column;
+  }
+
+  .cartoonLeft, .cartoonRight {
+    display: none; /* Hide cartoons on smaller screens */
+  }
+
+  .welcomeContent {
+    padding: 0;
+  }
+}
+
+/* Keep your existing animations and other styles */
