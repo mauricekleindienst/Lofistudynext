@@ -89,7 +89,6 @@ export default function Landing() {
           name="description"
           content="Enhance your study sessions with our Lo-Fi.Study Lofi styled learning platform"
         />
-        <link rel="icon" href="/favicon.ico" />
       </Head>
       <Header />
       <CookieBanner />	

@@ -1,5 +1,4 @@
 import { Html, Head, Main, NextScript } from "next/document";
-import CookieBanner from "../components/CookieBanner";
 
 export default function Document() {
   const jsonLdData = {
@@ -24,8 +23,19 @@ export default function Document() {
   return (
     <Html lang="en">
       <Head>
-      <CookieBanner />
-        <link rel="shortcut icon" href="/favicon.ico" />
+        {/* Favicon */}
+        <link rel="icon" href="/favicon.ico" sizes="any" />
+        <link rel="icon" href="/icon.svg" type="image/svg+xml" />
+        
+        {/* Additional Apple Touch Icons for different sizes */}
+        <link rel="apple-touch-icon" href="/apple-touch-icon-iphone-60x60.png"/>
+        <link rel="apple-touch-icon" sizes="60x60" href="/apple-touch-icon-ipad-76x76.png"/>
+        <link rel="apple-touch-icon" sizes="114x114" href="/apple-touch-icon-iphone-retina-120x120.png"/>
+        <link rel="apple-touch-icon" sizes="144x144" href="/apple-touch-icon-ipad-retina-152x152.png"/>
+      
+        {/* Web App Manifest */}
+        <link rel="manifest" href="/site.webmanifest" />
+
         <link
           href="https://fonts.googleapis.com/icon?family=Material+Icons"
           rel="stylesheet"
