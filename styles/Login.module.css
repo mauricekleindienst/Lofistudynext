@@ -18,6 +18,11 @@
   height: 100%;
   object-fit: cover;
   z-index: -1;
+  background-color: #282828;
+
+  /* Make the video non-interactable */
+  pointer-events: none;
+  user-select: none;
 }
 
 .gradientOverlay {
