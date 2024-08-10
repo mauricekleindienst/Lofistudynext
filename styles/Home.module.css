@@ -48,7 +48,7 @@
 
 .logo {
   display: flex;
-  align-items: center;
+  align-items: center;;
 }
 
 .logo image {
@@ -473,3 +473,135 @@
   padding-left: 1.2rem;
   list-style: disc;
 }
+
+
+.hamburger {
+  display: none;
+  flex-direction: column;
+  justify-content: space-around;
+  width: 2rem;
+  height: 2rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  z-index: 10;
+}
+
+.hamburger span {
+  width: 2rem;
+  height: 0.25rem;
+  background: #ff7b00;
+  border-radius: 10px;
+  transition: all 0.3s linear;
+  position: relative;
+  transform-origin: 1px;
+}
+@media (max-width: 768px) {
+  .header {
+    z-index: 1001; /* Ensure the header stays on top */
+  }
+
+  .buttonContainer {
+    position: fixed;
+    top: 0; /* Start from the top of the viewport */
+    right: 0;
+    height: auto; /* Allow height to adjust to content */
+    max-height: calc(100vh - 11%); /* Maximum height, accounting for header */
+    width: 100%;
+    border-bottom-left-radius: 5%;
+    border-bottom-right-radius: 5%;
+    flex-direction: column;
+    background-color: rgba(0, 0, 0, 0.9);
+    padding: 2rem;
+    padding-top: calc(11% + 2rem); /* Add padding at the top to account for the header */
+    z-index: 1000; /* Just below the header */
+    transform: translateY(-100%);
+    transition: transform 0.3s ease-in-out;
+    overflow-y: auto; /* Allow scrolling if content exceeds max-height */
+  }
+
+  .buttonContainer.open {
+    transform: translateY(0);
+  }
+
+  .hamburger {
+    display: flex;
+    z-index: 1002; /* Ensure the hamburger is clickable */
+  }
+
+  .contactButton, .faqButton, .loginButton {
+    font-size: 1.5rem;
+    text-align: center;
+    margin: 1rem 0;
+  }
+}
+
+.welcomeWrapper {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.welcomeSection {
+  min-height: 60vh;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2rem;
+  position: relative;
+  z-index: 1;
+}
+
+.cartoonLeft, .cartoonRight {
+  flex: 0 0 20px; /* Adjust this value based on your image size */
+}
+
+.welcomeContent {
+  flex: 1;
+  text-align: center;
+  padding: 0 2rem;
+}
+
+.title {
+  font-size: 4rem;
+  font-weight: 700;
+  color: #ff7b00;
+  margin-bottom: 1rem;
+  animation: fadeInUp 1s ease-out;
+}
+
+.description {
+  font-size: 1.5rem;
+  max-width: 600px;
+  margin: 0 auto 2rem;
+  animation: fadeIn 1s ease-out 0.5s both;
+}
+
+.ctaButton {
+  padding: 1rem 2rem;
+  font-size: 1.2rem;
+  border-radius: 5px;
+  border: none;
+  background-color: #ff7b00;
+  color: #ffffff;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+@media (max-width: 968px) {
+  .welcomeSection {
+    flex-direction: column;
+  }
+
+  .cartoonLeft, .cartoonRight {
+    display: none; /* Hide cartoons on smaller screens */
+  }
+
+  .welcomeContent {
+    padding: 0;
+  }
+}
+
+/* Keep your existing animations and other styles */

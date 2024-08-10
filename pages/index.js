@@ -7,28 +7,33 @@ import "react-responsive-carousel/lib/styles/carousel.min.css";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import CookieBanner from "../components/CookieBanner";
-
+import Image from "next/image";
 import styles from "../styles/Home.module.css";
 export default function Landing() {
   const img = [
     {
-      src: "https://i.ibb.co/K0qdm4r/lgsarius-cyberpunk-night-study-girl-window-desklight-c1650ad7-776d-470a-a2e0-da9e78140212.webp" ,
+      src:
+        "https://i.ibb.co/K0qdm4r/lgsarius-cyberpunk-night-study-girl-window-desklight-c1650ad7-776d-470a-a2e0-da9e78140212.webp",
       alt: "First slide",
     },
     {
-      src: "https://i.ibb.co/fGQQfWr/lgsarius-Lofi-study-girl-on-desk-cybperunk-like-coffee-rain-82a5d58d-44f1-4b9a-ae8f-1f82844543a6.webp",
+      src:
+        "https://i.ibb.co/fGQQfWr/lgsarius-Lofi-study-girl-on-desk-cybperunk-like-coffee-rain-82a5d58d-44f1-4b9a-ae8f-1f82844543a6.webp",
       alt: "Second slide",
     },
     {
-      src: "https://i.ibb.co/pdsgshq/lgsarius-Lofi-girl-and-cat-studying-in-a-field-sunset-3d94459d-fd73-43ee-8c1f-c4547239bb7a.webp",
+      src:
+        "https://i.ibb.co/pdsgshq/lgsarius-Lofi-girl-and-cat-studying-in-a-field-sunset-3d94459d-fd73-43ee-8c1f-c4547239bb7a.webp",
       alt: "Third slide",
     },
     {
-      src: "https://i.ibb.co/PG0bPhB/lgsarius-Lofi-study-girl-on-desk-plants-rain-coffee-rain-02e5bc5f-943e-4c0b-b986-1cf5d7362034.webp",
+      src:
+        "https://i.ibb.co/PG0bPhB/lgsarius-Lofi-study-girl-on-desk-plants-rain-coffee-rain-02e5bc5f-943e-4c0b-b986-1cf5d7362034.webp",
       alt: "Fourth slide",
     },
     {
-      src: "https://i.ibb.co/m9QYfwJ/lgsarius-Lofi-Trainstation-sunset-648859c2-8af6-4b30-b276-dca8f45ba231.webp",
+      src:
+        "https://i.ibb.co/m9QYfwJ/lgsarius-Lofi-Trainstation-sunset-648859c2-8af6-4b30-b276-dca8f45ba231.webp",
       alt: "Fifth slide",
     },
   ];
@@ -91,32 +96,43 @@ export default function Landing() {
         />
       </Head>
       <Header />
-      <CookieBanner />	
+      <CookieBanner />
       <main className={styles.main}>
-        <motion.div
-          className={styles.welcomeWrapper}
-          initial="hidden"
-          animate="visible"
-          variants={fadeInUp}
-          transition={{ duration: 0.5 }}
-        >
-          <section className={styles.welcomeSection}>
-            <h1 className={styles.title}>Welcome to Lo-Fi.Study</h1>
-            <p className={styles.description}>
-              With Lo-Fi.Study, you can create the perfect atmosphere to{" "}
-              <span id="typedtext"></span>.
-            </p>
-            <motion.button
-              onClick={() => router.push("/auth/signin")}
-              className={styles.ctaButton}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              Get Started
-            </motion.button>
-          </section>
-        </motion.div>
-
+      <motion.div
+  className={styles.welcomeWrapper}
+  initial="hidden"
+  animate="visible"
+  variants={fadeInUp}
+  transition={{ duration: 0.5 }}
+>
+  <section className={styles.welcomeSection}>
+    <div className={styles.cartoonLeft}>
+      <Image
+        src="/character_notebook.svg"
+        alt="Study illustration left"
+        width={200}
+        height={200}
+        priority
+      />
+    </div>
+    <div className={styles.welcomeContent}>
+      <h1 className={styles.title}>Welcome to Lo-Fi.Study</h1>
+      <p className={styles.description}>
+        With Lo-Fi.Study, you can create the perfect atmosphere to{" "}
+        <span id="typedtext"></span>.
+      </p>
+      <motion.button
+        onClick={() => router.push("/auth/signin")}
+        className={styles.ctaButton}
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+      >
+        Get Started
+      </motion.button>
+    </div>
+  
+  </section>
+</motion.div>
         <motion.section
           className={styles.overviewSection}
           initial="hidden"

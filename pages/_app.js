@@ -3,7 +3,7 @@ import { UserProvider } from "../context/UserContext";
 import "../styles/globals.css";
 import Head from "next/head";
 import CookieBanner from "../components/CookieBanner";
-
+import 'bootstrap/dist/css/bootstrap.css';
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }) {
   return (
