@@ -14,7 +14,6 @@ export default function ChangePassword() {
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
-
   const handlePasswordReset = async (e) => {
     e.preventDefault();
     setError("");
@@ -39,6 +38,7 @@ export default function ChangePassword() {
       setError(error.message);
     }
   };
+
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
@@ -48,24 +48,16 @@ export default function ChangePassword() {
       <div className={styles.authCard}>
         <h1 className={styles.authTitle}>Change Password</h1>
         <form onSubmit={handlePasswordReset} className={styles.authForm}>
-          <input
-            type="password"
-            value={newPassword}
-            onChange={(e) => setNewPassword(e.target.value)}
-            placeholder="New Password"
-            required
-            className={styles.authInput}
-          />
-           <div className={styles.passwordInputWrapper}>
+          <div className={styles.passwordInputWrapper}>
             <input
               type={showPassword ? "text" : "password"}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Password"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              placeholder="New Password"
               required
               className={`${styles.authInput} ${styles.passwordInput}`}
             />
-             <button
+            <button
               type="button"
               onClick={togglePasswordVisibility}
               className={styles.passwordToggle}
@@ -81,6 +73,14 @@ export default function ChangePassword() {
               )}
             </button>
           </div>
+          <input
+            type="password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            placeholder="Confirm Password"
+            required
+            className={styles.authInput}
+          />
           <button type="submit" className={styles.authButton}>
             Change Password
           </button>
