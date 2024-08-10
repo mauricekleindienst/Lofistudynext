@@ -473,3 +473,66 @@
   padding-left: 1.2rem;
   list-style: disc;
 }
+
+
+.hamburger {
+  display: none;
+  flex-direction: column;
+  justify-content: space-around;
+  width: 2rem;
+  height: 2rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  z-index: 10;
+}
+
+.hamburger span {
+  width: 2rem;
+  height: 0.25rem;
+  background: #ff7b00;
+  border-radius: 10px;
+  transition: all 0.3s linear;
+  position: relative;
+  transform-origin: 1px;
+}
+@media (max-width: 768px) {
+  .header {
+    z-index: 1001; /* Ensure the header stays on top */
+  }
+
+  .buttonContainer {
+    position: fixed;
+    top: 0; /* Start from the top of the viewport */
+    right: 0;
+    height: auto; /* Allow height to adjust to content */
+    max-height: calc(100vh - 11%); /* Maximum height, accounting for header */
+    width: 100%;
+    border-bottom-left-radius: 5%;
+    border-bottom-right-radius: 5%;
+    flex-direction: column;
+    background-color: rgba(0, 0, 0, 0.9);
+    padding: 2rem;
+    padding-top: calc(11% + 2rem); /* Add padding at the top to account for the header */
+    z-index: 1000; /* Just below the header */
+    transform: translateY(-100%);
+    transition: transform 0.3s ease-in-out;
+    overflow-y: auto; /* Allow scrolling if content exceeds max-height */
+  }
+
+  .buttonContainer.open {
+    transform: translateY(0);
+  }
+
+  .hamburger {
+    display: flex;
+    z-index: 1002; /* Ensure the hamburger is clickable */
+  }
+
+  .contactButton, .faqButton, .loginButton {
+    font-size: 1.5rem;
+    text-align: center;
+    margin: 1rem 0;
+  }
+}
