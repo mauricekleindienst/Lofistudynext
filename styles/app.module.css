@@ -9,16 +9,21 @@
 }
 
 .videoBackground {
-  position: fixed;  /* Change from absolute to fixed */
+  position: fixed;  /* The video is fixed in the background */
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  overflow: hidden;  /* Change from 'off' to 'hidden' */
+  overflow: hidden;  /* Hide any overflow from the video */
   object-fit: cover;
   z-index: -1;
   background-color: #282828;
+
+  /* Make the video non-interactable */
+  pointer-events: none;
+  user-select: none;
 }
+
 
 .main {
   display: flex;
