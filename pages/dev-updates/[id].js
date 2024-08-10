@@ -20,7 +20,7 @@ export default function UpdateDetail() {
             <Head>
                 <title>{update.title} - Lo-Fi Study</title>
                 <meta name="description" content={update.description} />
-                <link rel="icon" href="/favicon.ico" />
+               
             </Head>
 
             <main className={styles.main}>

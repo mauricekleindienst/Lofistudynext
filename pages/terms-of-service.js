@@ -18,7 +18,6 @@ export default function Terms() {
           name="description"
           content="Read our Terms and Conditions at Lo-Fi Study"
         />
-        <link rel="icon" href="/favicon.ico" />
       </Head>
       <Header />
       

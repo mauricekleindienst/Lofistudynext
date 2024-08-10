@@ -12,7 +12,6 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }) {
         <CookieBanner />
         <Head>
           <title>Lo-Fi.Study</title>
-          <link rel="shortcut icon" href="/favicon.ico" />
           <link
             href="https://fonts.googleapis.com/icon?family=Material+Icons"
             rel="stylesheet"

@@ -1,0 +1,9 @@
+{
+    "name": "Lo-Fi.Study",
+    "short_name": "Lo-Fi.Study",
+    "description": "Improve your focus and productivity with ambient music",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#ffffff"
+  }

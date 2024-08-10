@@ -23,7 +23,6 @@ export default function DevUpdates() {
           name="description"
           content="Development Updates for Lo-Fi Study"
         />
-        <link rel="icon" href="/favicon.ico" />
       </Head>
       
       <Header />

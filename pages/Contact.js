@@ -45,7 +45,6 @@ export default function Contact() {
           name="description"
           content="Get in touch with us at Lo-Fi Study"
         />
-        <link rel="icon" href="/favicon.ico" />
       </Head>
 
       <Header />

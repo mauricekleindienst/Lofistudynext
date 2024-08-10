@@ -37,7 +37,6 @@ export default function FAQ() {
           name="description"
           content="Frequently Asked Questions about Lo-Fi Study"
         />
-        <link rel="icon" href="/favicon.ico" />
       </Head>
       
       <Header />

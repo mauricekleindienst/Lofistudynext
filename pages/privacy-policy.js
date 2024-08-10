@@ -14,7 +14,6 @@ export default function PrivacyPolicy() {
           name="description"
           content="Privacy Policy of Lo-Fi Study"
         />
-        <link rel="icon" href="/favicon.ico" />
       </Head>
       
       <Header />
