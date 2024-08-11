@@ -69,21 +69,19 @@ const saveTodoHandler = async (req, res) => {
   }
 
   try {
+    const maxPositionResult = await prisma.todos.aggregate({
+      _max: { position: true },
+      where: { email },
+    });
+    const maxPosition = maxPositionResult._max.position || 0;
+
     const todo = await prisma.todos.create({
       data: {
         email,
         text,
         completed: false,
         color,
-        position: {
-          increment: 1,
-          from: (
-            await prisma.todos.aggregate({
-              _max: { position: true },
-              where: { email },
-            })
-          )._max.position || 0,
-        },
+        position: maxPosition + 1,
       },
     });
 
