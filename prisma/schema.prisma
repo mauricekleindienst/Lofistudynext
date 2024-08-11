@@ -4,8 +4,13 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url      = "postgres://ubj5nv3ir3a0h1:pa165c853a3e288f7b8842de4e1705ae8dcf642c6b6be4a6a40df419f46221d73@c3l5o0rb2a6o4l.cluster-czz5s0kz4scl.eu-west-1.rds.amazonaws.com:5432/d9jdgtgmbsoof1"
 }
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["tracing"]
+}
+
 
 model events {
   id         Int       @id @default(autoincrement())
