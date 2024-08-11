@@ -80,6 +80,7 @@ export default function Todo({ onMinimize }) {
         }
       } catch (error) {
         console.error("Error adding todo:", error);
+        // Roll back optimistic update if server request fails
         setTodos((prev) => prev.filter((todo) => todo.id !== newTodoItem.id));
         setError("Failed to add todo. Please try again.");
       }
@@ -112,13 +113,15 @@ export default function Todo({ onMinimize }) {
       } catch (error) {
         console.error("Error updating todo:", error);
         setError("Failed to update todo. Please try again.");
-        fetchTodosFromServer();
+        fetchTodosFromServer(); // Reload todos from server on failure
       }
     }
   };
 
   const deleteTodo = async (id) => {
     if (session?.user?.email) {
+      // Optimistic update: remove the todo from the UI
+      const originalTodos = todos;
       setTodos((prev) => prev.filter((todo) => todo.id !== id));
       setError(null);
 
@@ -135,7 +138,7 @@ export default function Todo({ onMinimize }) {
       } catch (error) {
         console.error("Error deleting todo:", error);
         setError("Failed to delete todo. Please try again.");
-        fetchTodosFromServer();
+        setTodos(originalTodos); // Rollback optimistic update on failure
       }
     }
   };
@@ -174,7 +177,38 @@ export default function Todo({ onMinimize }) {
     } catch (error) {
       console.error("Error reordering todos:", error);
       setError("Failed to reorder todos. Please try again.");
-      fetchTodosFromServer();
+      fetchTodosFromServer(); // Reload todos from server on failure
+    }
+  };
+
+  const saveEditedTodo = async (id, newText) => {
+    if (session?.user?.email) {
+      const updatedTodos = todos.map((todo) =>
+        todo.id === id ? { ...todo, text: newText } : todo
+      );
+      setTodos(updatedTodos);
+      setEditingTodo(null);
+      setError(null);
+
+      try {
+        const response = await fetch("/api/todos", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            id,
+            email: session.user.email,
+            text: newText,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to update todo");
+        }
+      } catch (error) {
+        console.error("Error updating todo:", error);
+        setError("Failed to update todo. Please try again.");
+        fetchTodosFromServer(); // Reload todos from server on failure
+      }
     }
   };
 
@@ -268,14 +302,17 @@ export default function Todo({ onMinimize }) {
                                       type="text"
                                       value={todo.text}
                                       onChange={(e) => {
-                                        const updatedTodos = todos.map((t) =>
-                                          t.id === todo.id
-                                            ? { ...t, text: e.target.value }
-                                            : t
+                                        setTodos((prev) =>
+                                          prev.map((t) =>
+                                            t.id === todo.id
+                                              ? { ...t, text: e.target.value }
+                                              : t
+                                          )
                                         );
-                                        setTodos(updatedTodos);
                                       }}
-                                      onBlur={() => setEditingTodo(null)}
+                                      onBlur={() =>
+                                        saveEditedTodo(todo.id, todo.text)
+                                      }
                                       className={styles.editInput}
                                       autoFocus
                                     />

@@ -36,7 +36,7 @@
 }
 
 .sidebar {
-  width: 380px;
+  width: 400px;
   height: 100%;
   background: linear-gradient(145deg, #1e1e1e, #2a2a2a);
   box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
@@ -71,7 +71,7 @@
   position: fixed;
   top: 20%;
   left: 0;
-  transform: translateY(-50%);
+  transform: translateY(50%);
   transition: left 0.3s ease;
   z-index: 10000;
   display: flex;
@@ -80,11 +80,11 @@
 }
 
 .buttonClosed {
-  left: 30px;
+  left: 50px;
 }
 
 .buttonOpen {
-  left: 380px;
+  left: 400px;
 }
 
 .toggleButton:hover {
