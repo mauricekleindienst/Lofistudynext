@@ -7,6 +7,10 @@ const nextConfig = {
   images: {
     domains: ['i.ibb.co'],
   },
+  env: {
+    DATABASE_URL: process.env.DATABASE_URL,
+    // Add other environment variables you need here
+  },
 };
 
 module.exports = nextConfig;

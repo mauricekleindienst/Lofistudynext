@@ -7,7 +7,6 @@ import {
   Draggable as DndDraggable,
 } from "react-beautiful-dnd";
 import styles from "../styles/Todo.module.css";
-
 import {
   FaPlus,
   FaTrash,
@@ -22,20 +21,26 @@ export default function Todo({ onMinimize }) {
   const [newTodo, setNewTodo] = useState("");
   const [editingTodo, setEditingTodo] = useState(null);
   const [selectedColor, setSelectedColor] = useState("#ff7b00");
-  const [collapsed, setCollapsed] = useState({});
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const fetchTodosFromServer = useCallback(async () => {
     if (session?.user?.email) {
+      setLoading(true);
+      setError(null);
       try {
         const response = await fetch(`/api/todos?email=${session.user.email}`);
         if (response.ok) {
           const data = await response.json();
-          setTodos(data);
+          setTodos(data.todos);
         } else {
-          console.error("Failed to fetch todos");
+          throw new Error("Failed to fetch todos");
         }
       } catch (error) {
         console.error("Error fetching todos:", error);
+        setError("Failed to load todos. Please try again.");
+      } finally {
+        setLoading(false);
       }
     }
   }, [session]);
@@ -57,6 +62,7 @@ export default function Todo({ onMinimize }) {
       };
       setTodos((prev) => [...prev, newTodoItem]);
       setNewTodo("");
+      setError(null);
 
       try {
         const response = await fetch("/api/todos", {
@@ -70,12 +76,12 @@ export default function Todo({ onMinimize }) {
         });
 
         if (!response.ok) {
-          console.error("Failed to add todo");
-          setTodos((prev) => prev.filter((todo) => todo.id !== newTodoItem.id));
+          throw new Error("Failed to add todo");
         }
       } catch (error) {
         console.error("Error adding todo:", error);
         setTodos((prev) => prev.filter((todo) => todo.id !== newTodoItem.id));
+        setError("Failed to add todo. Please try again.");
       }
     }
   };
@@ -86,6 +92,7 @@ export default function Todo({ onMinimize }) {
         todo.id === id ? { ...todo, completed: !todo.completed } : todo
       );
       setTodos(updatedTodos);
+      setError(null);
 
       try {
         const todoToUpdate = updatedTodos.find((todo) => todo.id === id);
@@ -100,11 +107,11 @@ export default function Todo({ onMinimize }) {
         });
 
         if (!response.ok) {
-          console.error("Failed to update todo");
-          fetchTodosFromServer();
+          throw new Error("Failed to update todo");
         }
       } catch (error) {
         console.error("Error updating todo:", error);
+        setError("Failed to update todo. Please try again.");
         fetchTodosFromServer();
       }
     }
@@ -113,6 +120,7 @@ export default function Todo({ onMinimize }) {
   const deleteTodo = async (id) => {
     if (session?.user?.email) {
       setTodos((prev) => prev.filter((todo) => todo.id !== id));
+      setError(null);
 
       try {
         const response = await fetch("/api/todos", {
@@ -122,11 +130,11 @@ export default function Todo({ onMinimize }) {
         });
 
         if (!response.ok) {
-          console.error("Failed to delete todo");
-          fetchTodosFromServer();
+          throw new Error("Failed to delete todo");
         }
       } catch (error) {
         console.error("Error deleting todo:", error);
+        setError("Failed to delete todo. Please try again.");
         fetchTodosFromServer();
       }
     }
@@ -145,6 +153,7 @@ export default function Todo({ onMinimize }) {
     }));
 
     setTodos(updatedItems);
+    setError(null);
 
     try {
       const response = await fetch("/api/todos/reorder", {
@@ -160,11 +169,11 @@ export default function Todo({ onMinimize }) {
       });
 
       if (!response.ok) {
-        console.error("Failed to reorder todos");
-        fetchTodosFromServer();
+        throw new Error("Failed to reorder todos");
       }
     } catch (error) {
       console.error("Error reordering todos:", error);
+      setError("Failed to reorder todos. Please try again.");
       fetchTodosFromServer();
     }
   };
@@ -211,95 +220,100 @@ export default function Todo({ onMinimize }) {
                 )}
               </div>
             </div>
-            <DragDropContext onDragEnd={onDragEnd}>
-              <Droppable droppableId="todos">
-                {(provided) => (
-                  <div
-                    {...provided.droppableProps}
-                    ref={provided.innerRef}
-                    className={styles.todoList}
-                  >
-                    {todos.map((todo, index) => (
-                      <DndDraggable
-                        key={todo.id}
-                        draggableId={todo.id.toString()}
-                        index={index}
-                      >
-                        {(provided, snapshot) => (
-                          <div
-                            ref={provided.innerRef}
-                            {...provided.draggableProps}
-                            {...provided.dragHandleProps}
-                            className={`${styles.todoItem} ${
-                              snapshot.isDragging ? styles.dragging : ""
-                            }`}
-                            style={{
-                              ...provided.draggableProps.style,
-                              borderLeft: `5px solid ${todo.color}`,
-                              backgroundColor: snapshot.isDragging
-                                ? "#444"
-                                : "#333",
-                              transition: "background-color 0.2s ease",
-                            }}
-                          >
-                            <div className={styles.mainTodo}>
-                              <div className={styles.todoHeader}>
-                                <input
-                                  type="checkbox"
-                                  checked={todo.completed}
-                                  onChange={() => toggleTodo(todo.id)}
-                                  className={styles.todoCheckbox}
-                                />
-                                {editingTodo === todo.id ? (
+            {error && <div className={styles.error}>{error}</div>}
+            {loading ? (
+              <div className={styles.loading}>Loading...</div>
+            ) : (
+              <DragDropContext onDragEnd={onDragEnd}>
+                <Droppable droppableId="todos">
+                  {(provided) => (
+                    <div
+                      {...provided.droppableProps}
+                      ref={provided.innerRef}
+                      className={styles.todoList}
+                    >
+                      {todos.map((todo, index) => (
+                        <DndDraggable
+                          key={todo.id}
+                          draggableId={todo.id.toString()}
+                          index={index}
+                        >
+                          {(provided, snapshot) => (
+                            <div
+                              ref={provided.innerRef}
+                              {...provided.draggableProps}
+                              {...provided.dragHandleProps}
+                              className={`${styles.todoItem} ${
+                                snapshot.isDragging ? styles.dragging : ""
+                              }`}
+                              style={{
+                                ...provided.draggableProps.style,
+                                borderLeft: `5px solid ${todo.color}`,
+                                backgroundColor: snapshot.isDragging
+                                  ? "#444"
+                                  : "#333",
+                                transition: "background-color 0.2s ease",
+                              }}
+                            >
+                              <div className={styles.mainTodo}>
+                                <div className={styles.todoHeader}>
                                   <input
-                                    type="text"
-                                    value={todo.text}
-                                    onChange={(e) => {
-                                      const updatedTodos = todos.map((t) =>
-                                        t.id === todo.id
-                                          ? { ...t, text: e.target.value }
-                                          : t
-                                      );
-                                      setTodos(updatedTodos);
-                                    }}
-                                    onBlur={() => setEditingTodo(null)}
-                                    className={styles.editInput}
-                                    autoFocus
+                                    type="checkbox"
+                                    checked={todo.completed}
+                                    onChange={() => toggleTodo(todo.id)}
+                                    className={styles.todoCheckbox}
                                   />
-                                ) : (
-                                  <span
-                                    className={`${styles.todoText} ${
-                                      todo.completed ? styles.completed : ""
-                                    }`}
-                                  >
-                                    {todo.text}
-                                  </span>
-                                )}
-                                <div className={styles.todoActions}>
-                                  <button
-                                    onClick={() => setEditingTodo(todo.id)}
-                                    className={styles.editButton}
-                                  >
-                                    <FaEdit />
-                                  </button>
-                                  <button
-                                    onClick={() => deleteTodo(todo.id)}
-                                    className={styles.deleteButton}
-                                  >
-                                    <FaTrash />
-                                  </button>
+                                  {editingTodo === todo.id ? (
+                                    <input
+                                      type="text"
+                                      value={todo.text}
+                                      onChange={(e) => {
+                                        const updatedTodos = todos.map((t) =>
+                                          t.id === todo.id
+                                            ? { ...t, text: e.target.value }
+                                            : t
+                                        );
+                                        setTodos(updatedTodos);
+                                      }}
+                                      onBlur={() => setEditingTodo(null)}
+                                      className={styles.editInput}
+                                      autoFocus
+                                    />
+                                  ) : (
+                                    <span
+                                      className={`${styles.todoText} ${
+                                        todo.completed ? styles.completed : ""
+                                      }`}
+                                    >
+                                      {todo.text}
+                                    </span>
+                                  )}
+                                  <div className={styles.todoActions}>
+                                    <button
+                                      onClick={() => setEditingTodo(todo.id)}
+                                      className={styles.editButton}
+                                    >
+                                      <FaEdit />
+                                    </button>
+                                    <button
+                                      onClick={() => deleteTodo(todo.id)}
+                                      className={styles.deleteButton}
+                                    >
+                                      <FaTrash />
+                                    </button>
+                                  </div>
                                 </div>
                               </div>
                             </div>
-                          </div>
-                        )}
-                      </DndDraggable>
-                    ))}
-                    {provided.placeholder}
-                  </div>
-                )}
-              </Droppable>
-            </DragDropContext>
+                          )}
+                        </DndDraggable>
+                      ))}
+                      {provided.placeholder}
+                    </div>
+                  )}
+                </Droppable>
+              </DragDropContext>
+            )}
           </>
         ) : (
           <p>Please sign in to use the Todo list.</p>
