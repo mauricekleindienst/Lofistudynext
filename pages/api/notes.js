@@ -47,19 +47,20 @@ const saveNoteHandler = async (req, res) => {
   const { id, email, title, content } = req.body;
 
   if (!email || !content) {
+    console.error('Missing required fields:', { email, content });
     return res.status(400).json({ error: 'Email and content are required' });
   }
 
   try {
     let note;
-    if (id) {
-      // Update existing note
+    if (id && !id.startsWith('temp_')) {
+      console.log('Updating note with ID:', id);
       note = await prisma.notes.update({
         where: { id },
         data: { title, content },
       });
     } else {
-      // Insert new note
+      console.log('Creating new note');
       note = await prisma.notes.create({
         data: { email, title, content },
       });
@@ -80,8 +81,13 @@ const deleteNoteHandler = async (req, res) => {
   }
 
   try {
-    await prisma.notes.deleteMany({ where: { id, email } });
-    res.status(200).json({ message: 'Note deleted successfully' });
+    const deleteResult = await prisma.notes.deleteMany({ where: { id, email } });
+
+    if (deleteResult.count > 0) {
+      res.status(200).json({ message: 'Note deleted successfully' });
+    } else {
+      res.status(404).json({ error: 'Note not found or already deleted' });
+    }
   } catch (error) {
     console.error('Error deleting note:', error);
     res.status(500).json({ error: 'Internal server error' });
