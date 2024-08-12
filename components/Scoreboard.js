@@ -10,17 +10,16 @@ export default function Scoreboard({ onMinimize }) {
   useEffect(() => {
     const fetchScoreboard = async () => {
       try {
-        const response = await fetch("https://lo-fi.study/api/getScoreboard");
-
-        // Log response for debugging
-        console.log("API response:", response);
+        console.log("Fetching scoreboard...");
+        const response = await fetch("/api/getScoreboard");
+        console.log("Response received:", response);
 
         if (!response.ok) {
           throw new Error(`Network response was not ok, status: ${response.status}`);
         }
 
         const data = await response.json();
-        console.log("Fetched data:", data);
+        console.log("Parsed data:", data);
 
         if (!Array.isArray(data)) {
           throw new Error("Data is not an array");
@@ -55,21 +54,21 @@ export default function Scoreboard({ onMinimize }) {
             <div>Loading...</div>
           ) : error ? (
             <div>Error: {error}</div>
+          ) : scoreboard.length === 0 ? (
+            <div>No data available</div>
           ) : (
-            scoreboard
-              .filter(user => user.pomodoro_count_weekly > 0) // Only include users with more than 0 Pomodoros
-              .map((user, index) => (
-                <div
-                  key={index}
-                  className={`${styles.user} ${
-                    index === 0 ? styles.firstPlace : ""
-                  }`}
-                >
-                  <span>{user.firstname}</span>
-                  <span>{user.pomodoro_count_weekly} Pomodoros</span>
-                  {index === 0 && <span className={styles.crown}>👑</span>}
-                </div>
-              ))
+            scoreboard.map((user, index) => (
+              <div
+                key={user.email}
+                className={`${styles.user} ${
+                  index === 0 ? styles.firstPlace : ""
+                }`}
+              >
+                <span>{user.firstname || 'Anonymous'}</span>
+                <span>{user.pomodoro_count_weekly} Pomodoros</span>
+                {index === 0 && <span className={styles.crown}>👑</span>}
+              </div>
+            ))
           )}
         </div>
       </div>

@@ -1,12 +1,13 @@
-
 import { useEffect, useRef, useState } from "react";
 import Draggable from "react-draggable";
 import { ResizableBox } from "react-resizable";
 import dynamic from "next/dynamic";
 import { useSession } from "next-auth/react";
+import debounce from "lodash/debounce";
 
 import styles from "../styles/Notes.module.css";
 
+// Dynamically import EditorJS and its tools to prevent SSR issues
 const EditorJS = dynamic(() => import("@editorjs/editorjs"), { ssr: false });
 const Header = dynamic(() => import("@editorjs/header"), { ssr: false });
 
@@ -16,7 +17,6 @@ export default function Notes({ onMinimize }) {
   const editorInstance = useRef(null);
   const [pages, setPages] = useState([]);
   const [selectedPage, setSelectedPage] = useState(null);
-  const [content, setContent] = useState("");
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -27,22 +27,21 @@ export default function Notes({ onMinimize }) {
 
   useEffect(() => {
     if (selectedPage) {
-      setContent(selectedPage.content);
-      initializeEditor(selectedPage.content).catch(error => {
+      initializeEditor(selectedPage.content).catch((error) => {
         console.error("Failed to initialize editor:", error);
       });
     }
   }, [selectedPage?.id]);
 
-  const getFirstSevenWords = (blocks) => {
-    let words = [];
+  const getFirstSixLetters = (blocks) => {
+    let text = '';
     for (let block of blocks) {
-      if (block.type === 'paragraph' || block.type === 'header') {
-        words = words.concat(block.data.text.split(' '));
-        if (words.length >= 7) break;
+      if (block.type === "paragraph" || block.type === "header") {
+        text += block.data.text;
+        if (text.length >= 6) break;
       }
     }
-    return words.slice(0, 7).join(' ');
+    return text.slice(0, 6);
   };
 
   const initializeEditor = async (data) => {
@@ -52,7 +51,7 @@ export default function Notes({ onMinimize }) {
     if (editorInstance.current) {
       try {
         await editorInstance.current.isReady;
-        if (typeof editorInstance.current.destroy === 'function') {
+        if (typeof editorInstance.current.destroy === "function") {
           await editorInstance.current.destroy();
         }
       } catch (error) {
@@ -70,19 +69,24 @@ export default function Notes({ onMinimize }) {
         onChange: async () => {
           if (editorInstance.current) {
             const savedData = await editorInstance.current.save();
-            const newTitle = getFirstSevenWords(savedData.blocks);
-            
-            // Update the local state
-            setSelectedPage(prevPage => ({
-              ...prevPage,
-              title: newTitle,
-              content: JSON.stringify(savedData)
-            }));
+            const newTitle = getFirstSixLetters(savedData.blocks);
 
-            // Save to server
-            saveNoteToServer({
-              ...savedData,
-              title: newTitle
+            setSelectedPage((prevPage) => {
+              const updatedPage = {
+                ...prevPage,
+                title: newTitle,
+                content: JSON.stringify(savedData),
+              };
+
+              setPages((prevPages) =>
+                prevPages.map((page) =>
+                  page.id === updatedPage.id ? updatedPage : page
+                )
+              );
+
+              debouncedSaveToServer(updatedPage);
+
+              return updatedPage;
             });
           }
         },
@@ -106,15 +110,19 @@ export default function Notes({ onMinimize }) {
       } else {
         const errorData = await response.json();
         console.error("Failed to fetch notes:", errorData);
-        setError(`Failed to fetch notes: ${errorData.message || "Unknown error"}`);
+        setError(
+          `Failed to fetch notes: ${errorData.message || "Unknown error"}`
+        );
       }
     } catch (error) {
       console.error("Error fetching notes:", error);
-      setError("An unexpected error occurred while fetching notes. Please try again.");
+      setError(
+        "An unexpected error occurred while fetching notes. Please try again."
+      );
     }
   };
 
-  const saveNoteToServer = async (savedData) => {
+  const saveNoteToServer = async (page) => {
     try {
       const response = await fetch("/api/notes", {
         method: "POST",
@@ -122,43 +130,73 @@ export default function Notes({ onMinimize }) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          id: selectedPage?.id,
+          id: page.id,
           email: session.user.email,
-          title: savedData.title,
-          content: JSON.stringify(savedData),
+          title: page.title,
+          content: page.content,
         }),
       });
-      if (response.ok) {
-        const updatedNote = await response.json();
-        setPages(prevPages =>
-          prevPages.map(page =>
-            page.id === updatedNote.id ? updatedNote : page
-          )
-        );
-        setSelectedPage(updatedNote);
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("Failed to save note:", errorData);
+        setError(`Failed to save note: ${errorData.message || "Unknown error"}`);
       } else {
-        console.error("Failed to save note:", await response.json());
+        const updatedPage = await response.json();
+        setPages((prevPages) =>
+          prevPages.map((p) => (p.id === page.id ? updatedPage : p))
+        );
+        setSelectedPage(updatedPage);
       }
     } catch (error) {
       console.error("Error saving note:", error);
+      setError("An unexpected error occurred while saving the note.");
     }
   };
 
+  const debouncedSaveToServer = debounce(saveNoteToServer, 500);
+
   const createNewPage = async () => {
+    const tempId = `temp_${Math.random().toString(36).substr(2, 9)}`;
     const newPage = {
-      id: null,
+      id: tempId,
       email: session.user.email,
       title: "New Page",
-      content: "{}",
+      content: JSON.stringify({ blocks: [] }),
     };
-    setPages([...pages, newPage]);
+
+    setPages((prevPages) => [...prevPages, newPage]);
     setSelectedPage(newPage);
-    initializeEditor("{}");
+
+    initializeEditor(newPage.content);
+
+    try {
+      const response = await fetch("/api/notes", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newPage),
+      });
+      if (response.ok) {
+        const savedPage = await response.json();
+        setPages((prevPages) =>
+          prevPages.map((p) => (p.id === tempId ? savedPage : p))
+        );
+        setSelectedPage(savedPage);
+      } else {
+        const errorData = await response.json();
+        console.error("Failed to save new page:", errorData);
+        setError(`Failed to save new page: ${errorData.message || "Unknown error"}`);
+      }
+    } catch (error) {
+      console.error("Error saving new page:", error);
+      setError("An unexpected error occurred while creating the new page.");
+    }
   };
 
   const deletePage = async (pageId) => {
-    if (pages[0].id === pageId) {
-      alert("The first page cannot be deleted.");
+    if (pages.length === 1) {
+      alert("The only remaining page cannot be deleted.");
       return;
     }
 
@@ -175,10 +213,13 @@ export default function Notes({ onMinimize }) {
         setPages(updatedPages);
         setSelectedPage(updatedPages.length > 0 ? updatedPages[0] : null);
       } else {
-        console.error("Failed to delete note:", await response.json());
+        const errorData = await response.json();
+        console.error("Failed to delete note:", errorData);
+        setError(`Failed to delete note: ${errorData.message || "Unknown error"}`);
       }
     } catch (error) {
       console.error("Error deleting note:", error);
+      setError("An unexpected error occurred while deleting the note.");
     }
   };
 
@@ -204,7 +245,7 @@ export default function Notes({ onMinimize }) {
           </div>
           <div className={styles.content}>
             <div className={styles.pageList}>
-              {pages.map((page, index) => (
+              {pages.map((page) => (
                 <div
                   key={page.id}
                   className={`${styles.pageItem} ${
@@ -213,7 +254,7 @@ export default function Notes({ onMinimize }) {
                   onClick={() => setSelectedPage(page)}
                 >
                   {page.title}
-                  {index !== 0 && (
+                  {pages.length > 1 && (
                     <button
                       onClick={(e) => {
                         e.stopPropagation();

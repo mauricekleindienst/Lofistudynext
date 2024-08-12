@@ -11,8 +11,6 @@ import {
   FaPlus,
   FaTrash,
   FaEdit,
-  FaChevronDown,
-  FaChevronRight,
 } from "react-icons/fa";
 
 export default function Todo({ onMinimize }) {
@@ -20,6 +18,7 @@ export default function Todo({ onMinimize }) {
   const [todos, setTodos] = useState([]);
   const [newTodo, setNewTodo] = useState("");
   const [editingTodo, setEditingTodo] = useState(null);
+  const [editingText, setEditingText] = useState(""); // New state for editing text
   const [selectedColor, setSelectedColor] = useState("#ff7b00");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -181,10 +180,15 @@ export default function Todo({ onMinimize }) {
     }
   };
 
-  const saveEditedTodo = async (id, newText) => {
+  const startEditingTodo = (todo) => {
+    setEditingTodo(todo.id);
+    setEditingText(todo.text);
+  };
+
+  const saveEditedTodo = async (id) => {
     if (session?.user?.email) {
       const updatedTodos = todos.map((todo) =>
-        todo.id === id ? { ...todo, text: newText } : todo
+        todo.id === id ? { ...todo, text: editingText } : todo
       );
       setTodos(updatedTodos);
       setEditingTodo(null);
@@ -197,7 +201,7 @@ export default function Todo({ onMinimize }) {
           body: JSON.stringify({
             id,
             email: session.user.email,
-            text: newText,
+            text: editingText,
           }),
         });
 
@@ -212,16 +216,17 @@ export default function Todo({ onMinimize }) {
     }
   };
 
+  const cancelEditingTodo = () => {
+    setEditingTodo(null);
+    setEditingText("");
+  };
+
   return (
     <Draggable handle=".drag-handle">
       <div className={styles.todoContainer}>
         <div className={`${styles.dragHandle} drag-handle`}></div>
         <div className={styles.header}>
           <h2>Todo List</h2>
-          <div className={styles.tooltip}>
-            <span className="material-icons">help</span>
-            <span className={styles.tooltiptext}>Organize tasks.</span>
-          </div>
           <button onClick={onMinimize} className={styles.closeButton}>
             <span className="material-icons">remove</span>
           </button>
@@ -300,19 +305,9 @@ export default function Todo({ onMinimize }) {
                                   {editingTodo === todo.id ? (
                                     <input
                                       type="text"
-                                      value={todo.text}
-                                      onChange={(e) => {
-                                        setTodos((prev) =>
-                                          prev.map((t) =>
-                                            t.id === todo.id
-                                              ? { ...t, text: e.target.value }
-                                              : t
-                                          )
-                                        );
-                                      }}
-                                      onBlur={() =>
-                                        saveEditedTodo(todo.id, todo.text)
-                                      }
+                                      value={editingText} // Use editingText state
+                                      onChange={(e) => setEditingText(e.target.value)}
+                                      onBlur={() => saveEditedTodo(todo.id)}
                                       className={styles.editInput}
                                       autoFocus
                                     />
@@ -326,18 +321,37 @@ export default function Todo({ onMinimize }) {
                                     </span>
                                   )}
                                   <div className={styles.todoActions}>
-                                    <button
-                                      onClick={() => setEditingTodo(todo.id)}
-                                      className={styles.editButton}
-                                    >
-                                      <FaEdit />
-                                    </button>
-                                    <button
-                                      onClick={() => deleteTodo(todo.id)}
-                                      className={styles.deleteButton}
-                                    >
-                                      <FaTrash />
-                                    </button>
+                                    {editingTodo === todo.id ? (
+                                      <>
+                                        <button
+                                          onClick={() => saveEditedTodo(todo.id)}
+                                          className={styles.saveButton}
+                                        >
+                                          Save
+                                        </button>
+                                        <button
+                                          onClick={cancelEditingTodo}
+                                          className={styles.cancelButton}
+                                        >
+                                          Cancel
+                                        </button>
+                                      </>
+                                    ) : (
+                                      <>
+                                        <button
+                                          onClick={() => startEditingTodo(todo)}
+                                          className={styles.editButton}
+                                        >
+                                          <FaEdit />
+                                        </button>
+                                        <button
+                                          onClick={() => deleteTodo(todo.id)}
+                                          className={styles.deleteButton}
+                                        >
+                                          <FaTrash />
+                                        </button>
+                                      </>
+                                    )}
                                   </div>
                                 </div>
                               </div>

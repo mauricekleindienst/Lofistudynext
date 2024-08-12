@@ -3,35 +3,29 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 export default async function handler(req, res) {
-  const { method } = req;
-
   try {
-    switch (method) {
+    switch (req.method) {
       case 'GET':
-        await getTodosHandler(req, res);
-        break;
+        return getTodosHandler(req, res);
       case 'POST':
-        await saveTodoHandler(req, res);
-        break;
+        return saveTodoHandler(req, res);
       case 'PUT':
-        await updateTodoHandler(req, res);
-        break;
+        return updateTodoHandler(req, res);
       case 'DELETE':
-        await deleteTodoHandler(req, res);
-        break;
+        return deleteTodoHandler(req, res);
       default:
         res.setHeader('Allow', ['GET', 'POST', 'PUT', 'DELETE']);
-        res.status(405).end(`Method ${method} Not Allowed`);
+        return res.status(405).end(`Method ${req.method} Not Allowed`);
     }
   } catch (error) {
     console.error('Error in todo handler:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    return res.status(500).json({ error: 'Internal server error' });
   } finally {
     await prisma.$disconnect();
   }
 }
 
-const getTodosHandler = async (req, res) => {
+async function getTodosHandler(req, res) {
   const { email, page = 1, limit = 20 } = req.query;
 
   if (!email) {
@@ -45,23 +39,23 @@ const getTodosHandler = async (req, res) => {
       orderBy: { position: 'asc' },
       include: { subtasks: true },
       skip,
-      take: Number(limit),
+      take: parseInt(limit),
     });
 
     const totalCount = await prisma.todos.count({ where: { email } });
 
-    res.status(200).json({
+    return res.status(200).json({
       todos,
       totalPages: Math.ceil(totalCount / limit),
-      currentPage: page,
+      currentPage: parseInt(page),
     });
   } catch (error) {
     console.error('Error fetching todos:', error);
-    res.status(500).json({ error: 'Failed to fetch todos' });
+    return res.status(500).json({ error: 'Failed to fetch todos' });
   }
-};
+}
 
-const saveTodoHandler = async (req, res) => {
+async function saveTodoHandler(req, res) {
   const { email, text, color = '#ff7b00' } = req.body;
 
   if (!email || !text) {
@@ -69,11 +63,10 @@ const saveTodoHandler = async (req, res) => {
   }
 
   try {
-    const maxPositionResult = await prisma.todos.aggregate({
+    const maxPosition = await prisma.todos.aggregate({
       _max: { position: true },
       where: { email },
-    });
-    const maxPosition = maxPositionResult._max.position || 0;
+    }).then(result => result._max.position || 0);
 
     const todo = await prisma.todos.create({
       data: {
@@ -85,14 +78,14 @@ const saveTodoHandler = async (req, res) => {
       },
     });
 
-    res.status(201).json({ message: 'Todo saved successfully', id: todo.id });
+    return res.status(201).json({ message: 'Todo saved successfully', id: todo.id });
   } catch (error) {
     console.error('Error saving todo:', error);
-    res.status(500).json({ error: 'Failed to save todo' });
+    return res.status(500).json({ error: 'Failed to save todo' });
   }
-};
+}
 
-const updateTodoHandler = async (req, res) => {
+async function updateTodoHandler(req, res) {
   const { id, email, text, completed, color } = req.body;
 
   if (!id || !email) {
@@ -115,14 +108,14 @@ const updateTodoHandler = async (req, res) => {
       return res.status(404).json({ error: 'Todo not found' });
     }
 
-    res.status(200).json({ message: 'Todo updated successfully' });
+    return res.status(200).json({ message: 'Todo updated successfully' });
   } catch (error) {
     console.error('Error updating todo:', error);
-    res.status(500).json({ error: 'Failed to update todo' });
+    return res.status(500).json({ error: 'Failed to update todo' });
   }
-};
+}
 
-const deleteTodoHandler = async (req, res) => {
+async function deleteTodoHandler(req, res) {
   const { id, email } = req.body;
 
   if (!id || !email) {
@@ -130,22 +123,18 @@ const deleteTodoHandler = async (req, res) => {
   }
 
   try {
-    await prisma.$transaction(async (prisma) => {
-      await prisma.subtasks.deleteMany({ where: { todo_id: id } });
-      const deletedTodo = await prisma.todos.deleteMany({ where: { id, email } });
+    const deleteTransaction = await prisma.$transaction([
+      prisma.subtasks.deleteMany({ where: { todo_id: id } }),
+      prisma.todos.deleteMany({ where: { id, email } }),
+    ]);
 
-      if (deletedTodo.count === 0) {
-        throw new Error('Todo not found');
-      }
-    });
+    if (deleteTransaction[1].count === 0) {
+      return res.status(404).json({ error: 'Todo not found' });
+    }
 
-    res.status(200).json({ message: 'Todo deleted successfully' });
+    return res.status(200).json({ message: 'Todo deleted successfully' });
   } catch (error) {
     console.error('Error deleting todo:', error);
-    if (error.message === 'Todo not found') {
-      res.status(404).json({ error: 'Todo not found' });
-    } else {
-      res.status(500).json({ error: 'Failed to delete todo' });
-    }
+    return res.status(500).json({ error: 'Failed to delete todo' });
   }
-};
+}
