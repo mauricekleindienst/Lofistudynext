@@ -5,7 +5,7 @@
   display: flex;
   align-items: center;
   z-index: 1000;
-  font-family: 'Comfortaa', cursive;
+  
 }
 
 .iconButton {
@@ -106,7 +106,7 @@
   border-radius: 20px;
   box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
   z-index: 1001;
-  font-family: 'Comfortaa', cursive;
+  
   animation: fadeIn 0.5s, fadeOut 0.5s 2.5s;
 }
 
