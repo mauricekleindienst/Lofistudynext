@@ -1,4 +1,3 @@
-
 .musicPlayerContainer {
   position: relative;
   max-width: 380px;
@@ -36,12 +35,47 @@
 }
 
 .trackInfo {
+  display: flex;
+  align-items: center;
   margin-bottom: 30px;
+}
+
+.thumbnail {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 5px;
+  margin-right: 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
 }
 
 .trackInfo h3 {
   font-size: 18px;
   font-weight: 400;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.channelName {
+  display: flex;
+  font-size: 14px;
+  color: #ff7b00;
+  text-decoration: underline !important;
+  margin-top: 5px;
+}
+
+.channelName:hover {
+  color: #ff9900;
+  text-decoration: underline;
+}
+
+
+
+.thumbnail:hover {
+  transform: scale(1.05);
+  transition: transform 0.3s ease;
 }
 
 .controls {
@@ -239,4 +273,3 @@
     font-size: 18px;
   }
 }
-

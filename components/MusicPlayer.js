@@ -4,14 +4,14 @@ import { debounce } from 'lodash';
 import styles from '../styles/MusicPlayer.module.css';
 
 const initialTracks = [
-  { id: 1, title: 'LoFi', videoId: 'jfKfPfyJRdk' },
-  { id: 2, title: 'Medieval LoFi', videoId: '_uMuuHk_KkQ' },
-  { id: 3, title: 'Asian LoFi', videoId: 'Na0w3Mz46GA' },
-  { id: 4, title: 'Classic Chill', videoId: '4oStw0r33so' },
-  { id: 5, title: 'SynthWave', videoId: '4xDzrJKXOOY' },
-  { id: 6, title: 'Deep Ambience', videoId: 'S_MOd40zlYU' },
-  { id: 7, title: 'Jazz', videoId: 'xVSlZWkjI94' },
-  { id: 8, title: 'Skyrim', videoId: '_Z1VzsE1GVg' },
+  { id: 1, title: 'lofi hip hop radio 📚', videoId: 'jfKfPfyJRdk' , channelName: 'LofiGirl', channelUrl: 'https://www.youtube.com/@LofiGirl' },
+  { id: 2, title: 'medieval lofi radio 🏰', videoId: '_uMuuHk_KkQ' , channelName: 'LofiGirl', channelUrl: 'https://www.youtube.com/@LofiGirl' },
+  { id: 3, title: 'asian lofi radio ⛩️', videoId: 'Na0w3Mz46GA' , channelName: 'LofiGirl', channelUrl: 'https://www.youtube.com/@LofiGirl' },
+  { id: 4, title: 'peaceful piano radio 🎹', videoId: '4oStw0r33so' , channelName: 'LofiGirl', channelUrl: 'https://www.youtube.com/@LofiGirl' },
+  { id: 5, title: 'synthwave radio 🌌', videoId: '4xDzrJKXOOY' , channelName: 'LofiGirl', channelUrl: 'https://www.youtube.com/@LofiGirl' },
+  { id: 6, title: 'dark ambient radio 🌃', videoId: 'S_MOd40zlYU' , channelName: 'LofiGirl', channelUrl: 'https://www.youtube.com/@LofiGirl' },
+  { id: 7, title: 'Jazz Music for Relaxing', videoId: 'MYPVQccHhAQ' , channelName: 'Relaxing Jazz Piano', channelUrl: 'https://www.youtube.com/@relaxingjazzpiano6491' },
+  { id: 8, title: 'Skyrim Soundtrack', videoId: '_Z1VzsE1GVg' , channelName: 'Aaronmn7', channelUrl: 'https://www.youtube.com/@AeronN7' },
 ];
 
 export default function MusicPlayer({ onMinimize }) {
@@ -123,8 +123,12 @@ export default function MusicPlayer({ onMinimize }) {
   }, [currentTrackIndex, tracks]);
 
   const addNewTrack = (title, url) => {
-    const videoId = url.split('v=')[1].split('&')[0];
-    setTracks([...tracks, { id: tracks.length + 1, title, videoId }]);
+    try {
+      const videoId = new URL(url).searchParams.get('v');
+      setTracks([...tracks, { id: tracks.length + 1, title, videoId }]);
+    } catch (error) {
+      console.error("Invalid YouTube URL:", error);
+    }
   };
 
   const handleFormSubmit = (e) => {
@@ -161,6 +165,8 @@ export default function MusicPlayer({ onMinimize }) {
     };
   }, []);
 
+  const getThumbnailUrl = (videoId) => `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`;
+
   return (
     <div className={styles.musicPlayerContainer}>
       {isFormVisible && (
@@ -187,10 +193,25 @@ export default function MusicPlayer({ onMinimize }) {
       )}
       <div className={styles.musicPlayer}>
         <div className={styles.header}>
-          <h2>Lo-Fi.Study</h2>
+          <h2>Music Player</h2>
         </div>
         <div className={styles.trackInfo}>
-          <h3>{tracks[currentTrackIndex].title}</h3>
+          <img 
+            src={getThumbnailUrl(tracks[currentTrackIndex].videoId)} 
+            alt="Track thumbnail" 
+            className={styles.thumbnail} 
+          />
+          <div>
+            <h3>{tracks[currentTrackIndex].title}</h3>
+            <a 
+              href={tracks[currentTrackIndex].channelUrl} 
+              className={styles.channelName} 
+              target="_blank" 
+              rel="noopener noreferrer"
+            >
+              {tracks[currentTrackIndex].channelName}
+            </a>
+          </div>
         </div>
         {apiReady && (
           <YouTube
@@ -204,7 +225,7 @@ export default function MusicPlayer({ onMinimize }) {
                 disablekb: 1,
                 rel: 0,
                 showinfo: 0,
-                playsinline: 1
+                playsinline: 1,
               },
             }}
             onReady={onReady}
@@ -215,11 +236,7 @@ export default function MusicPlayer({ onMinimize }) {
             }}
           />
         )}
-        <div 
-          className={styles.controls}
-          onTouchStart={handleTouchStart}
-          onTouchEnd={handleTouchEnd}
-        >
+        <div className={styles.controls}>
           <button onClick={prevTrack} className={styles.controlButton} disabled={isLoading}>
             <span className="material-icons">skip_previous</span>
           </button>
