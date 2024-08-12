@@ -10,13 +10,16 @@ export default function Scoreboard({ onMinimize }) {
   useEffect(() => {
     const fetchScoreboard = async () => {
       try {
+        console.log("Fetching scoreboard...");
         const response = await fetch("/api/getScoreboard");
+        console.log("Response received:", response);
 
         if (!response.ok) {
           throw new Error(`Network response was not ok, status: ${response.status}`);
         }
 
         const data = await response.json();
+        console.log("Parsed data:", data);
 
         if (!Array.isArray(data)) {
           throw new Error("Data is not an array");
@@ -35,6 +38,7 @@ export default function Scoreboard({ onMinimize }) {
     const intervalId = setInterval(fetchScoreboard, 30000);
     return () => clearInterval(intervalId);
   }, []);
+
 
   return (
     <Draggable handle={`.${styles.dragHandle}`}>
