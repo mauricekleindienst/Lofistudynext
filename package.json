@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "dev2": "next dev",
     "dev": "node server.js",
     "build": "next build",
     "start": "node server.js",
@@ -76,6 +77,7 @@
     "timer-for-pomodoro": "^1.0.2",
     "typed.js": "^2.1.0",
     "typescript": "^5.5.3",
+    "webpack": "^5.93.0",
     "winston": "^3.13.1"
   },
   "engines": {

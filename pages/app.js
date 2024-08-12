@@ -1,4 +1,3 @@
-// pages/app.js
 import { useSession } from "next-auth/react";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
@@ -35,6 +34,15 @@ export default function Study() {
   const [visibleComponents, setVisibleComponents] = useState({});
   const [videoRoomUrl, setVideoRoomUrl] = useState("");
   const [showLoading, setShowLoading] = useState(true);
+
+  // Preload all background videos when the component mounts
+  useEffect(() => {
+    backgrounds.forEach(background => {
+      const video = document.createElement('video');
+      video.src = background.src;
+      video.preload = 'auto';
+    });
+  }, []);
 
   useEffect(() => {
     setSelectedBackground(backgrounds[Math.floor(Math.random() * backgrounds.length)].src);

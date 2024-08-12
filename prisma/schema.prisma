@@ -62,3 +62,22 @@ model user_pomodoros {
   daily_counts          Json?   @default("{}")
   pomodoro_count_weekly Int     @default(0)
 }
+
+model FlashcardContainer {
+  id          Int         @id @default(autoincrement())
+  user_email  String      @db.VarChar(255)
+  title       String      @db.VarChar(255)
+  description String?     @db.Text
+  flashcards  Flashcard[]
+  pdf_url     String?     @db.Text
+  created_at  DateTime    @default(now()) @db.Timestamptz(6)
+}
+
+model Flashcard {
+  id                   Int                 @id @default(autoincrement())
+  container_id         Int
+  question             String              @db.Text
+  answer               String              @db.Text
+  created_at           DateTime            @default(now()) @db.Timestamptz(6)
+  flashcard_container  FlashcardContainer  @relation(fields: [container_id], references: [id], onDelete: Cascade)
+}
