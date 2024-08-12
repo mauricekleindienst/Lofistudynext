@@ -97,7 +97,7 @@
   border-radius: 25px;
   background-color: rgba(255, 255, 255, 0.1);
   color: #fff;
-  font-family: 'Comfortaa', cursive;
+  
   font-size: 14px;
   margin-right: 10px;
   transition: background-color 0.3s ease;
@@ -115,7 +115,7 @@
   border-radius: 25px;
   
   color: white;
-  font-family: 'Comfortaa', cursive;
+  
   font-size: 14px;
   transition: background-color 0.3s ease;
 }

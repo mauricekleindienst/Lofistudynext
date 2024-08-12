@@ -205,7 +205,7 @@
   
   color: #fff;
   border-radius: 5px;
-  font-family: 'Comfortaa', cursive;
+  
   font-size: 16px;
   transition: background-color 0.3s ease;
 }
@@ -255,7 +255,6 @@
   background-color: rgba(255, 255, 255, 0.1);
   color: #fff;
   font-size: 16px;
-  font-family: 'Comfortaa', cursive;
 }
 
 .categorySelect option {
