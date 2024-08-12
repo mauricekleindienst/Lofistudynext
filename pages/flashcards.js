@@ -36,7 +36,6 @@ if (status === "unauthenticated") {
   if (typeof window !== "undefined") {
     window.location.href = "/auth/signin";
   }
-  return null;
 }
 export default function Flashcards({ containers }) {
   const [searchTerm, setSearchTerm] = useState('');
