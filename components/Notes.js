@@ -7,6 +7,7 @@ import debounce from "lodash/debounce";
 
 import styles from "../styles/Notes.module.css";
 
+// Dynamically import EditorJS and its tools to prevent SSR issues
 const EditorJS = dynamic(() => import("@editorjs/editorjs"), { ssr: false });
 const Header = dynamic(() => import("@editorjs/header"), { ssr: false });
 
@@ -136,7 +137,9 @@ export default function Notes({ onMinimize }) {
         }),
       });
       if (!response.ok) {
-        console.error("Failed to save note:", await response.json());
+        const errorData = await response.json();
+        console.error("Failed to save note:", errorData);
+        setError(`Failed to save note: ${errorData.message || "Unknown error"}`);
       } else {
         const updatedPage = await response.json();
         setPages((prevPages) =>
@@ -146,6 +149,7 @@ export default function Notes({ onMinimize }) {
       }
     } catch (error) {
       console.error("Error saving note:", error);
+      setError("An unexpected error occurred while saving the note.");
     }
   };
 
@@ -180,10 +184,13 @@ export default function Notes({ onMinimize }) {
         );
         setSelectedPage(savedPage);
       } else {
-        console.error("Failed to save new page:", await response.json());
+        const errorData = await response.json();
+        console.error("Failed to save new page:", errorData);
+        setError(`Failed to save new page: ${errorData.message || "Unknown error"}`);
       }
     } catch (error) {
       console.error("Error saving new page:", error);
+      setError("An unexpected error occurred while creating the new page.");
     }
   };
 
@@ -206,10 +213,13 @@ export default function Notes({ onMinimize }) {
         setPages(updatedPages);
         setSelectedPage(updatedPages.length > 0 ? updatedPages[0] : null);
       } else {
-        console.error("Failed to delete note:", await response.json());
+        const errorData = await response.json();
+        console.error("Failed to delete note:", errorData);
+        setError(`Failed to delete note: ${errorData.message || "Unknown error"}`);
       }
     } catch (error) {
       console.error("Error deleting note:", error);
+      setError("An unexpected error occurred while deleting the note.");
     }
   };
 
@@ -237,7 +247,7 @@ export default function Notes({ onMinimize }) {
             <div className={styles.pageList}>
               {pages.map((page) => (
                 <div
-                  key={page.id || Math.random()}
+                  key={page.id}
                   className={`${styles.pageItem} ${
                     selectedPage?.id === page.id ? styles.active : ""
                   }`}

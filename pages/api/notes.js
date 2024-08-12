@@ -46,6 +46,7 @@ const getNotesHandler = async (req, res) => {
 const saveNoteHandler = async (req, res) => {
   const { id, email, title, content } = req.body;
 
+  // Validate incoming data
   if (!email || !content) {
     console.error('Missing required fields:', { email, content });
     return res.status(400).json({ error: 'Email and content are required' });
@@ -53,17 +54,25 @@ const saveNoteHandler = async (req, res) => {
 
   try {
     let note;
-    if (id && !id.startsWith('temp_')) {
-      console.log('Updating note with ID:', id);
-      note = await prisma.notes.update({
-        where: { id },
-        data: { title, content },
-      });
-    } else {
+    
+    // If id is provided and it's a string (temporary ID)
+    if (typeof id === 'string' && id.startsWith('temp_')) {
       console.log('Creating new note');
       note = await prisma.notes.create({
         data: { email, title, content },
       });
+    } 
+    // If id is an integer (real ID) or provided as a number-like string
+    else if (id) {
+      console.log('Updating note with ID:', id);
+      note = await prisma.notes.update({
+        where: { id: parseInt(id, 10) },  // Convert ID to integer
+        data: { title, content },
+      });
+    } else {
+      // Handle case where there's no valid ID (this is unexpected, log it)
+      console.error('Invalid ID:', id);
+      return res.status(400).json({ error: 'Invalid ID provided' });
     }
 
     res.status(200).json(note);
@@ -73,15 +82,17 @@ const saveNoteHandler = async (req, res) => {
   }
 };
 
+
 const deleteNoteHandler = async (req, res) => {
   const { id, email } = req.body;
 
+  // Validate incoming data
   if (!id || !email) {
     return res.status(400).json({ error: 'Id and email are required' });
   }
 
   try {
-    const deleteResult = await prisma.notes.deleteMany({ where: { id, email } });
+    const deleteResult = await prisma.notes.deleteMany({ where: { id: parseInt(id, 10), email } });
 
     if (deleteResult.count > 0) {
       res.status(200).json({ message: 'Note deleted successfully' });
