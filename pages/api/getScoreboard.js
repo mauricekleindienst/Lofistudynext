@@ -4,9 +4,7 @@ import Cors from 'cors';
 const prisma = new PrismaClient();
 
 const cors = Cors({
-  origin: ['http://localhost:3000', 'https://lo-fi.study'], // Add allowed origins
-  methods: ['GET', 'POST'], // Specify allowed methods
-  allowedHeaders: ['Content-Type'], // Specify allowed headers
+  methods: ['GET'],
 });
 
 function runMiddleware(req, res, fn) {
@@ -21,11 +19,19 @@ function runMiddleware(req, res, fn) {
 }
 
 export default async function handler(req, res) {
-  // Run the middleware
   await runMiddleware(req, res, cors);
+
+  if (req.method !== 'GET') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
 
   try {
     const users = await prisma.user_pomodoros.findMany({
+      where: {
+        pomodoro_count_weekly: {
+          gt: 0
+        }
+      },
       orderBy: {
         pomodoro_count_weekly: 'desc',
       },
