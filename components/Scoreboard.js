@@ -39,7 +39,6 @@ export default function Scoreboard({ onMinimize }) {
     return () => clearInterval(intervalId);
   }, []);
 
-
   return (
     <Draggable handle={`.${styles.dragHandle}`}>
       <div className={styles.scoreboardContainer}>
@@ -58,20 +57,18 @@ export default function Scoreboard({ onMinimize }) {
           ) : scoreboard.length === 0 ? (
             <div>No data available</div>
           ) : (
-            scoreboard
-              .filter(user => user.pomodoro_count_weekly > 0)
-              .map((user, index) => (
-                <div
-                  key={index}
-                  className={`${styles.user} ${
-                    index === 0 ? styles.firstPlace : ""
-                  }`}
-                >
-                  <span>{user.firstname}</span>
-                  <span>{user.pomodoro_count_weekly} Pomodoros</span>
-                  {index === 0 && <span className={styles.crown}>👑</span>}
-                </div>
-              ))
+            scoreboard.map((user, index) => (
+              <div
+                key={user.email}
+                className={`${styles.user} ${
+                  index === 0 ? styles.firstPlace : ""
+                }`}
+              >
+                <span>{user.firstname || 'Anonymous'}</span>
+                <span>{user.pomodoro_count_weekly} Pomodoros</span>
+                {index === 0 && <span className={styles.crown}>👑</span>}
+              </div>
+            ))
           )}
         </div>
       </div>

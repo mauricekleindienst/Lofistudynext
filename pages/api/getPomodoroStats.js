@@ -2,37 +2,46 @@ import { PrismaClient } from '@prisma/client';
 import Cors from 'cors';
 
 const prisma = new PrismaClient();
-
+const allowedOrigins = process.env.ALLOWED_ORIGINS 
+  ? process.env.ALLOWED_ORIGINS.split(',') 
+  : ['http://localhost:3000', 'https://lo-fi.study'];
+  
 const cors = Cors({
-  origin: ['http://localhost:3000', 'https://lo-fi.study'], // Add allowed origins
-  methods: ['GET', 'POST'], // Specify allowed methods
-  allowedHeaders: ['Content-Type'], // Specify allowed headers
+  origin: allowedOrigins,
+  methods: ['POST'],
+  allowedHeaders: ['Content-Type'],
 });
 
-function runMiddleware(req, res, fn) {
-  return new Promise((resolve, reject) => {
-    fn(req, res, (result) => {
-      if (result instanceof Error) {
-        return reject(result);
-      }
-      return resolve(result);
-    });
-  });
-}
+const runMiddleware = (req, res, fn) =>
+  new Promise((resolve, reject) =>
+    fn(req, res, (result) => (result instanceof Error ? reject(result) : resolve(result)))
+  );
 
 export default async function handler(req, res) {
-  // Run the middleware
-  await runMiddleware(req, res, cors);
-
-  const { email } = req.body;
-
-  if (!email) {
-    return res.status(400).json({ error: 'Invalid request' });
-  }
-
   try {
+    await runMiddleware(req, res, cors);
+
+    if (req.method !== 'POST') {
+      return res.status(405).json({ error: 'Method not allowed' });
+    }
+
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({ error: 'Email is required' });
+    }
+
     const user = await prisma.user_pomodoros.findUnique({
       where: { email },
+      select: {
+        pomodoro_count: true,
+        studying: true,
+        coding: true,
+        writing: true,
+        working: true,
+        other: true,
+        daily_counts: true,
+      },
     });
 
     if (!user) {
@@ -40,13 +49,13 @@ export default async function handler(req, res) {
     }
 
     const stats = {
-      pomodoro_count: user.pomodoro_count || 0,
-      studying: user.studying || 0,
-      coding: user.coding || 0,
-      writing: user.writing || 0,
-      working: user.working || 0,
-      other: user.other || 0,
-      daily_counts: user.daily_counts || {},
+      pomodoro_count: user.pomodoro_count ?? 0,
+      studying: user.studying ?? 0,
+      coding: user.coding ?? 0,
+      writing: user.writing ?? 0,
+      working: user.working ?? 0,
+      other: user.other ?? 0,
+      daily_counts: user.daily_counts ?? {},
     };
 
     res.status(200).json(stats);

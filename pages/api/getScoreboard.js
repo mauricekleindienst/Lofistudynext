@@ -45,11 +45,16 @@ export default async function handler(req, res) {
         pomodoro_count_weekly: 'desc',
       },
       select: {
+        email: true,
         firstname: true,
         pomodoro_count_weekly: true,
       },
     });
     console.log("Query result:", users);
+
+    if (users.length === 0) {
+      console.log("No users found with pomodoro_count_weekly > 0");
+    }
 
     res.status(200).json(users);
   } catch (error) {
