@@ -30,6 +30,7 @@ const COLORS = ["#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0", "#9966FF"];
 export default function Stats({ onMinimize }) {
   const { data: session } = useSession();
   const [stats, setStats] = useState(null);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     if (session?.user?.email) {
@@ -44,12 +45,20 @@ export default function Stats({ onMinimize }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: session.user.email }),
       });
-      if (!response.ok) throw new Error('Failed to fetch stats');
+
+      if (response.status === 404) {
+        setError("No stats found on your Account. Start a Pomodoro to begin tracking your stats.");
+        setStats(null);
+        return;
+      }
+
+      if (!response.ok) throw new Error(`Error: ${response.statusText}`);
+      
       const data = await response.json();
       setStats(data);
     } catch (error) {
       console.error("Failed to fetch Pomodoro stats:", error);
-      // Consider adding user-friendly error handling here
+      setError("Failed to fetch stats. Please try again later.");
     }
   };
 
@@ -77,6 +86,22 @@ export default function Stats({ onMinimize }) {
       }],
     };
   }, [stats]);
+
+  if (error) {
+    return (
+      <div className={styles.statsContainer}>
+        <div className={styles.header}>
+          <h2>Pomodoro Stats</h2>
+          <button onClick={onMinimize} className="material-icons" aria-label="Minimize">
+            remove
+          </button>
+        </div>
+        <div className={styles.error}>
+          <p>{error}</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!stats) {
     return <div className={styles.loading}>Loading stats...</div>;
