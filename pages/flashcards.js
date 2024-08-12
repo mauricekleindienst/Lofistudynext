@@ -1,11 +1,11 @@
-import { getSession } from 'next-auth/react';
+import { useSession } from 'next-auth/react';
 import prisma from '../lib/prisma';
 import { useRouter } from "next/router";
 import styles from "../styles/flashcards.module.css";
 import { useState, useEffect } from 'react';
 export async function getServerSideProps(context) {
-  const session = await getSession(context);
-
+  const { data: session, status } = useSession();
+  
   if (!session) {
     return {
       redirect: {
@@ -32,7 +32,12 @@ export async function getServerSideProps(context) {
     };
   }
 }
-
+if (status === "unauthenticated") {
+  if (typeof window !== "undefined") {
+    window.location.href = "/auth/signin";
+  }
+  return null;
+}
 export default function Flashcards({ containers }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredContainers, setFilteredContainers] = useState(containers);
