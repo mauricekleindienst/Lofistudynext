@@ -10,11 +10,11 @@ const initialTracks = [
   { id: 4, title: 'peaceful piano radio 🎹', videoId: '4oStw0r33so' , channelName: 'LofiGirl', channelUrl: 'https://www.youtube.com/@LofiGirl' },
   { id: 5, title: 'synthwave radio 🌌', videoId: '4xDzrJKXOOY' , channelName: 'LofiGirl', channelUrl: 'https://www.youtube.com/@LofiGirl' },
   { id: 6, title: 'dark ambient radio 🌃', videoId: 'S_MOd40zlYU' , channelName: 'LofiGirl', channelUrl: 'https://www.youtube.com/@LofiGirl' },
-{ id: 6, title: 'dark academia music 🌓', videoId: 'SllpB3W5f6s' , channelName: 'Toxic Drunker', channelUrl: 'https://www.youtube.com/@ToxicDrunker_' },
-  { id: 7, title: 'jazz music for relaxing', videoId: 'MYPVQccHhAQ' , channelName: 'Relaxing Jazz Piano', channelUrl: 'https://www.youtube.com/@relaxingjazzpiano6491' },
-  { id: 8, title: 'lofi Pokemon mix 🏝️', videoId: '6CjpgFOOtuI' , channelName: 'STUDIO MATCHA US', channelUrl: 'https://www.youtube.com/@LoFi_Pokemon_Matcha' },
-  { id: 9, title: 'skyrim soundtrack ❄️', videoId: '_Z1VzsE1GVg' , channelName: 'Aaronmn7', channelUrl: 'https://www.youtube.com/@AeronN7' },
-  { id: 9, title: 'animal crossing music 🌳', videoId: 'V6GUhCxMDLg' , channelName: 'RemDaBom', channelUrl: 'https://www.youtube.com/@RemDaBom' },
+  { id: 7, title: 'dark academia music 🌓', videoId: 'SllpB3W5f6s' , channelName: 'Toxic Drunker', channelUrl: 'https://www.youtube.com/@ToxicDrunker_' },
+  { id: 8, title: 'jazz music for relaxing', videoId: 'MYPVQccHhAQ' , channelName: 'Relaxing Jazz Piano', channelUrl: 'https://www.youtube.com/@relaxingjazzpiano6491' },
+  { id: 9, title: 'lofi Pokemon mix 🏝️', videoId: '6CjpgFOOtuI' , channelName: 'STUDIO MATCHA US', channelUrl: 'https://www.youtube.com/@LoFi_Pokemon_Matcha' },
+  { id: 10, title: 'skyrim soundtrack ❄️', videoId: '_Z1VzsE1GVg' , channelName: 'Aaronmn7', channelUrl: 'https://www.youtube.com/@AeronN7' },
+  { id: 11, title: 'animal crossing music 🌳', videoId: 'V6GUhCxMDLg' , channelName: 'RemDaBom', channelUrl: 'https://www.youtube.com/@RemDaBom' },
 ];
 
 export default function MusicPlayer({ onMinimize }) {
@@ -91,7 +91,6 @@ export default function MusicPlayer({ onMinimize }) {
       setIsPlaying(false);
     }
   };
-
   useEffect(() => {
     if (playerRef.current) {
       playerRef.current.setVolume(volume);
@@ -244,7 +243,13 @@ export default function MusicPlayer({ onMinimize }) {
             <span className="material-icons">skip_previous</span>
           </button>
           <button onClick={playPause} className={styles.controlButton} disabled={isLoading}>
-            <span className="material-icons">{isPlaying ? 'pause' : 'play_arrow'}</span>
+                        {isLoading ? (
+              <span className={styles.loader}></span> // This would be your loading spinner
+            ) : (
+              <span className="material-icons">
+                {isPlaying ? 'pause' : 'play_arrow'}
+              </span>
+            )}
           </button>
           <button onClick={nextTrack} className={styles.controlButton} disabled={isLoading}>
             <span className="material-icons">skip_next</span>
