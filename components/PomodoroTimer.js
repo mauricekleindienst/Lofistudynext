@@ -66,11 +66,14 @@ export default function PomodoroTimer({ onMinimize }) {
   const { data: session } = useSession();
   const timerRef = useRef(null);
 
-  const soundRefs = {
-    pomodoroStart: useRef(null),
-    pomodoroEnd: useRef(null),
-    longPause: useRef(null),
-  };
+  const soundRefs = useMemo(
+    () => ({
+      pomodoroStart: useRef(null),
+      pomodoroEnd: useRef(null),
+      longPause: useRef(null),
+    }),
+    []
+  );
 
   // Load sounds on mount and ensure they play on user interaction
   useEffect(() => {
@@ -79,7 +82,7 @@ export default function PomodoroTimer({ onMinimize }) {
       soundRefs.pomodoroEnd.current = new Audio("/sounds/alert-short-break.mp3");
       soundRefs.longPause.current = new Audio("/sounds/alert-long-break.mp3");
     }
-  }, []);
+  }, [soundRefs]);
 
   const playSound = useCallback((soundRef) => {
     if (soundRef.current) {
@@ -121,7 +124,7 @@ export default function PomodoroTimer({ onMinimize }) {
     if (state.timeLeft === 0) {
       handleTimerEnd();
     }
-  }, [state.timeLeft]);
+  }, [state.timeLeft, handleTimerEnd]);
 
   useEffect(() => {
     if (state.isTimerRunning) {
@@ -131,7 +134,7 @@ export default function PomodoroTimer({ onMinimize }) {
     } else {
       document.title = "Pomodoro Timer";
     }
-  }, [state.timeLeft, state.currentMode, state.isTimerRunning]);
+  }, [state.timeLeft, state.currentMode, state.isTimerRunning, formatTime]);
 
   const handleTimerEnd = useCallback(() => {
     console.log("Timer ended");
@@ -198,13 +201,7 @@ export default function PomodoroTimer({ onMinimize }) {
         "Stay focused for the next 25 minutes! 🚀"
       );
     }
-  }, [
-    state.isTimerRunning,
-    state.currentMode,
-    playSound,
-    soundRefs,
-    showNotification,
-  ]);
+  }, [state.isTimerRunning, state.currentMode, playSound, soundRefs, showNotification]);
 
   const resetTimer = useCallback(() => {
     dispatch({ type: "RESET_TIMER" });
@@ -212,9 +209,6 @@ export default function PomodoroTimer({ onMinimize }) {
 
   const changeMode = useCallback((mode) => {
     dispatch({ type: "SET_MODE", payload: mode });
-    if (mode === "pomodoro") {
-      dispatch({ type: "INCREMENT_POMODORO", payload: 0 });
-    }
   }, []);
 
   const formatTime = useMemo(() => {
