@@ -66,17 +66,18 @@ export default function PomodoroTimer({ onMinimize }) {
   const { data: session } = useSession();
   const timerRef = useRef(null);
 
-  // Create refs for sounds at the top level
-  const pomodoroStartRef = useRef(null);
-  const pomodoroEndRef = useRef(null);
-  const longPauseRef = useRef(null);
+  const soundRefs = {
+    pomodoroStart: useRef(null),
+    pomodoroEnd: useRef(null),
+    longPause: useRef(null),
+  };
 
   // Load sounds on mount and ensure they play on user interaction
   useEffect(() => {
     if (typeof window !== "undefined") {
-      pomodoroStartRef.current = new Audio("/sounds/alert-work.mp3");
-      pomodoroEndRef.current = new Audio("/sounds/alert-short-break.mp3");
-      longPauseRef.current = new Audio("/sounds/alert-long-break.mp3");
+      soundRefs.pomodoroStart.current = new Audio("/sounds/alert-work.mp3");
+      soundRefs.pomodoroEnd.current = new Audio("/sounds/alert-short-break.mp3");
+      soundRefs.longPause.current = new Audio("/sounds/alert-long-break.mp3");
     }
   }, []);
 
@@ -120,7 +121,7 @@ export default function PomodoroTimer({ onMinimize }) {
     if (state.timeLeft === 0) {
       handleTimerEnd();
     }
-  }, [state.timeLeft, handleTimerEnd]);
+  }, [state.timeLeft]);
 
   useEffect(() => {
     if (state.isTimerRunning) {
@@ -130,14 +131,14 @@ export default function PomodoroTimer({ onMinimize }) {
     } else {
       document.title = "Pomodoro Timer";
     }
-  }, [state.timeLeft, state.currentMode, state.isTimerRunning, formatTime]);
+  }, [state.timeLeft, state.currentMode, state.isTimerRunning]);
 
   const handleTimerEnd = useCallback(() => {
     console.log("Timer ended");
     dispatch({ type: "TOGGLE_TIMER" });
 
     if (state.currentMode === "pomodoro") {
-      playSound(pomodoroEndRef);
+      playSound(soundRefs.pomodoroEnd);
 
       const newPomodoroCount = state.pomodoroCount + 1;
       console.log("New Pomodoro Count:", newPomodoroCount);
@@ -185,12 +186,13 @@ export default function PomodoroTimer({ onMinimize }) {
     session,
     showNotification,
     playSound,
+    soundRefs,
   ]);
 
   const toggleTimer = useCallback(() => {
     dispatch({ type: "TOGGLE_TIMER" });
     if (!state.isTimerRunning && state.currentMode === "pomodoro") {
-      playSound(pomodoroStartRef);
+      playSound(soundRefs.pomodoroStart);
       showNotification(
         "Pomodoro Timer",
         "Stay focused for the next 25 minutes! 🚀"
@@ -200,6 +202,7 @@ export default function PomodoroTimer({ onMinimize }) {
     state.isTimerRunning,
     state.currentMode,
     playSound,
+    soundRefs,
     showNotification,
   ]);
 
@@ -209,6 +212,9 @@ export default function PomodoroTimer({ onMinimize }) {
 
   const changeMode = useCallback((mode) => {
     dispatch({ type: "SET_MODE", payload: mode });
+    if (mode === "pomodoro") {
+      dispatch({ type: "INCREMENT_POMODORO", payload: 0 });
+    }
   }, []);
 
   const formatTime = useMemo(() => {
