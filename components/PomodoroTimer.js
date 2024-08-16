@@ -66,23 +66,19 @@ export default function PomodoroTimer({ onMinimize }) {
   const { data: session } = useSession();
   const timerRef = useRef(null);
 
-  const soundRefs = useMemo(
-    () => ({
-      pomodoroStart: useRef(null),
-      pomodoroEnd: useRef(null),
-      longPause: useRef(null),
-    }),
-    []
-  );
+  // Create refs for sounds at the top level
+  const pomodoroStartRef = useRef(null);
+  const pomodoroEndRef = useRef(null);
+  const longPauseRef = useRef(null);
 
   // Load sounds on mount and ensure they play on user interaction
   useEffect(() => {
     if (typeof window !== "undefined") {
-      soundRefs.pomodoroStart.current = new Audio("/sounds/alert-work.mp3");
-      soundRefs.pomodoroEnd.current = new Audio("/sounds/alert-short-break.mp3");
-      soundRefs.longPause.current = new Audio("/sounds/alert-long-break.mp3");
+      pomodoroStartRef.current = new Audio("/sounds/alert-work.mp3");
+      pomodoroEndRef.current = new Audio("/sounds/alert-short-break.mp3");
+      longPauseRef.current = new Audio("/sounds/alert-long-break.mp3");
     }
-  }, [soundRefs]);
+  }, []);
 
   const playSound = useCallback((soundRef) => {
     if (soundRef.current) {
@@ -141,7 +137,7 @@ export default function PomodoroTimer({ onMinimize }) {
     dispatch({ type: "TOGGLE_TIMER" });
 
     if (state.currentMode === "pomodoro") {
-      playSound(soundRefs.pomodoroEnd);
+      playSound(pomodoroEndRef);
 
       const newPomodoroCount = state.pomodoroCount + 1;
       console.log("New Pomodoro Count:", newPomodoroCount);
@@ -189,19 +185,23 @@ export default function PomodoroTimer({ onMinimize }) {
     session,
     showNotification,
     playSound,
-    soundRefs,
   ]);
 
   const toggleTimer = useCallback(() => {
     dispatch({ type: "TOGGLE_TIMER" });
     if (!state.isTimerRunning && state.currentMode === "pomodoro") {
-      playSound(soundRefs.pomodoroStart);
+      playSound(pomodoroStartRef);
       showNotification(
         "Pomodoro Timer",
         "Stay focused for the next 25 minutes! 🚀"
       );
     }
-  }, [state.isTimerRunning, state.currentMode, playSound, soundRefs, showNotification]);
+  }, [
+    state.isTimerRunning,
+    state.currentMode,
+    playSound,
+    showNotification,
+  ]);
 
   const resetTimer = useCallback(() => {
     dispatch({ type: "RESET_TIMER" });
