@@ -1,8 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import styles from '../styles/FlashcardComponent.module.css';
 
-// Import EditorJS and its tools directly
-import EditorJS from '@editorjs/editorjs';
+// Import EditorJS tools directly
 import Header from '@editorjs/header';
 import ImageTool from '@editorjs/image';
 import List from '@editorjs/list';
@@ -44,18 +43,23 @@ const FlashcardComponent = ({ userEmail }: { userEmail: string }) => {
   }, [userEmail]);
 
   useEffect(() => {
+    // Check if running in the browser
     if (typeof window !== 'undefined') {
-      // Initialize EditorJS instances for question and answer fields on client-side
-      questionEditorRef.current = new EditorJS({
-        holder: 'question-editor',
-        tools: { header: Header, list: List, image: ImageTool, paragraph: Paragraph },
-        placeholder: 'Enter your question...',
-      });
+      // Dynamically import EditorJS only on the client-side
+      import('@editorjs/editorjs').then((EditorJSModule) => {
+        const EditorJS = EditorJSModule.default;
 
-      answerEditorRef.current = new EditorJS({
-        holder: 'answer-editor',
-        tools: { header: Header, list: List, image: ImageTool, paragraph: Paragraph },
-        placeholder: 'Enter your answer...',
+        questionEditorRef.current = new EditorJS({
+          holder: 'question-editor',
+          tools: { header: Header, list: List, image: ImageTool, paragraph: Paragraph },
+          placeholder: 'Enter your question...',
+        });
+
+        answerEditorRef.current = new EditorJS({
+          holder: 'answer-editor',
+          tools: { header: Header, list: List, image: ImageTool, paragraph: Paragraph },
+          placeholder: 'Enter your answer...',
+        });
       });
     }
 
