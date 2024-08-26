@@ -12,8 +12,11 @@
     "format": "prettier --write ."
   },
   "dependencies": {
-    "@editorjs/editorjs": "^2.30.2",
+    "@editorjs/editorjs": "^2.30.5",
     "@editorjs/header": "^2.8.7",
+    "@editorjs/image": "^2.9.3",
+    "@editorjs/list": "^1.10.0",
+    "@editorjs/paragraph": "^2.11.6",
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
     "@fortawesome/fontawesome-svg-core": "^6.5.2",
@@ -62,6 +65,7 @@
     "react-dropzone": "^14.2.3",
     "react-google-calendar-api": "^2.3.0",
     "react-icons": "^5.2.1",
+    "react-modal": "^3.16.1",
     "react-resizable": "^3.0.5",
     "react-responsive-carousel": "^3.2.23",
     "react-scroll": "^1.9.0",
