@@ -1,3 +1,4 @@
+// Scoreboard.jsx
 import React, { useState, useEffect } from "react";
 import Draggable from "react-draggable";
 import styles from "../styles/Scoreboard.module.css";
@@ -10,16 +11,12 @@ export default function Scoreboard({ onMinimize }) {
   useEffect(() => {
     const fetchScoreboard = async () => {
       try {
-        console.log("Fetching scoreboard...");
         const response = await fetch("/api/getScoreboard");
-        console.log("Response received:", response);
-
         if (!response.ok) {
           throw new Error(`Network response was not ok, status: ${response.status}`);
         }
 
         const data = await response.json();
-        console.log("Parsed data:", data);
 
         if (!Array.isArray(data)) {
           throw new Error("Data is not an array");
@@ -28,7 +25,6 @@ export default function Scoreboard({ onMinimize }) {
         setScoreboard(data);
         setLoading(false);
       } catch (err) {
-        console.error("Fetch error:", err);
         setError(err.message);
         setLoading(false);
       }

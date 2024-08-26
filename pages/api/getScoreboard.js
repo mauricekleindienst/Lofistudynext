@@ -1,45 +1,37 @@
+// api/getScoreboard.js
 import { PrismaClient } from '@prisma/client';
 import Cors from 'cors';
+import initMiddleware from '../../lib/init-middleware';
 
-const prisma = new PrismaClient();
-
-const cors = Cors({
-  methods: ['GET'],
-});
-
-function runMiddleware(req, res, fn) {
-  return new Promise((resolve, reject) => {
-    fn(req, res, (result) => {
-      if (result instanceof Error) {
-        return reject(result);
-      }
-      return resolve(result);
-    });
-  });
+let prisma;
+if (!global.prisma) {
+  global.prisma = new PrismaClient();
 }
+prisma = global.prisma;
+
+const cors = initMiddleware(
+  Cors({
+    methods: ['GET'],
+  })
+);
 
 export default async function handler(req, res) {
-  console.log("API handler called");
-  
   try {
-    await runMiddleware(req, res, cors);
+    await cors(req, res);
   } catch (error) {
-    console.error("CORS middleware error:", error);
     return res.status(500).json({ error: 'CORS error' });
   }
 
   if (req.method !== 'GET') {
-    console.log("Method not allowed:", req.method);
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
   try {
-    console.log("Querying database...");
     const users = await prisma.user_pomodoros.findMany({
       where: {
         pomodoro_count_weekly: {
-          gt: 0
-        }
+          gt: 0,
+        },
       },
       orderBy: {
         pomodoro_count_weekly: 'desc',
@@ -50,16 +42,10 @@ export default async function handler(req, res) {
         pomodoro_count_weekly: true,
       },
     });
-    console.log("Query result:", users);
-
-    if (users.length === 0) {
-      console.log("No users found with pomodoro_count_weekly > 0");
-    }
 
     res.status(200).json(users);
   } catch (error) {
-    console.error('Error fetching scoreboard data:', error);
-    res.status(500).json({ error: 'Internal server error', details: error.message });
+    res.status(500).json({ error: 'Internal server error' });
   } finally {
     await prisma.$disconnect();
   }
