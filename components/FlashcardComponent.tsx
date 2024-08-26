@@ -1,13 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
-import dynamic from 'next/dynamic';
 import styles from '../styles/FlashcardComponent.module.css';
 
-// Dynamically import EditorJS to prevent SSR issues
-const EditorJS = dynamic(() => import('@editorjs/editorjs'), { ssr: false });
-const Header = dynamic(() => import('@editorjs/header'), { ssr: false });
-const ImageTool = dynamic(() => import('@editorjs/image'), { ssr: false });
-const List = dynamic(() => import('@editorjs/list'), { ssr: false });
-const Paragraph = dynamic(() => import('@editorjs/paragraph'), { ssr: false });
+// Import EditorJS and its tools directly
+import EditorJS from '@editorjs/editorjs';
+import Header from '@editorjs/header';
+import ImageTool from '@editorjs/image';
+import List from '@editorjs/list';
+import Paragraph from '@editorjs/paragraph';
 
 interface Flashcard {
   id: number;
@@ -47,23 +46,17 @@ const FlashcardComponent = ({ userEmail }: { userEmail: string }) => {
   useEffect(() => {
     if (typeof window !== 'undefined') {
       // Initialize EditorJS instances for question and answer fields on client-side
-      const initializeEditor = async () => {
-        const EditorJSModule = (await import('@editorjs/editorjs')).default;
+      questionEditorRef.current = new EditorJS({
+        holder: 'question-editor',
+        tools: { header: Header, list: List, image: ImageTool, paragraph: Paragraph },
+        placeholder: 'Enter your question...',
+      });
 
-        questionEditorRef.current = new EditorJSModule({
-          holder: 'question-editor',
-          tools: { header: Header, list: List, image: ImageTool, paragraph: Paragraph },
-          placeholder: 'Enter your question...',
-        });
-
-        answerEditorRef.current = new EditorJSModule({
-          holder: 'answer-editor',
-          tools: { header: Header, list: List, image: ImageTool, paragraph: Paragraph },
-          placeholder: 'Enter your answer...',
-        });
-      };
-
-      initializeEditor();
+      answerEditorRef.current = new EditorJS({
+        holder: 'answer-editor',
+        tools: { header: Header, list: List, image: ImageTool, paragraph: Paragraph },
+        placeholder: 'Enter your answer...',
+      });
     }
 
     return () => {
