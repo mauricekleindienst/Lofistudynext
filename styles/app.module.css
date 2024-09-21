@@ -111,7 +111,7 @@
   overflow-x: auto;
   width: 100%;
   transition: transform 0.3s ease;
-  scroll-behavior: smooth; /* Optional for smooth scrolling */
+
 }
 
 .backgroundPage {
@@ -194,7 +194,19 @@
   align-items: center;
   background: #282828;
 }
-
+.createdByLabel {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #272727;
+  padding: 10px 15px;
+  border-radius: 15px;
+  color: #fff;
+  font-size: 14px;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.3);
+  z-index: 9999;
+  pointer-events: none;
+}
 .loader {
   --background: linear-gradient(135deg, #ff7b00, #ff9900);
   --shadow: rgba(255, 123, 0, 0.28);
@@ -296,19 +308,6 @@
 
 .loader li:last-child {
   --o: 1;
-}
-.createdByLabel {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  background: #272727;
-  padding: 10px 15px;
-  border-radius: 15px;
-  color: #fff;
-  font-size: 10px;
-  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.3);
-  z-index: 9999;
-  pointer-events: none;
 }
 
 .loader span {
