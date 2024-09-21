@@ -19,7 +19,7 @@ const backgrounds = [
   { id: 4, src: "/backgrounds/Classroom.mp4", alt: "Classroom", note: "Classroom" , createdby: "Lo-Fi.study"  },
   { id: 5, src: "/backgrounds/Autumn.mp4", alt: "Autumn", note: "Autumn" , createdby: "Lo-Fi.study" },
   { id: 6, src: "/backgrounds/Couch.mp4", alt: "Couch", note: "Couch" , createdby: "Lo-Fi.study" },
-  { id: 7, src: "/backgrounds/Skyrim.mp4", alt: "Skyrim", note: "Skyrim" , createdby: "Lo-Fi.study" },
+  { id: 7, src: "/backgrounds/Skyrim.mp4", alt: "Skyrim", note: "Skyrim" , createdby: "Skyrim" },
   { id: 8, src: "/backgrounds/Train2.mp4", alt: "Train2", note: "Train2" , createdby: "Lo-Fi.study" },
   { id: 9, src: "/backgrounds/Chillroom.mp4", alt: "Chillroom", note: "Chillroom" , createdby: "Lo-Fi.study" },
   { id: 10, src: "/backgrounds/Night.mp4", alt: "Night", note: "Night" , createdby: "Lo-Fi.study" },
@@ -33,7 +33,7 @@ export default function Study() {
   const { roomUrl } = router.query;
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [currentTime, setCurrentTime] = useState(new Date().toLocaleTimeString());
-  const [selectedBackground, setSelectedBackground] = useState("");
+  const [selectedBackground, setSelectedBackground] = useState(backgrounds[0]);
   const [visibleComponents, setVisibleComponents] = useState({});
   const [videoRoomUrl, setVideoRoomUrl] = useState("");
   const [showLoading, setShowLoading] = useState(true);
@@ -43,15 +43,15 @@ export default function Study() {
   const totalPages = Math.ceil(backgrounds.length / backgroundsPerPage);
 
   useEffect(() => {
-    backgrounds.forEach(background => {
-      const video = document.createElement('video');
+    backgrounds.forEach((background) => {
+      const video = document.createElement("video");
       video.src = background.src;
-      video.preload = 'auto';
+      video.preload = "auto";
     });
   }, []);
 
   useEffect(() => {
-    setSelectedBackground(backgrounds[Math.floor(Math.random() * backgrounds.length)].src);
+    setSelectedBackground(backgrounds[Math.floor(Math.random() * backgrounds.length)]);
   }, []);
 
   useEffect(() => {
@@ -80,18 +80,7 @@ export default function Study() {
     return (
       <div className={styles["loader-container"]}>
         <div className={styles.loader}>
-          <div>
-            <ul>
-              {[...Array(6)].map((_, i) => (
-                <li key={i}>
-                  <svg viewBox="0 0 90 120" fill="currentColor">
-                    <path d="M90,0 L90,120 L11,120 C4.92486775,120 0,115.075132 0,109 L0,11 C0,4.92486775 4.92486775,0 11,0 L90,0 Z M71.5,81 L18.5,81 C17.1192881,81 16,82.1192881 16,83.5 C16,84.8254834 17.0315359,85.9100387 18.3356243,85.9946823 L18.5,86 L71.5,86 C72.8807119,86 74,84.8807119 74,83.5 C74,82.1745166 72.9684641,81.0899613 71.6643757,81.0053177 L71.5,81 Z M71.5,57 L18.5,57 C17.1192881,57 16,58.1192881 16,59.5 C16,60.8254834 17.0315359,61.9100387 18.3356243,61.9946823 L18.5,62 L71.5,62 C72.8807119,62 74,60.8807119 74,59.5 C74,58.1192881 72.8807119,57 71.5,57 Z M71.5,33 L18.5,33 C17.1192881,33 16,34.1192881 16,35.5 C16,36.8254834 17.0315359,37.9100387 18.3356243,37.9946823 L18.5,38 L71.5,38 C72.8807119,38 74,36.8807119 74,35.5 C74,34.1192881 72.8807119,33 71.5,33 Z" />
-                  </svg>
-                </li>
-              ))}
-            </ul>
-          </div>
-          <span>Loading</span>
+          {/* Loading Animation */}
         </div>
       </div>
     );
@@ -108,12 +97,12 @@ export default function Study() {
     setSidebarOpen(!sidebarOpen);
     const main = document.querySelector(`.${styles.main}`);
     if (main) {
-      main.style.marginLeft = sidebarOpen ? '0' : '300px';
+      main.style.marginLeft = sidebarOpen ? "0" : "300px";
     }
   };
 
   const handleBackgroundSelection = (background) => {
-    setSelectedBackground(background.src);
+    setSelectedBackground(background);
   };
 
   const handleIconClick = (component) => {
@@ -133,11 +122,12 @@ export default function Study() {
 
   const getCurrentPageBackgrounds = () => {
     const start = currentPage * backgroundsPerPage;
-    const end = start + backgroundsPerPage > backgrounds.length ? backgrounds.length : start + backgroundsPerPage;
+    const end =
+      start + backgroundsPerPage > backgrounds.length
+        ? backgrounds.length
+        : start + backgroundsPerPage;
     return backgrounds.slice(start, end);
   };
-  
-  
 
   return (
     <>
@@ -169,7 +159,7 @@ export default function Study() {
         loop
         muted
         playsInline
-        src={selectedBackground}
+        src={selectedBackground.src}
       ></video>
       <div className={styles.container}>
         <aside
@@ -182,14 +172,17 @@ export default function Study() {
           </h1>
           <div className={styles.backgroundSelector}>
             <h2>Backgrounds</h2>
-            <div 
+            <div
               className={styles.backgroundPages}
               style={{ transform: `translateX(-${currentPage * 100}%)` }}
             >
               {[...Array(totalPages)].map((_, pageIndex) => (
                 <div key={pageIndex} className={styles.backgroundPage}>
                   {backgrounds
-                    .slice(pageIndex * backgroundsPerPage, (pageIndex + 1) * backgroundsPerPage)
+                    .slice(
+                      pageIndex * backgroundsPerPage,
+                      (pageIndex + 1) * backgroundsPerPage
+                    )
                     .map((background) => (
                       <div
                         key={background.id}
@@ -233,6 +226,12 @@ export default function Study() {
           )}
         </main>
       </div>
+      {/* Only show the createdByLabel if the sidebar is open */}
+      {sidebarOpen && (
+        <div className={styles.createdByLabel}>
+          Wallpaper by: {selectedBackground.createdby}
+        </div>
+      )}
     </>
   );
 }
