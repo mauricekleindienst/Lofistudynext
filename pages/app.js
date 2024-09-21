@@ -12,17 +12,6 @@ import LiveChat from "../components/LiveChat";
 import DraggableIframe from "../components/DraggableIframe";
 import CookieBanner from "../components/CookieBanner";
 
-// const backgrounds = [
-//   { id: 1, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Night.mp4", alt: "Night", note: "Night" },
-//   { id: 2, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Rain.mp4", alt: "Rain", note: "Rain" },
-//   { id: 3, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Train.mp4", alt: "Train", note: "Train" },
-//   { id: 4, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Classroom.mp4", alt: "Classroom", note: "Classroom" },
-//   { id: 5, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Autumn.mp4", alt: "Autumn", note: "Autumn" },
-//   { id: 6, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Couch.mp4", alt: "Couch", note: "Couch" },
-//   { id: 7, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Skyrim.mp4", alt: "Skyrim", note: "Skyrim" },
-//   { id: 8, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Train2.mp4", alt: "Train2", note: "Train2" },
-//   { id: 9, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Chillroom.mp4", alt: "Chillroom", note: "Chillroom" },
-// ];
 const backgrounds = [
   { id: 1, src: "/backgrounds/Night.mp4", alt: "Night", note: "Night" },
   { id: 2, src: "/backgrounds/Rain.mp4", alt: "Rain", note: "Rain" },
@@ -33,7 +22,17 @@ const backgrounds = [
   { id: 7, src: "/backgrounds/Skyrim.mp4", alt: "Skyrim", note: "Skyrim" },
   { id: 8, src: "/backgrounds/Train2.mp4", alt: "Train2", note: "Train2" },
   { id: 9, src: "/backgrounds/Chillroom.mp4", alt: "Chillroom", note: "Chillroom" },
+  { id: 10, src: "/backgrounds/Night.mp4", alt: "Night", note: "Night" },
+  { id: 11, src: "/backgrounds/Rain.mp4", alt: "Rain", note: "Rain" },
+  { id: 12, src: "/backgrounds/Train.mp4", alt: "Train", note: "Train" },
+  { id: 13, src: "/backgrounds/Classroom.mp4", alt: "Classroom", note: "Classroom" },
+  { id: 14, src: "/backgrounds/Autumn.mp4", alt: "Autumn", note: "Autumn" },
+  { id: 15, src: "/backgrounds/Couch.mp4", alt: "Couch", note: "Couch" },
+  { id: 16, src: "/backgrounds/Skyrim.mp4", alt: "Skyrim", note: "Skyrim" },
+  { id: 17, src: "/backgrounds/Train2.mp4", alt: "Train2", note: "Train2" },
+  { id: 18, src: "/backgrounds/Chillroom.mp4", alt: "Chillroom", note: "Chillroom" },
 ];
+
 export default function Study() {
   const { data: session, status } = useSession();
   const router = useRouter();
@@ -44,8 +43,11 @@ export default function Study() {
   const [visibleComponents, setVisibleComponents] = useState({});
   const [videoRoomUrl, setVideoRoomUrl] = useState("");
   const [showLoading, setShowLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(0);
 
-  // Preload all background videos when the component mounts
+  const backgroundsPerPage = 6;
+  const totalPages = Math.ceil(backgrounds.length / backgroundsPerPage);
+
   useEffect(() => {
     backgrounds.forEach(background => {
       const video = document.createElement('video');
@@ -131,6 +133,18 @@ export default function Study() {
     return fullName.split(" ")[0];
   };
 
+  const handlePageChange = (pageIndex) => {
+    setCurrentPage(pageIndex);
+  };
+
+  const getCurrentPageBackgrounds = () => {
+    const start = currentPage * backgroundsPerPage;
+    const end = start + backgroundsPerPage > backgrounds.length ? backgrounds.length : start + backgroundsPerPage;
+    return backgrounds.slice(start, end);
+  };
+  
+  
+
   return (
     <>
       <CustomHeader />
@@ -174,21 +188,30 @@ export default function Study() {
           </h1>
           <div className={styles.backgroundSelector}>
             <h2>Backgrounds</h2>
-            <div className={styles.backgroundGrid}>
-              {backgrounds.map((background) => (
-                <div
-                  key={background.id}
-                  className={styles.backgroundOption}
-                  title={background.note}
-                  onClick={() => handleBackgroundSelection(background)}
-                >
-                  <video
-                    src={background.src}
-                    alt={background.alt}
-                    muted
-                    loop
-                    playsInline
-                  ></video>
+            <div 
+              className={styles.backgroundPages}
+              style={{ transform: `translateX(-${currentPage * 100}%)` }}
+            >
+              {[...Array(totalPages)].map((_, pageIndex) => (
+                <div key={pageIndex} className={styles.backgroundPage}>
+                  {backgrounds
+                    .slice(pageIndex * backgroundsPerPage, (pageIndex + 1) * backgroundsPerPage)
+                    .map((background) => (
+                      <div
+                        key={background.id}
+                        className={styles.backgroundOption}
+                        title={background.note}
+                        onClick={() => handleBackgroundSelection(background)}
+                      >
+                        <video
+                          src={background.src}
+                          alt={background.alt}
+                          muted
+                          loop
+                          playsInline
+                        ></video>
+                      </div>
+                    ))}
                 </div>
               ))}
             </div>

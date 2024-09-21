@@ -51,7 +51,9 @@ export default function Scoreboard({ onMinimize }) {
           ) : error ? (
             <div>Error: {error}</div>
           ) : scoreboard.length === 0 ? (
-            <div>No data available</div>
+            <div>No user has completed a Pomodoro this week</div>
+            
+
           ) : (
             scoreboard.map((user, index) => (
               <div
