@@ -22,9 +22,10 @@ const backgrounds = [
   { id: 7, src: "/backgrounds/Skyrim.mp4", alt: "Skyrim", note: "Skyrim" , createdby: "Skyrim" },
   { id: 8, src: "/backgrounds/Train2.mp4", alt: "Train2", note: "Train2" , createdby: "Lo-Fi.study" },
   { id: 9, src: "/backgrounds/Chillroom.mp4", alt: "Chillroom", note: "Chillroom" , createdby: "Lo-Fi.study" },
-  { id: 10, src: "/backgrounds/Night.mp4", alt: "Night", note: "Night" , createdby: "Lo-Fi.study" },
-  { id: 11, src: "/backgrounds/Rain.mp4", alt: "Rain", note: "Rain", createdby: "Lo-Fi.study"  },
-  { id: 12, src: "/backgrounds/Train.mp4", alt: "Train", note: "Train" , createdby: "Lo-Fi.study" },
+  { id: 10, src: "/backgrounds/cables.mp4", alt: "Cables", note: "Cables" , createdby: "Lo-Fi.study" },
+  { id: 11, src: "/backgrounds/winter.mp4", alt: "Winter", note: "Winter", createdby: "Lo-Fi.study"  },
+  { id: 12, src: "/backgrounds/study_girl.mp4", alt: "StudyGirl", note: "StudyGirl" , createdby: "Lo-Fi.study" },
+  { id: 13, src: "/backgrounds/livingroom.mp4", alt: "Livingroom", note: "Livingroom" , createdby: "Lo-Fi.study" },
 ];
 
 export default function Study() {
