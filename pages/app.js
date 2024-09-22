@@ -11,22 +11,37 @@ import Calendar from "../components/Calendar";
 import LiveChat from "../components/LiveChat";
 import DraggableIframe from "../components/DraggableIframe";
 import CookieBanner from "../components/CookieBanner";
-
 const backgrounds = [
-  { id: 1, src: "/backgrounds/Night.mp4", alt: "Night", note: "Night", createdby: "Lo-Fi.study" },
-  { id: 2, src: "/backgrounds/Rain.mp4", alt: "Rain", note: "Rain", createdby: "Lo-Fi.study" },
-  { id: 3, src: "/backgrounds/Train.mp4", alt: "Train", note: "Train" ,createdby: "Lo-Fi.study" },
-  { id: 4, src: "/backgrounds/Classroom.mp4", alt: "Classroom", note: "Classroom" , createdby: "Lo-Fi.study"  },
-  { id: 5, src: "/backgrounds/Autumn.mp4", alt: "Autumn", note: "Autumn" , createdby: "Lo-Fi.study" },
-  { id: 6, src: "/backgrounds/Couch.mp4", alt: "Couch", note: "Couch" , createdby: "Lo-Fi.study" },
-  { id: 7, src: "/backgrounds/Skyrim.mp4", alt: "Skyrim", note: "Skyrim" , createdby: "Skyrim" },
-  { id: 8, src: "/backgrounds/Train2.mp4", alt: "Train2", note: "Train2" , createdby: "Lo-Fi.study" },
-  { id: 9, src: "/backgrounds/Chillroom.mp4", alt: "Chillroom", note: "Chillroom" , createdby: "Lo-Fi.study" },
-  { id: 10, src: "/backgrounds/cables.mp4", alt: "Cables", note: "Cables" , createdby: "Lo-Fi.study" },
-  { id: 11, src: "/backgrounds/winter.mp4", alt: "Winter", note: "Winter", createdby: "Lo-Fi.study"  },
-  { id: 12, src: "/backgrounds/study_girl.mp4", alt: "StudyGirl", note: "StudyGirl" , createdby: "Lo-Fi.study" },
-  { id: 13, src: "/backgrounds/coffee.mp4", alt: "Coffee", note: "Coffee" , createdby: "Lo-Fi.study" },
+  { id: 1, src: "/backgrounds/Couch.mp4", alt: "Couch", note: "Couch" },
+  { id: 2, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Rain.mp4", alt: "Rain", note: "Rain" },
+  { id: 3, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Train.mp4", alt: "Train", note: "Train" },
+  { id: 4, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Classroom.mp4", alt: "Classroom", note: "Classroom" },
+  { id: 5, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Autumn.mp4", alt: "Autumn", note: "Autumn" },
+  { id: 6, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Night.mp4", alt: "Night", note: "Night" },
+  { id: 7, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Skyrim.mp4", alt: "Skyrim", note: "Skyrim" },
+  { id: 8, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Train2.mp4", alt: "Train2", note: "Train2" },
+  { id: 9, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Chillroom.mp4", alt: "Chillroom", note: "Chillroom" },
+  { id: 10, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/cables.mp4", alt: "Cables", note: "Cables" , createdby: "Lo-Fi.study" },
+  { id: 11, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/winter.mp4", alt: "Winter", note: "Winter", createdby: "Lo-Fi.study"  },
+  { id: 12, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/study_girl.mp4", alt: "StudyGirl", note: "StudyGirl" , createdby: "Lo-Fi.study" },
+  { id: 13, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/coffee.mp4", alt: "Coffee", note: "Coffee" , createdby: "Lo-Fi.study" },
 ];
+
+// const backgrounds = [
+//   { id: 1, src: "/backgrounds/Night.mp4", alt: "Night", note: "Night", createdby: "Lo-Fi.study" },
+//   { id: 2, src: "/backgrounds/Rain.mp4", alt: "Rain", note: "Rain", createdby: "Lo-Fi.study" },
+//   { id: 3, src: "/backgrounds/Train.mp4", alt: "Train", note: "Train" ,createdby: "Lo-Fi.study" },
+//   { id: 4, src: "/backgrounds/Classroom.mp4", alt: "Classroom", note: "Classroom" , createdby: "Lo-Fi.study"  },
+//   { id: 5, src: "/backgrounds/Autumn.mp4", alt: "Autumn", note: "Autumn" , createdby: "Lo-Fi.study" },
+//   { id: 6, src: "/backgrounds/Couch.mp4", alt: "Couch", note: "Couch" , createdby: "Lo-Fi.study" },
+//   { id: 7, src: "/backgrounds/Skyrim.mp4", alt: "Skyrim", note: "Skyrim" , createdby: "Skyrim" },
+//   { id: 8, src: "/backgrounds/Train2.mp4", alt: "Train2", note: "Train2" , createdby: "Lo-Fi.study" },
+//   { id: 9, src: "/backgrounds/Chillroom.mp4", alt: "Chillroom", note: "Chillroom" , createdby: "Lo-Fi.study" },
+//   { id: 10, src: "/backgrounds/cables.mp4", alt: "Cables", note: "Cables" , createdby: "Lo-Fi.study" },
+//   { id: 11, src: "/backgrounds/winter.mp4", alt: "Winter", note: "Winter", createdby: "Lo-Fi.study"  },
+//   { id: 12, src: "/backgrounds/study_girl.mp4", alt: "StudyGirl", note: "StudyGirl" , createdby: "Lo-Fi.study" },
+//   { id: 13, src: "/backgrounds/coffee.mp4", alt: "Coffee", note: "Coffee" , createdby: "Lo-Fi.study" },
+// ];
 
 export default function Study() {
   const { data: session, status } = useSession();
