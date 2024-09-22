@@ -235,10 +235,7 @@ export default function Notes({ onMinimize }) {
         <div className={styles.notesContainer}>
           <div className={styles.header}>
             <h2>Notes</h2>
-            <div className={styles.tooltip}>
-              <span className="material-icons">help</span>
-              <span className={styles.tooltiptext}>Jot down ideas.</span>
-            </div>
+           
             <button onClick={onMinimize} className="material-icons">
               remove
             </button>

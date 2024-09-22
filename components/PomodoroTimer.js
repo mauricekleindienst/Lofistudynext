@@ -239,10 +239,7 @@ export default function PomodoroTimer({ onMinimize }) {
         <div className={`${styles.dragHandle} drag-handle`}></div>
         <div className={styles.header}>
           <h2>Pomodoro Timer</h2>
-          <div className={styles.tooltip}>
-            <span className="material-icons">help</span>
-            <span className={styles.tooltiptext}>Set work/break timers.</span>
-          </div>
+         
           <button
             onClick={onMinimize}
             className="material-icons"
