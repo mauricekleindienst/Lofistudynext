@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import Head from "next/head";
 import Typed from "typed.js";
+import { router } from "next/router";
 import { motion } from "framer-motion";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
@@ -18,13 +19,8 @@ export default function Landing() {
     },
     {
       src:
-        "https://i.ibb.co/fGQQfWr/lgsarius-Lofi-study-girl-on-desk-cybperunk-like-coffee-rain-82a5d58d-44f1-4b9a-ae8f-1f82844543a6.webp",
+        "https://i.ibb.co/nC5NnTr/DALL-E-2024-09-22-13-11-47-A-serene-winter-landscape-during-the-blue-hour-featuring-a-small-cozy-cab.webp",
       alt: "Second slide",
-    },
-    {
-      src:
-        "https://i.ibb.co/pdsgshq/lgsarius-Lofi-girl-and-cat-studying-in-a-field-sunset-3d94459d-fd73-43ee-8c1f-c4547239bb7a.webp",
-      alt: "Third slide",
     },
     {
       src:
@@ -42,7 +38,7 @@ export default function Landing() {
     return (
       <section className={styles.overviewSection}>
         <h2 className={styles.sectionTitle}>
-          Beautiful Changing Background Selection
+          Beautiful Background Selection
         </h2>
         <div className={styles.overviewGrid}>
           <Carousel
@@ -153,9 +149,9 @@ export default function Landing() {
               <p>Stay focused and manage your time effectively</p>
             </div>
             <div className={styles.overviewItem}>
-              <span className={styles.icon}>👥</span>
-              <h3>Collaborative Rooms</h3>
-              <p>Study with friends in virtual Chatrooms</p>
+              <span className={styles.icon}>📊</span>
+              <h3>Data Tracking</h3>
+              <p>Track your Pomodoro Sessions</p>
             </div>
           </div>
         </motion.section>

@@ -38,6 +38,7 @@ export default function Study() {
   const [videoRoomUrl, setVideoRoomUrl] = useState("");
   const [showLoading, setShowLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(0);
+  const [zenMode, setZenMode] = useState(false);
 
   const backgroundsPerPage = 6;
   const totalPages = Math.ceil(backgrounds.length / backgroundsPerPage);
@@ -92,7 +93,6 @@ export default function Study() {
             </ul>
           </div>
           <span>Opening Your Study Session</span>
-
         </div>
       </div>
     );
@@ -141,10 +141,31 @@ export default function Study() {
     return backgrounds.slice(start, end);
   };
 
+  const toggleZenMode = () => {
+    setZenMode(!zenMode);
+    const createdByLabel = document.querySelector(`.${styles.createdByLabel}`);
+    if (createdByLabel) {
+      createdByLabel.style.opacity = zenMode ? "1" : "0"; // Hide in Zen Mode
+      createdByLabel.style.pointerEvents = zenMode ? "auto" : "none"; // Disable interaction
+    }
+    const selectionBar = document.querySelector(`.${styles.selectionBar}`);
+  if (selectionBar) {
+    selectionBar.style.opacity = zenMode ? "1" : "0";
+    selectionBar.style.pointerEvents = zenMode ? "auto" : "none";
+  }
+  };
+
   return (
     <>
       <CustomHeader />
       <CookieBanner />
+       <SelectionBar
+       className={styles.selectionBar}
+          userEmail={session.user.email}
+          userName={getFirstName(session.user.name)}
+          onIconClick={handleIconClick}
+        />
+    
       {visibleComponents.pomodoro && (
         <PomodoroTimer onMinimize={() => handleIconClick("pomodoro")} />
       )}
@@ -160,11 +181,6 @@ export default function Study() {
           userName={getFirstName(session.user.name)}
         />
       )}
-      <SelectionBar
-        userEmail={session.user.email}
-        userName={getFirstName(session.user.name)}
-        onIconClick={handleIconClick}
-      />
       <video
         className={styles.videoBackground}
         autoPlay
@@ -173,7 +189,7 @@ export default function Study() {
         playsInline
         src={selectedBackground.src}
       ></video>
-      <div className={styles.container}>
+      <div className={`${styles.container} ${zenMode ? styles.zenMode : ''}`}>
         <aside
           className={`${styles.sidebar} ${
             sidebarOpen ? styles.open : styles.closed
@@ -238,12 +254,16 @@ export default function Study() {
           )}
         </main>
       </div>
-      {/* Only show the createdByLabel if the sidebar is open */}
-      {sidebarOpen && (
-        <div className={styles.createdByLabel}>
-          Wallpaper by: {selectedBackground.createdby}
-        </div>
-      )}
+      <div className={styles.createdByLabel}>
+        Wallpaper by: {selectedBackground.createdby}
+      </div>
+      <button
+        className={`${styles.zenModeButton} ${zenMode ? styles.active : ''}`}
+        onClick={toggleZenMode}
+        aria-label="Toggle Zen Mode"
+      >
+        <span className={styles.moonIcon}></span>
+      </button>
     </>
   );
 }

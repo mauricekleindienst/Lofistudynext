@@ -2,10 +2,11 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
+import { signIn, useSession } from "next-auth/react";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { auth } from "../../firebaseConfig";
 import styles from "../../styles/Login.module.css";
-
+import Image from "next/image";
 // const backgrounds = [
 //   { id: 1, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Night.mp4", alt: "Night", note: "Night" },
 //   { id: 2, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Rain.mp4", alt: "Rain", note: "Rain" },
@@ -126,6 +127,7 @@ export default function Register() {
             Register
           </button>
         </form>
+       
         {error && (
           <div className={`${styles.authMessage} ${styles.authError}`}>
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className={styles.authMessageIcon}>

@@ -5,34 +5,45 @@
   left: 50%;
   transform: translateX(-50%);
   background: linear-gradient(145deg, #1e1e1e, #2a2a2a);
-  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
   border-radius: 20px;
   display: flex;
-  padding: 15px;
-  
+  padding: 10px 20px;
+  gap: 15px; /* Space between icons */
   z-index: 1000;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px); /* Add a subtle blur effect */
 }
 
 .iconButton {
-  background-color: transparent;
+  background-color: rgba(255, 255, 255, 0.1); /* Light transparent background */
   border: none;
   color: #fff;
-  margin: 0 10px;
-  width: 50px;
-  height: 50px;
+  width: 60px;
+  height: 60px;
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
   transition: all 0.3s ease;
   border-radius: 50%;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Soft shadow */
+  cursor: pointer;
 }
-
+.selectionBar.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
 .iconButton:hover {
   background-color: #ff7b00;
   transform: scale(1.1);
 }
 
+.iconButton.active {
+  background-color: #ff7b00; /* Highlight active buttons */
+  box-shadow: 0 6px 12px rgba(255, 153, 0, 0.5);
+}
 .iconButton:hover .tooltip {
   visibility: visible;
   opacity: 1;
@@ -40,7 +51,11 @@
 }
 
 .material-icons {
-  font-size: 24px;
+  font-size: 28px;
+  transition: transform 0.3s ease;
+}
+.iconButton:hover .material-icons {
+  transform: scale(1.1); /* Slight grow on hover */
 }
 
 .tooltip {
@@ -60,6 +75,7 @@
   transition: opacity 0.3s, transform 0.3s;
   font-size: 14px;
   line-height: 1.2;
+  pointer-events: none;
 }
 
 .hidden {
@@ -67,18 +83,19 @@
 }
 
 .notificationDot {
-  width: 10px;
-  height: 10px;
-  background-color: orange;
+  width: 12px;
+  height: 12px;
+  background-color: #ff4500;
   border-radius: 50%;
   position: absolute;
-  top: 0;
-  right: 0;
+  top: 5px;
+  right: 5px;
+  border: 2px solid #2a2a2a; /* Add border for better visibility */
 }
 
 .dragging {
   background-color: #ff7b00;
-  transform: scale(1.1);
+  transform: scale(1.2);
   position: absolute;
 }
 

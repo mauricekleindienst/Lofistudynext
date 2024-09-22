@@ -1,25 +1,20 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import PomodoroTimer from "./PomodoroTimer";
 import Sounds from "./Sounds";
 import Notes from "./Notes";
-//import Calendar from "./Calendar";
 import LiveChat from "./LiveChat";
 import Scoreboard from "./Scoreboard";
 import Settings from "./Settings";
-
 import Todo from "./Todo";
-
 import Stats from "./Stats";
-import styles from "../styles/SelectionBar.module.css";
 import YouTubePlayer from "./YouTubePlayer";
+import styles from "../styles/SelectionBar.module.css";
 
 const initialIcons = [
   { id: "pomodoro", label: "Pomodoro", icon: "alarm" },
   { id: "sounds", label: "Sounds", icon: "graphic_eq" },
   { id: "youtubePlayer", label: "YouTube", icon: "smart_display" },
- // { id: "chat", label: "Chat", icon: "chat" },
- // { id: "calendar", label: "Calendar", icon: "event" },
   { id: "todo", label: "Todo", icon: "checklist" },
   { id: "note", label: "Note", icon: "edit" },
   { id: "stats", label: "Stats", icon: "bar_chart" },
@@ -31,8 +26,6 @@ const components = {
   pomodoro: PomodoroTimer,
   sounds: Sounds,
   note: Notes,
-  //calendar: Calendar,
-  //chat: LiveChat,
   scoreboard: Scoreboard,
   youtubePlayer: YouTubePlayer,
   todo: Todo,
@@ -44,16 +37,15 @@ export default function SelectionBar({ userEmail, userName }) {
   const [icons, setIcons] = useState(initialIcons);
   const [visibleComponents, setVisibleComponents] = useState([]);
   const [newChatMessage, setNewChatMessage] = useState(false);
+  const [zenMode, setZenMode] = useState(false); // Add Zen Mode state
 
-  const handleIconClick = (component) => {
-    setVisibleComponents((prevVisibleComponents) =>
-      prevVisibleComponents.includes(component)
-        ? prevVisibleComponents.filter((c) => c !== component)
-        : [...prevVisibleComponents, component]
+  const toggleComponentVisibility = (component) => {
+    setVisibleComponents((prev) =>
+      prev.includes(component)
+        ? prev.filter((c) => c !== component)
+        : [...prev, component]
     );
-    if (component === "chat") {
-      setNewChatMessage(false);
-    }
+    if (component === "chat") setNewChatMessage(false);
   };
 
   const onDragEnd = (result) => {
@@ -66,13 +58,40 @@ export default function SelectionBar({ userEmail, userName }) {
     setIcons(reorderedIcons);
   };
 
+  const renderedComponents = useMemo(
+    () =>
+      Object.entries(components).map(([name, Component]) => (
+        <div
+          key={name}
+          className={visibleComponents.includes(name) ? "" : styles.hidden}
+        >
+          <Component
+            onMinimize={() => toggleComponentVisibility(name)}
+            userEmail={userEmail}
+            userName={userName}
+            onNewMessage={() => setNewChatMessage(true)}
+          />
+        </div>
+      )),
+    [visibleComponents, userEmail, userName]
+  );
+
+  const toggleZenMode = () => {
+    setZenMode((prev) => !prev); // Toggle Zen Mode state
+  };
+
   return (
     <div>
+      <button className={styles.zenModeButton} onClick={toggleZenMode}>
+        Zen Mode
+      </button>
       <DragDropContext onDragEnd={onDragEnd}>
         <Droppable droppableId="selectionBar" direction="horizontal">
           {(provided) => (
             <div
-              className={styles.selectionBar}
+              className={`${styles.selectionBar} ${
+                zenMode ? styles.hidden : "" // Conditionally hide bar in Zen Mode
+              }`}
               {...provided.droppableProps}
               ref={provided.innerRef}
             >
@@ -85,8 +104,8 @@ export default function SelectionBar({ userEmail, userName }) {
                       {...provided.dragHandleProps}
                       className={`${styles.iconButton} ${
                         snapshot.isDragging ? styles.dragging : ""
-                      }`}
-                      onClick={() => handleIconClick(icon.id)}
+                      } ${visibleComponents.includes(icon.id) ? styles.active : ""}`}
+                      onClick={() => toggleComponentVisibility(icon.id)}
                       aria-label={icon.label}
                     >
                       <span className="material-icons">{icon.icon}</span>
@@ -102,21 +121,8 @@ export default function SelectionBar({ userEmail, userName }) {
             </div>
           )}
         </Droppable>
-        
       </DragDropContext>
-      {Object.entries(components).map(([name, Component]) => (
-        <div
-          key={name}
-          className={visibleComponents.includes(name) ? "" : styles.hidden}
-        >
-          <Component
-            onMinimize={() => handleIconClick(name)}
-            userEmail={userEmail}
-            userName={userName}
-            onNewMessage={() => setNewChatMessage(true)}
-          />
-        </div>
-      ))}
+      {renderedComponents}
     </div>
   );
 }
