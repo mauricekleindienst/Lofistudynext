@@ -178,6 +178,7 @@ useEffect(() => {
           userName={getFirstName(session.user.name)}
           onIconClick={handleIconClick}
         />
+            
     
       {visibleComponents.pomodoro && (
         <PomodoroTimer onMinimize={() => handleIconClick("pomodoro")} />
@@ -208,9 +209,17 @@ useEffect(() => {
             sidebarOpen ? styles.open : styles.closed
           }`}
         >
+          
           <h1>
             Welcome, {getFirstName(session.user.name)}! {currentTime}
           </h1>
+             <button
+        className={`${styles.zenModeButton} ${zenMode ? styles.active : ''}`}
+        onClick={toggleZenMode}
+        aria-label="Toggle Zen Mode"
+      >
+        <span className={styles.moonIcon}></span>
+      </button>
           <div className={styles.backgroundSelector}>
             <h2>Backgrounds</h2>
             <div
@@ -270,13 +279,7 @@ useEffect(() => {
       <div className={styles.createdByLabel}>
         Wallpaper by: {selectedBackground.createdby}
       </div>
-      <button
-        className={`${styles.zenModeButton} ${zenMode ? styles.active : ''}`}
-        onClick={toggleZenMode}
-        aria-label="Toggle Zen Mode"
-      >
-        <span className={styles.moonIcon}></span>
-      </button>
+     
     </>
   );
 }
