@@ -25,6 +25,7 @@ const backgrounds = [
   { id: 10, src: "/backgrounds/cables.mp4", alt: "Cables", note: "Cables" , createdby: "Lo-Fi.study" },
   { id: 11, src: "/backgrounds/winter.mp4", alt: "Winter", note: "Winter", createdby: "Lo-Fi.study"  },
   { id: 12, src: "/backgrounds/study_girl.mp4", alt: "StudyGirl", note: "StudyGirl" , createdby: "Lo-Fi.study" },
+  { id: 13, src: "/backgrounds/coffee.mp4", alt: "Coffee", note: "Coffee" , createdby: "Lo-Fi.study" },
 ];
 
 export default function Study() {
