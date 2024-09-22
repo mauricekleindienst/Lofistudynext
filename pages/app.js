@@ -28,6 +28,8 @@ const backgrounds = [
   { id: 14, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Minecraft.mp4", alt: "Minecraft", note: "Minecraft" , createdby: "Mojang" },
   { id: 15, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Darkroom.mp4", alt: "Darkroom", note: "Darkroom" , createdby: "Lo-Fi.study" },
   { id: 16, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Snowtrain.mp4", alt: "Snowtrain", note: "Snowtrain" , createdby: "Lo-Fi.study" },
+  { id: 17, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Garden.mp4", alt: "Garden", note: "Garden" , createdby: "Lo-Fi.study" },
+  { id: 18, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/japannight.mp4", alt: "japannight", note: "japannight" , createdby: "Lo-Fi.study" },
 ];
 
 export default function Study() {
