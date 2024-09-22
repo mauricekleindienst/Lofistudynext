@@ -47,7 +47,15 @@ export default function Study() {
 
   const backgroundsPerPage = 6;
   const totalPages = Math.ceil(backgrounds.length / backgroundsPerPage);
+useEffect(() => {
+    // Disable scrolling when the component mounts
+    document.body.style.overflow = 'hidden';
 
+    // Re-enable scrolling when the component unmounts
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
+  }, []);
   useEffect(() => {
     backgrounds.forEach((background) => {
       const video = document.createElement("video");
