@@ -214,8 +214,7 @@ useEffect(() => {
             Welcome, {getFirstName(session.user.name)}! {currentTime}
           </h1>
        
-        <span className={styles.moonIcon}></span>
-      </button>
+       
           <div className={styles.backgroundSelector}>
             <h2>Backgrounds</h2>
             <div
