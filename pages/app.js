@@ -213,11 +213,7 @@ useEffect(() => {
           <h1>
             Welcome, {getFirstName(session.user.name)}! {currentTime}
           </h1>
-             <button
-        className={`${styles.zenModeButton} ${zenMode ? styles.active : ''}`}
-        onClick={toggleZenMode}
-        aria-label="Toggle Zen Mode"
-      >
+       
         <span className={styles.moonIcon}></span>
       </button>
           <div className={styles.backgroundSelector}>
