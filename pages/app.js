@@ -274,7 +274,9 @@ useEffect(() => {
       <div className={styles.createdByLabel}>
         Wallpaper by: {selectedBackground.createdby}
       </div>
-     
+     <button className={`${styles.zenModeButton} ${zenMode ? styles.active : ''}`} onClick={toggleZenMode} aria-label="Toggle Zen Mode" >
+ <span className={styles.moonIcon}></span>
+      </button>
     </>
   );
 }
