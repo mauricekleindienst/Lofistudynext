@@ -82,9 +82,6 @@ export default function SelectionBar({ userEmail, userName }) {
 
   return (
     <div>
-      <button className={styles.zenModeButton} onClick={toggleZenMode}>
-        Zen Mode
-      </button>
       <DragDropContext onDragEnd={onDragEnd}>
         <Droppable droppableId="selectionBar" direction="horizontal">
           {(provided) => (
