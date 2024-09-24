@@ -11,7 +11,7 @@ const initialTracks = [
   { id: 5, title: 'synthwave radio 🌌', videoId: '4xDzrJKXOOY' , channelName: 'LofiGirl', channelUrl: 'https://www.youtube.com/@LofiGirl' },
   { id: 6, title: 'dark ambient radio 🌃', videoId: 'S_MOd40zlYU' , channelName: 'LofiGirl', channelUrl: 'https://www.youtube.com/@LofiGirl' },
   { id: 7, title: 'dark academia 🌓', videoId: 'SllpB3W5f6s' , channelName: 'Toxic Drunker', channelUrl: 'https://www.youtube.com/@ToxicDrunker_' },
-  { id: 8, title: 'jazz music for relaxing ☕', videoId: 'MYPVQccHhAQ' , channelName: 'Relaxing Jazz Piano', channelUrl: 'https://www.youtube.com/@relaxingjazzpiano6491' },
+  { id: 8, title: 'jazz music ☕', videoId: 'MYPVQccHhAQ' , channelName: 'Relaxing Jazz Piano', channelUrl: 'https://www.youtube.com/@relaxingjazzpiano6491' },
   { id: 9, title: 'lofi Pokemon mix 🏝️', videoId: '6CjpgFOOtuI' , channelName: 'STUDIO MATCHA US', channelUrl: 'https://www.youtube.com/@LoFi_Pokemon_Matcha' },
   { id: 10, title: 'skyrim soundtrack ❄️', videoId: '_Z1VzsE1GVg' , channelName: 'Aaronmn7', channelUrl: 'https://www.youtube.com/@AeronN7' },
   { id: 11, title: 'animal crossing 🌳', videoId: 'V6GUhCxMDLg' , channelName: 'RemDaBom', channelUrl: 'https://www.youtube.com/@RemDaBom' },
@@ -27,9 +27,11 @@ export default function MusicPlayer({ onMinimize }) {
   const [newTrackUrl, setNewTrackUrl] = useState('');
   const [apiReady, setApiReady] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isMuted, setIsMuted] = useState(false);
   const playerRef = useRef(null);
   const autoplayAttemptedRef = useRef(false);
 
+  // Load YouTube iframe API script on mount
   useEffect(() => {
     const script = document.createElement('script');
     script.src = 'https://www.youtube.com/iframe_api';
@@ -43,6 +45,22 @@ export default function MusicPlayer({ onMinimize }) {
       delete window.onYouTubeIframeAPIReady;
     };
   }, []);
+
+  // Persist volume, tracks, and current track index in localStorage
+  useEffect(() => {
+    const storedTracks = JSON.parse(localStorage.getItem('tracks'));
+    const storedTrackIndex = localStorage.getItem('currentTrackIndex');
+    const storedVolume = localStorage.getItem('volume');
+    if (storedTracks) setTracks(storedTracks);
+    if (storedTrackIndex) setCurrentTrackIndex(parseInt(storedTrackIndex));
+    if (storedVolume) setVolume(parseInt(storedVolume));
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('tracks', JSON.stringify(tracks));
+    localStorage.setItem('currentTrackIndex', currentTrackIndex);
+    localStorage.setItem('volume', volume);
+  }, [tracks, currentTrackIndex, volume]);
 
   const playPause = () => {
     if (playerRef.current) {
@@ -91,45 +109,40 @@ export default function MusicPlayer({ onMinimize }) {
       setIsPlaying(false);
     }
   };
-  useEffect(() => {
+
+  const toggleMute = () => {
     if (playerRef.current) {
-      playerRef.current.setVolume(volume);
-    }
-  }, [volume]);
-
-  useEffect(() => {
-    let isMounted = true;
-
-    const loadVideo = async () => {
-      if (playerRef.current && playerRef.current.loadVideoById) {
-        try {
-          await playerRef.current.loadVideoById(tracks[currentTrackIndex].videoId);
-          if (isMounted) {
-            attemptAutoplay();
-            setIsLoading(false);
-          }
-        } catch (error) {
-          console.error("Error loading video:", error);
-          if (isMounted) {
-            setIsLoading(false);
-          }
-        }
+      if (isMuted) {
+        playerRef.current.unMute();
+      } else {
+        playerRef.current.mute();
       }
-    };
+      setIsMuted(!isMuted);
+    }
+  };
 
-    loadVideo();
+  const debouncedSelectTrack = debounce((index) => {
+    if (isLoading) return;
+    setIsLoading(true);
+    setCurrentTrackIndex(index);
+    setIsLoading(false); // Stop the loading spinner after selecting a track
+  }, 300);
 
-    return () => {
-      isMounted = false;
-    };
-  }, [currentTrackIndex, tracks]);
+  const selectTrack = (index) => {
+    debouncedSelectTrack(index);
+  };
 
   const addNewTrack = (title, url) => {
     try {
       const videoId = new URL(url).searchParams.get('v');
+      if (!videoId) {
+        alert('Invalid YouTube URL');
+        return;
+      }
       setTracks([...tracks, { id: tracks.length + 1, title, videoId }]);
     } catch (error) {
-      console.error("Invalid YouTube URL:", error);
+      alert('Invalid YouTube URL');
+      console.error("Error parsing YouTube URL:", error);
     }
   };
 
@@ -141,23 +154,11 @@ export default function MusicPlayer({ onMinimize }) {
     setIsFormVisible(false);
   };
 
-  const debouncedSelectTrack = debounce((index) => {
-    if (isLoading) return;
-    setIsLoading(true);
-    setCurrentTrackIndex(index);
-  }, 300);
-
-  const selectTrack = (index) => {
-    debouncedSelectTrack(index);
-  };
-
-  const handleTouchStart = (e) => {
-    e.preventDefault();
-  };
-
-  const handleTouchEnd = (e) => {
-    e.preventDefault();
-  };
+  useEffect(() => {
+    if (playerRef.current) {
+      playerRef.current.setVolume(volume);
+    }
+  }, [volume]);
 
   useEffect(() => {
     return () => {
@@ -219,7 +220,7 @@ export default function MusicPlayer({ onMinimize }) {
           <YouTube
             videoId={tracks[currentTrackIndex].videoId}
             opts={{
-              height: '0',
+              height: '0', // Keep player visually hidden
               width: '0',
               playerVars: {
                 autoplay: 1,
@@ -243,8 +244,8 @@ export default function MusicPlayer({ onMinimize }) {
             <span className="material-icons">skip_previous</span>
           </button>
           <button onClick={playPause} className={styles.controlButton} disabled={isLoading}>
-                        {isLoading ? (
-              <span className={styles.loader}></span> // This would be your loading spinner
+            {isLoading ? (
+              <div className={styles.loadingSpinner}></div> // Loading spinner
             ) : (
               <span className="material-icons">
                 {isPlaying ? 'pause' : 'play_arrow'}
@@ -256,7 +257,9 @@ export default function MusicPlayer({ onMinimize }) {
           </button>
         </div>
         <div className={styles.volumeControl}>
-          <span className="material-icons">volume_up</span>
+          <button onClick={toggleMute} className={styles.muteButton}>
+            <span className="material-icons">{isMuted ? 'volume_off' : 'volume_up'}</span>
+          </button>
           <input
             type="range"
             min="0"

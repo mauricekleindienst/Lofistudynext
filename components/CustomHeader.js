@@ -70,8 +70,11 @@ export default function CustomHeader() {
         <span className="material-icons">videocam</span>
       </button>
       <button className={styles.iconButton} onClick={toggleFullscreen}>
-        <span className="material-icons">fullscreen</span>
-      </button>
+  <span className="material-icons">
+    {isFullscreen ? "fullscreen_exit" : "fullscreen"}
+  </span>
+</button>
+
       <div className={styles.iconButton}>
         <button onClick={() => signOut()} className={styles.iconButton}>
           <span className="material-icons">logout</span>

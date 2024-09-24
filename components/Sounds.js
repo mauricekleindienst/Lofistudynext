@@ -21,7 +21,22 @@ const sounds = [
 
 export default function Sounds({ onMinimize }) {
   const [volumes, setVolumes] = useState(Array(sounds.length).fill(0));
-  const audioRefs = useRef(sounds.map(() => new Audio()));
+  const audioRefs = useRef([]);
+
+useEffect(() => {
+  if (!audioRefs.current.length) {
+    audioRefs.current = sounds.map(() => new Audio());
+  }
+  const currentAudioRefs = audioRefs.current;
+  currentAudioRefs.forEach((audio, index) => {
+    audio.src = sounds[index].file;
+    audio.loop = true;
+  });
+
+  return () => {
+    currentAudioRefs.forEach((audio) => audio.pause());
+  };
+}, []);
 
   useEffect(() => {
     const currentAudioRefs = audioRefs.current;
@@ -36,24 +51,23 @@ export default function Sounds({ onMinimize }) {
   }, []);
 
   const handleVolumeChange = (index, volume) => {
-    const newVolumes = [...volumes];
-    newVolumes[index] = volume;
-    setVolumes(newVolumes);
-    audioRefs.current[index].volume = volume / 100;
-    if (volume > 0) {
-      audioRefs.current[index].play();
-    } else {
-      audioRefs.current[index].pause();
-    }
+    setVolumes((prev) => {
+      const newVolumes = [...prev];
+      newVolumes[index] = volume;
+      return newVolumes;
+    });
+    const audio = audioRefs.current[index];
+    audio.volume = volume / 100;
+    volume > 0 ? audio.play() : audio.pause();
   };
-
+  
+  
   return (
     <Draggable handle=".drag-handle">
       <div className={styles.soundsContainer}>
         <div className={`${styles.dragHandle} drag-handle`}></div>
         <div className={styles.header}>
           <h2>Ambient Sounds</h2>
-   
           <button onClick={onMinimize} className={styles.minimizeButton}>
             <span className="material-icons">remove</span>
           </button>
@@ -61,16 +75,18 @@ export default function Sounds({ onMinimize }) {
         <div className={styles.soundsList}>
           {sounds.map((sound, index) => (
             <div key={sound.name} className={styles.sound}>
-              <span className={styles.icon}>{sound.icon}</span>
+              <span
+                className={`${styles.icon} ${volumes[index] > 0 ? styles.iconPlaying : ''}`}
+              >
+                {sound.icon}
+              </span>
               <span className={styles.soundName}>{sound.name}</span>
               <input
                 type="range"
                 min="0"
                 max="100"
                 value={volumes[index]}
-                onChange={(e) =>
-                  handleVolumeChange(index, parseInt(e.target.value))
-                }
+                onChange={(e) => handleVolumeChange(index, parseInt(e.target.value))}
                 className={styles.slider}
               />
             </div>

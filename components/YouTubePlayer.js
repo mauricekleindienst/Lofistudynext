@@ -1,20 +1,52 @@
+// Path: components/YouTubePlayer.js
+
 import React, { useState, useEffect, useRef } from "react";
 import Draggable from "react-draggable";
+import { debounce } from "lodash";
 import styles from "../styles/YouTubePlayer.module.css";
 
 export default function YouTubePlayer({ onMinimize }) {
   const [videoUrl, setVideoUrl] = useState("");
   const [videoId, setVideoId] = useState("");
+  const [isValidUrl, setIsValidUrl] = useState(true);
   const [showInput, setShowInput] = useState(false);
   const [dimensions, setDimensions] = useState({ width: 400, height: 300 });
-  const containerRef = useRef(null);
-  const resizingRef = useRef(false);
+  const playerRef = useRef({ container: null, resizing: false });
 
+  // Load video URL from local storage on component mount
+  useEffect(() => {
+    const storedVideoUrl = localStorage.getItem("videoUrl");
+    if (storedVideoUrl) {
+      setVideoUrl(storedVideoUrl);
+    }
+  }, []);
+
+  // Save video URL to local storage when it changes
   useEffect(() => {
     if (videoUrl) {
-      const id = extractVideoId(videoUrl);
-      setVideoId(id);
+      localStorage.setItem("videoUrl", videoUrl);
     }
+  }, [videoUrl]);
+
+  // Debounced video ID extraction and validation
+  useEffect(() => {
+    const debouncedSetVideoId = debounce(() => {
+      if (videoUrl) {
+        const id = extractVideoId(videoUrl);
+        if (id) {
+          setVideoId(id);
+          setIsValidUrl(true);
+        } else {
+          setIsValidUrl(false); // Invalid URL
+        }
+      }
+    }, 300);
+
+    debouncedSetVideoId();
+
+    return () => {
+      debouncedSetVideoId.cancel();
+    };
   }, [videoUrl]);
 
   const extractVideoId = (url) => {
@@ -24,17 +56,18 @@ export default function YouTubePlayer({ onMinimize }) {
     return match && match[2].length === 11 ? match[2] : null;
   };
 
+  // Resize handlers
   const handleResizeStart = (e) => {
     e.preventDefault();
-    resizingRef.current = true;
+    playerRef.current.resizing = true;
     document.addEventListener("mousemove", handleResize);
     document.addEventListener("mouseup", handleResizeEnd);
   };
 
   const handleResize = (e) => {
-    if (!resizingRef.current) return;
+    if (!playerRef.current.resizing) return;
 
-    const containerRect = containerRef.current.getBoundingClientRect();
+    const containerRect = playerRef.current.container.getBoundingClientRect();
     const newWidth = e.clientX - containerRect.left;
     const newHeight = e.clientY - containerRect.top;
 
@@ -45,7 +78,7 @@ export default function YouTubePlayer({ onMinimize }) {
   };
 
   const handleResizeEnd = () => {
-    resizingRef.current = false;
+    playerRef.current.resizing = false;
     document.removeEventListener("mousemove", handleResize);
     document.removeEventListener("mouseup", handleResizeEnd);
   };
@@ -58,7 +91,7 @@ export default function YouTubePlayer({ onMinimize }) {
     <Draggable handle=".drag-handle">
       <div
         className={styles.playerContainer}
-        ref={containerRef}
+        ref={(el) => (playerRef.current.container = el)}
         style={{
           width: `${dimensions.width}px`,
           height: `${dimensions.height}px`,
@@ -78,6 +111,7 @@ export default function YouTubePlayer({ onMinimize }) {
             <span className="material-icons">remove</span>
           </button>
         </div>
+
         {showInput && (
           <div className={styles.inputContainer}>
             <input
@@ -87,8 +121,12 @@ export default function YouTubePlayer({ onMinimize }) {
               placeholder="Paste YouTube URL here..."
               className={styles.urlInput}
             />
+            {!isValidUrl && (
+              <p className={styles.errorText}>Invalid YouTube URL</p>
+            )}
           </div>
         )}
+
         {videoId && (
           <div className={styles.videoContainer}>
             <iframe
@@ -101,6 +139,7 @@ export default function YouTubePlayer({ onMinimize }) {
             ></iframe>
           </div>
         )}
+
         <div
           className={styles.resizeHandle}
           onMouseDown={handleResizeStart}
