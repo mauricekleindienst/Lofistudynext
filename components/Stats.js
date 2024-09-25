@@ -1,3 +1,4 @@
+// Stats.jsx
 import React, { useState, useEffect, useMemo } from "react";
 import { useSession } from "next-auth/react";
 import { Doughnut, Bar } from "react-chartjs-2";
@@ -31,6 +32,7 @@ export default function Stats({ onMinimize }) {
   const { data: session } = useSession();
   const [stats, setStats] = useState(null);
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (session?.user?.email) {
@@ -39,6 +41,7 @@ export default function Stats({ onMinimize }) {
   }, [session]);
 
   const fetchStats = async () => {
+    setLoading(true);
     try {
       const response = await fetch("/api/getPomodoroStats", {
         method: "POST",
@@ -49,17 +52,23 @@ export default function Stats({ onMinimize }) {
       if (response.status === 404) {
         setError("No stats found on your Account. Start a Pomodoro to begin tracking your stats.");
         setStats(null);
-        return;
+      } else if (!response.ok) {
+        throw new Error(`Error: ${response.statusText}`);
+      } else {
+        const data = await response.json();
+        setStats(data);
       }
-
-      if (!response.ok) throw new Error(`Error: ${response.statusText}`);
-      
-      const data = await response.json();
-      setStats(data);
     } catch (error) {
       console.error("Failed to fetch Pomodoro stats:", error);
       setError("Failed to fetch stats. Please try again later.");
+    } finally {
+      setLoading(false);
     }
+  };
+
+  const retryFetch = () => {
+    setError("");
+    fetchStats();
   };
 
   const categoryData = useMemo(() => ({
@@ -98,13 +107,20 @@ export default function Stats({ onMinimize }) {
         </div>
         <div className={styles.error}>
           <p>{error}</p>
+          <button onClick={retryFetch} className={styles.retryButton} aria-label="Retry">
+            Retry
+          </button>
         </div>
       </div>
     );
   }
 
-  if (!stats) {
+  if (loading) {
     return <div className={styles.loading}>Loading stats...</div>;
+  }
+
+  if (!stats) {
+    return <div className={styles.loading}>No stats available</div>;
   }
 
   return (
@@ -131,6 +147,7 @@ export default function Stats({ onMinimize }) {
                   plugins: { legend: { display: true }, tooltip: { enabled: true } },
                   responsive: true,
                   maintainAspectRatio: false,
+                  animation: { animateScale: true },
                 }}
                 height={200}
                 width={200}
@@ -152,7 +169,8 @@ export default function Stats({ onMinimize }) {
                       x: { grid: { display: false } },
                     },
                     responsive: true,
-                    maintainAspectRatio: true,
+                    maintainAspectRatio: false,
+                    animation: { animateScale: true },
                   }}
                   height={200}
                   width={300}

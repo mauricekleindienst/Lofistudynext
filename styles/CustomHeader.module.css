@@ -5,7 +5,6 @@
   display: flex;
   align-items: center;
   z-index: 1000;
-  
 }
 
 .iconButton {
@@ -21,8 +20,37 @@
   position: relative;
   transition: all 0.3s ease;
   border-radius: 50%;
+  cursor: pointer;
+}
+.tooltip {
+  position: relative;
+  display: inline-block;
 }
 
+.tooltiptext {
+  visibility: hidden;
+  opacity: 0;
+  width: 120px;
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px;
+  position: absolute;
+  z-index: 1;
+  top: 140%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-10px);
+  transition: opacity 0.3s, transform 0.3s;
+  font-size: 14px;
+  line-height: 1.2;
+  pointer-events: none;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
+}
 .iconButton:hover {
   background-color: #ff7b00;
   transform: scale(1.1);
@@ -36,16 +64,6 @@
   position: relative;
 }
 
-.dropdownContent {
-  display: false;
-  position: absolute;
-  top: 60px;
-  right: 0;
-  background: linear-gradient(145deg, #1e1e1e, #2a2a2a);
-  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-  padding: 15px;
-  border-radius: 20px;
-}
 
 
 .dropdownContent.show {
@@ -58,42 +76,6 @@
   font-size: 24px;
 }
 
-/* Custom styles for react-pdf-viewer */
-.rpv-core__toolbar {
-  background: linear-gradient(145deg, #1e1e1e, #2a2a2a) !important;
-  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-  border-radius: 20px;
-  padding: 10px;
-}
-
-.rpv-core__toolbar-button,
-.rpv-core__minimal-button {
-  color: #fff !important;
-  transition: all 0.3s ease;
-}
-
-.rpv-core__toolbar-button:hover,
-.rpv-core__minimal-button:hover {
-  background-color: #ff7b00 !important;
-  transform: scale(1.1);
-}
-
-.rpv-core__zoom-in-button,
-.rpv-core__zoom-out-button {
-  color: #fff !important;
-}
-
-.rpv-core__text-layer {
-  color: #fff !important;
-}
-
-.rpv-core__text-layer * {
-  color: #fff !important;
-}
-
-.rpv-core__icon {
-  fill: #fff !important;
-}
 
 .toast {
   position: fixed;
@@ -106,7 +88,6 @@
   border-radius: 20px;
   box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
   z-index: 1001;
-  
   animation: fadeIn 0.5s, fadeOut 0.5s 2.5s;
 }
 
@@ -122,6 +103,7 @@
   color: #ff7b00;
 }
 
+
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
@@ -132,74 +114,3 @@
   to { opacity: 0; }
 }
 
-.pdfViewer {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  width: 100%;
-  background-color: #f0f0f0;
-}
-
-.pdfControls {
-  display: flex;
-  justify-content: space-between;
-  padding: 10px;
-  background-color: #333;
-  color: white;
-}
-
-.pdfControls button {
-  background-color: #4CAF50;
-  border: none;
-  color: white;
-  padding: 5px 10px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 14px;
-  margin: 4px 2px;
-  
-  border-radius: 3px;
-}
-
-.pdfControls button:disabled {
-  background-color: #cccccc;
-  color: #666666;
-  cursor: not-allowed;
-}
-
-.pdfDocument {
-  flex-grow: 1;
-  overflow: auto;
-}
-
-.pdfPage {
-  margin: 0 auto;
-}
-.tooltip {
-  position: relative;
-  display: inline-block;
-  
-}
-
-.tooltip .tooltiptext {
-  visibility: hidden;
-  width: 120px;
-  background-color: black;
-  color: #fff;
-  text-align: center;
-  border-radius: 6px;
-  padding: 5px 0;
-  position: absolute;
-  z-index: 1;
-  bottom: 125%; /* Position the tooltip above the icon */
-  left: 50%;
-  margin-left: -60px;
-  opacity: 0;
-  transition: opacity 0.3s;
-}
-
-.tooltip:hover .tooltiptext {
-  visibility: visible;
-  opacity: 1;
-}

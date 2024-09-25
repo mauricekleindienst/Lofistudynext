@@ -123,7 +123,54 @@
   width: 100%;
   flex: 0 0 100%;
 }
+/* Tooltip Container */
+/* Tooltip Container */
+.tooltipWrapper {
+  position: relative;
+  display: inline-block;
+  width: 100%; /* Ensures it covers the backgroundOption */
+  height: 100%; /* Matches the size of the parent */
+}
 
+/* Tooltip Text */
+.tooltipWrapper .tooltiptext {
+  visibility: hidden;
+  opacity: 0;
+  width: 120px;
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%; /* Tooltip above the element */
+  left: 50%;
+  margin-left: -60px; /* Centers tooltip horizontally */
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  transform: translateY(10px); /* Starts tooltip slightly below */
+  pointer-events: none; /* Prevent interaction with tooltip itself */
+  font-size: 14px;
+}
+
+/* Tooltip Arrow */
+.tooltipWrapper .tooltiptext::after {
+  content: "";
+  position: absolute;
+  top: 100%; /* Arrow pointing down */
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #333 transparent transparent transparent;
+}
+
+/* Tooltip visible on hover */
+.tooltipWrapper:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
+  transform: translateY(0); /* Animates tooltip into view */
+}
 .backgroundOption {
   aspect-ratio: 16 / 9;
   display: flex;
@@ -140,8 +187,13 @@
 .backgroundOption:hover {
   border-color: #ff7b00;
   transform: scale(1.05);
+  position: relative;
 }
-
+.backgroundOption:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
+  transform: translateY(0);
+}
 .backgroundOption video {
   width: 100%;
   height: 100%;

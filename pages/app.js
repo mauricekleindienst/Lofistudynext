@@ -216,38 +216,42 @@ useEffect(() => {
        
        
           <div className={styles.backgroundSelector}>
-            <h2>Backgrounds</h2>
+  <h2>Backgrounds</h2>
+  <div
+    className={styles.backgroundPages}
+    style={{ transform: `translateX(-${currentPage * 100}%)` }}
+  >
+    {[...Array(totalPages)].map((_, pageIndex) => (
+      <div key={pageIndex} className={styles.backgroundPage}>
+        {backgrounds
+          .slice(
+            pageIndex * backgroundsPerPage,
+            (pageIndex + 1) * backgroundsPerPage
+          )
+          .map((background) => (
             <div
-              className={styles.backgroundPages}
-              style={{ transform: `translateX(-${currentPage * 100}%)` }}
+              key={background.id}
+              className={styles.backgroundOption}
+              onClick={() => handleBackgroundSelection(background)}
             >
-              {[...Array(totalPages)].map((_, pageIndex) => (
-                <div key={pageIndex} className={styles.backgroundPage}>
-                  {backgrounds
-                    .slice(
-                      pageIndex * backgroundsPerPage,
-                      (pageIndex + 1) * backgroundsPerPage
-                    )
-                    .map((background) => (
-                      <div
-                        key={background.id}
-                        className={styles.backgroundOption}
-                        title={background.note}
-                        onClick={() => handleBackgroundSelection(background)}
-                      >
-                        <video
-                          src={background.src}
-                          alt={background.alt}
-                          muted
-                          loop
-                          playsInline
-                        ></video>
-                      </div>
-                    ))}
-                </div>
-              ))}
+              <div className={styles.tooltipWrapper}>
+                <video
+                  src={background.src}
+                  alt={background.alt}
+                  muted
+                  loop
+                  playsInline
+                  className={styles.backgroundVideo}
+                ></video>
+                <span className={styles.tooltiptext}>{background.note}</span>
+              </div>
             </div>
-          </div>
+          ))}
+      </div>
+    ))}
+  </div>
+</div>
+
           <MusicPlayer />
         </aside>
         <button
