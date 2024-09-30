@@ -4,10 +4,12 @@ import "../styles/globals.css";
 import Head from "next/head";
 import CookieBanner from "../components/CookieBanner";
 import 'bootstrap/dist/css/bootstrap.css';
-
+import { ChakraProvider } from '@chakra-ui/react'
 function MyApp({ Component, pageProps: { session, ...pageProps } }) {
   return (
+ 
     <SessionProvider session={session}>
+         <ChakraProvider>
       <UserProvider>
         <CookieBanner />
         <Head>
@@ -64,6 +66,7 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }) {
         </Head>
         <Component {...pageProps} />
       </UserProvider>
+      </ChakraProvider>
     </SessionProvider>
   );
 }

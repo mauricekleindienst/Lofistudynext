@@ -21,6 +21,7 @@ export default async function handler(req, res) {
     console.error('Error in todo handler:', error);
     return res.status(500).json({ error: 'Internal server error' });
   } finally {
+    // Ensure that Prisma disconnects only once after all requests
     await prisma.$disconnect();
   }
 }
@@ -123,18 +124,39 @@ async function deleteTodoHandler(req, res) {
   }
 
   try {
+    // Start transaction to delete subtasks and the todo
     const deleteTransaction = await prisma.$transaction([
-      prisma.subtasks.deleteMany({ where: { todo_id: id } }),
-      prisma.todos.deleteMany({ where: { id, email } }),
+      prisma.subtasks.deleteMany({
+        where: { todo_id: id },
+      }),
+      prisma.todos.delete({
+        where: {
+          id_email: {
+            id,
+            email,
+          },
+        },
+      }),
     ]);
 
-    if (deleteTransaction[1].count === 0) {
-      return res.status(404).json({ error: 'Todo not found' });
+    // Check if the todo deletion was successful
+    if (!deleteTransaction[1]) {
+      return res.status(404).json({ error: 'Todo not found or already deleted' });
     }
 
     return res.status(200).json({ message: 'Todo deleted successfully' });
   } catch (error) {
     console.error('Error deleting todo:', error);
+
+    // Handle specific Prisma error cases
+    if (error.code === 'P2025') {
+      return res.status(404).json({ error: 'Todo not found or already deleted' });
+    }
+
+    if (error.code === 'P1001') {
+      return res.status(500).json({ error: 'Database connection failed' });
+    }
+
     return res.status(500).json({ error: 'Failed to delete todo' });
   }
 }
