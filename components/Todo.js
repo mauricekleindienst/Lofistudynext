@@ -123,24 +123,27 @@ export default function Todo({ onMinimize }) {
       const originalTodos = todos;
       setTodos((prev) => prev.filter((todo) => todo.id !== id));
       setError(null);
-
+  
       try {
         const response = await fetch("/api/todos", {
           method: "DELETE",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ id, email: session.user.email }),
         });
-
+  
         if (!response.ok) {
           throw new Error("Failed to delete todo");
         }
       } catch (error) {
         console.error("Error deleting todo:", error);
         setError("Failed to delete todo. Please try again.");
-        setTodos(originalTodos); // Rollback optimistic update on failure
+        
+        // Roll back optimistic update on failure
+        setTodos(originalTodos);
       }
     }
   };
+  
 
   const onDragEnd = async (result) => {
     if (!result.destination) return;

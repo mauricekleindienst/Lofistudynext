@@ -116,6 +116,7 @@ async function updateTodoHandler(req, res) {
   }
 }
 
+// Backend code: Fix in the handler
 async function deleteTodoHandler(req, res) {
   const { id, email } = req.body;
 
@@ -139,7 +140,7 @@ async function deleteTodoHandler(req, res) {
       }),
     ]);
 
-    // Check if the todo deletion was successful
+    // Ensure that the todo was successfully deleted
     if (!deleteTransaction[1]) {
       return res.status(404).json({ error: 'Todo not found or already deleted' });
     }
