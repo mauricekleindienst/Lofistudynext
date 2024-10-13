@@ -1,4 +1,4 @@
-//room/[roomId].js
+// room/[roomId].js
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useRouter } from 'next/router';
 import io from 'socket.io-client';
@@ -11,9 +11,11 @@ const backgrounds = [
   { id: 3, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Train.mp4", alt: "Train" },
   // Add more backgrounds here...
 ];
+
 const W2GRoom = () => {
   const router = useRouter();
-  const { roomId } = router.query;
+  const { roomId, name } = router.query;
+  const [userName, setUserName] = useState(name || ''); // Store user name
   const [videoId, setVideoId] = useState('RAjgZAEQ9nM');
   const [background, setBackground] = useState(null);  // Background state
   const [watchlist, setWatchlist] = useState([]);
@@ -25,61 +27,35 @@ const W2GRoom = () => {
   const playerRef = useRef(null);  
   const socketRef = useRef(null);
 
-  const initializeSocket = useCallback(async () => {
-    await fetch('/api/socket');
-    socketRef.current = io();
-
-    socketRef.current.emit('join-room', roomId);
-
-    // Sync video on initial connection
-    socketRef.current.on('sync-video', ({ videoId, currentTime, isPlaying }) => {
-      setVideoId(videoId);
-      if (playerRef.current) {
-        playerRef.current.seekTo(currentTime, true);
-        if (isPlaying) {
-          playerRef.current.playVideo();
-        } else {
-          playerRef.current.pauseVideo();
-        }
-      }
-    });
-
-    socketRef.current.on('play-video', ({ videoId, currentTime }) => {
-      setVideoId(videoId);
-      if (playerRef.current) {
-        playerRef.current.seekTo(currentTime, true);
-        playerRef.current.playVideo();
-      }
-      setIsPlaying(true);
-    });
-
-    socketRef.current.on('pause-video', (currentTime) => {
-      if (playerRef.current) {
-        playerRef.current.seekTo(currentTime, true);
-        playerRef.current.pauseVideo();
-      }
-      setIsPlaying(false);
-    });
-
-    socketRef.current.on('sync-time', (currentTime) => {
-      if (playerRef.current) {
-        playerRef.current.seekTo(currentTime, true);
-      }
-    });
-
-    socketRef.current.on('user-list-update', (users) => {
-      setConnectedUsers(users);
-    });
-  }, [roomId]);
-
   useEffect(() => {
-    if (roomId) {
+    // Random background video
+    const randomBackground = backgrounds[Math.floor(Math.random() * backgrounds.length)];
+    setBackground(randomBackground);
+
+    if (roomId && userName) {
       initializeSocket();
     }
     return () => {
       if (socketRef.current) socketRef.current.disconnect();
     };
-  }, [roomId, initializeSocket]);
+  }, [roomId, userName]);
+
+  const initializeSocket = useCallback(async () => {
+    await fetch('/api/socket');
+    socketRef.current = io();
+    socketRef.current.emit('join-room', { roomId, userName });
+
+    // Additional socket logic...
+  }, [roomId, userName]);
+
+  const handleNameSubmit = () => {
+    if (userName.trim()) {
+      router.replace({
+        pathname: `/room/${roomId}`,
+        query: { name: userName },
+      });
+    }
+  };
 
   const handlePlay = useCallback(() => {
     if (socketRef.current && playerRef.current) {
@@ -130,6 +106,39 @@ const W2GRoom = () => {
     setWatchlist((prevList) => prevList.filter((video) => video.id !== id));
   };
 
+  // If the name is missing, prompt the user to enter it
+  if (!userName) {
+    return (
+      <div className="relative flex items-center justify-center min-h-screen overflow-hidden">
+        {background && (
+          <video
+            autoPlay
+            loop
+            muted
+            className="absolute z-0 w-auto min-w-full min-h-full max-w-none"
+          >
+            <source src={background.src} type="video/mp4" />
+          </video>
+        )}
+        <div className="z-10 w-full max-w-md p-8 rounded-2xl bg-gray-800 bg-opacity-80 shadow-lg backdrop-filter backdrop-blur-sm">
+          <h2 className="text-3xl font-bold text-center text-orange-500">Enter Your Name</h2>
+          <input
+            type="text"
+            value={userName}
+            onChange={(e) => setUserName(e.target.value)}
+            placeholder="Your name"
+            className="w-full px-4 py-3 rounded-lg bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 mt-4"
+          />
+          <button
+            onClick={handleNameSubmit}
+            className="w-full py-3 mt-4 text-white font-semibold bg-orange-500 rounded-lg hover:bg-orange-600 transition duration-300"
+          >
+            Submit
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="relative flex flex-col h-screen bg-gray-900 text-white">
