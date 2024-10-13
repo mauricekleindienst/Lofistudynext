@@ -6,7 +6,7 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Missing query parameter' });
     }
   
-    const apiKey = process.env.YOUTUBE_API_KEY; // Store your API key in environment variables
+    const apiKey = process.env.NEXT_PUBLIC_FIREBASE_API_KEY; // Store your API key in environment variables
     const searchUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&q=${encodeURIComponent(
       q
     )}&key=${apiKey}&maxResults=10`;
