@@ -34,7 +34,7 @@ export default function handler(req, res) {
 
       // Send the current video state (videoId, currentTime, isPlaying) to the newly joined user
       socket.emit('sync-video', {
-        videoId: rooms[roomId].videoId,
+        videoId: rooms[roomId].videoId || null,  // Send null if no video is set yet
         currentTime: rooms[roomId].currentTime,
         isPlaying: rooms[roomId].isPlaying,
       });
@@ -42,31 +42,31 @@ export default function handler(req, res) {
       // Broadcast the updated user list to the room
       io.to(roomId).emit("user-list-update", rooms[roomId].users);
 
-      // Handle playing video and sync the current time across the room
+      // Handle play-video event
       socket.on("play-video", (data) => {
         const { videoId, currentTime } = data;
         rooms[roomId].videoId = videoId;
         rooms[roomId].currentTime = currentTime;
         rooms[roomId].isPlaying = true;
 
-        // Broadcast play-video with the time to all users except the sender
+        // Emit the play-video event to all other users in the room
         socket.to(roomId).emit("play-video", { videoId, currentTime });
       });
 
-      // Handle pausing video and sync the current time across the room
+      // Handle pause-video event
       socket.on("pause-video", (currentTime) => {
         rooms[roomId].currentTime = currentTime;
         rooms[roomId].isPlaying = false;
 
-        // Broadcast pause-video with the time to all users except the sender
+        // Emit the pause-video event to all other users in the room
         socket.to(roomId).emit("pause-video", currentTime);
       });
 
-      // Handle time updates to ensure synchronization (for scrubbing through video)
+      // Handle sync-time updates (for scrubbing)
       socket.on("sync-time", (currentTime) => {
         rooms[roomId].currentTime = currentTime;
 
-        // Broadcast the updated time to all users except the sender
+        // Emit sync-time event to all other users in the room
         socket.to(roomId).emit("sync-time", currentTime);
       });
 
@@ -74,14 +74,14 @@ export default function handler(req, res) {
       socket.on("disconnect", () => {
         console.log(`Socket ${socket.id} disconnected from room ${roomId}`);
 
-        // Remove the socket from the room's user list
+        // Remove user from room
         rooms[roomId].users = rooms[roomId].users.filter((id) => id !== socket.id);
 
-        // If the room is empty, delete the room
+        // Clean up the room if no users are left
         if (rooms[roomId].users.length === 0) {
-          delete rooms[roomId];
+          delete rooms[roomId];  // Remove the room from the rooms object
         } else {
-          // Broadcast the updated user list to the room
+          // If users remain, update their user list
           io.to(roomId).emit("user-list-update", rooms[roomId].users);
         }
       });
