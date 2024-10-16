@@ -32,6 +32,7 @@
   margin-left: 0;
 }
 
+/* Base styles for the sidebar */
 .sidebar {
   width: 400px;
   height: 100%;
@@ -39,7 +40,7 @@
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.37);
   padding: 30px;
   border-radius: 0 20px 20px 0;
-  transition: transform 0.3s ease;
+  transition: all 0.3s ease;
   position: fixed;
   top: 0;
   left: 0;
@@ -56,6 +57,120 @@
 
 .sidebar.open {
   transform: translateX(0);
+}
+
+/* Responsive styles for different screen sizes */
+@media (max-width: 1200px) {
+  .sidebar {
+    width: 350px;
+  }
+  
+  .sidebar.closed {
+    transform: translateX(-300px);
+  }
+  
+  .buttonOpen {
+    left: 350px;
+  }
+}
+
+@media (max-width: 992px) {
+  .sidebar {
+    width: 300px;
+    padding: 20px;
+  }
+  
+  .sidebar.closed {
+    transform: translateX(-250px);
+  }
+  
+  .buttonOpen {
+    left: 300px;
+  }
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    width: 250px;
+    padding: 15px;
+  }
+  
+  .sidebar.closed {
+    transform: translateX(-200px);
+  }
+  
+  .buttonOpen {
+    left: 250px;
+  }
+  
+  .sidebar h1 {
+    font-size: 20px;
+  }
+  
+  .backgroundSelector h2 {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 576px) {
+  .sidebar {
+    width: 100%;
+    border-radius: 0;
+  }
+  
+  .sidebar.closed {
+    transform: translateX(-100%);
+  }
+  
+  .buttonOpen {
+    left: calc(100% - 50px);
+  }
+  
+  .toggleButton {
+    border-radius: 20px 0 0 20px;
+    right: 0;
+    left: auto;
+  }
+  
+  .buttonClosed {
+    right: 50px;
+    left: auto;
+  }
+}
+
+/* Adjust the main content area */
+.main {
+  transition: margin-left 0.3s ease;
+}
+
+@media (min-width: 577px) {
+  .main {
+    margin-left: 400px;
+  }
+}
+
+@media (max-width: 1200px) {
+  .main {
+    margin-left: 350px;
+  }
+}
+
+@media (max-width: 992px) {
+  .main {
+    margin-left: 300px;
+  }
+}
+
+@media (max-width: 768px) {
+  .main {
+    margin-left: 250px;
+  }
+}
+
+@media (max-width: 576px) {
+  .main {
+    margin-left: 0;
+  }
 }
 
 .toggleButton {
