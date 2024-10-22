@@ -104,7 +104,7 @@ useEffect(() => {
     if (status !== "loading") {
       setTimeout(() => {
         setShowLoading(false);
-      }, 5000);
+      }, 6000);
     }
   }, [status]);
 
