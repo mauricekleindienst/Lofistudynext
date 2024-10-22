@@ -234,9 +234,8 @@ useEffect(() => {
         >
           
           <h1>
-  Hi {getFirstName(session.user.name)}! 
-  <span>{currentTime}</span>
-</h1>
+            Hi {getFirstName(session.user.name)}! {currentTime}
+          </h1> what would be cooler ?
 
        
        
