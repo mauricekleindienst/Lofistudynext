@@ -211,8 +211,14 @@ useEffect(() => {
         >
           
           <h1>
-            Welcome, {getFirstName(session.user.name)}! {currentTime}
-          </h1>
+  Good <span id="timeOfDay"></span>, {getFirstName(session.user.name)}! 
+  <span>{currentTime}</span>
+</h1>
+<script>
+  const hour = new Date().getHours();
+  const timeOfDay = hour < 12 ? 'morning' : (hour < 18 ? 'afternoon' : 'evening');
+  document.getElementById('timeOfDay').textContent = timeOfDay;
+</script>
        
        
           <div className={styles.backgroundSelector}>
