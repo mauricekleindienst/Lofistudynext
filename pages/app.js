@@ -127,8 +127,7 @@ useEffect(() => {
       </div>
     );
   }
-  return null;
-};
+
   if (status === "unauthenticated") {
     if (typeof window !== "undefined") {
       window.location.href = "/auth/signin";
@@ -301,4 +300,5 @@ useEffect(() => {
       </button>
     </>
   );
+}
 }
