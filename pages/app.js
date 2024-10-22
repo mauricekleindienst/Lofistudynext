@@ -123,7 +123,6 @@ useEffect(() => {
               ))}
             </ul>
           </div>
-          <span>Opening Your Study Session</span>
           <span>{messages[messageIndex]}</span> {/* Dynamic line below */}
         </div>
       </div>
