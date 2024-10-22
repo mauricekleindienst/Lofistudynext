@@ -31,7 +31,16 @@ const backgrounds = [
   { id: 17, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Garden.mp4", alt: "Garden", note: "Garden" , createdby: "Lo-Fi.study" },
   { id: 18, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/japannight.mp4", alt: "japannight", note: "japannight" , createdby: "Lo-Fi.study" },
 ];
-
+const messages = [
+  "Pouring Coffee",
+  "Grabbing Your Notes",
+  "Setting Up Your Desk",
+  "Fetching Resources",
+  "Sharpening Your Pencils",
+  "Organizing Your Thoughts",
+  "Clearing Distractions",
+  "Boosting Your Focus"
+];
 export default function Study() {
   const { data: session, status } = useSession();
   const router = useRouter();
@@ -44,9 +53,18 @@ export default function Study() {
   const [showLoading, setShowLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(0);
   const [zenMode, setZenMode] = useState(false);
-
+  const [messageIndex, setMessageIndex] = useState(0);
   const backgroundsPerPage = 6;
   const totalPages = Math.ceil(backgrounds.length / backgroundsPerPage);
+
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setMessageIndex((prevIndex) => (prevIndex + 1) % messages.length);
+    }, 2000); // Change message every 2 seconds
+
+    return () => clearInterval(interval); // Cleanup the interval on unmount
+  }, []);
 useEffect(() => {
     // Disable scrolling when the component mounts
     document.body.style.overflow = 'hidden';
@@ -106,6 +124,7 @@ useEffect(() => {
             </ul>
           </div>
           <span>Opening Your Study Session</span>
+          <span>{messages[messageIndex]}</span> {/* Dynamic line below */}
         </div>
       </div>
     );
