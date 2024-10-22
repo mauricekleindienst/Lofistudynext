@@ -6,7 +6,8 @@ import {
   FaFire,
   FaWater,
   FaKeyboard,
-  FaSnowflake
+  FaSnowflake,
+  FaCoffee 
 } from "react-icons/fa";
 import { FaHouseFloodWaterCircleArrowRight } from "react-icons/fa6";
 
@@ -16,6 +17,7 @@ const sounds = [
   { name: "Ocean", icon: <FaWater />, file: "/sounds/ocean.mp3" },
   { name: "River", icon: <FaHouseFloodWaterCircleArrowRight />, file: "/sounds/waterstream.mp3" },
   { name: "Keyboard", icon: <FaKeyboard />, file: "/sounds/keyboard.mp3" },
+  { name: "Coffee", icon: <FaCoffee />, file: "/sounds/coffee.mp3" },
   { name: "Blizzard", icon: <FaSnowflake />, file: "/sounds/blizzard.mp3" }
 ];
 
