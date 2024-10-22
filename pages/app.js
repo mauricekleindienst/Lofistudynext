@@ -86,7 +86,7 @@ useEffect(() => {
     if (status !== "loading") {
       setTimeout(() => {
         setShowLoading(false);
-      }, 5000);
+      }, 8000);
     }
   }, [status]);
 
