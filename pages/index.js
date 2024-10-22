@@ -84,13 +84,17 @@ export default function Landing() {
   };
   return (
     <div className={styles.container}>
-      <Head>
-        <title>Lo-Fi.Study - Enhance Your Study Sessions</title>
-        <meta
-          name="description"
-          content="Enhance your study sessions with our Lo-Fi.Study Lofi styled learning platform"
-        />
-      </Head>
+<Head>
+   <title>Lo-Fi.Study - Enhance Your Study Sessions</title>
+   <meta
+      name="description"
+      content="Enhance your study sessions with Lo-Fi.Study, a platform that offers ambient music, Pomodoro timers, and tools to help you stay focused and productive."
+   />
+   <meta name="keywords" content="study music, focus music, lo-fi, productivity, ambient music, Pomodoro timer, study tools, note-taking, study atmosphere" />
+   <meta property="og:title" content="Lo-Fi.Study - Enhance Your Study Sessions" />
+   <meta property="og:description" content="Discover a platform designed to help you stay focused with ambient sounds, productivity tools, and customizable study environments." />
+   <meta property="og:image" content="/path-to-your-og-image.jpg" />  {/* Update the OG image */}
+</Head>
       <Header />
       <CookieBanner />
       <main className={styles.main}>
