@@ -10,45 +10,7 @@ export default function Document() {
     author: {
       "@type": "Organization",
       name: "Lo-Fi.Study",
-      url: "https://www.lo-fi.study/",// next.config.js
-
-      /** @type {import('next').NextConfig} */
-      const nextConfig = {
-        webpack: (config) => {
-          config.resolve.alias.canvas = false;
-          return config;
-        },
-        images: {
-          domains: ['i.ibb.co'],
-        },
-        async headers() {
-          return [
-            {
-              source: '/(.*)',
-              headers: [
-                {
-                  key: 'Content-Security-Policy',
-                  value: `
-                    default-src 'self';
-                    img-src 'self' https://i.ibb.co;
-                    media-src 'self' https://i.ibb.co;
-                    script-src 'self' 'unsafe-inline' 'unsafe-eval';
-                    style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
-                    font-src 'self' https://fonts.gstatic.com;
-                  `,
-                },
-              ],
-            },
-          ];
-        },
-        env: {
-          DATABASE_URL: process.env.DATABASE_URL,
-          // Add other environment variables you need here
-        },
-      };
-      
-      module.exports = nextConfig;
-      
+      url: "https://www.lo-fi.study/",
     },
     description:
       "Lo-Fi.Study is a website that helps you study by providing a distraction-free environment. Enjoy ambient music and focus better.",
@@ -111,6 +73,12 @@ export default function Document() {
   font-src 'self' https://fonts.gstatic.com; 
   style-src-elem 'self' https://fonts.googleapis.com 'unsafe-inline';
 " />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Lo-Fi.Study - Improve Your Focus and Productivity" />
+        <meta name="twitter:description" content="Lo-Fi.Study is a website that helps you study by providing a distraction-free environment. Enjoy ambient music and focus better." />
+        <meta name="twitter:url" content="https://www.lo-fi.study/" />
+        <meta name="twitter:image" content="https://lo-fi.study/lo-fi.study.svg" />
+        <meta name="twitter:image:alt" content="Lo-Fi.Study - Ambient Music for Studying" />
 
         {/* Open Graph meta tags */}
         <meta property="og:title" content="Lo-Fi.Study - Improve Your Focus and Productivity" />
@@ -119,14 +87,6 @@ export default function Document() {
         <meta property="og:type" content="website" />
         <meta property="og:image" content="https://lo-fi.study/lo-fi.study.svg" />
         <meta property="og:image:alt" content="Lo-Fi.Study - Ambient Music for Studying and Productivity" />
-
-        {/* Twitter Card meta tags */}
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Lo-Fi.Study - Improve Your Focus and Productivity" />
-        <meta name="twitter:description" content="Lo-Fi.Study is a website that helps you study by providing a distraction-free environment. Enjoy ambient music and focus better." />
-        <meta name="twitter:url" content="https://www.lo-fi.study/" />
-        <meta name="twitter:image" content="https://lo-fi.study/lo-fi.study.svg" />
-        <meta name="twitter:image:alt" content="Lo-Fi.Study - Ambient Music for Studying" />
 
         {/* Structured Data */}
         <script
