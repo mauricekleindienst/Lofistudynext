@@ -27,8 +27,8 @@ export default function Header() {
         <span></span>
       </div>
       <div className={`${styles.buttonContainer} ${isMenuOpen ? styles.open : ''}`}>
-        <button onClick={() => navigateTo("/dev-updates")} className={styles.contactButton}>
-          Updates
+        <button onClick={() => navigateTo("/demo")} className={styles.contactButton}>
+          Demo
         </button>
         <button onClick={() => navigateTo("/Contact")} className={styles.contactButton}>
           Contact
