@@ -7,7 +7,7 @@
     "dev": "node server.js",
     "build": "next build",
     "start": "node server.js",
-    "next-sitemap": "next-sitemap", 
+    "next-sitemap": "next-sitemap",
     "heroku-postbuild": "npm install --legacy-peer-deps && npm run build && npm run next-sitemap",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "format": "prettier --write ."
@@ -76,9 +76,11 @@
     "react-responsive-carousel": "^3.2.23",
     "react-router-dom": "^6.27.0",
     "react-scroll": "^1.9.0",
+    "react-slick": "^0.30.2",
     "react-timer-hook": "^3.0.7",
     "react-youtube": "^10.1.0",
     "sequelize": "^6.37.3",
+    "slick-carousel": "^1.8.1",
     "socket.io": "^4.8.0",
     "socket.io-client": "^4.8.0",
     "sqlite3": "^5.1.7",
@@ -92,8 +94,7 @@
     "winston": "^3.13.1",
     "youtube-search-api": "^1.2.2"
   },
- "engines": {
-  "node": "20.x"
-}
-
+  "engines": {
+    "node": "20.x"
+  }
 }

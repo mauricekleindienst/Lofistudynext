@@ -1,7 +1,7 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useMemo } from "react";
 import Head from "next/head";
 import Typed from "typed.js";
-import { router } from "next/router";
+import { useRouter } from "next/router";
 import { motion } from "framer-motion";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
@@ -13,6 +13,7 @@ import styles from "../styles/Home.module.css";
 
 export default function Landing() {
   const featuresRef = useRef(null);
+  const router = useRouter();
 
   const img = [
     {
@@ -37,8 +38,8 @@ export default function Landing() {
     },
   ];
 
-  const ImageCarousel = () => {
-    return (
+  const ImageCarousel = useMemo(() => {
+    const MemoizedCarousel = () => (
       <section className={styles.overviewSection}>
         <h2 className={styles.sectionTitle}>
           Beautiful Background Selection
@@ -54,10 +55,13 @@ export default function Landing() {
           >
             {img.map((img, index) => (
               <div key={index} className={styles.carouselItem}>
-                <img
+                <Image
                   className={styles.carouselImage}
                   src={img.src}
                   alt={img.alt}
+                  width={500}
+                  height={300}
+                  style={{ width: '100%', height: 'auto' }}
                 />
               </div>
             ))}
@@ -65,7 +69,9 @@ export default function Landing() {
         </div>
       </section>
     );
-  };
+    MemoizedCarousel.displayName = 'ImageCarousel';
+    return MemoizedCarousel;
+  }, []);
 
   useEffect(() => {
     const typed = new Typed("#typedtext", {
@@ -122,13 +128,13 @@ export default function Landing() {
       <Header />
       <CookieBanner />
       <main className={styles.main}>
-      <motion.div
-  className={styles.welcomeWrapper}
-  initial="hidden"
-  animate="visible"
-  variants={fadeInUp}
-  transition={{ duration: 0.5 }}
->
+        <motion.div
+          className={styles.welcomeWrapper}
+          initial="hidden"
+          animate="visible"
+          variants={fadeInUp}
+          transition={{ duration: 0.5 }}
+        >
           <section className={styles.welcomeSection}>
             <div className={styles.cartoonLeft}>
               <Image
@@ -140,28 +146,28 @@ export default function Landing() {
               />
             </div>
   
-    <div className={styles.welcomeContent}>
-      <h1 className={styles.title}>
-        Welcome to <span className={styles.gradientText}>Lo-Fi.Study</span>
-      </h1>
-      <p className={styles.description}>
-        With Lo-Fi.Study, you can create the perfect atmosphere to{" "}
-        <span className={styles.typedTextWrapper}>
-          <span id="typedtext" className={styles.typedText}></span>
-        </span>
-      </p>
-      <motion.button
-        onClick={() => router.push("/auth/signin")}
-        className={styles.ctaButton}
-        whileHover={{ scale: 1.05, boxShadow: "0 0 15px rgba(255,123,0,0.5)" }}
-        whileTap={{ scale: 0.95 }}
-      >
-        Get Started
-      </motion.button>
-    </div>
-    <div className={styles.backgroundAnimation}></div>
-  </section>
-</motion.div>
+            <div className={styles.welcomeContent}>
+              <h1 className={styles.title}>
+                Welcome to <span className={styles.gradientText}>Lo-Fi.Study</span>
+              </h1>
+              <p className={styles.description}>
+                With Lo-Fi.Study, you can create the perfect atmosphere to{" "}
+                <span className={styles.typedTextWrapper}>
+                  <span id="typedtext" className={styles.typedText}></span>
+                </span>
+              </p>
+              <motion.button
+                onClick={() => router.push("/auth/signin")}
+                className={styles.ctaButton}
+                whileHover={{ scale: 1.05, boxShadow: "0 0 15px rgba(255,123,0,0.5)" }}
+                whileTap={{ scale: 0.95 }}
+              >
+                Get Started
+              </motion.button>
+            </div>
+            <div className={styles.backgroundAnimation}></div>
+          </section>
+        </motion.div>
         <motion.section
           className={styles.coverSection}
           initial="hidden"
@@ -276,7 +282,6 @@ export default function Landing() {
           </div>
         </motion.section>
       </main>
-
       <Footer />
     </div>
   );

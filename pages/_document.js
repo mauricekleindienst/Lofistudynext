@@ -50,7 +50,6 @@ export default function Document() {
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
         
         {/* Meta Tags */}
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="theme-color" content="#ffffff" />
         <meta name="color-scheme" content="light dark" />
         <meta
