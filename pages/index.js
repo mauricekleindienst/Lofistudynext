@@ -40,6 +40,8 @@ export default function Landing() {
       const sliderRef = useRef(null);
 
       useEffect(() => {
+        if (!sliderRef.current) return;
+
         const glide = new Glide(sliderRef.current, {
           type: 'carousel',
           perView: 1,
@@ -64,7 +66,7 @@ export default function Landing() {
             <div className="glide__track" data-glide-el="track">
               <ul className="glide__slides">
                 {img.map((image, index) => (
-                  <li key={index} className={`glide__slide ${styles.sliderItem}`}>
+                  <li key={image.src} className={`glide__slide ${styles.sliderItem}`}>
                     <Image
                       src={image.src}
                       alt={image.alt}
@@ -74,9 +76,11 @@ export default function Landing() {
                       className={styles.sliderImage}
                       loading="lazy"
                       onLoad={() => {
-                        const newImagesLoaded = [...imagesLoaded];
-                        newImagesLoaded[index] = true;
-                        setImagesLoaded(newImagesLoaded);
+                        setImagesLoaded(prev => {
+                          const newImagesLoaded = [...prev];
+                          newImagesLoaded[index] = true;
+                          return newImagesLoaded;
+                        });
                       }}
                       placeholder="blur"
                       blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mN8/+F9PQAI8wNPvd7POQAAAABJRU5ErkJggg=="
@@ -101,7 +105,7 @@ export default function Landing() {
     };
     MemoizedSlider.displayName = 'ImageSlider';
     return MemoizedSlider;
-  }, [img, imagesLoaded]);
+  }, [img]);
 
   useEffect(() => {
     const typed = new Typed("#typedtext", {
