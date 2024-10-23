@@ -18,13 +18,10 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }) {
             href="https://fonts.googleapis.com/icon?family=Material+Icons"
             rel="stylesheet"
           />
-          <meta name="viewport" content="width=device-width, initial-scale=1" />
+    
           <meta name="theme-color" content="#ffffff" />
           <meta name="color-scheme" content="light dark" />
-          <meta
-            name="description"
-            content="lo-fi.study is a website that helps you to study by giving you a distraction free environment. Enjoy ambient music and focus better."
-          />
+         #
           <meta
             name="keywords"
             content="study, focus, productivity, ambient music, lo-fi"
