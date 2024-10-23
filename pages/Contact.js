@@ -51,7 +51,7 @@ export default function Contact() {
       <main className={styles.main}>
         <section className={styles.contactSection}>
           <h1 className={styles.title}>Get in Touch</h1>
-          <p className={styles.subtitle}>We'd love to hear from you!</p>
+          <p className={styles.subtitle}>We&apos;d love to hear from you!</p>
           <div className={styles.contactWrapper}>
             <form
               onSubmit={handleSubmit}
