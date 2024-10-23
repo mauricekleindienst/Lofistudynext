@@ -614,3 +614,99 @@
   transition: background-color 0.3s ease;
 }
 /* Keep your existing animations and other styles */
+
+
+.coverSection {
+  border-radius: 20px;
+  margin: 4rem 0;
+  overflow: hidden;
+  position: relative;
+}
+
+.coverWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 4rem 2rem;
+  position: relative;
+  z-index: 1;
+}
+
+.coverContent {
+  flex: 1;
+  padding-right: 4rem; 
+}
+
+.coverImageWrapper {
+  flex: 2; 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  perspective: 1000px;
+}
+
+.coverImage {
+  max-width: 100%;
+  height: auto;
+  border-radius: 15px;  
+  transition: all 0.3s ease-out;
+  transform: translateZ(0);
+  box-shadow: 0 1cqmax 60px rgba(255, 123, 0, 0.3); 
+  transform: perspective(10000px) rotate3D(0, 1, 0, -10deg);
+  
+}
+
+
+.coverImage:hover {
+  transform: translateY(-15px) scale(1.03); 
+
+}
+
+@media (max-width: 1200px) {
+  .coverWrapper {
+    flex-direction: column;
+  }
+
+  .coverContent, .coverImageWrapper {
+    width: 100%;
+    padding: 2rem 0;
+  }
+
+  .coverContent {
+    padding-right: 0;
+    margin-bottom: 2rem;
+  }
+
+  .coverImage {
+    max-width: 80%;  
+  }
+}
+
+@media (max-width: 768px) {
+  .coverTitle {
+    font-size: 2rem;
+  }
+
+  .coverDescription {
+    font-size: 1rem;
+  }
+
+  .coverImage {
+    max-width: 100%;
+  }
+}
+
+@keyframes highlightSection {
+  0% {
+    background-color: rgba(255, 123, 0, 0.1);
+  }
+  100% {
+    background-color: transparent;
+  }
+}
+
+.featureSection:target {
+  animation: highlightSection 2s ease-out;
+}

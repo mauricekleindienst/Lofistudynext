@@ -10,7 +10,10 @@ import Footer from "../components/Footer";
 import CookieBanner from "../components/CookieBanner";
 import Image from "next/image";
 import styles from "../styles/Home.module.css";
+
 export default function Landing() {
+  const featuresRef = useRef(null);
+
   const img = [
     {
       src:
@@ -78,61 +81,118 @@ export default function Landing() {
       typed.destroy();
     };
   }, []);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (featuresRef.current) {
+        const rect = featuresRef.current.getBoundingClientRect();
+        if (rect.top >= 0 && rect.top <= window.innerHeight) {
+          featuresRef.current.style.animation = 'none';
+          featuresRef.current.offsetHeight; // Trigger reflow
+          featuresRef.current.style.animation = null;
+        }
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   const fadeInUp = {
     hidden: { opacity: 0, y: 20 },
     visible: { opacity: 1, y: 0 },
   };
+
+  const scrollToFeatures = () => {
+    if (featuresRef.current) {
+      featuresRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
     <div className={styles.container}>
-<Head>
-   <title>Lo-Fi.Study - Enhance Your Study Sessions</title>
-   <meta
-      name="description"
-      content="Enhance your study sessions with Lo-Fi.Study, a platform that offers ambient music, Pomodoro timers, and tools to help you stay focused and productive."
-   />
-   <meta name="keywords" content="study music, focus music, lo-fi, productivity, ambient music, Pomodoro timer, study tools, note-taking, study atmosphere" />
-   <meta property="og:title" content="Lo-Fi.Study - Enhance Your Study Sessions" />
-   <meta property="og:description" content="Discover a platform designed to help you stay focused with ambient sounds, productivity tools, and customizable study environments." />
-   <meta property="og:image" content="/path-to-your-og-image.jpg" />  {/* Update the OG image */}
-</Head>
+      <Head>
+        <title>Lo-Fi.Study - Enhance Your Study Sessions</title>
+        <meta
+          name="description"
+          content="Enhance your study sessions with Lo-Fi.Study, a platform that offers ambient music, Pomodoro timers, and tools to help you stay focused and productive."
+        />
+        <meta name="keywords" content="study music, focus music, lo-fi, productivity, ambient music, Pomodoro timer, study tools, note-taking, study atmosphere" />
+        <meta property="og:title" content="Lo-Fi.Study - Enhance Your Study Sessions" />
+        <meta property="og:description" content="Discover a platform designed to help you stay focused with ambient sounds, productivity tools, and customizable study environments." />
+        <meta property="og:image" content="/path-to-your-og-image.jpg" />  {/* Update the OG image */}
+      </Head>
       <Header />
       <CookieBanner />
       <main className={styles.main}>
-      <motion.div
-  className={styles.welcomeWrapper}
-  initial="hidden"
-  animate="visible"
-  variants={fadeInUp}
-  transition={{ duration: 0.5 }}
->
-  <section className={styles.welcomeSection}>
-    <div className={styles.cartoonLeft}>
-      <Image
-        src="/character_notebook.svg"
-        alt="Study illustration left"
-        width={200}
-        height={200}
-        priority
-      />
-    </div>
-    <div className={styles.welcomeContent}>
-      <h1 className={styles.title}>Welcome to Lo-Fi.Study</h1>
-      <p className={styles.description}>
-        With Lo-Fi.Study, you can create the perfect atmosphere to{" "}
-        <span id="typedtext"></span>.
-      </p>
-      <motion.button
-        onClick={() => router.push("/auth/signin")}
-        className={styles.ctaButton}
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-      >
-        Get Started
-      </motion.button>
-    </div>
-  
-  </section>
-</motion.div>
+        <motion.div
+          className={styles.welcomeWrapper}
+          initial="hidden"
+          animate="visible"
+          variants={fadeInUp}
+          transition={{ duration: 0.5 }}
+        >
+          <section className={styles.welcomeSection}>
+            <div className={styles.cartoonLeft}>
+              <Image
+                src="/character_notebook.svg"
+                alt="Study illustration left"
+                width={200}
+                height={200}
+                priority
+              />
+            </div>
+            <div className={styles.welcomeContent}>
+              <h1 className={styles.title}>Welcome to Lo-Fi.Study</h1>
+              <p className={styles.description}>
+                With Lo-Fi.Study, you can create the perfect atmosphere to{" "}
+                <span id="typedtext"></span>.
+              </p>
+              <motion.button
+                onClick={() => router.push("/auth/signin")}
+                className={styles.ctaButton}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                Get Started
+              </motion.button>
+            </div>
+          </section>
+        </motion.div>
+        <motion.section
+          className={styles.coverSection}
+          initial="hidden"
+          animate="visible"
+          variants={fadeInUp}
+          transition={{ duration: 0.5, delay: 0.2 }}
+        >
+          <div className={styles.coverWrapper}>
+            <div className={styles.coverContent}>
+              <h2 className={styles.sectionTitle}>The Lo-Fi.Study App</h2>
+              <p className={styles.coverDescription}>
+                Immerse yourself in a world of focus and productivity. Create your perfect study atmosphere with curated lo-fi beats, ambient sounds, and powerful productivity tools.
+              </p>
+              <motion.button
+                className={styles.ctaButton}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={scrollToFeatures}
+              >
+                Explore Features
+              </motion.button>
+            </div>
+            <div className={styles.coverImageWrapper}>
+              <Image
+                src="/cover.png"
+                alt="Lo-Fi Study Cover"
+                width={2000}
+                height={1200}
+                className={styles.coverImage}
+              />
+            </div>
+          </div>
+        </motion.section>
+
         <motion.section
           className={styles.overviewSection}
           initial="hidden"
@@ -170,6 +230,7 @@ export default function Landing() {
         </motion.div>
 
         <motion.section
+          ref={featuresRef}
           className={styles.featureSection}
           initial="hidden"
           animate="visible"
