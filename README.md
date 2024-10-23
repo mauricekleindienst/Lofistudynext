@@ -1,6 +1,6 @@
 
 
-<h1 align="center">lo-fi.study</h1>
+<h1 align="center">Lo-Fi.Study</h1>
 </p>
 
 Welcome to lo-fi.study, a website dedicated to providing a relaxing environment for studying.
