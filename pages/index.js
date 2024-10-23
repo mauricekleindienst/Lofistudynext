@@ -1,4 +1,4 @@
-import { useEffect, useRef, useMemo } from "react";
+import { useEffect, useRef, useMemo, useState } from "react";
 import Head from "next/head";
 import Typed from "typed.js";
 import { useRouter } from "next/router";
@@ -13,29 +13,24 @@ import Image from "next/image";
 import styles from "../styles/Home.module.css";
 
 export default function Landing() {
-  const featuresRef = useRef(null);
-  const router = useRouter();
+  const [imagesLoaded, setImagesLoaded] = useState(Array(img.length).fill(false));
 
   const img = [
     {
-      src:
-        "https://i.ibb.co/K0qdm4r/lgsarius-cyberpunk-night-study-girl-window-desklight-c1650ad7-776d-470a-a2e0-da9e78140212.webp",
-      alt: "First slide",
+      src: "https://i.ibb.co/K0qdm4r/lgsarius-cyberpunk-night-study-girl-window-desklight-c1650ad7-776d-470a-a2e0-da9e78140212.webp",
+      alt: "Cyberpunk night study scene",
     },
     {
-      src:
-        "https://i.ibb.co/nC5NnTr/DALL-E-2024-09-22-13-11-47-A-serene-winter-landscape-during-the-blue-hour-featuring-a-small-cozy-cab.webp",
-      alt: "Second slide",
+      src: "https://i.ibb.co/nC5NnTr/DALL-E-2024-09-22-13-11-47-A-serene-winter-landscape-during-the-blue-hour-featuring-a-small-cozy-cab.webp",
+      alt: "Serene winter landscape with cozy cabin",
     },
     {
-      src:
-        "https://i.ibb.co/PG0bPhB/lgsarius-Lofi-study-girl-on-desk-plants-rain-coffee-rain-02e5bc5f-943e-4c0b-b986-1cf5d7362034.webp",
-      alt: "Fourth slide",
+      src: "https://i.ibb.co/PG0bPhB/lgsarius-Lofi-study-girl-on-desk-plants-rain-coffee-rain-02e5bc5f-943e-4c0b-b986-1cf5d7362034.webp",
+      alt: "Lo-fi study girl with plants and rain",
     },
     {
-      src:
-        "https://i.ibb.co/m9QYfwJ/lgsarius-Lofi-Trainstation-sunset-648859c2-8af6-4b30-b276-dca8f45ba231.webp",
-      alt: "Fifth slide",
+      src: "https://i.ibb.co/m9QYfwJ/lgsarius-Lofi-Trainstation-sunset-648859c2-8af6-4b30-b276-dca8f45ba231.webp",
+      alt: "Lo-fi trainstation at sunset",
     },
   ];
 
@@ -67,15 +62,23 @@ export default function Landing() {
           <div className={styles.sliderWrapper} ref={sliderRef}>
             <div className="glide__track" data-glide-el="track">
               <ul className="glide__slides">
-                {img.map((img, index) => (
+                {img.map((image, index) => (
                   <li key={index} className={`glide__slide ${styles.sliderItem}`}>
                     <Image
-                      src={img.src}
-                      alt={img.alt}
+                      src={image.src}
+                      alt={image.alt}
                       width={1000}
                       height={600}
                       objectFit="cover"
                       className={styles.sliderImage}
+                      loading="lazy"
+                      onLoad={() => {
+                        const newImagesLoaded = [...imagesLoaded];
+                        newImagesLoaded[index] = true;
+                        setImagesLoaded(newImagesLoaded);
+                      }}
+                      placeholder="blur"
+                      blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mN8/+F9PQAI8wNPvd7POQAAAABJRU5ErkJggg=="
                     />
                   </li>
                 ))}
@@ -97,7 +100,7 @@ export default function Landing() {
     };
     MemoizedSlider.displayName = 'ImageSlider';
     return MemoizedSlider;
-  }, []);
+  }, [imagesLoaded]);
 
   useEffect(() => {
     const typed = new Typed("#typedtext", {
