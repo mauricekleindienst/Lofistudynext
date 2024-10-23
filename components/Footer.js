@@ -2,8 +2,8 @@
 
 import Link from 'next/link';
 import styles from '../styles/Footer.module.css';
-
 import Image from 'next/image';
+import { FaTiktok, FaInstagram } from 'react-icons/fa';
 
 export default function Footer() {
     return (
@@ -27,14 +27,22 @@ export default function Footer() {
                     </ul>
                 </div>
                 <div className={styles.navSection}>
-                <h3>Legal</h3>
+                    <h3>Legal</h3>
                     <ul>
                         <li><Link href="/privacy-policy">Privacy Policy</Link></li>
                         <li><Link href="/terms-of-service">Terms of Service</Link></li>
                     </ul>
                 </div>
                 <div className={styles.navSection}>
-                    
+                    <h3>Follow Us</h3>
+                    <div className={styles.socialIcons}>
+                        <Link href="https://www.tiktok.com/@lofi.study.app?lang=en" target="_blank" rel="noopener noreferrer">
+                            <FaTiktok size={24} />
+                        </Link>
+                        <Link href="https://www.instagram.com/lo_fi.study/" target="_blank" rel="noopener noreferrer">
+                            <FaInstagram size={24} />
+                        </Link>
+                    </div>
                 </div>
             </div>
             <div className={styles.copyright}>

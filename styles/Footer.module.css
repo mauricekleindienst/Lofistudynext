@@ -77,3 +77,14 @@
 .signUpButton:hover {
     background-color: #ff7b00;
 }
+
+.socialIcons {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .socialIcons a:hover {
+    opacity: 0.8;
+  }
+
+  
