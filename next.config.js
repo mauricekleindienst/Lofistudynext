@@ -2,6 +2,7 @@
 const nextConfig = {
   webpack: (config) => {
     config.resolve.alias.canvas = false;
+    config.cache = false;
     return config;
   },
   images: {
