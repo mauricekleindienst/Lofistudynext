@@ -22,8 +22,8 @@ export default function Footer() {
                         <li><Link href="/app">Study App</Link></li>
                         <li><Link href="/aboutus">About Us</Link></li>
                         <li><Link href="/dev-updates">Changelog</Link></li>
-                        <li><Link href="/faq">FAQ</Link></li>
-                        <li><Link href="/contact">Contact</Link></li>
+                        <li><Link href="/FAQ">FAQ</Link></li>
+                        <li><Link href="/Contact">Contact</Link></li>
                     </ul>
                 </div>
                 <div className={styles.navSection}>
