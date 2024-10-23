@@ -14,6 +14,7 @@ import styles from "../styles/Home.module.css";
 
 export default function Landing() {
   const [imagesLoaded, setImagesLoaded] = useState([]);
+  const featuresRef = useRef(null);
 
   const img = useMemo(() => [
     {
