@@ -13,9 +13,9 @@ import Image from "next/image";
 import styles from "../styles/Home.module.css";
 
 export default function Landing() {
-  const [imagesLoaded, setImagesLoaded] = useState(Array(img.length).fill(false));
+  const [imagesLoaded, setImagesLoaded] = useState([]);
 
-  const img = [
+  const img = useMemo(() => [
     {
       src: "https://i.ibb.co/K0qdm4r/lgsarius-cyberpunk-night-study-girl-window-desklight-c1650ad7-776d-470a-a2e0-da9e78140212.webp",
       alt: "Cyberpunk night study scene",
@@ -32,7 +32,7 @@ export default function Landing() {
       src: "https://i.ibb.co/m9QYfwJ/lgsarius-Lofi-Trainstation-sunset-648859c2-8af6-4b30-b276-dca8f45ba231.webp",
       alt: "Lo-fi trainstation at sunset",
     },
-  ];
+  ], [])
 
   const ImageSlider = useMemo(() => {
     const MemoizedSlider = () => {
@@ -100,7 +100,7 @@ export default function Landing() {
     };
     MemoizedSlider.displayName = 'ImageSlider';
     return MemoizedSlider;
-  }, [imagesLoaded]);
+  }, [img, imagesLoaded]);
 
   useEffect(() => {
     const typed = new Typed("#typedtext", {
