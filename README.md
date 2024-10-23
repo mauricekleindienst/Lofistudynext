@@ -1,6 +1,6 @@
 
 
-<h1 align="center">lo-fi.study</h1>
+<h1 align="center">Lo-Fi.Study</h1>
 </p>
 
 Welcome to lo-fi.study, a website dedicated to providing a relaxing environment for studying.
@@ -21,7 +21,7 @@ lo-fi.study is a platform that combines the lo-fi artstyle with a simple, distra
 3. Set your study timer.
 4. Start studying!
 
-![Lofi Study Interface](https://github.com/Lgsarius/Lofistudy/blob/main/static/media/SVG/Macchrome.svg)
+![Lofi Study Interface](https://github.com/Lgsarius/Lofistudynext/blob/master/public/cover.png)
 
 ## License
 
