@@ -5,7 +5,7 @@
   "scripts": {
     "dev2": "next dev",
     "dev": "node server.js",
-    "build": "next build",
+    "build": "npm install --legacy-peer-deps && npm run build && next-sitemap",
     "start": "node server.js",
     "heroku-postbuild": "npm install --legacy-peer-deps && npm run build && next-sitemap",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
