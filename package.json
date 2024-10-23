@@ -7,7 +7,7 @@
     "dev": "node server.js",
     "build": "next build",
     "start": "node server.js",
-    "heroku-postbuild": "npm install --legacy-peer-deps && npm run build && next-sitemap",
+    "heroku-postbuild": "npm install --legacy-peer-deps && npm run build && npm run next-sitemap",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "format": "prettier --write ."
   },
