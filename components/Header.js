@@ -1,44 +1,44 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import styles from "../styles/Home.module.css";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function Header() {
-  const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
-  const navigateTo = (path) => {
-    router.push(path);
-    setIsMenuOpen(false);
-  };
-
   return (
-    <header className={styles.header}>
-      <div className={styles.logo} onClick={() => navigateTo("/")}>
-        <Image src="/lo-fi.study.svg" alt="lo-fi.study" width={100} height={100} />
-      </div>
-      <div className={styles.hamburger} onClick={toggleMenu}>
-        <span></span>
-        <span></span>
-        <span></span>
-      </div>
-      <div className={`${styles.buttonContainer} ${isMenuOpen ? styles.open : ''}`}>
-        <button onClick={() => navigateTo("/demo")} className={styles.contactButton}>
-          Demo
-        </button>
-        <button onClick={() => navigateTo("/Contact")} className={styles.contactButton}>
-          Contact
-        </button>
-        <button onClick={() => navigateTo("/FAQ")} className={styles.faqButton}>
-          FAQ
-        </button>
-        <button onClick={() => navigateTo("/auth/signin")} className={styles.loginButton}>
-          Sign In
-        </button>
+    <header className={`${styles.header} ${isScrolled ? styles.scrolled : ''}`}>
+      <div className={styles.headerContent}>
+        <Link href="/" className={styles.logo}>
+          <Image src="/lo-fi.study.svg" alt="lo-fi.study" width={50} height={50} />
+        </Link>
+        <nav className={`${styles.nav} ${isMenuOpen ? styles.open : ''}`}>
+          <Link href="/demo" className={styles.navLink}>Demo</Link>
+          <Link href="/Contact" className={styles.navLink}>Contact</Link>
+          <Link href="/FAQ" className={styles.navLink}>FAQ</Link>
+          <Link href="/auth/signin" className={`${styles.navLink} ${styles.signInButton}`}>
+            Sign In
+          </Link>
+        </nav>
+        <div className={`${styles.hamburger} ${isMenuOpen ? styles.open : ''}`} onClick={toggleMenu}>
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
       </div>
     </header>
   );

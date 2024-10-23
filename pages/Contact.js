@@ -38,7 +38,6 @@ export default function Contact() {
 
   return (
     <div className={styles.container}>
-      
       <Head>
         <title>Contact - Lo-Fi Study</title>
         <meta
@@ -51,57 +50,64 @@ export default function Contact() {
 
       <main className={styles.main}>
         <section className={styles.contactSection}>
-          <h1 className={styles.title}>Contact Us</h1>
-          <form
-            onSubmit={handleSubmit}
-            action="https://formspree.io/f/mqazannj"
-            method="POST"
-            className={styles.contactForm}
-          >
-            <div className={styles.formGroup}>
-              <label htmlFor="name">Name</label>
-              <input
-                type="text"
-                id="name"
-                name="name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                required
-              />
-            </div>
-            <div className={styles.formGroup}>
-              <label htmlFor="email">Email</label>
-              <input
-                type="email"
-                id="email"
-                name="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </div>
-            <div className={styles.formGroup}>
-              <label htmlFor="message">Message</label>
-              <textarea
-                id="message"
-                name="message"
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                required
-              />
-            </div>
-            <button type="submit" className={styles.submitButton}>
-              Send Message
-            </button>
-            {status === "SUCCESS" && (
-              <p className={styles.successMessage}>
-                Thanks! Your message has been sent.
-              </p>
-            )}
-            {status === "ERROR" && (
-              <p className={styles.errorMessage}>Oops! There was an error.</p>
-            )}
-          </form>
+          <h1 className={styles.title}>Get in Touch</h1>
+          <p className={styles.subtitle}>We'd love to hear from you!</p>
+          <div className={styles.contactWrapper}>
+            <form
+              onSubmit={handleSubmit}
+              action="https://formspree.io/f/mqazannj"
+              method="POST"
+              className={styles.contactForm}
+            >
+              <div className={styles.formGroup}>
+                <label htmlFor="name">Name</label>
+                <input
+                  type="text"
+                  id="name"
+                  name="name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  required
+                  placeholder="Your name"
+                />
+              </div>
+              <div className={styles.formGroup}>
+                <label htmlFor="email">Email</label>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  placeholder="Your email"
+                />
+              </div>
+              <div className={styles.formGroup}>
+                <label htmlFor="message">Message</label>
+                <textarea
+                  id="message"
+                  name="message"
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  required
+                  placeholder="Your message"
+                />
+              </div>
+              <button type="submit" className={styles.submitButton}>
+                Send Message
+              </button>
+              {status === "SUCCESS" && (
+                <p className={styles.successMessage}>
+                  Thanks! Your message has been sent.
+                </p>
+              )}
+              {status === "ERROR" && (
+                <p className={styles.errorMessage}>Oops! There was an error.</p>
+              )}
+            </form>
+           
+          </div>
         </section>
       </main>
 
