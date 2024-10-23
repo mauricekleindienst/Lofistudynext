@@ -10,7 +10,7 @@ export default function FAQ() {
     {
       question: "What is Lo-Fi Study?",
       answer:
-        "Lo-Fi Study is an app designed to enhance your study sessions with ambient sounds, Pomodoro timer, collaborative rooms, and more.",
+        "Lo-Fi Study is a free Tool designed to enhance your study sessions with ambient sounds, Pomodoro timer, collaborative rooms, and more.",
     },
     {
       question: "How do I use the Pomodoro timer?",
