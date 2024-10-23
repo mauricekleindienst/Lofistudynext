@@ -176,8 +176,9 @@ export default function Landing() {
             <div className={styles.coverContent}>
               <h2 className={styles.sectionTitle}>The Lo-Fi.Study App</h2>
               <p className={styles.coverDescription}>
-  Immerse yourself in a world of focus and productivity. Create your perfect study atmosphere with curated lo-fi beats, ambient sounds, and powerful productivity tools. Whether you're tackling a challenging project or diving deep into your studies, our immersive soundscapes and intuitive features are designed to help you maintain concentration, reduce distractions, and boost your workflow. Discover the ultimate blend of relaxation and productivity, tailor-made for your daily routine. Let the ambient vibes guide you toward accomplishing your goals, one task at a time.
+  Immerse yourself in a world of focus and productivity. Create your perfect study atmosphere with curated lo-fi beats, ambient sounds, and powerful productivity tools. Whether you&apos;re tackling a challenging project or diving deep into your studies, our immersive soundscapes and intuitive features are designed to help you maintain concentration, reduce distractions, and boost your workflow. Discover the ultimate blend of relaxation and productivity, tailor-made for your daily routine. Let the ambient vibes guide you toward accomplishing your goals, one task at a time.
 </p>
+
 
               <motion.button
                 className={styles.ctaButton}
