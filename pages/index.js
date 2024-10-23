@@ -191,7 +191,7 @@ export default function Landing() {
             </div>
             <div className={styles.coverImageWrapper}>
               <Image
-                src="/cover.png"
+                src="https://i.ibb.co/kG960G6/cover.webp"
                 alt="Lo-Fi Study Cover"
                 width={2000}
                 height={1200}
