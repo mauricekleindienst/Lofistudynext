@@ -15,6 +15,8 @@ import styles from "../styles/Home.module.css";
 export default function Landing() {
   const [imagesLoaded, setImagesLoaded] = useState([]);
   const featuresRef = useRef(null);
+  const freeToolSectionRef = useRef(null);
+  const router = useRouter();
 
   const img = useMemo(() => [
     {
@@ -149,6 +151,12 @@ export default function Landing() {
     }
   };
 
+  const scrollToFreeToolSection = () => {
+    if (freeToolSectionRef.current) {
+      freeToolSectionRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
     <div className={styles.container}>
       <Head>
@@ -182,22 +190,34 @@ export default function Landing() {
   
             <div className={styles.welcomeContent}>
               <h1 className={styles.title}>
-                Welcome to <span className={styles.gradientText}>Lo-Fi.Study</span>
+                Welcome to
+                <br />
+                <span className={styles.gradientText}>Lo-Fi.Study</span>
               </h1>
               <p className={styles.description}>
-                With Lo-Fi.Study, you can create the perfect atmosphere to{" "}
+                Create the perfect atmosphere to{" "}
                 <span className={styles.typedTextWrapper}>
                   <span id="typedtext" className={styles.typedText}></span>
                 </span>
               </p>
-              <motion.button
-                onClick={() => router.push("/auth/signin")}
-                className={styles.ctaButton}
-                whileHover={{ scale: 1.05, boxShadow: "0 0 15px rgba(255,123,0,0.5)" }}
-                whileTap={{ scale: 0.95 }}
-              >
-                Get Started
-              </motion.button>
+              <div className={styles.ctaContainer}>
+                <motion.button
+                  onClick={() => router.push("/auth/signin")}
+                  className={styles.ctaButton}
+                  whileHover={{ scale: 1.05, boxShadow: "0 0 15px rgba(255,123,0,0.5)" }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  Get Started
+                </motion.button>
+                <motion.button
+                  onClick={scrollToFreeToolSection}
+                  className={`${styles.ctaButton} ${styles.secondaryButton}`}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  Learn More
+                </motion.button>
+              </div>
             </div>
             <div className={styles.backgroundAnimation}></div>
           </section>
@@ -213,9 +233,8 @@ export default function Landing() {
             <div className={styles.coverContent}>
               <h2 className={styles.sectionTitle}>The Lo-Fi.Study App</h2>
               <p className={styles.coverDescription}>
-  Immerse yourself in a world of focus and productivity. Create your perfect study atmosphere with curated lo-fi beats, ambient sounds, and powerful productivity tools. Whether you&apos;re tackling a challenging project or diving deep into your studies, our immersive soundscapes and intuitive features are designed to help you maintain concentration, reduce distractions, and boost your workflow. Discover the ultimate blend of relaxation and productivity, tailor-made for your daily routine. Let the ambient vibes guide you toward accomplishing your goals, one task at a time.
-</p>
-
+                Immerse yourself in a world of focus and productivity. Create your perfect study atmosphere with curated lo-fi beats, ambient sounds, and powerful productivity tools. Whether you&apos;re tackling a challenging project or diving deep into your studies, our immersive soundscapes and intuitive features are designed to help you maintain concentration, reduce distractions, and boost your workflow. Discover the ultimate blend of relaxation and productivity, tailor-made for your daily routine. Let the ambient vibes guide you toward accomplishing your goals, one task at a time.
+              </p>
 
               <motion.button
                 className={styles.ctaButton}
@@ -239,11 +258,38 @@ export default function Landing() {
         </motion.section>
 
         <motion.section
+          ref={freeToolSectionRef}
+          className={styles.freeToolSection}
+          initial="hidden"
+          animate="visible"
+          variants={fadeInUp}
+          transition={{ duration: 0.5, delay: 0.3 }}
+        >
+          <div className={styles.freeToolContent}>
+            <h2 className={styles.freeToolTitle}>Empowering Students, Free of Charge</h2>
+            <p className={styles.freeToolDescription}>
+              Lo-Fi.Study is a <span className={styles.freeToolHighlight}>completely free</span> platform designed to boost your productivity and enhance your learning experience. Created by students who understand the challenges of academic life, our tools are tailored for learners striving for excellence.
+            </p>
+            <p className={styles.freeToolDescription}>
+              We offer a comprehensive suite of features, including ambient sounds, productivity tools, and customizable study environments - all at <span className={styles.freeToolHighlight}>no cost</span>. Our mission is to make effective studying accessible to everyone, regardless of their financial situation.
+            </p>
+            <p className={styles.freeToolDescription}>
+              Your feedback drives our innovation. We continuously refine and expand our platform based on <span className={styles.freeToolHighlight}>user input</span>, creating an evolving ecosystem that transforms studying into an efficient, enjoyable, and rewarding experience. Join our community and be part of shaping the future of learning!
+            </p>
+            <div className={styles.freeToolIcons}>
+              <span className={styles.freeToolIcon} role="img" aria-label="Headphones">🎧</span>
+              <span className={styles.freeToolIcon} role="img" aria-label="Books">📚</span>
+              <span className={styles.freeToolIcon} role="img" aria-label="Chart Increasing">📈</span>
+            </div>
+          </div>
+        </motion.section>
+
+        <motion.section
           className={styles.overviewSection}
           initial="hidden"
           animate="visible"
           variants={fadeInUp}
-          transition={{ duration: 0.5, delay: 0.2 }}
+          transition={{ duration: 0.5, delay: 0.4 }}
         >
           <h2 className={styles.sectionTitle}>Why Choose Lo-Fi.Study?</h2>
           <div className={styles.overviewGrid}>
