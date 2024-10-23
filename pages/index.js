@@ -3,8 +3,9 @@ import Head from "next/head";
 import Typed from "typed.js";
 import { useRouter } from "next/router";
 import { motion } from "framer-motion";
-import { Carousel } from "react-responsive-carousel";
-import "react-responsive-carousel/lib/styles/carousel.min.css";
+import Glide from "@glidejs/glide";
+import "@glidejs/glide/dist/css/glide.core.min.css";
+import "@glidejs/glide/dist/css/glide.theme.min.css";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import CookieBanner from "../components/CookieBanner";
@@ -38,39 +39,64 @@ export default function Landing() {
     },
   ];
 
-  const ImageCarousel = useMemo(() => {
-    const MemoizedCarousel = () => (
-      <section className={styles.overviewSection}>
-        <h2 className={styles.sectionTitle}>
-          Beautiful Background Selection
-        </h2>
-        <div className={styles.overviewGrid}>
-          <Carousel
-            showArrows={false}
-            showStatus={false}
-            showThumbs={false}
-            infiniteLoop={true}
-            autoPlay={true}
-            interval={2000}
-          >
-            {img.map((img, index) => (
-              <div key={index} className={styles.carouselItem}>
-                <Image
-                  className={styles.carouselImage}
-                  src={img.src}
-                  alt={img.alt}
-                  width={500}
-                  height={300}
-                  style={{ width: '100%', height: 'auto' }}
-                />
-              </div>
-            ))}
-          </Carousel>
-        </div>
-      </section>
-    );
-    MemoizedCarousel.displayName = 'ImageCarousel';
-    return MemoizedCarousel;
+  const ImageSlider = useMemo(() => {
+    const MemoizedSlider = () => {
+      const sliderRef = useRef(null);
+
+      useEffect(() => {
+        const glide = new Glide(sliderRef.current, {
+          type: 'carousel',
+          perView: 1,
+          autoplay: 3000,
+          hoverpause: true,
+          animationDuration: 1000,
+        });
+
+        glide.mount();
+
+        return () => {
+          glide.destroy();
+        };
+      }, []);
+
+      return (
+        <section className={styles.overviewSection}>
+          <h2 className={styles.sectionTitle}>
+            Beautiful Background Selection
+          </h2>
+          <div className={styles.sliderWrapper} ref={sliderRef}>
+            <div className="glide__track" data-glide-el="track">
+              <ul className="glide__slides">
+                {img.map((img, index) => (
+                  <li key={index} className={`glide__slide ${styles.sliderItem}`}>
+                    <Image
+                      src={img.src}
+                      alt={img.alt}
+                      width={1000}
+                      height={600}
+                      objectFit="cover"
+                      className={styles.sliderImage}
+                    />
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="glide__bullets" data-glide-el="controls[nav]">
+              {img.map((_, index) => (
+                <button 
+                  key={index} 
+                  className="glide__bullet" 
+                  data-glide-dir={`=${index}`}
+                  aria-label={`Go to slide ${index + 1}`}
+                ></button>
+              ))}
+            </div>
+          </div>
+        </section>
+      );
+    };
+    MemoizedSlider.displayName = 'ImageSlider';
+    return MemoizedSlider;
   }, []);
 
   useEffect(() => {
@@ -237,7 +263,7 @@ export default function Landing() {
           variants={fadeInUp}
           transition={{ duration: 0.5, delay: 0.4 }}
         >
-          <ImageCarousel />
+          <ImageSlider />
         </motion.div>
 
         <motion.section

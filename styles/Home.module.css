@@ -740,4 +740,51 @@
   animation: highlightSection 2s ease-out;
 }
 
+.sliderWrapper {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
 
+.sliderItem {
+  padding: 20px;
+}
+
+.sliderImage {
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Customize the bullets */
+.sliderWrapper :global(.glide__bullet) {
+  background-color: #888;
+  width: 10px;
+  height: 10px;
+  padding: 0;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  transition: all 300ms ease-in-out;
+  cursor: pointer;
+  line-height: 0;
+  box-shadow: 0 0.25em 0.5em 0 rgba(0, 0, 0, 0.1);
+  margin: 0 0.25em;
+}
+
+.sliderWrapper :global(.glide__bullet:hover),
+.sliderWrapper :global(.glide__bullet:focus) {
+  border: 2px solid white;
+  background-color: #666;
+}
+
+.sliderWrapper :global(.glide__bullet--active) {
+  background-color: white;
+}
+
+.sliderWrapper :global(.glide__slide) {
+  transform: scale(0.9);
+  transition: transform 0.5s ease-in-out;
+}
+
+.sliderWrapper :global(.glide__slide--active) {
+  transform: scale(1);
+}

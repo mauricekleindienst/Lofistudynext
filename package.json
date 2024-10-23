@@ -27,6 +27,7 @@
     "@fortawesome/free-regular-svg-icons": "^6.5.2",
     "@fortawesome/free-solid-svg-icons": "^6.5.2",
     "@fortawesome/react-fontawesome": "^0.2.2",
+    "@glidejs/glide": "^3.6.2",
     "@mui/material": "^5.16.7",
     "@prisma/client": "^5.18.0",
     "@types/node": "^20.14.11",
