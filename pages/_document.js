@@ -64,15 +64,7 @@ export default function Document() {
         <meta name="author" content="Lo-Fi.Study" />
         <meta name="robots" content="index, follow" />
         <link rel="canonical" href="https://www.lo-fi.study/" />
-        <meta http-equiv="Content-Security-Policy" content="
-   default-src 'self';
-   script-src 'self' https://www.googletagmanager.com https://static.cloudflareinsights.com;
-   font-src 'self' https://fonts.gstatic.com;
-   img-src 'self' https://i.ibb.co;
-    connect-src 'self' https://firebase.googleapis.com;
-   media-src 'self' https://lofistudy.fra1.cdn.digitaloceanspaces.com;
-   style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
-"/>
+ 
 
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="Lo-Fi.Study - Improve Your Focus and Productivity" />
