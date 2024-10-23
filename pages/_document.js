@@ -102,7 +102,16 @@ export default function Document() {
         <meta name="author" content="Lo-Fi.Study" />
         <meta name="robots" content="index, follow" />
         <link rel="canonical" href="https://www.lo-fi.study/" />
-        <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; object-src 'none'; style-src 'self' 'unsafe-inline';" />
+        <meta http-equiv="Content-Security-Policy" content="
+  default-src 'self'; 
+  script-src 'self'; 
+  object-src 'none'; 
+  style-src 'self' 'unsafe-inline'; 
+  img-src 'self' https://i.ibb.co; 
+  font-src 'self' https://fonts.gstatic.com; 
+  style-src-elem 'self' https://fonts.googleapis.com 'unsafe-inline';
+">
+
 
         {/* Open Graph meta tags */}
         <meta property="og:title" content="Lo-Fi.Study - Improve Your Focus and Productivity" />
