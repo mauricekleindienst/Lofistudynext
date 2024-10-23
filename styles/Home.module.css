@@ -149,17 +149,16 @@
   }
 }
 .ctaButton {
-  padding: 1rem 2rem;
-  font-size: 1.2rem;
-  border-radius: 5px;
+  background: linear-gradient(45deg, #ff7b00, #ff9a44);
   border: none;
-  background-color: #ff7b00;
-  color: #ffffff;
-  
+  color: white;
+  padding: 12px 24px;
+  font-size: 1.1rem;
+  border-radius: 30px;
+  cursor: pointer;
   transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
 }
+
 .ctaButton::after {
   content: "";
   position: absolute;
@@ -653,12 +652,42 @@
   border-radius: 15px;  
   transition: all 0.3s ease-out;
   transform: translateZ(0);
-  box-shadow: 0 1cqmax 60px rgba(255, 123, 0, 0.3); 
+  box-shadow: 0 0px 40px rgba(255, 123, 0, 0.3); 
   transform: perspective(10000px) rotate3D(0, 1, 0, -10deg);
   
 }
 
+.coverDescription {
+  font-size: 1.1rem;
+  color: #ffffff;
+  line-height: 1.8;
+  margin-bottom: 2rem;
+  opacity: 0.9;
+  position: relative;
+  padding-left: 20px;
+  border-left: 3px solid #ff7b00;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
 
+.coverDescription::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -3px;
+  width: 3px;
+  height: 100%;
+  background: linear-gradient(to bottom, #ff7b00, transparent);
+  animation: glowPulse 2s infinite alternate;
+}
+
+@keyframes glowPulse {
+  from {
+    opacity: 0.5;
+  }
+  to {
+    opacity: 1;
+  }
+}
 .coverImage:hover {
   transform: translateY(-15px) scale(1.03); 
 
@@ -710,3 +739,5 @@
 .featureSection:target {
   animation: highlightSection 2s ease-out;
 }
+
+
