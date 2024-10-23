@@ -6,7 +6,7 @@ const nextConfig = {
     return config;
   },
   images: {
-    remotePatterns: ['i.ibb.co'],
+    domains: ['i.ibb.co'],
   },
   env: {
     DATABASE_URL: process.env.DATABASE_URL,
