@@ -685,3 +685,52 @@
   pointer-events: none;
   transition: opacity 0.3s ease, pointer-events 0.3s ease;
 }
+
+.banner {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  z-index: 10001;
+  text-align: center;
+  transition: opacity 0.3s ease;
+  max-width: 400px;
+  width: 90%;
+  position: relative;
+}
+
+.closeButton {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 20px;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.closeButton:hover {
+  color: #ff7b00;
+}
+
+.signUpButton {
+  margin-top: 10px;
+  padding: 10px 20px;
+  background-color: #ff7b00;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.signUpButton:hover {
+  background-color: #ff9900;
+}
