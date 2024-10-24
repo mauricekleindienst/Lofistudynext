@@ -102,16 +102,17 @@ useEffect(() => {
 
   useEffect(() => {
     const savedBackgroundId = localStorage.getItem('selectedBackgroundId');
+    let initialBackground;
+
     if (savedBackgroundId) {
       const savedBackground = backgrounds.find(bg => bg.id === parseInt(savedBackgroundId));
-      if (savedBackground) {
-        setSelectedBackground(savedBackground);
-      } else {
-        setSelectedBackground(backgrounds[Math.floor(Math.random() * backgrounds.length)]);
-      }
+      initialBackground = savedBackground || backgrounds[0]; // Use the first background as default
     } else {
-      setSelectedBackground(backgrounds[Math.floor(Math.random() * backgrounds.length)]);
+      initialBackground = backgrounds[0]; // Use the first background as default
     }
+
+    setSelectedBackground(initialBackground);
+    setShowLoading(false);
   }, []);
 
   useEffect(() => {
@@ -158,40 +159,39 @@ useEffect(() => {
       setIsBackgroundLoading(true);
       videoRef.current.src = selectedBackground.src;
       videoRef.current.load();
-      videoRef.current.play().catch(error => console.error('Error playing video:', error));
-      
+      videoRef.current.play().catch(error => {
+        console.error('Error playing video:', error);
+      });
+
       const handleVideoLoaded = () => {
         setIsBackgroundLoading(false);
+        clearTimeout(fallbackTimeout); // Clear the timeout if video loads successfully
       };
 
       videoRef.current.addEventListener('loadeddata', handleVideoLoaded);
+
+      // Set a timeout to switch to the fallback background after 3 seconds
+      const fallbackTimeout = setTimeout(() => {
+        if (isBackgroundLoading) {
+          console.warn('Switching to fallback background due to loading timeout');
+          const fallbackBackgroundUrl = "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Rain.mp4"; // Replace with your fallback URL
+          videoRef.current.src = fallbackBackgroundUrl;
+          videoRef.current.load();
+          videoRef.current.play().catch(err => console.error('Error playing fallback video:', err));
+        }
+      }, 3000); // 3 seconds
 
       return () => {
         if (videoRef.current) {
           videoRef.current.removeEventListener('loadeddata', handleVideoLoaded);
         }
+        clearTimeout(fallbackTimeout); // Clear the timeout on cleanup
       };
     }
   }, [selectedBackground]);
 
   const handlePageChange = useCallback((newPage) => {
     setCurrentPage(newPage);
-  }, []);
-
-  useEffect(() => {
-    // Fetch backgrounds data
-    const fetchBackgrounds = async () => {
-      try {
-        const response = await fetch('/api/backgrounds');
-        const data = await response.json();
-        setBackgrounds(data);
-        setSelectedBackground(data[0]); // Set first background as default
-      } catch (error) {
-        console.error('Error fetching backgrounds:', error);
-      }
-    };
-
-    fetchBackgrounds();
   }, []);
 
   const handleBackgroundSelection = useCallback((background) => {
