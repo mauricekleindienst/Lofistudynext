@@ -3,33 +3,31 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 export default async function handler(req, res) {
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed. Only POST requests are accepted.' });
+  }
+
   const { email, firstname, increment, category } = req.body;
 
   if (!email || !firstname || typeof increment !== 'number' || !category) {
-    return res.status(400).json({ error: 'Invalid request' });
+    return res.status(400).json({ error: 'Invalid request. All fields are required.' });
+  }
+
+  if (!['Studying', 'Coding', 'Writing', 'Working', 'Other'].includes(category)) {
+    return res.status(400).json({ error: 'Invalid category.' });
   }
 
   try {
-    const today = new Date().toISOString().split('T')[0]; // Get the current date in YYYY-MM-DD format
+    const today = new Date().toISOString().split('T')[0];
 
-    // Fetch current data
     const existingUser = await prisma.user_pomodoros.findUnique({
       where: { email },
     });
 
-    let updatedDailyCounts = {};
-    if (existingUser) {
-      // If user exists, update the daily counts
-      updatedDailyCounts = {
-        ...existingUser.daily_counts,
-        [today]: (existingUser.daily_counts[today] || 0) + increment,
-      };
-    } else {
-      // If user does not exist, create new daily counts
-      updatedDailyCounts = { [today]: increment };
-    }
+    let updatedDailyCounts = existingUser
+      ? { ...existingUser.daily_counts, [today]: (existingUser.daily_counts[today] || 0) + increment }
+      : { [today]: increment };
 
-    // Perform upsert
     const user = await prisma.user_pomodoros.upsert({
       where: { email },
       update: {
@@ -48,10 +46,10 @@ export default async function handler(req, res) {
       },
     });
 
-    res.status(200).json({ message: 'Pomodoro count updated' });
+    res.status(200).json({ message: 'Pomodoro count updated successfully' });
   } catch (error) {
     console.error('Error updating Pomodoro count:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    res.status(500).json({ error: 'Internal server error. Please try again later.' });
   } finally {
     await prisma.$disconnect();
   }

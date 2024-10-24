@@ -233,13 +233,20 @@ export default function PomodoroTimer({ onMinimize }) {
     });
   }, []);
 
+  // Add this new function
+  const handleKeyDown = useCallback((e, action) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      action();
+    }
+  }, []);
+
   return (
     <Draggable handle=".drag-handle">
-      <div className={styles.timerContainer}>
-        <div className={`${styles.dragHandle} drag-handle`}></div>
+      <div className={styles.timerContainer} role="region" aria-label="Pomodoro Timer">
+        <div className={`${styles.dragHandle} drag-handle`} aria-hidden="true"></div>
         <div className={styles.header}>
-          <h2>Pomodoro Timer</h2>
-         
+          <h2 id="timer-title">Pomodoro Timer</h2>
           <button
             onClick={onMinimize}
             className="material-icons"
@@ -248,40 +255,23 @@ export default function PomodoroTimer({ onMinimize }) {
             remove
           </button>
         </div>
-        <div className={styles.timerHeader}>
-          <div
-            className={`${styles.timerMode} ${
-              state.currentMode === "pomodoro" ? styles.active : ""
-            }`}
-            onClick={() => changeMode("pomodoro")}
-            role="button"
-            tabIndex={0}
-            aria-pressed={state.currentMode === "pomodoro"}
-          >
-            Pomodoro
-          </div>
-          <div
-            className={`${styles.timerMode} ${
-              state.currentMode === "shortBreak" ? styles.active : ""
-            }`}
-            onClick={() => changeMode("shortBreak")}
-            role="button"
-            tabIndex={0}
-            aria-pressed={state.currentMode === "shortBreak"}
-          >
-            Short Break
-          </div>
-          <div
-            className={`${styles.timerMode} ${
-              state.currentMode === "longBreak" ? styles.active : ""
-            }`}
-            onClick={() => changeMode("longBreak")}
-            role="button"
-            tabIndex={0}
-            aria-pressed={state.currentMode === "longBreak"}
-          >
-            Long Break
-          </div>
+        <div className={styles.timerHeader} role="tablist">
+          {['pomodoro', 'shortBreak', 'longBreak'].map((mode) => (
+            <div
+              key={mode}
+              className={`${styles.timerMode} ${
+                state.currentMode === mode ? styles.active : ''
+              }`}
+              onClick={() => changeMode(mode)}
+              onKeyDown={(e) => handleKeyDown(e, () => changeMode(mode))}
+              role="tab"
+              tabIndex={0}
+              aria-selected={state.currentMode === mode}
+              aria-controls={`${mode}-panel`}
+            >
+              {mode === 'pomodoro' ? 'Pomodoro' : mode === 'shortBreak' ? 'Short Break' : 'Long Break'}
+            </div>
+          ))}
         </div>
         <div className={styles.pomodoroinfo}>Category</div>
         <div className={styles.categorySelection}>
@@ -301,7 +291,7 @@ export default function PomodoroTimer({ onMinimize }) {
           </select>
         </div>
         <div className={styles.timerDisplay}>
-          <h3>{formatTime}</h3>
+          <h3 aria-live="polite">{formatTime}</h3>
           <div className={styles.buttonContainer}>
             <button className={styles.startButton} onClick={toggleTimer}>
               {state.isTimerRunning ? (

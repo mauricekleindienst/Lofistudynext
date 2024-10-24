@@ -59,7 +59,7 @@ export default function Study() {
   const totalPages = Math.ceil(backgrounds.length / backgroundsPerPage);
   const scrollContainerRef = useRef(null);
   const videoRef = useRef(null);
-  const [isBackgroundLoading, setIsBackgroundLoading] = useState(false);
+  const [isBackgroundLoading, setIsBackgroundLoading] = useState(true);
 
   const getCurrentPageBackgrounds = () => {
     const start = currentPage * backgroundsPerPage;
@@ -101,7 +101,17 @@ useEffect(() => {
   }, []);
 
   useEffect(() => {
-    setSelectedBackground(backgrounds[Math.floor(Math.random() * backgrounds.length)]);
+    const savedBackgroundId = localStorage.getItem('selectedBackgroundId');
+    if (savedBackgroundId) {
+      const savedBackground = backgrounds.find(bg => bg.id === parseInt(savedBackgroundId));
+      if (savedBackground) {
+        setSelectedBackground(savedBackground);
+      } else {
+        setSelectedBackground(backgrounds[Math.floor(Math.random() * backgrounds.length)]);
+      }
+    } else {
+      setSelectedBackground(backgrounds[Math.floor(Math.random() * backgrounds.length)]);
+    }
   }, []);
 
   useEffect(() => {
@@ -145,6 +155,7 @@ useEffect(() => {
 
   useEffect(() => {
     if (selectedBackground && videoRef.current) {
+      setIsBackgroundLoading(true);
       videoRef.current.src = selectedBackground.src;
       videoRef.current.load();
       videoRef.current.play().catch(error => console.error('Error playing video:', error));
@@ -186,6 +197,7 @@ useEffect(() => {
   const handleBackgroundSelection = useCallback((background) => {
     setIsBackgroundLoading(true);
     setSelectedBackground(background);
+    localStorage.setItem('selectedBackgroundId', background.id.toString());
   }, []);
 
   const handleScroll = (direction) => {
@@ -284,14 +296,16 @@ useEffect(() => {
         />
       )}
       <div className={`${styles.container} ${zenMode ? styles.zenMode : ''}`}>
-        <video
-          ref={videoRef}
-          className={styles.videoBackground}
-          autoPlay
-          loop
-          muted
-          playsInline
-        />
+        {selectedBackground && (
+          <video
+            ref={videoRef}
+            className={styles.videoBackground}
+            autoPlay
+            loop
+            muted
+            playsInline
+          />
+        )}
         {isBackgroundLoading && (
           <div className={styles.backgroundLoader}>
             <div className={styles.backgroundLoaderSpinner}></div>

@@ -4,6 +4,7 @@ import { ResizableBox } from "react-resizable";
 import dynamic from "next/dynamic";
 import { useSession } from "next-auth/react";
 import debounce from "lodash/debounce";
+import { toast } from "react-toastify";
 
 import styles from "../styles/Notes.module.css";
 
@@ -108,17 +109,11 @@ export default function Notes({ onMinimize }) {
           setSelectedPage(notes[0]);
         }
       } else {
-        const errorData = await response.json();
-        console.error("Failed to fetch notes:", errorData);
-        setError(
-          `Failed to fetch notes: ${errorData.message || "Unknown error"}`
-        );
+        throw new Error('Failed to fetch notes');
       }
     } catch (error) {
       console.error("Error fetching notes:", error);
-      setError(
-        "An unexpected error occurred while fetching notes. Please try again."
-      );
+      toast.error("Failed to fetch notes. Please try again.");
     }
   };
 
@@ -137,37 +132,28 @@ export default function Notes({ onMinimize }) {
         }),
       });
       if (!response.ok) {
-        const errorData = await response.json();
-        console.error("Failed to save note:", errorData);
-        setError(`Failed to save note: ${errorData.message || "Unknown error"}`);
-      } else {
-        const updatedPage = await response.json();
-        setPages((prevPages) =>
-          prevPages.map((p) => (p.id === page.id ? updatedPage : p))
-        );
-        setSelectedPage(updatedPage);
+        throw new Error('Failed to save note');
       }
+      const updatedPage = await response.json();
+      setPages((prevPages) =>
+        prevPages.map((p) => (p.id === updatedPage.id ? updatedPage : p))
+      );
+      setSelectedPage(updatedPage);
+      toast.success("Note saved successfully");
     } catch (error) {
       console.error("Error saving note:", error);
-      setError("An unexpected error occurred while saving the note.");
+      toast.error("Failed to save note. Please try again.");
     }
   };
 
   const debouncedSaveToServer = debounce(saveNoteToServer, 500);
 
   const createNewPage = async () => {
-    const tempId = `temp_${Math.random().toString(36).substr(2, 9)}`;
     const newPage = {
-      id: tempId,
       email: session.user.email,
       title: "New Page",
       content: JSON.stringify({ blocks: [] }),
     };
-
-    setPages((prevPages) => [...prevPages, newPage]);
-    setSelectedPage(newPage);
-
-    initializeEditor(newPage.content);
 
     try {
       const response = await fetch("/api/notes", {
@@ -177,26 +163,22 @@ export default function Notes({ onMinimize }) {
         },
         body: JSON.stringify(newPage),
       });
-      if (response.ok) {
-        const savedPage = await response.json();
-        setPages((prevPages) =>
-          prevPages.map((p) => (p.id === tempId ? savedPage : p))
-        );
-        setSelectedPage(savedPage);
-      } else {
-        const errorData = await response.json();
-        console.error("Failed to save new page:", errorData);
-        setError(`Failed to save new page: ${errorData.message || "Unknown error"}`);
+      if (!response.ok) {
+        throw new Error('Failed to create new page');
       }
+      const savedPage = await response.json();
+      setPages((prevPages) => [...prevPages, savedPage]);
+      setSelectedPage(savedPage);
+      toast.success("New page created successfully");
     } catch (error) {
-      console.error("Error saving new page:", error);
-      setError("An unexpected error occurred while creating the new page.");
+      console.error("Error creating new page:", error);
+      toast.error("Failed to create new page. Please try again.");
     }
   };
 
   const deletePage = async (pageId) => {
     if (pages.length === 1) {
-      alert("The only remaining page cannot be deleted.");
+      toast.warn("The only remaining page cannot be deleted.");
       return;
     }
 
@@ -208,18 +190,16 @@ export default function Notes({ onMinimize }) {
         },
         body: JSON.stringify({ id: pageId, email: session.user.email }),
       });
-      if (response.ok) {
-        const updatedPages = pages.filter((page) => page.id !== pageId);
-        setPages(updatedPages);
-        setSelectedPage(updatedPages.length > 0 ? updatedPages[0] : null);
-      } else {
-        const errorData = await response.json();
-        console.error("Failed to delete note:", errorData);
-        setError(`Failed to delete note: ${errorData.message || "Unknown error"}`);
+      if (!response.ok) {
+        throw new Error('Failed to delete note');
       }
+      const updatedPages = pages.filter((page) => page.id !== pageId);
+      setPages(updatedPages);
+      setSelectedPage(updatedPages.length > 0 ? updatedPages[0] : null);
+      toast.success("Note deleted successfully");
     } catch (error) {
       console.error("Error deleting note:", error);
-      setError("An unexpected error occurred while deleting the note.");
+      toast.error("Failed to delete note. Please try again.");
     }
   };
 
