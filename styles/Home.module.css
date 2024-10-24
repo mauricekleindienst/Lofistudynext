@@ -445,11 +445,11 @@
 .contactSection {
   padding: 4rem 2rem;
   text-align: center;
-  background: linear-gradient(145deg, rgba(30, 30, 30, 0.8), rgba(42, 42, 42, 0.8));
+ 
   border-radius: 20px;
   margin: 4rem auto;
   max-width: 1200px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  
 }
 
 .title {
