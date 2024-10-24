@@ -1092,11 +1092,11 @@
 
 .freeToolSection {
   padding: 4rem 0;
-  background: linear-gradient(145deg, rgba(30, 30, 30, 0.8), rgba(42, 42, 42, 0.8));
+  
   border-radius: 20px;
   margin: 4rem auto;
   max-width: 1200px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+
 }
 
 .freeToolContent {
@@ -1187,9 +1187,9 @@
   max-width: 800px;
   margin: 4rem auto;
   padding: 2rem;
-  background: rgba(255, 255, 255, 0.1);
+ 
   border-radius: 20px;
-  backdrop-filter: blur(10px);
+  
 }
 
 .aboutDescription,
@@ -1247,11 +1247,11 @@
 
 .featureSection {
   padding: 4rem 2rem;
-  background: linear-gradient(145deg, rgba(30, 30, 30, 0.9), rgba(42, 42, 42, 0.9));
+ 
   border-radius: 20px;
   margin: 4rem auto;
   max-width: 1200px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+
   text-align: center;
   position: relative;
   overflow: hidden;
@@ -1287,12 +1287,12 @@
 }
 
 .featureItem {
-  background: rgba(255, 255, 255, 0.1);
+ 
   padding: 2rem;
   border-radius: 15px;
   transition: all 0.3s ease;
   backdrop-filter: blur(10px);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
 }
 
 .featureItem:hover {
@@ -1339,11 +1339,11 @@
 
 .overviewSection {
   padding: 4rem 2rem;
-  background: linear-gradient(145deg, rgba(30, 30, 30, 0.9), rgba(42, 42, 42, 0.9));
+ 
   border-radius: 20px;
   margin: 4rem auto;
   max-width: 1200px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  
   text-align: center;
   position: relative;
   overflow: hidden;
@@ -1381,12 +1381,12 @@
 }
 
 .overviewItem {
-  background: rgba(255, 255, 255, 0.1);
+
   padding: 2rem;
   border-radius: 15px;
   transition: all 0.3s ease;
   backdrop-filter: blur(10px);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
   display: flex;
   flex-direction: column;
   align-items: center;
