@@ -42,11 +42,14 @@ export default function Footer() {
                         <Link href="https://www.instagram.com/lo_fi.study/" target="_blank" rel="noopener noreferrer">
                             <FaInstagram size={24} />
                         </Link>
+                        <Link href="https://www.mousewerk.de" target="_blank" rel="noopener noreferrer">
+                            <FaInstagram size={24} />
+                        </Link>
                     </div>
                 </div>
             </div>
             <div className={styles.copyright}>
-                © 2024 Copyright Lo-Fi.study. All rights reserved.
+                © 2024 Copyright Lo-Fi.Study. All rights reserved.
             </div>
         </footer>
     );
