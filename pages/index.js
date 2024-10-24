@@ -296,17 +296,17 @@ export default function Landing() {
             <div className={styles.overviewItem}>
               <span className={styles.icon}>🎵</span>
               <h3>Ambient Sounds</h3>
-              <p>Create your perfect study atmosphere</p>
+              <p>Create your perfect study atmosphere with curated lo-fi beats and nature sounds</p>
             </div>
             <div className={styles.overviewItem}>
               <span className={styles.icon}>⏱️</span>
               <h3>Pomodoro Timer</h3>
-              <p>Stay focused and manage your time effectively</p>
+              <p>Stay focused and manage your time effectively with our customizable Pomodoro timer</p>
             </div>
             <div className={styles.overviewItem}>
               <span className={styles.icon}>📊</span>
-              <h3>Data Tracking</h3>
-              <p>Track your Pomodoro Sessions</p>
+              <h3>Progress Tracking</h3>
+              <p>Monitor your study sessions and visualize your productivity over time</p>
             </div>
           </div>
         </motion.section>
