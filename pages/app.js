@@ -1,5 +1,5 @@
 import { useSession } from "next-auth/react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { useRouter } from "next/router";
 import styles from "../styles/app.module.css";
 import MusicPlayer from "../components/MusicPlayer";
@@ -11,6 +11,7 @@ import Calendar from "../components/Calendar";
 import LiveChat from "../components/LiveChat";
 import DraggableIframe from "../components/DraggableIframe";
 import CookieBanner from "../components/CookieBanner";
+import { ErrorBoundary } from "react-error-boundary";
 const backgrounds = [
   { id: 1, src: "/backgrounds/Couch.mp4", alt: "Couch", note: "Couch" },
   { id: 2, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Rain.mp4", alt: "Rain", note: "Rain", createdby: "Lo-Fi.study" },
@@ -56,7 +57,24 @@ export default function Study() {
   const [messageIndex, setMessageIndex] = useState(0);
   const backgroundsPerPage = 6;
   const totalPages = Math.ceil(backgrounds.length / backgroundsPerPage);
+  const scrollContainerRef = useRef(null);
+  const videoRef = useRef(null);
+  const [isBackgroundLoading, setIsBackgroundLoading] = useState(false);
 
+  const getCurrentPageBackgrounds = () => {
+    const start = currentPage * backgroundsPerPage;
+    const end =
+      start + backgroundsPerPage > backgrounds.length
+        ? backgrounds.length
+        : start + backgroundsPerPage;
+    return backgrounds.slice(start, end);
+  };
+
+  const memoizedBackgrounds = useMemo(() => getCurrentPageBackgrounds(), [currentPage, backgrounds]);
+
+  const memoizedHandleBackgroundSelection = useCallback((background) => {
+    setSelectedBackground(background);
+  }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -108,6 +126,76 @@ useEffect(() => {
     }
   }, [status]);
 
+  useEffect(() => {
+    const preloadBackgrounds = async () => {
+      const currentIndex = backgrounds.findIndex(bg => bg.id === selectedBackground.id);
+      const preloadRange = 2; // Preload 2 backgrounds before and after the current one
+
+      for (let i = currentIndex - preloadRange; i <= currentIndex + preloadRange; i++) {
+        if (i >= 0 && i < backgrounds.length) {
+          const video = document.createElement("video");
+          video.src = backgrounds[i].src;
+          video.preload = "auto";
+        }
+      }
+    };
+
+    preloadBackgrounds();
+  }, [selectedBackground]);
+
+  useEffect(() => {
+    if (selectedBackground && videoRef.current) {
+      videoRef.current.src = selectedBackground.src;
+      videoRef.current.load();
+      videoRef.current.play().catch(error => console.error('Error playing video:', error));
+      
+      const handleVideoLoaded = () => {
+        setIsBackgroundLoading(false);
+      };
+
+      videoRef.current.addEventListener('loadeddata', handleVideoLoaded);
+
+      return () => {
+        if (videoRef.current) {
+          videoRef.current.removeEventListener('loadeddata', handleVideoLoaded);
+        }
+      };
+    }
+  }, [selectedBackground]);
+
+  const handlePageChange = useCallback((newPage) => {
+    setCurrentPage(newPage);
+  }, []);
+
+  useEffect(() => {
+    // Fetch backgrounds data
+    const fetchBackgrounds = async () => {
+      try {
+        const response = await fetch('/api/backgrounds');
+        const data = await response.json();
+        setBackgrounds(data);
+        setSelectedBackground(data[0]); // Set first background as default
+      } catch (error) {
+        console.error('Error fetching backgrounds:', error);
+      }
+    };
+
+    fetchBackgrounds();
+  }, []);
+
+  const handleBackgroundSelection = useCallback((background) => {
+    setIsBackgroundLoading(true);
+    setSelectedBackground(background);
+  }, []);
+
+  const handleScroll = (direction) => {
+    const container = scrollContainerRef.current;
+    if (container) {
+      const scrollAmount = direction === 'left' ? -200 : 200;
+      container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+    }
+  };
+
   if (status === "loading" || showLoading) {
     return (
       <div className={styles["loader-container"]}>
@@ -144,10 +232,6 @@ useEffect(() => {
     }
   };
 
-  const handleBackgroundSelection = (background) => {
-    setSelectedBackground(background);
-  };
-
   const handleIconClick = (component) => {
     setVisibleComponents((prevState) => ({
       ...prevState,
@@ -159,19 +243,6 @@ useEffect(() => {
     return fullName.split(" ")[0];
   };
 
-  const handlePageChange = (pageIndex) => {
-    setCurrentPage(pageIndex);
-  };
-
-  const getCurrentPageBackgrounds = () => {
-    const start = currentPage * backgroundsPerPage;
-    const end =
-      start + backgroundsPerPage > backgrounds.length
-        ? backgrounds.length
-        : start + backgroundsPerPage;
-    return backgrounds.slice(start, end);
-  };
-
   const toggleZenMode = () => {
     setZenMode(!zenMode);
     const createdByLabel = document.querySelector(`.${styles.createdByLabel}`);
@@ -180,24 +251,23 @@ useEffect(() => {
       createdByLabel.style.pointerEvents = zenMode ? "auto" : "none"; // Disable interaction
     }
     const selectionBar = document.querySelector(`.${styles.selectionBar}`);
-  if (selectionBar) {
-    selectionBar.style.opacity = zenMode ? "1" : "0";
-    selectionBar.style.pointerEvents = zenMode ? "auto" : "none";
-  }
+    if (selectionBar) {
+      selectionBar.style.opacity = zenMode ? "1" : "0";
+      selectionBar.style.pointerEvents = zenMode ? "auto" : "none";
+    }
   };
 
   return (
-    <>
+    <ErrorBoundary>
       <CustomHeader />
       <CookieBanner />
-       <SelectionBar
-       className={styles.selectionBar}
-          userEmail={session.user.email}
-          userName={getFirstName(session.user.name)}
-          onIconClick={handleIconClick}
-        />
-            
-    
+      <SelectionBar
+        className={`${styles.selectionBar} ${zenMode ? styles.hidden : ''}`}
+        userEmail={session.user.email}
+        userName={getFirstName(session.user.name)}
+        onIconClick={handleIconClick}
+      />
+      
       {visibleComponents.pomodoro && (
         <PomodoroTimer onMinimize={() => handleIconClick("pomodoro")} />
       )}
@@ -213,19 +283,24 @@ useEffect(() => {
           userName={getFirstName(session.user.name)}
         />
       )}
-      <video
-        className={styles.videoBackground}
-        autoPlay
-        loop
-        muted
-        playsInline
-        src={selectedBackground.src}
-      ></video>
       <div className={`${styles.container} ${zenMode ? styles.zenMode : ''}`}>
+        <video
+          ref={videoRef}
+          className={styles.videoBackground}
+          autoPlay
+          loop
+          muted
+          playsInline
+        />
+        {isBackgroundLoading && (
+          <div className={styles.backgroundLoader}>
+            <div className={styles.backgroundLoaderSpinner}></div>
+          </div>
+        )}
         <aside
           className={`${styles.sidebar} ${
             sidebarOpen ? styles.open : styles.closed
-          }`}
+          } ${zenMode ? styles.hidden : ''}`}
         >
           
           <h1>
@@ -234,48 +309,47 @@ useEffect(() => {
        
        
           <div className={styles.backgroundSelector}>
-  <h2>Backgrounds</h2>
-  <div
-    className={styles.backgroundPages}
-    style={{ transform: `translateX(-${currentPage * 100}%)` }}
-  >
-    {[...Array(totalPages)].map((_, pageIndex) => (
-      <div key={pageIndex} className={styles.backgroundPage}>
-        {backgrounds
-          .slice(
-            pageIndex * backgroundsPerPage,
-            (pageIndex + 1) * backgroundsPerPage
-          )
-          .map((background) => (
-            <div
-              key={background.id}
-              className={styles.backgroundOption}
-              onClick={() => handleBackgroundSelection(background)}
-            >
-              <div className={styles.tooltipWrapper}>
-                <video
-                  src={background.src}
-                  alt={background.alt}
-                  muted
-                  loop
-                  playsInline
-                  className={styles.backgroundVideo}
-                ></video>
-                <span className={styles.tooltiptext}>{background.note}</span>
+            <h2>Backgrounds</h2>
+            <div className={styles.backgroundScrollContainer}>
+              <button 
+                className={`${styles.scrollButton} ${styles.scrollLeft}`} 
+                onClick={() => handleScroll('left')}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+                  <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+                </svg>
+              </button>
+              <div className={styles.backgroundOptions} ref={scrollContainerRef}>
+                {backgrounds.map((background) => (
+                  <div
+                    key={background.id}
+                    className={`${styles.backgroundOption} ${
+                      selectedBackground?.id === background.id ? styles.selected : ''
+                    }`}
+                    onClick={() => handleBackgroundSelection(background)}
+                  >
+                    <video src={background.src} muted loop />
+                    <span className={styles.backgroundLabel}>{background.note}</span>
+                  </div>
+                ))}
               </div>
+              <button 
+                className={`${styles.scrollButton} ${styles.scrollRight}`} 
+                onClick={() => handleScroll('right')}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+                  <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
+                </svg>
+              </button>
             </div>
-          ))}
-      </div>
-    ))}
-  </div>
-</div>
+          </div>
 
           <MusicPlayer />
         </aside>
         <button
           className={`${styles.toggleButton} ${
             sidebarOpen ? styles.buttonOpen : styles.buttonClosed
-          }`}
+          } ${zenMode ? styles.hidden : ''}`}
           onClick={toggleSidebar}
         >
           {sidebarOpen ? (
@@ -293,12 +367,12 @@ useEffect(() => {
           )}
         </main>
       </div>
-      <div className={styles.createdByLabel}>
+      <div className={`${styles.createdByLabel} ${zenMode ? styles.hidden : ''}`}>
         Wallpaper by: {selectedBackground.createdby}
       </div>
      <button className={`${styles.zenModeButton} ${zenMode ? styles.active : ''}`} onClick={toggleZenMode} aria-label="Toggle Zen Mode" >
  <span className={styles.moonIcon}></span>
       </button>
-    </>
+    </ErrorBoundary>
   );
 }

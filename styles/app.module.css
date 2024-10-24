@@ -5,6 +5,7 @@
   overflow: hidden;
   height: 100%;
   width: 100%;
+  z-index: 1;
 }
 
 .videoBackground {
@@ -13,13 +14,8 @@
   left: 0;
   width: 100%;
   height: 100%;
-  overflow: hidden;
   object-fit: cover;
   z-index: -1;
-  background-color: #282828;
-  pointer-events: none;
-  user-select: none;
-  filter: brightness(0.8); /* Darkens the background slightly for contrast */
 }
 
 .main {
@@ -218,118 +214,119 @@
   font-size: 18px;
   font-weight: 700;
   margin-bottom: 15px;
+  color: #ff7b00;
 }
 
-.backgroundPages {
+.backgroundScrollContainer {
+  position: relative;
+  overflow: hidden;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.backgroundOptions {
   display: flex;
   overflow-x: auto;
-  width: 100%;
-  transition: transform 0.3s ease;
+  scroll-behavior: smooth;
+  padding: 10px;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
 }
 
-.backgroundPage {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: repeat(2, 1fr);
-  gap: 10px;
-  margin-left: 10px;
-  margin-top: 15px;
-  margin-bottom: 15px;
-  width: 100%;
-  flex: 0 0 100%;
-}
-/* Tooltip Container */
-/* Tooltip Container */
-.tooltipWrapper {
-  position: relative;
-  display: inline-block;
-  width: 100%; /* Ensures it covers the backgroundOption */
-  height: 100%; /* Matches the size of the parent */
+.backgroundOptions::-webkit-scrollbar {
+  display: none; /* WebKit */
 }
 
-/* Tooltip Text */
-.tooltipWrapper .tooltiptext {
-  visibility: hidden;
-  opacity: 0;
-  width: 120px;
-  background-color: #333;
-  color: #fff;
-  text-align: center;
-  border-radius: 6px;
-  padding: 5px;
-  position: absolute;
-  z-index: 1;
-  bottom: 125%; /* Tooltip above the element */
-  left: 50%;
-  margin-left: -60px; /* Centers tooltip horizontally */
-  transition: opacity 0.3s ease, transform 0.3s ease;
-  transform: translateY(10px); /* Starts tooltip slightly below */
-  pointer-events: none; /* Prevent interaction with tooltip itself */
-  font-size: 14px;
-}
-
-/* Tooltip Arrow */
-.tooltipWrapper .tooltiptext::after {
-  content: "";
-  position: absolute;
-  top: 100%; /* Arrow pointing down */
-  left: 50%;
-  margin-left: -5px;
-  border-width: 5px;
-  border-style: solid;
-  border-color: #333 transparent transparent transparent;
-}
-
-/* Tooltip visible on hover */
-.tooltipWrapper:hover .tooltiptext {
-  visibility: visible;
-  opacity: 1;
-  transform: translateY(0); /* Animates tooltip into view */
-}
 .backgroundOption {
-  aspect-ratio: 16 / 9;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border: 2px solid transparent;
-  transition: all 0.3s ease;
-  border-radius: 10px;
+  flex: 0 0 auto;
+  width: 150px;
+  height: 100px;
+  margin-right: 10px;
+  position: relative;
+  border-radius: 8px;
   overflow: hidden;
   cursor: pointer;
-  filter: brightness(0.9); /* Adds brightness control */
+  transition: transform 0.2s ease;
 }
 
 .backgroundOption:hover {
-  border-color: #ff7b00;
   transform: scale(1.05);
-  position: relative;
 }
-.backgroundOption:hover .tooltiptext {
-  visibility: visible;
-  opacity: 1;
-  transform: translateY(0);
+
+.backgroundOption.selected {
+  box-shadow: 0 0 0 2px #ff7b00;
 }
+
 .backgroundOption video {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: 8px;
+}
+
+.backgroundLabel {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 5px;
+  font-size: 12px;
+  text-align: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.backgroundOption:hover .backgroundLabel {
+  opacity: 1;
+}
+
+.scrollButton {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 1;
+  transition: background-color 0.3s ease;
+}
+
+.scrollButton:hover {
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+.scrollLeft {
+  left: 5px;
+}
+
+.scrollRight {
+  right: 5px;
 }
 
 .pageIndicators {
   display: flex;
   justify-content: center;
-  margin-top: 10px;
+  margin-top: 15px;
 }
 
 .pageIndicator {
-  width: 10px;
-  height: 10px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
   background-color: #555;
   margin: 0 5px;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  border: none;
+  padding: 0;
 }
 
 .pageIndicator.active {
@@ -390,7 +387,7 @@
   justify-content: center;
   align-items: center;
   overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* Subtle shadow for zen button */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .zenModeButton:hover {
@@ -616,4 +613,75 @@
     transform: rotateY(0deg);
     opacity: 0;
   }
+}
+
+@media (max-width: 768px) {
+  .backgroundPage {
+    grid-template-columns: 1fr;
+  }
+}
+
+.wallpaperLoader {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+}
+
+.wallpaperSpinner {
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top: 3px solid #ff7b00;
+  width: 30px;
+  height: 30px;
+  animation: wallpaperSpin 1s linear infinite;
+}
+
+@keyframes wallpaperSpin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.backgroundLoader {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1000;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.5);
+  border-radius: 50%;
+}
+
+.backgroundLoaderSpinner {
+  width: 30px;
+  height: 30px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-top: 3px solid #ff7b00;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.hidden {
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transition: opacity 0.3s ease, pointer-events 0.3s ease;
+}
+
+.zenMode .sidebar,
+.zenMode .toggleButton,
+.zenMode .selectionBar,
+.zenMode .createdByLabel {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease, pointer-events 0.3s ease;
 }
