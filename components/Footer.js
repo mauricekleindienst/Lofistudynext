@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import styles from '../styles/Footer.module.css';
 import Image from 'next/image';
-import { FaTiktok, FaInstagram } from 'react-icons/fa';
+import { FaTiktok, FaInstagram, FaGlobe } from 'react-icons/fa';
 
 export default function Footer() {
     return (
@@ -43,7 +43,7 @@ export default function Footer() {
                             <FaInstagram size={24} />
                         </Link>
                         <Link href="https://www.mousewerk.de" target="_blank" rel="noopener noreferrer">
-                            <FaInstagram size={24} />
+                            <FaGlobe size={24} />
                         </Link>
                     </div>
                 </div>
