@@ -130,10 +130,12 @@ useEffect(() => {
   }, []);
 
   useEffect(() => {
-    if (status !== "loading") {
+    if (status === "loading" || status === "unauthenticated") {
+      setShowLoading(true);
+    } else {
       setTimeout(() => {
         setShowLoading(false);
-      }, 6000);
+      }, 2000);
     }
   }, [status]);
 
