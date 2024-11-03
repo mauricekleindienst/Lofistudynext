@@ -12,6 +12,17 @@ import LiveChat from "../components/LiveChat";
 import DraggableIframe from "../components/DraggableIframe";
 import CookieBanner from "../components/CookieBanner";
 import { ErrorBoundary } from "react-error-boundary";
+
+// Define the default background
+const DEFAULT_BACKGROUND = {
+  id: 1,
+  src: "/backgrounds/Couch.mp4",
+  alt: "Couch",
+  note: "Couch",
+  createdby: "Lo-Fi.study",
+  priority: true
+};
+
 const backgrounds = [
   { id: 1, src: "/backgrounds/Couch.mp4", alt: "Couch", note: "Couch", priority: true },
   { id: 2, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Rain.mp4", alt: "Rain", note: "Rain",  createdby: "Lo-Fi.study", priority: true },
@@ -48,7 +59,7 @@ export default function Study() {
   const { roomUrl } = router.query;
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [currentTime, setCurrentTime] = useState(new Date().toLocaleTimeString());
-  const [selectedBackground, setSelectedBackground] = useState(backgrounds[0]);
+  const [selectedBackground, setSelectedBackground] = useState(DEFAULT_BACKGROUND);
   const [visibleComponents, setVisibleComponents] = useState({
     pomodoro: false,
     note: false,
@@ -113,21 +124,6 @@ useEffect(() => {
     }
     return () => clearTimeout(timeoutId);
   }, [showLoading]);
-
-  useEffect(() => {
-    const savedBackgroundId = localStorage.getItem('selectedBackgroundId');
-    let initialBackground;
-
-    if (savedBackgroundId) {
-      const savedBackground = backgrounds.find(bg => bg.id === parseInt(savedBackgroundId));
-      initialBackground = savedBackground || backgrounds[0]; // Use the first background as default
-    } else {
-      initialBackground = backgrounds[0]; // Use the first background as default
-    }
-
-    setSelectedBackground(initialBackground);
-    setShowLoading(false);
-  }, []);
 
   useEffect(() => {
     if (roomUrl) {
@@ -228,7 +224,6 @@ useEffect(() => {
   const handleBackgroundSelection = useCallback((background) => {
     setIsBackgroundLoading(true);
     setSelectedBackground(background);
-    localStorage.setItem('selectedBackgroundId', background.id.toString());
   }, []);
 
   const handleScroll = (direction) => {
