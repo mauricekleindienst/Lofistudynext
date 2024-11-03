@@ -13,24 +13,24 @@ import DraggableIframe from "../components/DraggableIframe";
 import CookieBanner from "../components/CookieBanner";
 import { ErrorBoundary } from "react-error-boundary";
 const backgrounds = [
-  { id: 1, src: "/backgrounds/Couch.mp4", alt: "Couch", note: "Couch" },
-  { id: 2, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Rain.mp4", alt: "Rain", note: "Rain", createdby: "Lo-Fi.study" },
-  { id: 3, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Train.mp4", alt: "Train", note: "Train", createdby: "Lo-Fi.study" },
-  { id: 4, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Classroom.mp4", alt: "Classroom", note: "Classroom" , createdby: "Lo-Fi.study"},
-  { id: 5, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Autumn.mp4", alt: "Autumn", note: "Autumn", createdby: "Lo-Fi.study" },
-  { id: 6, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Night.mp4", alt: "Night", note: "Night", createdby: "Lo-Fi.study" },
-  { id: 7, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Skyrim.mp4", alt: "Skyrim", note: "Skyrim" , createdby: "Skyrim"},
-  { id: 8, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Train2.mp4", alt: "Train2", note: "Train2", createdby: "Lo-Fi.study" },
-  { id: 9, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Chillroom.mp4", alt: "Chillroom", note: "Chillroom", createdby: "Lo-Fi.study" },
-  { id: 10, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/cables.mp4", alt: "Cables", note: "Cables" , createdby: "Lo-Fi.study" },
-  { id: 11, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/winter.mp4", alt: "Winter", note: "Winter", createdby: "Lo-Fi.study"  },
-  { id: 12, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/study_girl.mp4", alt: "StudyGirl", note: "StudyGirl" , createdby: "Lo-Fi.study" },
-  { id: 13, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/coffee.mp4", alt: "Coffee", note: "Coffee" , createdby: "Lo-Fi.study" },
-  { id: 14, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Minecraft.mp4", alt: "Minecraft", note: "Minecraft" , createdby: "Mojang" },
-  { id: 15, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Darkroom.mp4", alt: "Darkroom", note: "Darkroom" , createdby: "Lo-Fi.study" },
-  { id: 16, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Snowtrain.mp4", alt: "Snowtrain", note: "Snowtrain" , createdby: "Lo-Fi.study" },
-  { id: 17, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Garden.mp4", alt: "Garden", note: "Garden" , createdby: "Lo-Fi.study" },
-  { id: 18, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/japannight.mp4", alt: "japannight", note: "japannight" , createdby: "Lo-Fi.study" },
+  { id: 1, src: "/backgrounds/Couch.mp4", alt: "Couch", note: "Couch", priority: true },
+  { id: 2, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Rain.mp4", alt: "Rain", note: "Rain",  createdby: "Lo-Fi.study", priority: true },
+  { id: 3, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Train.mp4", alt: "Train", note: "Train", createdby: "Lo-Fi.study", priority: false },
+  { id: 4, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Classroom.mp4", alt: "Classroom", note: "Classroom", createdby: "Lo-Fi.study", priority: false },
+  { id: 5, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Autumn.mp4", alt: "Autumn", note: "Autumn", createdby: "Lo-Fi.study", priority: false },
+  { id: 6, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Night.mp4", alt: "Night", note: "Night", createdby: "Lo-Fi.study", priority: false },
+  { id: 7, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Skyrim.mp4", alt: "Skyrim", note: "Skyrim", createdby: "Skyrim", priority: false },
+  { id: 8, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Train2.mp4", alt: "Train2", note: "Train2", createdby: "Lo-Fi.study", priority: false },
+  { id: 9, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Chillroom.mp4", alt: "Chillroom", note: "Chillroom", createdby: "Lo-Fi.study", priority: false },
+  { id: 10, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/cables.mp4", alt: "Cables", note: "Cables", createdby: "Lo-Fi.study", priority: false },
+  { id: 11, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/winter.mp4", alt: "Winter", note: "Winter", createdby: "Lo-Fi.study", priority: false },
+  { id: 12, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/study_girl.mp4", alt: "StudyGirl", note: "StudyGirl", createdby: "Lo-Fi.study", priority: false },
+  { id: 13, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/coffee.mp4", alt: "Coffee", note: "Coffee", createdby: "Lo-Fi.study", priority: false },
+  { id: 14, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Minecraft.mp4", alt: "Minecraft", note: "Minecraft", createdby: "Mojang", priority: false },
+  { id: 15, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Darkroom.mp4", alt: "Darkroom", note: "Darkroom", createdby: "Lo-Fi.study", priority: false },
+  { id: 16, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Snowtrain.mp4", alt: "Snowtrain", note: "Snowtrain", createdby: "Lo-Fi.study", priority: false },
+  { id: 17, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Garden.mp4", alt: "Garden", note: "Garden", createdby: "Lo-Fi.study", priority: false },
+  { id: 18, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/japannight.mp4", alt: "japannight", note: "japannight", createdby: "Lo-Fi.study", priority: false },
 ];
 const messages = [
   "Pouring Coffee",
@@ -49,32 +49,19 @@ export default function Study() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [currentTime, setCurrentTime] = useState(new Date().toLocaleTimeString());
   const [selectedBackground, setSelectedBackground] = useState(backgrounds[0]);
-  const [visibleComponents, setVisibleComponents] = useState({});
+  const [visibleComponents, setVisibleComponents] = useState({
+    pomodoro: false,
+    note: false,
+    calendar: false,
+    chat: false
+  });
   const [videoRoomUrl, setVideoRoomUrl] = useState("");
   const [showLoading, setShowLoading] = useState(true);
-  const [currentPage, setCurrentPage] = useState(0);
   const [zenMode, setZenMode] = useState(false);
   const [messageIndex, setMessageIndex] = useState(0);
-  const backgroundsPerPage = 6;
-  const totalPages = Math.ceil(backgrounds.length / backgroundsPerPage);
   const scrollContainerRef = useRef(null);
   const videoRef = useRef(null);
   const [isBackgroundLoading, setIsBackgroundLoading] = useState(true);
-
-  const getCurrentPageBackgrounds = () => {
-    const start = currentPage * backgroundsPerPage;
-    const end =
-      start + backgroundsPerPage > backgrounds.length
-        ? backgrounds.length
-        : start + backgroundsPerPage;
-    return backgrounds.slice(start, end);
-  };
-
-  const memoizedBackgrounds = useMemo(() => getCurrentPageBackgrounds(), [currentPage, backgrounds]);
-
-  const memoizedHandleBackgroundSelection = useCallback((background) => {
-    setSelectedBackground(background);
-  }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -93,12 +80,39 @@ useEffect(() => {
     };
   }, []);
   useEffect(() => {
-    backgrounds.forEach((background) => {
-      const video = document.createElement("video");
-      video.src = background.src;
-      video.preload = "auto";
-    });
+    // Only preload the initial background and maybe 1-2 others
+    if (videoRef.current) {
+      const initialBackground = backgrounds.find(bg => bg.priority) || backgrounds[0];
+      videoRef.current.src = initialBackground.src;
+      videoRef.current.load();
+    }
+
+    // Only preload priority backgrounds initially
+    backgrounds
+      .filter(bg => bg.priority)
+      .forEach((background) => {
+        const video = document.createElement("video");
+        video.src = background.src;
+        video.preload = "auto";
+      });
   }, []);
+
+  useEffect(() => {
+    let timeoutId;
+    if (!showLoading) {
+      // Start loading non-priority backgrounds after initial load
+      timeoutId = setTimeout(() => {
+        backgrounds
+          .filter(bg => !bg.priority)
+          .forEach((background) => {
+            const video = document.createElement("video");
+            video.src = background.src;
+            video.preload = "auto";
+          });
+      }, 10000); // Wait 10 seconds after initial load
+    }
+    return () => clearTimeout(timeoutId);
+  }, [showLoading]);
 
   useEffect(() => {
     const savedBackgroundId = localStorage.getItem('selectedBackgroundId');
@@ -133,11 +147,30 @@ useEffect(() => {
     if (status === "loading" || status === "unauthenticated") {
       setShowLoading(true);
     } else {
-      setTimeout(() => {
-        setShowLoading(false);
-      }, 2000);
+      // Wait for both the timer and video to be ready
+      const timer = setTimeout(() => {
+        if (!isBackgroundLoading) {
+          setShowLoading(false);
+        } else {
+          // If video isn't ready yet, wait for it
+          const checkVideo = setInterval(() => {
+            if (!isBackgroundLoading) {
+              setShowLoading(false);
+              clearInterval(checkVideo);
+            }
+          }, 500);
+          
+          // Failsafe: don't wait longer than 8 seconds total
+          setTimeout(() => {
+            clearInterval(checkVideo);
+            setShowLoading(false);
+          }, 8000);
+        }
+      }, 6000);
+
+      return () => clearTimeout(timer);
     }
-  }, [status]);
+  }, [status, isBackgroundLoading]);
 
   useEffect(() => {
     const preloadBackgrounds = async () => {
@@ -191,10 +224,6 @@ useEffect(() => {
       };
     }
   }, [selectedBackground]);
-
-  const handlePageChange = useCallback((newPage) => {
-    setCurrentPage(newPage);
-  }, []);
 
   const handleBackgroundSelection = useCallback((background) => {
     setIsBackgroundLoading(true);
@@ -271,6 +300,26 @@ useEffect(() => {
     }
   };
 
+  const renderComponent = (componentName) => {
+    if (!visibleComponents[componentName]) return null;
+
+    switch (componentName) {
+      case "pomodoro":
+        return <PomodoroTimer onMinimize={() => handleIconClick("pomodoro")} />;
+      case "note":
+        return <Notes onMinimize={() => handleIconClick("note")} />;
+      case "calendar":
+        return <Calendar onMinimize={() => handleIconClick("calendar")} />;
+      case "chat":
+        return <LiveChat
+          onMinimize={() => handleIconClick("chat")}
+          userName={getFirstName(session.user.name)}
+        />;
+      default:
+        return null;
+    }
+  };
+
   return (
     <ErrorBoundary>
       <CustomHeader />
@@ -282,21 +331,10 @@ useEffect(() => {
         onIconClick={handleIconClick}
       />
       
-      {visibleComponents.pomodoro && (
-        <PomodoroTimer onMinimize={() => handleIconClick("pomodoro")} />
-      )}
-      {visibleComponents.note && (
-        <Notes onMinimize={() => handleIconClick("note")} />
-      )}
-      {visibleComponents.calendar && (
-        <Calendar onMinimize={() => handleIconClick("calendar")} />
-      )}
-      {visibleComponents.chat && (
-        <LiveChat
-          onMinimize={() => handleIconClick("chat")}
-          userName={getFirstName(session.user.name)}
-        />
-      )}
+      {renderComponent("pomodoro")}
+      {renderComponent("note")}
+      {renderComponent("calendar")}
+      {renderComponent("chat")}
       <div className={`${styles.container} ${zenMode ? styles.zenMode : ''}`}>
         {selectedBackground && (
           <video
