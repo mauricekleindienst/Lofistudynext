@@ -4,17 +4,18 @@ import { debounce } from 'lodash';
 import styles from '../styles/MusicPlayer.module.css';
 
 const initialTracks = [
-  { id: 1, title: 'lofi hip hop radio 📚', videoId: 'jfKfPfyJRdk' , channelName: 'LofiGirl', channelUrl: 'https://www.youtube.com/@LofiGirl' },
-  { id: 2, title: 'medieval lofi radio 🏰', videoId: '_uMuuHk_KkQ' , channelName: 'LofiGirl', channelUrl: 'https://www.youtube.com/@LofiGirl' },
-  { id: 3, title: 'asian lofi radio ⛩️', videoId: 'Na0w3Mz46GA' , channelName: 'LofiGirl', channelUrl: 'https://www.youtube.com/@LofiGirl' },
-  { id: 4, title: 'peaceful piano radio 🎹', videoId: '4oStw0r33so' , channelName: 'LofiGirl', channelUrl: 'https://www.youtube.com/@LofiGirl' },
-  { id: 5, title: 'synthwave radio 🌌', videoId: '4xDzrJKXOOY' , channelName: 'LofiGirl', channelUrl: 'https://www.youtube.com/@LofiGirl' },
-  { id: 6, title: 'dark ambient radio 🌃', videoId: 'S_MOd40zlYU' , channelName: 'LofiGirl', channelUrl: 'https://www.youtube.com/@LofiGirl' },
-  { id: 7, title: 'dark academia 🌓', videoId: 'SllpB3W5f6s' , channelName: 'Toxic Drunker', channelUrl: 'https://www.youtube.com/@ToxicDrunker_' },
-  { id: 8, title: 'jazz music ☕', videoId: 'MYPVQccHhAQ' , channelName: 'Relaxing Jazz Piano', channelUrl: 'https://www.youtube.com/@relaxingjazzpiano6491' },
-  { id: 9, title: 'lofi Pokemon mix 🏝️', videoId: '6CjpgFOOtuI' , channelName: 'STUDIO MATCHA US', channelUrl: 'https://www.youtube.com/@LoFi_Pokemon_Matcha' },
-  { id: 10, title: 'skyrim soundtrack ❄️', videoId: '_Z1VzsE1GVg' , channelName: 'Aaronmn7', channelUrl: 'https://www.youtube.com/@AeronN7' },
-  { id: 11, title: 'animal crossing 🌳', videoId: 'V6GUhCxMDLg' , channelName: 'RemDaBom', channelUrl: 'https://www.youtube.com/@RemDaBom' },
+  { id: 1, title: 'Christmas Lofi Radio 🎄', videoId: 'pfiCNAc2AgU' , channelName: 'LofiGirl', channelUrl: 'https://www.youtube.com/@LofiGirl' },
+  { id: 2, title: 'lofi hip hop radio 📚', videoId: 'jfKfPfyJRdk' , channelName: 'LofiGirl', channelUrl: 'https://www.youtube.com/@LofiGirl' },
+  { id: 3, title: 'medieval lofi radio 🏰', videoId: '_uMuuHk_KkQ' , channelName: 'LofiGirl', channelUrl: 'https://www.youtube.com/@LofiGirl' },
+  { id: 4, title: 'asian lofi radio ⛩️', videoId: 'Na0w3Mz46GA' , channelName: 'LofiGirl', channelUrl: 'https://www.youtube.com/@LofiGirl' },
+  { id: 5, title: 'peaceful piano radio 🎹', videoId: '4oStw0r33so' , channelName: 'LofiGirl', channelUrl: 'https://www.youtube.com/@LofiGirl' },
+  { id: 6, title: 'synthwave radio 🌌', videoId: '4xDzrJKXOOY' , channelName: 'LofiGirl', channelUrl: 'https://www.youtube.com/@LofiGirl' },
+  { id: 7, title: 'dark ambient radio 🌃', videoId: 'S_MOd40zlYU' , channelName: 'LofiGirl', channelUrl: 'https://www.youtube.com/@LofiGirl' },
+  { id: 8, title: 'dark academia 🌓', videoId: 'SllpB3W5f6s' , channelName: 'Toxic Drunker', channelUrl: 'https://www.youtube.com/@ToxicDrunker_' },
+  { id: 9, title: 'jazz music ☕', videoId: 'MYPVQccHhAQ' , channelName: 'Relaxing Jazz Piano', channelUrl: 'https://www.youtube.com/@relaxingjazzpiano6491' },
+  { id: 10, title: 'lofi Pokemon mix 🏝️', videoId: '6CjpgFOOtuI' , channelName: 'STUDIO MATCHA US', channelUrl: 'https://www.youtube.com/@LoFi_Pokemon_Matcha' },
+  { id: 11, title: 'skyrim soundtrack ❄️', videoId: '_Z1VzsE1GVg' , channelName: 'Aaronmn7', channelUrl: 'https://www.youtube.com/@AeronN7' },
+  { id: 12, title: 'animal crossing 🌳', videoId: 'V6GUhCxMDLg' , channelName: 'RemDaBom', channelUrl: 'https://www.youtube.com/@RemDaBom' },
 ];
 
 export default function MusicPlayer({ onMinimize }) {
