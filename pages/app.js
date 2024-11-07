@@ -15,10 +15,10 @@ import { ErrorBoundary } from "react-error-boundary";
 
 // Define the default background
 const DEFAULT_BACKGROUND = {
-  id: 1,
-  src: "/backgrounds/Couch.mp4",
-  alt: "Couch",
-  note: "Couch",
+  id: 11,
+  src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/winter.mp4",
+  alt: "Winter",
+  note: "Winter",
   createdby: "Lo-Fi.study",
   priority: true
 };
@@ -72,7 +72,7 @@ export default function Study() {
   const [messageIndex, setMessageIndex] = useState(0);
   const scrollContainerRef = useRef(null);
   const videoRef = useRef(null);
-  const [isBackgroundLoading, setIsBackgroundLoading] = useState(true);
+  const [isBackgroundLoading, setIsBackgroundLoading] = useState(false);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -107,23 +107,6 @@ useEffect(() => {
         video.preload = "auto";
       });
   }, []);
-
-  useEffect(() => {
-    let timeoutId;
-    if (!showLoading) {
-      // Start loading non-priority backgrounds after initial load
-      timeoutId = setTimeout(() => {
-        backgrounds
-          .filter(bg => !bg.priority)
-          .forEach((background) => {
-            const video = document.createElement("video");
-            video.src = background.src;
-            video.preload = "auto";
-          });
-      }, 10000); // Wait 10 seconds after initial load
-    }
-    return () => clearTimeout(timeoutId);
-  }, [showLoading]);
 
   useEffect(() => {
     if (roomUrl) {
