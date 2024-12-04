@@ -125,83 +125,100 @@ useEffect(() => {
   useEffect(() => {
     if (status === "loading" || status === "unauthenticated") {
       setShowLoading(true);
-    } else {
-      // Wait for both the timer and video to be ready
-      const timer = setTimeout(() => {
+      return;
+    }
+
+    const minLoadTime = 2000; // Minimum time to show loading screen
+    const loadingTimeout = setTimeout(() => {
+      if (!isBackgroundLoading) {
+        setShowLoading(false);
+      }
+    }, minLoadTime);
+
+    // If background is still loading after min time, wait for it
+    if (isBackgroundLoading) {
+      const checkInterval = setInterval(() => {
         if (!isBackgroundLoading) {
           setShowLoading(false);
-        } else {
-          // If video isn't ready yet, wait for it
-          const checkVideo = setInterval(() => {
-            if (!isBackgroundLoading) {
-              setShowLoading(false);
-              clearInterval(checkVideo);
-            }
-          }, 500);
-          
-          // Failsafe: don't wait longer than 8 seconds total
-          setTimeout(() => {
-            clearInterval(checkVideo);
-            setShowLoading(false);
-          }, 8000);
+          clearInterval(checkInterval);
         }
-      }, 6000);
+      }, 500);
 
-      return () => clearTimeout(timer);
+      // Failsafe: don't wait longer than 5 seconds total
+      const failsafe = setTimeout(() => {
+        clearInterval(checkInterval);
+        setShowLoading(false);
+      }, 5000);
+
+      return () => {
+        clearInterval(checkInterval);
+        clearTimeout(failsafe);
+      };
     }
+
+    return () => clearTimeout(loadingTimeout);
   }, [status, isBackgroundLoading]);
 
   useEffect(() => {
-    const preloadBackgrounds = async () => {
-      const currentIndex = backgrounds.findIndex(bg => bg.id === selectedBackground.id);
-      const preloadRange = 2; // Preload 2 backgrounds before and after the current one
+    const preloadCache = new Map();
 
-      for (let i = currentIndex - preloadRange; i <= currentIndex + preloadRange; i++) {
-        if (i >= 0 && i < backgrounds.length) {
-          const video = document.createElement("video");
-          video.src = backgrounds[i].src;
-          video.preload = "auto";
-        }
-      }
+    const preloadBackground = (src) => {
+      if (preloadCache.has(src)) return;
+
+      const video = document.createElement('video');
+      video.preload = 'auto';
+      video.src = src;
+      preloadCache.set(src, video);
     };
 
-    preloadBackgrounds();
-  }, [selectedBackground]);
+    // Preload priority backgrounds
+    backgrounds
+      .filter(bg => bg.priority)
+      .forEach(bg => preloadBackground(bg.src));
+
+    return () => {
+      preloadCache.clear();
+    };
+  }, []);
 
   useEffect(() => {
-    if (selectedBackground && videoRef.current) {
-      setIsBackgroundLoading(true);
-      videoRef.current.src = selectedBackground.src;
-      videoRef.current.load();
-      videoRef.current.play().catch(error => {
+    if (!selectedBackground || !videoRef.current) return;
+
+    setIsBackgroundLoading(true);
+    const video = videoRef.current;
+    video.src = selectedBackground.src;
+    video.load();
+
+    const handleVideoLoaded = () => {
+      setIsBackgroundLoading(false);
+      video.play().catch(error => {
         console.error('Error playing video:', error);
       });
+    };
 
-      const handleVideoLoaded = () => {
-        setIsBackgroundLoading(false);
-        clearTimeout(fallbackTimeout); // Clear the timeout if video loads successfully
-      };
+    const handleVideoError = () => {
+      console.error('Video loading failed, switching to fallback');
+      video.src = DEFAULT_BACKGROUND.src;
+      video.load();
+      video.play().catch(err => console.error('Error playing fallback video:', err));
+      setIsBackgroundLoading(false);
+    };
 
-      videoRef.current.addEventListener('loadeddata', handleVideoLoaded);
+    video.addEventListener('loadeddata', handleVideoLoaded);
+    video.addEventListener('error', handleVideoError);
 
-      // Set a timeout to switch to the fallback background after 3 seconds
-      const fallbackTimeout = setTimeout(() => {
-        if (isBackgroundLoading) {
-          console.warn('Switching to fallback background due to loading timeout');
-          const fallbackBackgroundUrl = "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Rain.mp4"; // Replace with your fallback URL
-          videoRef.current.src = fallbackBackgroundUrl;
-          videoRef.current.load();
-          videoRef.current.play().catch(err => console.error('Error playing fallback video:', err));
-        }
-      }, 3000); // 3 seconds
+    // Failsafe timeout
+    const loadingTimeout = setTimeout(() => {
+      if (isBackgroundLoading) {
+        handleVideoError();
+      }
+    }, 5000);
 
-      return () => {
-        if (videoRef.current) {
-          videoRef.current.removeEventListener('loadeddata', handleVideoLoaded);
-        }
-        clearTimeout(fallbackTimeout); // Clear the timeout on cleanup
-      };
-    }
+    return () => {
+      video.removeEventListener('loadeddata', handleVideoLoaded);
+      video.removeEventListener('error', handleVideoError);
+      clearTimeout(loadingTimeout);
+    };
   }, [selectedBackground]);
 
   const handleBackgroundSelection = useCallback((background) => {
