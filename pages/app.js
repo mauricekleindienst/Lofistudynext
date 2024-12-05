@@ -186,40 +186,115 @@ useEffect(() => {
 
     setIsBackgroundLoading(true);
     const video = videoRef.current;
-    video.src = selectedBackground.src;
-    video.load();
+    
+    // Keep track of mounting state
+    let isMounted = true;
 
     const handleVideoLoaded = () => {
+      if (!isMounted) return;
       setIsBackgroundLoading(false);
-      video.play().catch(error => {
-        console.error('Error playing video:', error);
-      });
+      
+      // Ensure video is playing and loops properly
+      const ensurePlayback = async () => {
+        try {
+          await video.play();
+          // Check periodically if video is still playing
+          const playbackCheck = setInterval(() => {
+            if (video.paused && !video.ended) {
+              video.play().catch(console.error);
+            }
+          }, 1000);
+          
+          return () => clearInterval(playbackCheck);
+        } catch (error) {
+          console.error('Error playing video:', error);
+          handleVideoError();
+        }
+      };
+      
+      ensurePlayback();
     };
 
     const handleVideoError = () => {
+      if (!isMounted) return;
       console.error('Video loading failed, switching to fallback');
-      video.src = DEFAULT_BACKGROUND.src;
-      video.load();
-      video.play().catch(err => console.error('Error playing fallback video:', err));
+      
+      // Try to recover by reloading current video first
+      try {
+        video.load();
+        video.play().catch(() => {
+          // If reload fails, switch to fallback
+          video.src = DEFAULT_BACKGROUND.src;
+          video.load();
+          video.play().catch(err => console.error('Error playing fallback video:', err));
+        });
+      } catch (err) {
+        console.error('Recovery failed:', err);
+      }
+      
       setIsBackgroundLoading(false);
     };
 
+    const handleVideoStall = () => {
+      if (!isMounted) return;
+      console.log('Video stalled, attempting recovery');
+      video.load();
+      video.play().catch(handleVideoError);
+    };
+
+    // Set up video properties
+    video.src = selectedBackground.src;
+    video.autoplay = true;
+    video.loop = true;
+    video.muted = true;
+    video.playsInline = true;
+    video.load();
+
+    // Add all relevant event listeners
     video.addEventListener('loadeddata', handleVideoLoaded);
     video.addEventListener('error', handleVideoError);
+    video.addEventListener('stalled', handleVideoStall);
+    video.addEventListener('pause', () => {
+      if (!video.ended) video.play().catch(console.error);
+    });
 
     // Failsafe timeout
     const loadingTimeout = setTimeout(() => {
-      if (isBackgroundLoading) {
+      if (isMounted && isBackgroundLoading) {
         handleVideoError();
       }
     }, 5000);
 
     return () => {
+      isMounted = false;
       video.removeEventListener('loadeddata', handleVideoLoaded);
       video.removeEventListener('error', handleVideoError);
+      video.removeEventListener('stalled', handleVideoStall);
       clearTimeout(loadingTimeout);
     };
   }, [selectedBackground]);
+
+  // Add this new effect to handle visibility changes
+  useEffect(() => {
+    if (!videoRef.current) return;
+
+    const handleVisibilityChange = () => {
+      const video = videoRef.current;
+      if (!video) return;
+
+      if (document.hidden) {
+        video.pause();
+      } else {
+        video.play().catch(console.error);
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, []);
 
   const handleBackgroundSelection = useCallback((background) => {
     setIsBackgroundLoading(true);
