@@ -416,6 +416,7 @@ useEffect(() => {
             loop
             muted
             playsInline
+            src={selectedBackground.src}
           />
         )}
         {isBackgroundLoading && (
