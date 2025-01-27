@@ -24,24 +24,24 @@ const DEFAULT_BACKGROUND = {
 };
 
 const backgrounds = [
-  { id: 1, src: "/backgrounds/Couch.mp4", alt: "Couch", note: "Couch", note: "Couch", createdby: "Lo-Fi.study", mood: "Cozy", timeOfDay: "Any", recommended: "Reading, Light Study", priority: true },
-  { id: 2, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Rain.mp4", alt: "Rain", note: "Rain", note: "Rain", createdby: "Lo-Fi.study", mood: "Calm", timeOfDay: "Any", recommended: "Deep Focus, Writing", priority: true },
-  { id: 3, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Train.mp4", alt: "Train", note: "Train", createdby: "Lo-Fi.study", mood: "Contemplative", timeOfDay: "Day", recommended: "Reading, Problem Solving", priority: false },
-  { id: 4, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Classroom.mp4", alt: "Classroom", note: "Classroom", createdby: "Lo-Fi.study", mood: "Focused", timeOfDay: "Day", recommended: "Academic Study, Note-taking", priority: false },
-  { id: 5, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Autumn.mp4", alt: "Autumn", note: "Autumn", createdby: "Lo-Fi.study", mood: "Peaceful", timeOfDay: "Day", recommended: "Creative Work, Reading", priority: false },
-  { id: 6, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Night.mp4", alt: "Night", note: "Night", createdby: "Lo-Fi.study", mood: "Serene", timeOfDay: "Night", recommended: "Late Night Study, Programming", priority: false },
-  { id: 7, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Skyrim.mp4", alt: "Skyrim", note: "Skyrim", createdby: "Skyrim", mood: "Adventurous", timeOfDay: "Any", recommended: "Creative Writing, Gaming Breaks", priority: false },
-  { id: 8, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Train2.mp4", alt: "Train2", note: "Train2", createdby: "Lo-Fi.study", mood: "Relaxed", timeOfDay: "Day", recommended: "Light Reading, Planning", priority: false },
-  { id: 9, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Chillroom.mp4", alt: "Chillroom", note: "Chillroom", createdby: "Lo-Fi.study", mood: "Chill", timeOfDay: "Any", recommended: "Casual Study, Brainstorming", priority: false },
-  { id: 10, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/cables.mp4", alt: "Cables", note: "Cables", createdby: "Lo-Fi.study", mood: "Tech", timeOfDay: "Any", recommended: "Programming, Technical Study", priority: false },
-  { id: 11, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/winter.mp4", alt: "Winter", note: "Winter", createdby: "Lo-Fi.study", mood: "Cozy", timeOfDay: "Day", recommended: "Focused Study, Research", priority: false },
-  { id: 12, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/study_girl.mp4", alt: "StudyGirl", note: "StudyGirl", createdby: "Lo-Fi.study", mood: "Focused", timeOfDay: "Day", recommended: "Long Study Sessions, Note-taking", priority: false },
-  { id: 13, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/coffee.mp4", alt: "Coffee", note: "Coffee", createdby: "Lo-Fi.study", mood: "Energetic", timeOfDay: "Morning", recommended: "Morning Study, Quick Reviews", priority: false },
-  { id: 14, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Minecraft.mp4", alt: "Minecraft", note: "Minecraft", createdby: "Mojang", mood: "Playful", timeOfDay: "Any", recommended: "Casual Learning, Creative Tasks", priority: false },
-  { id: 15, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Darkroom.mp4", alt: "Darkroom", note: "Darkroom", createdby: "Lo-Fi.study", mood: "Dark", timeOfDay: "Night", recommended: "Late Night Focus, Programming", priority: false },
-  { id: 16, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Snowtrain.mp4", alt: "Snowtrain", note: "Snowtrain", createdby: "Lo-Fi.study", mood: "Peaceful", timeOfDay: "Day", recommended: "Reading, Meditation", priority: false },
-  { id: 17, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Garden.mp4", alt: "Garden", note: "Garden", createdby: "Lo-Fi.study", mood: "Fresh", timeOfDay: "Day", recommended: "Creative Work, Light Study", priority: false },
-  { id: 18, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/japannight.mp4", alt: "japannight", note: "japannight", createdby: "Lo-Fi.study", mood: "Atmospheric", timeOfDay: "Night", recommended: "Night Study, Programming", priority: false },
+  { id: 1, src: "/backgrounds/Couch.mp4", alt: "Couch", note: "Couch", priority: true },
+  { id: 2, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Rain.mp4", alt: "Rain", note: "Rain",  createdby: "Lo-Fi.study", priority: true },
+  { id: 3, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Train.mp4", alt: "Train", note: "Train", createdby: "Lo-Fi.study", priority: false },
+  { id: 4, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Classroom.mp4", alt: "Classroom", note: "Classroom", createdby: "Lo-Fi.study", priority: false },
+  { id: 5, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Autumn.mp4", alt: "Autumn", note: "Autumn", createdby: "Lo-Fi.study", priority: false },
+  { id: 6, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Night.mp4", alt: "Night", note: "Night", createdby: "Lo-Fi.study", priority: false },
+  { id: 7, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Skyrim.mp4", alt: "Skyrim", note: "Skyrim", createdby: "Skyrim", priority: false },
+  { id: 8, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Train2.mp4", alt: "Train2", note: "Train2", createdby: "Lo-Fi.study", priority: false },
+  { id: 9, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Chillroom.mp4", alt: "Chillroom", note: "Chillroom", createdby: "Lo-Fi.study", priority: false },
+  { id: 10, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/cables.mp4", alt: "Cables", note: "Cables", createdby: "Lo-Fi.study", priority: false },
+  { id: 11, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/winter.mp4", alt: "Winter", note: "Winter", createdby: "Lo-Fi.study", priority: false },
+  { id: 12, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/study_girl.mp4", alt: "StudyGirl", note: "StudyGirl", createdby: "Lo-Fi.study", priority: false },
+  { id: 13, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/coffee.mp4", alt: "Coffee", note: "Coffee", createdby: "Lo-Fi.study", priority: false },
+  { id: 14, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Minecraft.mp4", alt: "Minecraft", note: "Minecraft", createdby: "Mojang", priority: false },
+  { id: 15, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Darkroom.mp4", alt: "Darkroom", note: "Darkroom", createdby: "Lo-Fi.study", priority: false },
+  { id: 16, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Snowtrain.mp4", alt: "Snowtrain", note: "Snowtrain", createdby: "Lo-Fi.study", priority: false },
+  { id: 17, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Garden.mp4", alt: "Garden", note: "Garden", createdby: "Lo-Fi.study", priority: false },
+  { id: 18, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/japannight.mp4", alt: "japannight", note: "japannight", createdby: "Lo-Fi.study", priority: false },
 ];
 const messages = [
   "Pouring Coffee",
@@ -82,14 +82,12 @@ export default function Study() {
     return () => clearInterval(interval); // Cleanup the interval on unmount
   }, []);
 useEffect(() => {
-    // Disable scrolling and set background color when the component mounts
+    // Disable scrolling when the component mounts
     document.body.style.overflow = 'hidden';
-    document.body.style.backgroundColor = '#1a1a1a';
 
-    // Re-enable scrolling and reset background color when the component unmounts
+    // Re-enable scrolling when the component unmounts
     return () => {
       document.body.style.overflow = 'auto';
-      document.body.style.backgroundColor = '';
     };
   }, []);
   useEffect(() => {
@@ -416,7 +414,6 @@ useEffect(() => {
             loop
             muted
             playsInline
-            src={selectedBackground.src}
           />
         )}
         {isBackgroundLoading && (
@@ -453,16 +450,10 @@ useEffect(() => {
                     className={`${styles.backgroundOption} ${
                       selectedBackground?.id === background.id ? styles.selected : ''
                     }`}
-                    onClick={() => handleBackgroundSelect(background)}
+                    onClick={() => handleBackgroundSelection(background)}
                   >
-                    <div className={styles.backgroundInfo}>
-                      <span className={styles.backgroundLabel}>{background.note}</span>
-                      <div className={styles.backgroundTooltip}>
-                        <p><strong>Mood:</strong> {background.mood}</p>
-                        <p><strong>Best Time:</strong> {background.timeOfDay}</p>
-                        <p><strong>Recommended for:</strong> {background.recommended}</p>
-                      </div>
-                    </div>
+                    <video src={background.src} muted loop />
+                    <span className={styles.backgroundLabel}>{background.note}</span>
                   </div>
                 ))}
               </div>
