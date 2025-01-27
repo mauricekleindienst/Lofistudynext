@@ -24,23 +24,27 @@ export default function Todo({ onMinimize }) {
   const [error, setError] = useState(null);
 
   const fetchTodosFromServer = useCallback(async () => {
-    if (session?.user?.email) {
-      setLoading(true);
-      setError(null);
-      try {
-        const response = await fetch(`/api/todos?email=${session.user.email}`);
-        if (response.ok) {
-          const data = await response.json();
-          setTodos(data.todos);
-        } else {
-          throw new Error("Failed to fetch todos");
-        }
-      } catch (error) {
-        console.error("Error fetching todos:", error);
-        setError("Failed to load todos. Please try again.");
-      } finally {
-        setLoading(false);
+    if (!session?.user?.email) return;
+
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await fetch(`/api/todos?email=${session.user.email}`);
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to fetch todos");
       }
+      
+      setTodos(data.todos.map(todo => ({
+        ...todo,
+        id: todo.id.toString() // Ensure ID is string for drag-drop
+      })));
+    } catch (error) {
+      console.error("Error fetching todos:", error);
+      setError(error.message || "Failed to load todos. Please try again.");
+    } finally {
+      setLoading(false);
     }
   }, [session]);
 
@@ -51,69 +55,81 @@ export default function Todo({ onMinimize }) {
   }, [status, fetchTodosFromServer]);
 
   const addTodo = async () => {
-    if (newTodo.trim() !== "" && session?.user?.email) {
-      const newTodoItem = {
-        id: Date.now(),
-        text: newTodo,
-        completed: false,
-        color: selectedColor,
-        position: todos.length + 1,
-      };
-      setTodos((prev) => [...prev, newTodoItem]);
-      setNewTodo("");
-      setError(null);
+    const trimmedTodo = newTodo.trim();
+    if (!trimmedTodo || !session?.user?.email) return;
 
-      try {
-        const response = await fetch("/api/todos", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            email: session.user.email,
-            text: newTodo,
-            color: selectedColor,
-          }),
-        });
+    const tempId = `temp-${Date.now()}`;
+    const newTodoItem = {
+      id: tempId,
+      text: trimmedTodo,
+      completed: false,
+      color: selectedColor,
+      position: todos.length + 1,
+    };
 
-        if (!response.ok) {
-          throw new Error("Failed to add todo");
-        }
-      } catch (error) {
-        console.error("Error adding todo:", error);
-        // Roll back optimistic update if server request fails
-        setTodos((prev) => prev.filter((todo) => todo.id !== newTodoItem.id));
-        setError("Failed to add todo. Please try again.");
+    setTodos((prev) => [...prev, newTodoItem]);
+    setNewTodo("");
+    setError(null);
+
+    try {
+      const response = await fetch("/api/todos", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: session.user.email,
+          text: trimmedTodo,
+          color: selectedColor,
+        }),
+      });
+
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to add todo");
       }
+
+      // Update the temporary ID with the real one from the server
+      setTodos((prev) =>
+        prev.map((todo) =>
+          todo.id === tempId ? { ...todo, id: data.id.toString() } : todo
+        )
+      );
+    } catch (error) {
+      console.error("Error adding todo:", error);
+      setTodos((prev) => prev.filter((todo) => todo.id !== tempId));
+      setError(error.message || "Failed to add todo. Please try again.");
     }
   };
 
   const toggleTodo = async (id) => {
-    if (session?.user?.email) {
-      const updatedTodos = todos.map((todo) =>
-        todo.id === id ? { ...todo, completed: !todo.completed } : todo
-      );
-      setTodos(updatedTodos);
-      setError(null);
+    if (!session?.user?.email) return;
 
-      try {
-        const todoToUpdate = updatedTodos.find((todo) => todo.id === id);
-        const response = await fetch("/api/todos", {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            id,
-            email: session.user.email,
-            completed: todoToUpdate.completed,
-          }),
-        });
+    const originalTodos = todos;
+    const updatedTodos = todos.map((todo) =>
+      todo.id === id ? { ...todo, completed: !todo.completed } : todo
+    );
+    setTodos(updatedTodos);
+    setError(null);
 
-        if (!response.ok) {
-          throw new Error("Failed to update todo");
-        }
-      } catch (error) {
-        console.error("Error updating todo:", error);
-        setError("Failed to update todo. Please try again.");
-        fetchTodosFromServer(); // Reload todos from server on failure
+    try {
+      const todoToUpdate = updatedTodos.find((todo) => todo.id === id);
+      const response = await fetch("/api/todos", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id,
+          email: session.user.email,
+          completed: todoToUpdate.completed,
+        }),
+      });
+
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to update todo");
       }
+    } catch (error) {
+      console.error("Error updating todo:", error);
+      setError(error.message || "Failed to update todo. Please try again.");
+      setTodos(originalTodos); // Roll back optimistic update on failure
     }
   };
 
@@ -146,8 +162,9 @@ export default function Todo({ onMinimize }) {
   
 
   const onDragEnd = async (result) => {
-    if (!result.destination) return;
+    if (!result.destination || !session?.user?.email) return;
 
+    const originalTodos = [...todos];
     const items = Array.from(todos);
     const [reorderedItem] = items.splice(result.source.index, 1);
     items.splice(result.destination.index, 0, reorderedItem);
@@ -173,13 +190,14 @@ export default function Todo({ onMinimize }) {
         }),
       });
 
+      const data = await response.json();
       if (!response.ok) {
-        throw new Error("Failed to reorder todos");
+        throw new Error(data.error || "Failed to reorder todos");
       }
     } catch (error) {
       console.error("Error reordering todos:", error);
-      setError("Failed to reorder todos. Please try again.");
-      fetchTodosFromServer(); // Reload todos from server on failure
+      setError(error.message || "Failed to reorder todos. Please try again.");
+      setTodos(originalTodos); // Restore original order on failure
     }
   };
 

@@ -1,11 +1,6 @@
-import { Pool } from "pg";
+import { PrismaClient } from '@prisma/client';
 
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: {
-    rejectUnauthorized: false,
-  },
-});
+const prisma = new PrismaClient();
 
 export default async function handler(req, res) {
   if (req.method !== "PUT") {
@@ -26,20 +21,17 @@ const reorderTodosHandler = async (req, res) => {
   }
 
   try {
-    const client = await pool.connect();
-    await client.query("BEGIN");
+    // Use Prisma transaction to ensure all updates succeed or none do
+    await prisma.$transaction(async (tx) => {
+      for (const { id, position } of newOrder) {
+        await tx.todos.update({
+          where: { id_email: { id, email } },
+          data: { position },
+        });
+      }
+    });
 
-    for (let i = 0; i < newOrder.length; i++) {
-      await client.query(
-        "UPDATE todos SET position = $1 WHERE id = $2 AND email = $3",
-        [i + 1, newOrder[i].id, email]
-      );
-    }
-
-    await client.query("COMMIT");
-    client.release();
-
-    res.status(200).json({ message: "Todos reordered successfully" });
+    return res.status(200).json({ message: 'Todos reordered successfully' });
   } catch (error) {
     console.error("Error reordering todos:", error);
     res.status(500).json({ error: "Internal server error" });
