@@ -146,13 +146,14 @@ export default function Todo({ onMinimize }) {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ id, email: session.user.email }),
         });
-  
+
+        const data = await response.json();
         if (!response.ok) {
-          throw new Error("Failed to delete todo");
+          throw new Error(data.error || "Failed to delete todo");
         }
       } catch (error) {
         console.error("Error deleting todo:", error);
-        setError("Failed to delete todo. Please try again.");
+        setError(error.message || "Failed to delete todo. Please try again.");
         
         // Roll back optimistic update on failure
         setTodos(originalTodos);
@@ -226,12 +227,13 @@ export default function Todo({ onMinimize }) {
           }),
         });
 
+        const data = await response.json();
         if (!response.ok) {
-          throw new Error("Failed to update todo");
+          throw new Error(data.error || "Failed to update todo");
         }
       } catch (error) {
         console.error("Error updating todo:", error);
-        setError("Failed to update todo. Please try again.");
+        setError(error.message || "Failed to update todo. Please try again.");
         fetchTodosFromServer(); // Reload todos from server on failure
       }
     }
