@@ -21,7 +21,7 @@ lo-fi.study is a platform that combines the lo-fi artstyle with a simple, distra
 3. Set your study timer.
 4. Start studying!
 
-![Lofi Study Interface](https://github.com/Lgsarius/Lofistudynext/blob/master/public/cover.png)
+![Lofi Study Interface](https://github.com/mauricekleindienst/Lofistudynext/blob/master/public/cover.png)
 
 ## License
 
