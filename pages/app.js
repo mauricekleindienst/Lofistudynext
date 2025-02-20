@@ -11,6 +11,7 @@ import Calendar from "../components/Calendar";
 import LiveChat from "../components/LiveChat";
 import DraggableIframe from "../components/DraggableIframe";
 import { ErrorBoundary } from "react-error-boundary";
+import ChallengeSidebar from '../components/ChallengeSidebar';
 
 // Define the default background
 const DEFAULT_BACKGROUND = {
@@ -488,6 +489,7 @@ useEffect(() => {
             />
           )}
         </main>
+        <ChallengeSidebar />
       </div>
       <div className={`${styles.createdByLabel} ${zenMode ? styles.hidden : ''}`}>
         Wallpaper by: {selectedBackground.createdby}

@@ -75,3 +75,34 @@ model Flashcard {
   completed Boolean  @default(false)
   createdAt DateTime @default(now())
 }
+
+model Challenge {
+  id          String    @id @default(cuid())
+  title       String
+  description String
+  reward      String
+  total       Int
+  type        String    // daily, weekly, monthly
+  category    String    // focus, consistency, early_bird, etc.
+  trackingType String   // pomodoro_daily, category_count, etc.
+  timeRequirement Json? // For time-based challenges
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  progress    Progress[]
+  
+  @@unique([title, type])
+}
+
+model Progress {
+  id          String    @id @default(cuid())
+  email       String
+  challengeId String
+  progress    Int
+  completed   Boolean   @default(false)
+  completedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  challenge   Challenge @relation(fields: [challengeId], references: [id])
+  
+  @@unique([email, challengeId])
+}

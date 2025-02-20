@@ -10,7 +10,8 @@
     "next-sitemap": "next-sitemap",
     "heroku-postbuild": "npm install --legacy-peer-deps && npm run build && npm run next-sitemap",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "seed-challenges": "node prisma/seed-challenges.js"
   },
   "dependencies": {
     "@chakra-ui/icons": "^2.1.1",
