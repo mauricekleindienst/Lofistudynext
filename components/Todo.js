@@ -257,30 +257,43 @@ export default function Todo({ onMinimize }) {
         {status === "authenticated" ? (
           <>
             <div className={styles.addTodo}>
-              <input
-                type="text"
-                value={newTodo}
-                onChange={(e) => setNewTodo(e.target.value)}
-                placeholder="Add a new todo..."
-                className={styles.todoInput}
-              />
-              <button onClick={addTodo} className={styles.addButton}>
+              <div className={styles.inputGroup}>
+                <input
+                  type="text"
+                  value={newTodo}
+                  onChange={(e) => setNewTodo(e.target.value)}
+                  placeholder="Add a new todo..."
+                  className={styles.todoInput}
+                  onKeyPress={(e) => {
+                    if (e.key === 'Enter') {
+                      addTodo();
+                    }
+                  }}
+                />
+              </div>
+              <div className={styles.colorPicker}>
+                {[
+                  "#ff7b00",
+                  "#00b894",
+                  "#0984e3",
+                  "#6c5ce7",
+                  "#e84393",
+                  "#00cec9"
+                ].map((color) => (
+                  <button
+                    key={color}
+                    style={{ backgroundColor: color }}
+                    className={`${styles.colorButton} ${
+                      selectedColor === color ? styles.selectedColor : ""
+                    }`}
+                    onClick={() => setSelectedColor(color)}
+                    title={`Select ${color} color`}
+                  />
+                ))}
+              </div>
+              <button onClick={addTodo} className={styles.addStandaloneButton}>
                 <FaPlus />
               </button>
-              <div className={styles.colorPicker}>
-                {["#ff7b00", "#00ff7b", "#7b00ff", "#ff007b", "#7bff00"].map(
-                  (color) => (
-                    <button
-                      key={color}
-                      style={{ backgroundColor: color }}
-                      className={`${styles.colorButton} ${
-                        selectedColor === color ? styles.selectedColor : ""
-                      }`}
-                      onClick={() => setSelectedColor(color)}
-                    />
-                  )
-                )}
-              </div>
             </div>
             {error && <div className={styles.error}>{error}</div>}
             {loading ? (
@@ -326,14 +339,37 @@ export default function Todo({ onMinimize }) {
                                     className={styles.todoCheckbox}
                                   />
                                   {editingTodo === todo.id ? (
-                                    <input
-                                      type="text"
-                                      value={editingText} // Use editingText state
-                                      onChange={(e) => setEditingText(e.target.value)}
-                                      onBlur={() => saveEditedTodo(todo.id)}
-                                      className={styles.editInput}
-                                      autoFocus
-                                    />
+                                    <div className={`${styles.todoHeader} ${styles.editing}`}>
+                                      <input
+                                        type="text"
+                                        value={editingText}
+                                        onChange={(e) => setEditingText(e.target.value)}
+                                        onKeyPress={(e) => {
+                                          if (e.key === 'Enter') {
+                                            saveEditedTodo(todo.id);
+                                          }
+                                          if (e.key === 'Escape') {
+                                            cancelEditingTodo();
+                                          }
+                                        }}
+                                        className={styles.editInput}
+                                        autoFocus
+                                      />
+                                      <div className={styles.editActions}>
+                                        <button
+                                          onClick={() => saveEditedTodo(todo.id)}
+                                          className={styles.saveButton}
+                                        >
+                                          Save
+                                        </button>
+                                        <button
+                                          onClick={cancelEditingTodo}
+                                          className={styles.cancelButton}
+                                        >
+                                          Cancel
+                                        </button>
+                                      </div>
+                                    </div>
                                   ) : (
                                     <span
                                       className={`${styles.todoText} ${
@@ -347,16 +383,16 @@ export default function Todo({ onMinimize }) {
                                     {editingTodo === todo.id ? (
                                       <>
                                         <button
-                                          onClick={() => saveEditedTodo(todo.id)}
-                                          className={styles.saveButton}
+                                          onClick={() => startEditingTodo(todo)}
+                                          className={styles.editButton}
                                         >
-                                          Save
+                                          <FaEdit />
                                         </button>
                                         <button
-                                          onClick={cancelEditingTodo}
-                                          className={styles.cancelButton}
+                                          onClick={() => deleteTodo(todo.id)}
+                                          className={styles.deleteButton}
                                         >
-                                          Cancel
+                                          <FaTrash />
                                         </button>
                                       </>
                                     ) : (

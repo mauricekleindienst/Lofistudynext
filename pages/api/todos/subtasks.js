@@ -1,112 +1,155 @@
-import { Pool } from "pg";
+import { PrismaClient } from '@prisma/client';
 
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: {
-    rejectUnauthorized: false,
-  },
-});
+const prisma = new PrismaClient();
 
 export default async function handler(req, res) {
-  const { method } = req;
-
-  switch (method) {
-    case "POST":
-      await addSubtaskHandler(req, res);
-      break;
-    case "PUT":
-      await updateSubtaskHandler(req, res);
-      break;
-    case "DELETE":
-      await deleteSubtaskHandler(req, res);
-      break;
-    default:
-      res.setHeader("Allow", ["POST", "PUT", "DELETE"]);
-      res.status(405).end(`Method ${method} Not Allowed`);
+  try {
+    switch (req.method) {
+      case 'POST':
+        return addSubtaskHandler(req, res);
+      case 'PUT':
+        return updateSubtaskHandler(req, res);
+      case 'DELETE':
+        return deleteSubtaskHandler(req, res);
+      default:
+        res.setHeader('Allow', ['POST', 'PUT', 'DELETE']);
+        return res.status(405).end(`Method ${req.method} Not Allowed`);
+    }
+  } catch (error) {
+    console.error('Error in subtask handler:', error);
+    return res.status(500).json({ error: 'Internal server error' });
+  } finally {
+    await prisma.$disconnect();
   }
 }
 
-const addSubtaskHandler = async (req, res) => {
+async function addSubtaskHandler(req, res) {
   const { todoId, email, text } = req.body;
 
   if (!todoId || !email || !text) {
-    return res
-      .status(400)
-      .json({ error: "TodoId, email, and text are required" });
+    return res.status(400).json({ error: 'TodoId, email, and text are required' });
   }
 
   try {
-    const client = await pool.connect();
-    const result = await client.query(
-      "INSERT INTO subtasks (todo_id, text, completed) VALUES ($1, $2, $3) RETURNING id",
-      [todoId, text, false]
-    );
-    client.release();
-    res
-      .status(200)
-      .json({ message: "Subtask added successfully", id: result.rows[0].id });
-  } catch (error) {
-    console.error("Error adding subtask:", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-};
+    // First verify the todo belongs to the user
+    const todo = await prisma.todos.findUnique({
+      where: {
+        id_email: {
+          id: parseInt(todoId),
+          email: email,
+        }
+      }
+    });
 
-const updateSubtaskHandler = async (req, res) => {
+    if (!todo) {
+      return res.status(404).json({ error: 'Todo not found' });
+    }
+
+    const subtask = await prisma.subtasks.create({
+      data: {
+        todo_id: parseInt(todoId),
+        text,
+        completed: false,
+      },
+    });
+
+    return res.status(201).json({
+      message: 'Subtask added successfully',
+      subtask,
+    });
+  } catch (error) {
+    console.error('Error adding subtask:', error);
+    return res.status(500).json({ error: 'Failed to add subtask' });
+  }
+}
+
+async function updateSubtaskHandler(req, res) {
   const { id, todoId, email, text, completed } = req.body;
 
   if (!id || !todoId || !email) {
-    return res
-      .status(400)
-      .json({ error: "Id, todoId, and email are required" });
+    return res.status(400).json({ error: 'Id, todoId, and email are required' });
   }
 
   try {
-    const client = await pool.connect();
-    let query = "UPDATE subtasks SET ";
-    const updateFields = [];
-    const values = [id, todoId];
-    let paramCount = 3;
+    // Verify todo ownership
+    const todo = await prisma.todos.findUnique({
+      where: {
+        id_email: {
+          id: parseInt(todoId),
+          email: email,
+        }
+      }
+    });
 
-    if (text !== undefined) {
-      updateFields.push(`text = $${paramCount}`);
-      values.push(text);
-      paramCount++;
-    }
-    if (completed !== undefined) {
-      updateFields.push(`completed = $${paramCount}`);
-      values.push(completed);
+    if (!todo) {
+      return res.status(404).json({ error: 'Todo not found' });
     }
 
-    query += updateFields.join(", ") + " WHERE id = $1 AND todo_id = $2";
+    const updateData = {
+      ...(text !== undefined && { text }),
+      ...(completed !== undefined && { completed }),
+    };
 
-    await client.query(query, values);
-    client.release();
-    res.status(200).json({ message: "Subtask updated successfully" });
+    const subtask = await prisma.subtasks.update({
+      where: {
+        id_todo_id: {
+          id: parseInt(id),
+          todo_id: parseInt(todoId),
+        }
+      },
+      data: updateData,
+    });
+
+    return res.status(200).json({
+      message: 'Subtask updated successfully',
+      subtask,
+    });
   } catch (error) {
-    console.error("Error updating subtask:", error);
-    res.status(500).json({ error: "Internal server error" });
+    console.error('Error updating subtask:', error);
+    if (error.code === 'P2025') {
+      return res.status(404).json({ error: 'Subtask not found' });
+    }
+    return res.status(500).json({ error: 'Failed to update subtask' });
   }
-};
+}
 
-const deleteSubtaskHandler = async (req, res) => {
+async function deleteSubtaskHandler(req, res) {
   const { id, todoId, email } = req.body;
 
   if (!id || !todoId || !email) {
-    return res
-      .status(400)
-      .json({ error: "Id, todoId, and email are required" });
+    return res.status(400).json({ error: 'Id, todoId, and email are required' });
   }
 
   try {
-    const client = await pool.connect();
-    await client.query("DELETE FROM subtasks WHERE id = $1 AND todo_id = $2", [
-      id,
-      todoId,
-    ]);
-    client.release();
-    res.status(200).json({ message: "Subtask deleted successfully" });
+    // Verify todo ownership
+    const todo = await prisma.todos.findUnique({
+      where: {
+        id_email: {
+          id: parseInt(todoId),
+          email: email,
+        }
+      }
+    });
+
+    if (!todo) {
+      return res.status(404).json({ error: 'Todo not found' });
+    }
+
+    await prisma.subtasks.delete({
+      where: {
+        id_todo_id: {
+          id: parseInt(id),
+          todo_id: parseInt(todoId),
+        }
+      },
+    });
+
+    return res.status(200).json({ message: 'Subtask deleted successfully' });
   } catch (error) {
-    console.error("Error deleting subtask:", error);
-    res.status(500).json({ error: "Internal server error" });
+    console.error('Error deleting subtask:', error);
+    if (error.code === 'P2025') {
+      return res.status(404).json({ error: 'Subtask not found' });
+    }
+    return res.status(500).json({ error: 'Failed to delete subtask' });
   }
-};
+}

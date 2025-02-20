@@ -9,7 +9,6 @@ import Notes from "../components/Notes";
 import Calendar from "../components/Calendar";
 import LiveChat from "../components/LiveChat";
 import DraggableIframe from "../components/DraggableIframe";
-import CookieBanner from "../components/CookieBanner";
 import { ErrorBoundary } from "react-error-boundary";
 const backgrounds = [
   { id: 1, src: "/backgrounds/Couch.mp4", alt: "Couch", note: "Couch" },
@@ -255,8 +254,7 @@ useEffect(() => {
   return (
     <ErrorBoundary>
       <CustomHeader />
-      <CookieBanner />
-      <SelectionBar
+            <SelectionBar
         className={`${styles.selectionBar} ${zenMode ? styles.hidden : ''}`}
       />
       

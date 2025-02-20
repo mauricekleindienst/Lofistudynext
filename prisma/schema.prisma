@@ -41,6 +41,8 @@ model todos {
   position  Int?
   color     String?    @default("#ff7b00") @db.VarChar(7)
   subtasks  subtasks[]
+
+  @@unique([id, email])
 }
 
 model tracks {

@@ -1,39 +1,43 @@
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 import Draggable from "react-draggable";
 import styles from "../styles/Settings.module.css";
-import { FaCog, FaBell, FaMoon, FaSun, FaLanguage } from "react-icons/fa";
-
-const settings = [
-  { name: "General", icon: <FaCog /> },
-  { name: "Notifications", icon: <FaBell /> },
-  { name: "Dark Mode", icon: <FaMoon /> },
-  { name: "Light Mode", icon: <FaSun /> },
-  { name: "Language", icon: <FaLanguage /> },
-];
+import { FaMoon, FaSun } from "react-icons/fa";
+import { useTheme } from "../contexts/ThemeContext";
 
 export default function Settings({ onMinimize }) {
+  const { theme, toggleTheme } = useTheme();
+
   return (
     <Draggable handle=".draggable-header">
       <div className={styles.settingsContainer}>
         <div className={`${styles.header} draggable-header`}>
-          <h2>Settings-Placeholder</h2>
-          <div className={styles.tooltip}>
-            <span className="material-icons">help</span>
-            <span className={styles.tooltiptext}>
-              Placeholder. Settings Soon
-            </span>
-          </div>
+          <h2>Settings</h2>
           <button onClick={onMinimize} className={styles.closeButton}>
             <span className="material-icons">remove</span>
           </button>
         </div>
+
         <div className={styles.settingsList}>
-          {settings.map((setting, index) => (
-            <div key={setting.name} className={styles.setting}>
-              <span className={styles.icon}>{setting.icon}</span>
-              <span className={styles.settingName}>{setting.name}</span>
+          {/* Theme Setting */}
+          <div className={styles.setting}>
+            <span className={styles.icon}>
+              {theme === 'dark' ? <FaMoon /> : <FaSun />}
+            </span>
+            <span className={styles.settingName}>Theme</span>
+            <div className={styles.settingControl}>
+              <button 
+                className={`${styles.themeToggle} ${theme === 'dark' ? styles.active : ''}`}
+                onClick={toggleTheme}
+              >
+                {theme === 'dark' ? 'Dark' : 'Light'}
+              </button>
             </div>
-          ))}
+            {theme === 'light' && (
+              <div className={styles.betaNotice}>
+                ⚠️ Light Mode is currently in early development and some elements may not display correctly
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </Draggable>

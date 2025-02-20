@@ -100,8 +100,14 @@ async function updateTodoHandler(req, res) {
       ...(color !== undefined && { color }),
     };
 
+    // Use updateMany with AND condition instead of update with id_email
     const updatedTodo = await prisma.todos.updateMany({
-      where: { id, email },
+      where: {
+        AND: [
+          { id: parseInt(id) },
+          { email: email }
+        ]
+      },
       data: updateData,
     });
 
@@ -109,14 +115,26 @@ async function updateTodoHandler(req, res) {
       return res.status(404).json({ error: 'Todo not found' });
     }
 
-    return res.status(200).json({ message: 'Todo updated successfully' });
+    // Fetch the updated todo to return in response
+    const todo = await prisma.todos.findFirst({
+      where: {
+        AND: [
+          { id: parseInt(id) },
+          { email: email }
+        ]
+      }
+    });
+
+    return res.status(200).json({ 
+      message: 'Todo updated successfully',
+      todo: todo 
+    });
   } catch (error) {
     console.error('Error updating todo:', error);
     return res.status(500).json({ error: 'Failed to update todo' });
   }
 }
 
-// Backend code: Fix in the handler
 async function deleteTodoHandler(req, res) {
   const { id, email } = req.body;
 
@@ -125,23 +143,24 @@ async function deleteTodoHandler(req, res) {
   }
 
   try {
-    // Start transaction to delete subtasks and the todo
-    const deleteTransaction = await prisma.$transaction([
-      prisma.subtasks.deleteMany({
-        where: { todo_id: id },
-      }),
-      prisma.todos.delete({
-        where: {
-          id_email: {
-            id,
-            email,
-          },
-        },
-      }),
-    ]);
+    // First delete all subtasks
+    await prisma.subtasks.deleteMany({
+      where: { 
+        todo_id: parseInt(id)
+      },
+    });
 
-    // Ensure that the todo was successfully deleted
-    if (!deleteTransaction[1]) {
+    // Then delete the todo
+    const deletedTodo = await prisma.todos.deleteMany({
+      where: {
+        AND: [
+          { id: parseInt(id) },
+          { email: email }
+        ]
+      },
+    });
+
+    if (deletedTodo.count === 0) {
       return res.status(404).json({ error: 'Todo not found or already deleted' });
     }
 
@@ -149,7 +168,6 @@ async function deleteTodoHandler(req, res) {
   } catch (error) {
     console.error('Error deleting todo:', error);
 
-    // Handle specific Prisma error cases
     if (error.code === 'P2025') {
       return res.status(404).json({ error: 'Todo not found or already deleted' });
     }

@@ -1,11 +1,11 @@
 .soundsContainer {
   padding: 0;
   border-radius: 20px;
-  color: #fff;
+  color: var(--text-primary);
   width: 100%;
-  max-width: 420px; /* Slightly wider for better alignment */
-  background: linear-gradient(145deg, #1a1a1a, #333);
-  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.5);
+  max-width: 420px;
+  background: linear-gradient(145deg, var(--bg-primary), var(--bg-secondary));
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
   position: fixed;
   top: 50%;
   left: 50%;
@@ -16,25 +16,25 @@
 
 .dragHandle {
   height: 40px;
-  background-color: #2d2d2d;
+  background-color: var(--bg-secondary);
   display: flex;
   justify-content: center;
   align-items: center;
-  border-bottom: 2px solid #ff7b00;
-  cursor: move; /* Shows that this area is draggable */
+  border-bottom: 2px solid var(--accent-color);
+  cursor: move;
 }
 
 .dragHandle::before {
   content: '';
   width: 45px;
   height: 5px;
-  background-color: #ff7b00;
+  background-color: var(--accent-color);
   border-radius: 2px;
   transition: background-color 0.3s ease;
 }
 
 .dragHandle:hover::before {
-  background-color: #ff9900;
+  background-color: var(--accent-hover);
 }
 
 .header {
@@ -42,8 +42,8 @@
   justify-content: space-between;
   align-items: center;
   padding: 15px 30px;
-  background-color: #252525;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  background-color: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
 }
 
 .header h2 {
@@ -51,19 +51,20 @@
   font-size: 22px;
   font-weight: 600;
   letter-spacing: 0.5px;
+  color: var(--text-primary);
 }
 
 .minimizeButton {
   background-color: transparent;
   border: none;
-  color: #ff7b00;
+  color: var(--accent-color);
   font-size: 24px;
   cursor: pointer;
   transition: color 0.3s ease;
 }
 
 .minimizeButton:hover {
-  color: #ff9900;
+  color: var(--accent-hover);
 }
 
 .soundsList {
@@ -72,7 +73,7 @@
   max-height: 300px;
   overflow-y: auto;
   padding: 0 30px 30px;
-  background-color: #1e1e1e;
+  background-color: var(--bg-primary);
 }
 
 .sound {
@@ -80,19 +81,18 @@
   align-items: center;
   margin-bottom: 15px;
   padding: 12px;
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--bg-secondary);
   border-radius: 10px;
-  transition: background-color 0.3s ease, transform 0.2s ease;
+  transition: all 0.3s ease;
 }
 
 .sound:hover {
-  background-color: rgba(255, 255, 255, 0.15);
-  transform: translateY(-2px); /* Slight lift on hover */
+  background-color: var(--accent-color);
+  transform: translateY(-2px);
 }
 
-
 .sound:hover .icon {
-  color: #ff9900;
+  color: var(--text-primary);
 }
 
 .soundName {
@@ -100,6 +100,7 @@
   font-size: 18px;
   font-weight: 500;
   letter-spacing: 0.2px;
+  color: var(--text-primary);
 }
 
 .slider {
@@ -107,15 +108,14 @@
   width: 130px;
   height: 6px;
   border-radius: 10px;
-  background: #555;
+  background: var(--bg-primary);
   outline: none;
   opacity: 0.8;
-  transition: opacity 0.2s ease, background-color 0.3s ease;
+  transition: all 0.2s ease;
 }
 
 .slider:hover {
   opacity: 1;
-  background-color: #777;
 }
 
 .slider::-webkit-slider-thumb {
@@ -124,50 +124,69 @@
   width: 18px;
   height: 18px;
   border-radius: 50%;
-  background: #ff7b00;
+  background: var(--accent-color);
   cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.2s ease;
+  transition: all 0.2s ease;
 }
 
 .slider:hover::-webkit-slider-thumb {
-  background-color: #ff9900;
-  transform: scale(1.1); /* Enlarges the thumb on hover */
+  background-color: var(--accent-hover);
+  transform: scale(1.1);
 }
 
 .slider::-moz-range-thumb {
   width: 18px;
   height: 18px;
   border-radius: 50%;
-  background: #ff7b00;
+  background: var(--accent-color);
   cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.2s ease;
+  transition: all 0.2s ease;
 }
 
 .slider:hover::-moz-range-thumb {
-  background-color: #ff9900;
-  transform: scale(1.1); /* Enlarges the thumb on hover */
+  background-color: var(--accent-hover);
+  transform: scale(1.1);
 }
 
-/* Custom scrollbar styles */
+/* Scrollbar styles */
 .soundsList::-webkit-scrollbar {
   width: 8px;
 }
 
 .soundsList::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--bg-secondary);
   border-radius: 10px;
 }
 
 .soundsList::-webkit-scrollbar-thumb {
-  background: #ff7b00;
+  background: var(--accent-color);
   border-radius: 10px;
   transition: background-color 0.3s ease;
 }
 
 .soundsList::-webkit-scrollbar-thumb:hover {
-  background: #ff9900;
+  background: var(--accent-hover);
 }
 
+.icon {
+  margin-right: 15px;
+  font-size: 24px;
+  color: var(--accent-color);
+  transition: color 0.3s ease;
+}
+
+.icon-playing {
+  animation: pulse 1s infinite ease-in-out;
+  color: var(--accent-hover);
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+/* Tooltip styles */
 .tooltip {
   position: relative;
   display: inline-block;
@@ -176,45 +195,22 @@
 .tooltip .tooltiptext {
   visibility: hidden;
   width: 130px;
-  background-color: black;
-  color: #fff;
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
   text-align: center;
   border-radius: 6px;
   padding: 5px 0;
   position: absolute;
   z-index: 1;
-  bottom: 130%; /* Position the tooltip above the icon */
+  bottom: 130%;
   left: 50%;
   margin-left: -65px;
   opacity: 0;
   transition: opacity 0.3s;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .tooltip:hover .tooltiptext {
   visibility: visible;
   opacity: 1;
-}
-
-@keyframes pulse {
-  0% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.2);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
-
-.icon {
-  margin-right: 15px;
-  font-size: 24px;
-  color: #ff7b00;
-  transition: color 0.3s ease;
-}
-
-.icon-playing {
-  animation: pulse 1s infinite ease-in-out;
-  color: #ff9900; /* Brighter color when playing */
 }

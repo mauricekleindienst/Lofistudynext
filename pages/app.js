@@ -10,7 +10,6 @@ import Notes from "../components/Notes";
 import Calendar from "../components/Calendar";
 import LiveChat from "../components/LiveChat";
 import DraggableIframe from "../components/DraggableIframe";
-import CookieBanner from "../components/CookieBanner";
 import { ErrorBoundary } from "react-error-boundary";
 
 // Define the default background
@@ -393,7 +392,6 @@ useEffect(() => {
   return (
     <ErrorBoundary>
       <CustomHeader />
-      <CookieBanner />
       <SelectionBar
         className={`${styles.selectionBar} ${zenMode ? styles.hidden : ''}`}
         userEmail={session.user.email}
