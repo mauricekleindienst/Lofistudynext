@@ -11,7 +11,6 @@ import Calendar from "../components/Calendar";
 import LiveChat from "../components/LiveChat";
 import DraggableIframe from "../components/DraggableIframe";
 import { ErrorBoundary } from "react-error-boundary";
-import ChallengeSidebar from '../components/ChallengeSidebar';
 import BackgroundPrompt from '../components/BackgroundPrompt';
 import BackgroundModal from '../components/BackgroundModal';
 
@@ -346,10 +345,6 @@ useEffect(() => {
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
-    const main = document.querySelector(`.${styles.main}`);
-    if (main) {
-      main.style.marginLeft = sidebarOpen ? "0" : "300px";
-    }
   };
 
   const handleIconClick = (component) => {
@@ -442,7 +437,7 @@ useEffect(() => {
           <h1>
             Welcome, {getFirstName(session.user.name)}! {currentTime}
           </h1>
-       
+          
           <div className={styles.backgroundSelector}>
             <div className={styles.backgroundHeader}>
               <h2>Backgrounds</h2>
@@ -493,17 +488,14 @@ useEffect(() => {
 
           <MusicPlayer />
         </aside>
-        <button
-          className={`${styles.toggleButton} ${
-            sidebarOpen ? styles.buttonOpen : styles.buttonClosed
-          } ${zenMode ? styles.hidden : ''}`}
+        <button 
+          className={styles.toggleButton}
           onClick={toggleSidebar}
+          aria-label={sidebarOpen ? 'Close Sidebar' : 'Open Sidebar'}
         >
-          {sidebarOpen ? (
-            <span className="material-icons">chevron_left</span>
-          ) : (
-            <span className="material-icons">chevron_right</span>
-          )}
+          <span className="material-icons">
+            {sidebarOpen ? 'chevron_left' : 'chevron_right'}
+          </span>
         </button>
         <main className={styles.main}>
           {videoRoomUrl && (
@@ -513,7 +505,7 @@ useEffect(() => {
             />
           )}
         </main>
-        <ChallengeSidebar />
+   
       </div>
       <div className={`${styles.createdByLabel} ${zenMode ? styles.hidden : ''}`}>
         Wallpaper by: {selectedBackground.createdby}
