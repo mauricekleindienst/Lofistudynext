@@ -23,9 +23,9 @@ const initialIcons = [
   { id: "quiz", label: "Flashcards", icon: "school" },
   { id: "stats", label: "Stats", icon: "bar_chart" },
   { id: "scoreboard", label: "Scoreboard", icon: "stairs" },
-  { id: "settings", label: "Settings", icon: "settings" },
   { id: "help", label: "Background Tutorial", icon: "help_outline" },
   { id: "pdf", label: "PDF Library", icon: "picture_as_pdf" },
+  { id: "settings", label: "Settings", icon: "settings" },
 ];
 
 const components = {
