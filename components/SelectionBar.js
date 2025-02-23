@@ -154,6 +154,7 @@ export default function SelectionBar({ userEmail, userName }) {
 
   const toggleComponentVisibility = (component) => {
     if (component === "help") {
+      console.log("Opening tutorial");
       setShowTutorial(true);
       return;
     }
