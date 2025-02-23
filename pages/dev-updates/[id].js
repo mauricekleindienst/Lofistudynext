@@ -47,7 +47,7 @@ export default function UpdateDetail() {
             </main>
 
             <footer className={styles.footer}>
-                <p>© 2024 Lo-Fi Study App. All rights reserved.</p>
+                <p>© 2025 Lo-Fi Study App. All rights reserved.</p>
                 <ul className={styles.footerLinks}>
                     <li><Link href="/legal">Legal</Link></li>
                     <li><Link href="/data">Data Policy</Link></li>

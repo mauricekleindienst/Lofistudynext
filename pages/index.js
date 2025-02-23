@@ -24,7 +24,7 @@ export default function Landing() {
       alt: "Cyberpunk night study scene",
     },
     {
-      src: "https://i.ibb.co/nC5NnTr/DALL-E-2024-09-22-13-11-47-A-serene-winter-landscape-during-the-blue-hour-featuring-a-small-cozy-cab.webp",
+      src: "https://i.ibb.co/nC5NnTr/DALL-E-2025-09-22-13-11-47-A-serene-winter-landscape-during-the-blue-hour-featuring-a-small-cozy-cab.webp",
       alt: "Serene winter landscape with cozy cabin",
     },
     {

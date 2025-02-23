@@ -59,12 +59,19 @@
   transform: scale(1.1);
 }
 
+.uploadSection {
+  padding: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
 .uploadView {
   display: flex;
   flex-direction: column;
-  height: 100%;
-  position: relative;
-  transition: all 0.3s ease;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.05);
 }
 
 .uploadView::before {
@@ -85,17 +92,6 @@
   opacity: 1;
   border-color: var(--accent-color);
   background: rgba(255, 123, 0, 0.05);
-}
-
-.uploadSection {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem;
-  gap: 1rem;
-  z-index: 1;
 }
 
 .uploadButton {
@@ -154,19 +150,30 @@
   gap: 8px;
 }
 
+.pdfGrid {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(600px, 1fr));
+  gap: 1rem;
+  padding: 1rem;
+  overflow-y: auto;
+}
+
 .pdfViewer {
+  background: var(--bg-secondary);
+  border-radius: 12px;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
-  height: 100%;
-  width: 100%;
-  background: var(--bg-secondary);
+  height: 600px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .viewerHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 1.5rem;
+  padding: 0.75rem 1rem;
   background: var(--bg-secondary);
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
@@ -174,12 +181,12 @@
 .viewerTitle {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 0.75rem;
 }
 
 .fileName {
   color: var(--text-primary);
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 500;
   max-width: 300px;
   overflow: hidden;
@@ -306,6 +313,14 @@
     width: 100%;
     height: 100vh;
     border-radius: 0;
+  }
+
+  .pdfGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .pdfViewer {
+    height: 500px;
   }
 
   .viewerHeader {

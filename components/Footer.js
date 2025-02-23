@@ -49,7 +49,7 @@ export default function Footer() {
                 </div>
             </div>
             <div className={styles.copyright}>
-                © 2024 Copyright Lo-Fi.Study. All rights reserved.
+                © 2025 Copyright Lo-Fi.Study. All rights reserved.
             </div>
         </footer>
     );
