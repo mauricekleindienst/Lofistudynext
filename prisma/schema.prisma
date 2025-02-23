@@ -110,3 +110,14 @@ model Progress {
   
   @@unique([email, challengeId])
 }
+
+model TutorialState {
+  id        Int      @id @default(autoincrement())
+  email     String
+  tutorial  String   // Identifier for the tutorial (e.g., "background_prompt")
+  completed Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([email, tutorial])
+}

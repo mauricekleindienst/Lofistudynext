@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import PomodoroTimer from "./PomodoroTimer";
 import Sounds from "./Sounds";
@@ -10,6 +10,7 @@ import Todo from "./Todo";
 import Stats from "./Stats";
 import YouTubePlayer from "./YouTubePlayer";
 import Quiz from "./Quiz";
+import BackgroundPrompt from "./BackgroundPrompt";
 import styles from "../styles/SelectionBar.module.css";
 
 const initialIcons = [
@@ -21,6 +22,7 @@ const initialIcons = [
   { id: "stats", label: "Stats", icon: "bar_chart" },
   { id: "scoreboard", label: "Scoreboard", icon: "stairs" },
   { id: "settings", label: "Settings", icon: "settings" },
+  { id: "help", label: "Help", icon: "help_outline" },
 ];
 
 const components = {
@@ -40,8 +42,33 @@ export default function SelectionBar({ userEmail, userName }) {
   const [visibleComponents, setVisibleComponents] = useState([]);
   const [newChatMessage, setNewChatMessage] = useState(false);
   const [zenMode, setZenMode] = useState(false); // Add Zen Mode state
+  const [showTutorial, setShowTutorial] = useState(false);
+  const [tutorialCompleted, setTutorialCompleted] = useState(true);
+
+  useEffect(() => {
+    // Check tutorial state when component mounts
+    const checkTutorialState = async () => {
+      try {
+        const response = await fetch('/api/tutorials/state?tutorial=background_prompt');
+        const data = await response.json();
+        setTutorialCompleted(data.completed);
+        setShowTutorial(!data.completed);
+      } catch (error) {
+        console.error('Failed to fetch tutorial state:', error);
+      }
+    };
+
+    if (userEmail) {
+      checkTutorialState();
+    }
+  }, [userEmail]);
 
   const toggleComponentVisibility = (component) => {
+    if (component === "help") {
+      setShowTutorial(true);
+      return;
+    }
+
     setVisibleComponents((prev) =>
       prev.includes(component)
         ? prev.filter((c) => c !== component)
@@ -84,6 +111,9 @@ export default function SelectionBar({ userEmail, userName }) {
 
   return (
     <div>
+      {showTutorial && (
+        <BackgroundPrompt onClose={() => setShowTutorial(false)} />
+      )}
       <DragDropContext onDragEnd={onDragEnd}>
         <Droppable droppableId="selectionBar" direction="horizontal">
           {(provided) => (

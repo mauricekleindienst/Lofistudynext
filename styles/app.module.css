@@ -839,6 +839,32 @@
   max-width: 500px;
   margin: 20px;
   animation: fadeIn 0.5s ease-out;
+  position: relative;
+}
+
+.promptContent .closeButton {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  opacity: 0.6;
+  z-index: 2;
+}
+
+.promptContent .closeButton:hover {
+  opacity: 1;
+  background-color: rgba(255, 255, 255, 0.1);
+  transform: scale(1.1);
+}
+
+.promptContent .closeButton .material-icons {
+  font-size: 20px;
 }
 
 .iconWrapper {
