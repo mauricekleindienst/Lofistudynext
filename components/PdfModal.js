@@ -12,9 +12,9 @@ import '@react-pdf-viewer/page-navigation/lib/styles/index.css';
 
 import styles from '../styles/PdfModal.module.css';
 
-export default function PdfModal({ onClose }) {
-  const [pdfs, setPdfs] = useState([]);
+export default function PdfModal({ onClose, savedPdfs = [], onPdfsChange }) {
   const [error, setError] = useState(null);
+  const [fullViewPdf, setFullViewPdf] = useState(null);
 
   // Initialize the plugins
   const defaultLayoutPluginInstance = defaultLayoutPlugin();
@@ -29,7 +29,7 @@ export default function PdfModal({ onClose }) {
   const handleFile = (file) => {
     if (file && file.type === 'application/pdf') {
       const fileUrl = URL.createObjectURL(file);
-      setPdfs(prev => [...prev, {
+      onPdfsChange([...savedPdfs, {
         file: fileUrl,
         name: file.name,
         size: (file.size / 1024 / 1024).toFixed(2),
@@ -54,24 +54,22 @@ export default function PdfModal({ onClose }) {
   };
 
   const handleClosePdf = (index) => {
-    setPdfs(prev => {
-      const newPdfs = [...prev];
-      URL.revokeObjectURL(newPdfs[index].file);
-      newPdfs.splice(index, 1);
-      return newPdfs;
-    });
+    const newPdfs = [...savedPdfs];
+    URL.revokeObjectURL(newPdfs[index].file);
+    newPdfs.splice(index, 1);
+    onPdfsChange(newPdfs);
+    if (fullViewPdf?.index === index) {
+      setFullViewPdf(null);
+    }
   };
 
-  // Cleanup URLs when component unmounts
-  React.useEffect(() => {
-    return () => {
-      pdfs.forEach(pdf => {
-        if (pdf.file) {
-          URL.revokeObjectURL(pdf.file);
-        }
-      });
-    };
-  }, []);
+  const handlePdfClick = (pdf, index) => {
+    setFullViewPdf({ ...pdf, index });
+  };
+
+  const exitFullView = () => {
+    setFullViewPdf(null);
+  };
 
   return (
     <div className={styles.modalOverlay} onClick={onClose}>
@@ -83,67 +81,126 @@ export default function PdfModal({ onClose }) {
           </button>
         </div>
 
-        <div className={styles.uploadSection}>
-          <div 
-            className={styles.uploadView}
-            onDragOver={handleDragOver}
-            onDrop={handleDrop}
-          >
-            <label className={styles.uploadButton}>
-              <input
-                type="file"
-                accept=".pdf"
-                onChange={handleFileSelect}
-                style={{ display: 'none' }}
-              />
-              <span className="material-icons">upload_file</span>
-              {pdfs.length === 0 ? 'Select PDF to View' : 'Open Another PDF'}
-            </label>
-            <p className={styles.uploadInfo}>
-              Select a PDF file from your device or drag and drop it here
-            </p>
-            <p className={styles.privacyInfo}>
-              <span className="material-icons">lock</span>
-              Your PDF stays on your device - we never upload or store it on our servers
-            </p>
-            {error && <p className={styles.errorMessage}>{error}</p>}
-          </div>
-        </div>
-
-        <div className={styles.pdfGrid}>
-          {pdfs.map((pdf, index) => (
-            <div key={pdf.file} className={styles.pdfViewer}>
-              <div className={styles.viewerHeader}>
-                <div className={styles.viewerTitle}>
-                  <button 
-                    className={styles.backButton}
-                    onClick={() => handleClosePdf(index)}
-                    title="Close PDF"
-                  >
-                    <span className="material-icons">close</span>
-                  </button>
-                  <span className={styles.fileName}>{pdf.name}</span>
-                </div>
-              </div>
-              <div className={styles.documentContainer}>
-                <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js">
-                  <Viewer
-                    fileUrl={pdf.file}
-                    plugins={[
-                      defaultLayoutPluginInstance,
-                      zoomPluginInstance,
-                      pageNavigationPluginInstance,
-                    ]}
-                    defaultScale={1}
-                    theme={{
-                      theme: 'dark',
-                    }}
+        {!fullViewPdf ? (
+          <>
+            <div className={styles.uploadSection}>
+              <div 
+                className={styles.uploadView}
+                onDragOver={handleDragOver}
+                onDrop={handleDrop}
+              >
+                <label className={styles.uploadButton}>
+                  <input
+                    type="file"
+                    accept=".pdf"
+                    onChange={handleFileSelect}
+                    style={{ display: 'none' }}
                   />
-                </Worker>
+                  <span className="material-icons">upload_file</span>
+                  {savedPdfs.length === 0 ? 'Select PDF to View' : 'Open Another PDF'}
+                </label>
+                <p className={styles.uploadInfo}>
+                  Select a PDF file from your device or drag and drop it here
+                </p>
+                <p className={styles.privacyInfo}>
+                  <span className="material-icons">lock</span>
+                  Your PDF stays on your device - we never upload or store it on our servers
+                </p>
+                {error && <p className={styles.errorMessage}>{error}</p>}
               </div>
             </div>
-          ))}
-        </div>
+
+            <div className={styles.pdfGrid}>
+              {savedPdfs.map((pdf, index) => (
+                <div 
+                  key={pdf.file} 
+                  className={styles.pdfViewer} 
+                  onClick={() => handlePdfClick(pdf, index)}
+                >
+                  <div className={styles.viewerHeader}>
+                    <div className={styles.viewerTitle}>
+                      <button 
+                        className={styles.backButton}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleClosePdf(index);
+                        }}
+                        title="Close PDF"
+                      >
+                        <span className="material-icons">close</span>
+                      </button>
+                      <span className={styles.fileName}>{pdf.name}</span>
+                    </div>
+                    <button 
+                      className={styles.expandButton}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handlePdfClick(pdf, index);
+                      }}
+                      title="Expand PDF"
+                    >
+                      <span className="material-icons">fullscreen</span>
+                    </button>
+                  </div>
+                  <div className={styles.documentContainer}>
+                    <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js">
+                      <Viewer
+                        fileUrl={pdf.file}
+                        plugins={[
+                          defaultLayoutPluginInstance,
+                          zoomPluginInstance,
+                          pageNavigationPluginInstance,
+                        ]}
+                        defaultScale={1}
+                        theme={{
+                          theme: 'dark',
+                        }}
+                      />
+                    </Worker>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>
+        ) : (
+          <div className={styles.fullView}>
+            <div className={styles.viewerHeader}>
+              <div className={styles.viewerTitle}>
+                <button 
+                  className={styles.backButton}
+                  onClick={exitFullView}
+                  title="Exit Full View"
+                >
+                  <span className="material-icons">arrow_back</span>
+                </button>
+                <span className={styles.fileName}>{fullViewPdf.name}</span>
+              </div>
+              <button 
+                className={styles.backButton}
+                onClick={() => handleClosePdf(fullViewPdf.index)}
+                title="Close PDF"
+              >
+                <span className="material-icons">close</span>
+              </button>
+            </div>
+            <div className={styles.fullViewContainer}>
+              <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js">
+                <Viewer
+                  fileUrl={fullViewPdf.file}
+                  plugins={[
+                    defaultLayoutPluginInstance,
+                    zoomPluginInstance,
+                    pageNavigationPluginInstance,
+                  ]}
+                  defaultScale={1}
+                  theme={{
+                    theme: 'dark',
+                  }}
+                />
+              </Worker>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

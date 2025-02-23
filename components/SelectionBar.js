@@ -60,6 +60,7 @@ export default function SelectionBar({ userEmail, userName }) {
     scoreboard: null
   });
   const [showPdfModal, setShowPdfModal] = useState(false);
+  const [savedPdfs, setSavedPdfs] = useState([]);
 
   // Listen for Pomodoro updates
   useEffect(() => {
@@ -154,6 +155,17 @@ export default function SelectionBar({ userEmail, userName }) {
     const interval = setInterval(fetchInfo, 300000); // 5 minutes
     return () => clearInterval(interval);
   }, [session]);
+
+  // Cleanup PDFs when component unmounts
+  useEffect(() => {
+    return () => {
+      savedPdfs.forEach(pdf => {
+        if (pdf.file) {
+          URL.revokeObjectURL(pdf.file);
+        }
+      });
+    };
+  }, []);
 
   const toggleComponentVisibility = (component) => {
     if (component === "help") {
@@ -254,7 +266,11 @@ export default function SelectionBar({ userEmail, userName }) {
         <BackgroundPrompt onClose={() => setShowTutorial(false)} />
       )}
       {showPdfModal && (
-        <PdfModal onClose={() => setShowPdfModal(false)} />
+        <PdfModal 
+          onClose={() => setShowPdfModal(false)} 
+          savedPdfs={savedPdfs}
+          onPdfsChange={setSavedPdfs}
+        />
       )}
       <DragDropContext onDragEnd={onDragEnd}>
         <Droppable droppableId="selectionBar" direction="horizontal">
