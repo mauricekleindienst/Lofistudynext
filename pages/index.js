@@ -11,17 +11,12 @@ import Footer from "../components/Footer";
 import CookieBanner from "../components/CookieBanner";
 import Image from "next/image";
 import styles from "../styles/Home.module.css";
-import SelectionBar from '../components/SelectionBar';
-import BackgroundPrompt from '../components/BackgroundPrompt';
-import { useSession } from 'next-auth/react';
 
 export default function Landing() {
   const [imagesLoaded, setImagesLoaded] = useState([]);
   const featuresRef = useRef(null);
   const freeToolSectionRef = useRef(null);
   const router = useRouter();
-  const { data: session } = useSession();
-  const [selectedBackground, setSelectedBackground] = useState(null);
 
   const img = useMemo(() => [
     {
@@ -166,37 +161,14 @@ export default function Landing() {
     <div className={styles.container}>
       <Head>
         <title>Lo-Fi.Study - Enhance Your Study Sessions</title>
-    
         <meta name="keywords" content="study music, focus music, lo-fi, productivity, ambient music, Pomodoro timer, study tools, note-taking, study atmosphere" />
         <meta property="og:title" content="Lo-Fi.Study - Enhance Your Study Sessions" />
         <meta property="og:description" content="Discover a platform designed to help you stay focused with ambient sounds, productivity tools, and customizable study environments." />
-        <meta property="og:image" content="/path-to-your-og-image.jpg" />  {/* Update the OG image */}
+        <meta property="og:image" content="/path-to-your-og-image.jpg" />
       </Head>
       <Header />
       <CookieBanner />
-      {!selectedBackground && session && <BackgroundPrompt />}
-      <SelectionBar 
-        userEmail={session?.user?.email} 
-        userName={session?.user?.name}
-        onBackgroundSelect={setSelectedBackground}
-      />
-      {selectedBackground && (
-        <div 
-          className={styles.background}
-          style={{
-            backgroundImage: `url(${selectedBackground})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            zIndex: -1,
-          }}
-        />
-      )}
-      <main className={`${styles.main} ${!selectedBackground && session ? styles.blurred : ''}`}>
+      <main className={styles.main}>
         <motion.div
           className={styles.welcomeWrapper}
           initial="hidden"
@@ -307,33 +279,6 @@ export default function Landing() {
               <span className={styles.freeToolIcon} role="img" aria-label="Headphones">🎧</span>
               <span className={styles.freeToolIcon} role="img" aria-label="Books">📚</span>
               <span className={styles.freeToolIcon} role="img" aria-label="Chart Increasing">📈</span>
-            </div>
-          </div>
-        </motion.section>
-
-        <motion.section
-          className={styles.overviewSection}
-          initial="hidden"
-          animate="visible"
-          variants={fadeInUp}
-          transition={{ duration: 0.5, delay: 0.4 }}
-        >
-          <h2 className={styles.sectionTitle}>Why Choose Lo-Fi.Study?</h2>
-          <div className={styles.overviewGrid}>
-            <div className={styles.overviewItem}>
-              <span className={styles.icon}>🎵</span>
-              <h3>Ambient Sounds</h3>
-              <p>Create your perfect study atmosphere with curated lo-fi beats and nature sounds</p>
-            </div>
-            <div className={styles.overviewItem}>
-              <span className={styles.icon}>⏱️</span>
-              <h3>Pomodoro Timer</h3>
-              <p>Stay focused and manage your time effectively with our customizable Pomodoro timer</p>
-            </div>
-            <div className={styles.overviewItem}>
-              <span className={styles.icon}>📊</span>
-              <h3>Progress Tracking</h3>
-              <p>Monitor your study sessions and visualize your productivity over time</p>
             </div>
           </div>
         </motion.section>
