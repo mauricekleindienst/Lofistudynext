@@ -35,6 +35,24 @@ export default function CustomHeader() {
     dropdownVisible: false,
   });
 
+  // Add periodic reminder
+  useEffect(() => {
+    const showReminder = () => {
+      const messages = [
+        "Enjoying Lo-fi.study? Share it with your friends! 🎵",
+        "Study better together! Share Lo-fi.study with your study group 📚",
+        "Help others discover Lo-fi.study - Share the productivity! ✨",
+        "Spread the focus! Share Lo-fi.study with fellow students 🎯"
+      ];
+      const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+      dispatch({ type: SHOW_TOAST, message: randomMessage });
+      setTimeout(() => dispatch({ type: HIDE_TOAST }), 5000);
+    };
+
+    const reminderInterval = setInterval(showReminder, 30 * 60 * 1000); // 30 minutes
+    return () => clearInterval(reminderInterval);
+  }, []);
+
   const toggleFullscreen = useCallback(() => {
     if (!state.isFullscreen) {
       document.documentElement.requestFullscreen();
