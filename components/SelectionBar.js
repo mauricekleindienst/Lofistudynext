@@ -12,6 +12,7 @@ import Stats from "./Stats";
 import YouTubePlayer from "./YouTubePlayer";
 import Quiz from "./Quiz";
 import BackgroundPrompt from "./BackgroundPrompt";
+import PdfModal from "./PdfModal";
 import styles from "../styles/SelectionBar.module.css";
 
 const initialIcons = [
@@ -24,6 +25,7 @@ const initialIcons = [
   { id: "scoreboard", label: "Scoreboard", icon: "stairs" },
   { id: "settings", label: "Settings", icon: "settings" },
   { id: "help", label: "Background Tutorial", icon: "help_outline" },
+  { id: "pdf", label: "PDF Library", icon: "picture_as_pdf" },
 ];
 
 const components = {
@@ -57,6 +59,7 @@ export default function SelectionBar({ userEmail, userName }) {
     quiz: null,
     scoreboard: null
   });
+  const [showPdfModal, setShowPdfModal] = useState(false);
 
   // Listen for Pomodoro updates
   useEffect(() => {
@@ -114,7 +117,7 @@ export default function SelectionBar({ userEmail, userName }) {
 
     const fetchInfo = async () => {
       try {
-        console.log('Fetching component info...');
+       
         
         // Fetch todos count
         const todosRes = await fetch('/api/todos/count');
@@ -139,7 +142,7 @@ export default function SelectionBar({ userEmail, userName }) {
           scoreboard: rankData.rank
         };
 
-        console.log('Component info fetched:', newInfo);
+      
         setComponentInfo(newInfo);
       } catch (error) {
         console.error('Error fetching component info:', error);
@@ -154,8 +157,13 @@ export default function SelectionBar({ userEmail, userName }) {
 
   const toggleComponentVisibility = (component) => {
     if (component === "help") {
-      console.log("Opening tutorial");
+    
       setShowTutorial(true);
+      return;
+    }
+
+    if (component === "pdf") {
+      setShowPdfModal(!showPdfModal);
       return;
     }
 
@@ -186,7 +194,7 @@ export default function SelectionBar({ userEmail, userName }) {
 
   const renderInfoBadge = (iconId) => {
     const info = componentInfo[iconId];
-    console.log(`Rendering badge for ${iconId}:`, info);
+   
 
     if (iconId === 'pomodoro') {
       if (info?.isRunning && info?.timeLeft) {
@@ -244,6 +252,9 @@ export default function SelectionBar({ userEmail, userName }) {
     <div>
       {showTutorial && (
         <BackgroundPrompt onClose={() => setShowTutorial(false)} />
+      )}
+      {showPdfModal && (
+        <PdfModal onClose={() => setShowPdfModal(false)} />
       )}
       <DragDropContext onDragEnd={onDragEnd}>
         <Droppable droppableId="selectionBar" direction="horizontal">
