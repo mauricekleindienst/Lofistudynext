@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useEffect } from "react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import { useSession } from "next-auth/react";
 import PomodoroTimer from "./PomodoroTimer";
 import Sounds from "./Sounds";
 import Notes from "./Notes";
@@ -22,7 +23,7 @@ const initialIcons = [
   { id: "stats", label: "Stats", icon: "bar_chart" },
   { id: "scoreboard", label: "Scoreboard", icon: "stairs" },
   { id: "settings", label: "Settings", icon: "settings" },
-  { id: "help", label: "Help", icon: "help_outline" },
+  { id: "help", label: "Background Tutorial", icon: "help_outline" },
 ];
 
 const components = {
@@ -38,30 +39,118 @@ const components = {
 };
 
 export default function SelectionBar({ userEmail, userName }) {
+  const { data: session } = useSession();
   const [icons, setIcons] = useState(initialIcons);
   const [visibleComponents, setVisibleComponents] = useState([]);
   const [newChatMessage, setNewChatMessage] = useState(false);
   const [zenMode, setZenMode] = useState(false); // Add Zen Mode state
   const [showTutorial, setShowTutorial] = useState(false);
   const [tutorialCompleted, setTutorialCompleted] = useState(true);
+  const [componentInfo, setComponentInfo] = useState({
+    pomodoro: {
+      count: null,
+      isRunning: false,
+      timeLeft: null,
+      mode: null
+    },
+    todo: null,
+    quiz: null,
+    scoreboard: null
+  });
+
+  // Listen for Pomodoro updates
+  useEffect(() => {
+    const handlePomodoroUpdate = (event) => {
+      if (event.detail) {
+        setComponentInfo(prev => ({
+          ...prev,
+          pomodoro: event.detail
+        }));
+      }
+    };
+
+    window.addEventListener('pomodoroUpdate', handlePomodoroUpdate);
+    return () => window.removeEventListener('pomodoroUpdate', handlePomodoroUpdate);
+  }, []);
+
+  // Listen for Todo updates
+  useEffect(() => {
+    const handleTodoUpdate = (event) => {
+      if (event.detail && typeof event.detail.count === 'number') {
+        setComponentInfo(prev => ({
+          ...prev,
+          todo: event.detail.count
+        }));
+      }
+    };
+
+    window.addEventListener('todoUpdate', handleTodoUpdate);
+    return () => window.removeEventListener('todoUpdate', handleTodoUpdate);
+  }, []);
 
   useEffect(() => {
     // Check tutorial state when component mounts
     const checkTutorialState = async () => {
+      if (!userEmail) return;
+      
       try {
         const response = await fetch('/api/tutorials/state?tutorial=background_prompt');
         const data = await response.json();
-        setTutorialCompleted(data.completed);
-        setShowTutorial(!data.completed);
+        // Only show tutorial automatically if it hasn't been completed
+        if (!data.completed) {
+          setShowTutorial(true);
+        }
       } catch (error) {
         console.error('Failed to fetch tutorial state:', error);
       }
     };
 
-    if (userEmail) {
-      checkTutorialState();
-    }
+    checkTutorialState();
   }, [userEmail]);
+
+  // Fetch initial component info
+  useEffect(() => {
+    if (!session?.user?.email) return;
+
+    const fetchInfo = async () => {
+      try {
+        console.log('Fetching component info...');
+        
+        // Fetch todos count
+        const todosRes = await fetch('/api/todos/count');
+        const todosData = await todosRes.json();
+
+        // Fetch weekly pomodoro count
+        const pomodoroRes = await fetch('/api/pomodoros/weekly');
+        const pomodoroData = await pomodoroRes.json();
+
+        // Fetch flashcards count
+        const flashcardsRes = await fetch('/api/flashcards/count');
+        const flashcardsData = await flashcardsRes.json();
+
+        // Fetch user rank
+        const rankRes = await fetch('/api/scoreboard/rank');
+        const rankData = await rankRes.json();
+
+        const newInfo = {
+          todo: todosData.count,
+          pomodoro: pomodoroData.count,
+          quiz: flashcardsData.count,
+          scoreboard: rankData.rank
+        };
+
+        console.log('Component info fetched:', newInfo);
+        setComponentInfo(newInfo);
+      } catch (error) {
+        console.error('Error fetching component info:', error);
+      }
+    };
+
+    fetchInfo();
+    // Reduced polling interval for other components that don't have live updates
+    const interval = setInterval(fetchInfo, 300000); // 5 minutes
+    return () => clearInterval(interval);
+  }, [session]);
 
   const toggleComponentVisibility = (component) => {
     if (component === "help") {
@@ -85,6 +174,47 @@ export default function SelectionBar({ userEmail, userName }) {
     reorderedIcons.splice(result.destination.index, 0, removed);
 
     setIcons(reorderedIcons);
+  };
+
+  const formatTime = (seconds) => {
+    if (!seconds) return null;
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+  };
+
+  const renderInfoBadge = (iconId) => {
+    const info = componentInfo[iconId];
+    console.log(`Rendering badge for ${iconId}:`, info);
+
+    if (iconId === 'pomodoro') {
+      if (info?.isRunning && info?.timeLeft) {
+        return (
+          <div className={`${styles.infoBadge} ${styles.highlight}`}>
+            {formatTime(info.timeLeft)}
+          </div>
+        );
+      } else if (info?.count > 0) {
+        return (
+          <div className={`${styles.infoBadge} ${styles.highlight}`}>
+            {info.count}
+          </div>
+        );
+      }
+      return null;
+    }
+
+    // Handle other badges
+    if (!info || (typeof info === 'number' && info <= 0)) return null;
+
+    let badgeClass = styles.infoBadge;
+    if (iconId === 'scoreboard') badgeClass += ' ' + styles.small;
+
+    return (
+      <div className={badgeClass}>
+        {iconId === 'scoreboard' ? `#${info}` : info}
+      </div>
+    );
   };
 
   const renderedComponents = useMemo(
@@ -138,6 +268,7 @@ export default function SelectionBar({ userEmail, userName }) {
                       aria-label={icon.label}
                     >
                       <span className="material-icons">{icon.icon}</span>
+                      {renderInfoBadge(icon.id)}
                       {icon.id === "chat" && newChatMessage && (
                         <span className={styles.notificationDot}></span>
                       )}

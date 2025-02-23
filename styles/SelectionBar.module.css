@@ -3,79 +3,86 @@
   bottom: 20px;
   left: 50%;
   transform: translateX(-50%);
-  background: linear-gradient(145deg, var(--bg-primary), var(--bg-secondary));
-  color: var(--text-primary);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
-  border-radius: 20px;
   display: flex;
-  padding: 10px 20px;
-  gap: 15px; /* Space between icons */
+  gap: 12px;
+  padding: 15px 20px;
+  background: linear-gradient(145deg, var(--bg-primary), var(--bg-secondary));
+  border-radius: 20px;
   z-index: 1000;
-  transition: all 0.3s ease;
-  backdrop-filter: blur(10px); /* Add a subtle blur effect */
+  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
 }
 
 .iconButton {
-  background-color: var(--bg-secondary);
-  border: none;
-  color: var(--text-primary);
-  width: 60px;
-  height: 60px;
+  width: 45px;
+  height: 45px;
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
-  position: relative;
-  transition: all 0.3s ease;
-  border-radius: 50%;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Soft shadow */
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
   cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  border: 1px solid var(--border-color);
 }
-.selectionBar.hidden {
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-}
+
 .iconButton:hover {
-  background-color: var(--accent-color);
-  transform: scale(1.1);
+  background: var(--accent-color);
+  color: var(--text-primary);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 123, 0, 0.2);
+  border-color: var(--accent-color);
 }
 
 .iconButton.active {
-  background-color: var(--accent-color); /* Highlight active buttons */
-  box-shadow: 0 6px 12px rgba(255, 153, 0, 0.5);
-}
-.iconButton:hover .tooltip {
-  visibility: visible;
-  opacity: 1;
-  transform: translateY(0);
+  background: var(--accent-color);
+  color: var(--text-primary);
+  border-color: var(--accent-color);
 }
 
-.material-icons {
-  font-size: 28px;
-  transition: transform 0.3s ease;
-}
-.iconButton:hover .material-icons {
-  transform: scale(1.1); /* Slight grow on hover */
+.iconButton.dragging {
+  background: var(--accent-color);
+  transform: scale(1.05);
+  box-shadow: 0 8px 16px rgba(255, 123, 0, 0.3);
 }
 
 .tooltip {
-  visibility: hidden;
-  opacity: 0;
-  width: 120px;
-  background-color: var(--bg-secondary);
-  color: var(--text-primary);
-  text-align: center;
-  border-radius: 6px;
-  padding: 5px;
   position: absolute;
-  z-index: 1;
-  bottom: 125%;
+  bottom: calc(100% + 10px);
   left: 50%;
-  transform: translateX(-50%) translateY(-10px);
-  transition: opacity 0.3s, transform 0.3s;
-  font-size: 14px;
-  line-height: 1.2;
+  transform: translateX(-50%);
+  padding: 8px 12px;
+  background: linear-gradient(145deg, var(--bg-primary), var(--bg-secondary));
+  color: var(--text-primary);
+  font-size: 13px;
+  border-radius: 8px;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--border-color);
   pointer-events: none;
+}
+
+.tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 6px;
+  border-style: solid;
+  border-color: var(--bg-secondary) transparent transparent transparent;
+}
+
+.iconButton:hover .tooltip {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(-5px);
 }
 
 .hidden {
@@ -83,26 +90,121 @@
 }
 
 .notificationDot {
-  width: 12px;
-  height: 12px;
-  background-color: #ff4500;
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 10px;
+  height: 10px;
+  background-color: var(--accent-color);
   border-radius: 50%;
-  position: absolute;
-  top: 5px;
-  right: 5px;
-  border: 2px solid #2a2a2a; /* Add border for better visibility */
+  border: 2px solid var(--bg-primary);
+  animation: pulse 2s infinite;
 }
 
-.dragging {
-  background-color: #ff7b00;
-  transform: scale(1.2);
-  position: absolute;
+.selectionBar.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translate(-50%, 100%);
 }
 
-@media (max-width: 1180px) {
-  .container {
-    transform: scale(0.7);
-    transform-origin: top left;
-    padding: 10px;
+.material-icons {
+  font-size: 22px;
+  transition: transform 0.3s ease;
+}
+
+.iconButton:hover .material-icons {
+  transform: scale(1.1);
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.2); opacity: 0.8; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* Info Badge Styles */
+.infoBadge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  background: var(--accent-color);
+  color: white;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--bg-primary);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+  z-index: 2;
+}
+
+.infoBadge.highlight {
+  animation: badgePulse 2s infinite;
+  background: #4CAF50;
+}
+
+@keyframes badgePulse {
+  0% { transform: scale(1); box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2); }
+  50% { transform: scale(1.2); box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4); }
+  100% { transform: scale(1); box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2); }
+}
+
+.infoBadge.small {
+  min-width: 16px;
+  height: 16px;
+  font-size: 10px;
+  padding: 0 4px;
+  background: #2196F3;
+}
+
+.infoBadge.large {
+  min-width: 24px;
+  height: 24px;
+  font-size: 14px;
+  padding: 0 8px;
+}
+
+/* Make sure badges stay visible when button is hovered */
+.iconButton:hover .infoBadge {
+  transform: translateY(-2px);
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .selectionBar {
+    bottom: 10px;
+    padding: 10px 15px;
+    gap: 8px;
+  }
+
+  .iconButton {
+    width: 40px;
+    height: 40px;
+  }
+
+  .material-icons {
+    font-size: 20px;
+  }
+
+  .infoBadge {
+    min-width: 18px;
+    height: 18px;
+    font-size: 11px;
+    padding: 0 4px;
+  }
+}
+
+@media (max-width: 480px) {
+  .selectionBar {
+    width: 90%;
+    justify-content: center;
+    flex-wrap: wrap;
   }
 }

@@ -128,10 +128,21 @@ export default function PomodoroTimer({ onMinimize }) {
       document.title = `${formatTime} - ${
         state.currentMode === "pomodoro" ? "Focus Time" : "Break Time"
       }`;
+
+      // Dispatch timer update event
+      const event = new CustomEvent('pomodoroUpdate', {
+        detail: {
+          count: state.pomodoroCount,
+          isRunning: state.isTimerRunning,
+          timeLeft: state.timeLeft,
+          mode: state.currentMode
+        }
+      });
+      window.dispatchEvent(event);
     } else {
       document.title = "Pomodoro Timer";
     }
-  }, [state.timeLeft, state.currentMode, state.isTimerRunning]);
+  }, [state.timeLeft, state.currentMode, state.isTimerRunning, state.pomodoroCount]);
 
   const handleTimerEnd = useCallback(() => {
     console.log("Timer ended");
@@ -143,6 +154,12 @@ export default function PomodoroTimer({ onMinimize }) {
       const newPomodoroCount = state.pomodoroCount + 1;
       console.log("New Pomodoro Count:", newPomodoroCount);
       dispatch({ type: "INCREMENT_POMODORO" });
+
+      // Dispatch event for SelectionBar
+      const event = new CustomEvent('pomodoroUpdate', {
+        detail: { count: newPomodoroCount }
+      });
+      window.dispatchEvent(event);
 
       if (session?.user?.email) {
         fetch("/api/updatePomodoroCount", {

@@ -54,6 +54,15 @@ export default function Todo({ onMinimize }) {
     }
   }, [status, fetchTodosFromServer]);
 
+  // Add effect to dispatch todo count updates
+  useEffect(() => {
+    const incompleteTodos = todos.filter(todo => !todo.completed).length;
+    const event = new CustomEvent('todoUpdate', {
+      detail: { count: incompleteTodos }
+    });
+    window.dispatchEvent(event);
+  }, [todos]);
+
   const addTodo = async () => {
     const trimmedTodo = newTodo.trim();
     if (!trimmedTodo || !session?.user?.email) return;
