@@ -8,7 +8,7 @@ import { auth } from "../../firebaseConfig";
 import styles from "../../styles/Login.module.css";
 import Image from "next/image";
 const backgrounds = [
-  { id: 1, src: "/backgrounds/Couch.mp4", alt: "Couch", note: "Couch" },
+  { id: 1, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Couch.mp4", alt: "Couch", note: "Couch" },
   { id: 2, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Rain.mp4", alt: "Rain", note: "Rain" },
   { id: 3, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Train.mp4", alt: "Train", note: "Train" },
   { id: 4, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Classroom.mp4", alt: "Classroom", note: "Classroom" },
@@ -37,6 +37,7 @@ export default function Register() {
   const [success, setSuccess] = useState("");
   const [background, setBackground] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
+  const [videoLoaded, setVideoLoaded] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -71,11 +72,12 @@ export default function Register() {
     <div className={styles.container}>
       {background && (
         <video
-          className={styles.videoBackground}
+          className={`${styles.videoBackground} ${videoLoaded ? styles.loaded : ''}`}
           autoPlay
           loop
           muted
           src={background.src}
+          onLoadedData={() => setVideoLoaded(true)}
         />
       )}
       <div className={styles.gradientOverlay}></div>
