@@ -45,6 +45,9 @@ const backgrounds = [
   { id: 17, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Garden.mp4", alt: "Garden", note: "Garden", createdby: "Lo-Fi.study", priority: false },
   { id: 18, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/japannight.mp4", alt: "Nighttime in Japan", note: "Nighttime in Japan", createdby: "Lo-Fi.study", priority: false },
   { id: 19, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Nightcity.mp4", alt: "Night City", note: "Night City", createdby: "Lo-Fi.study", priority: false },
+  { id: 20, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Beachisland.mp4", alt: "Beach Island", note: "Beach Island", createdby: "Lo-Fi.study", priority: false },
+  { id: 21, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/NightRoom.mp4", alt: "Night Room", note: "Night Room", createdby: "Lo-Fi.study", priority: false },
+  { id: 22, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Bedroom.mp4", alt: "Bedroom", note: "Bedroom", createdby: "Lo-Fi.study", priority: false },
 ];
 const messages = [
   "Pouring Coffee",

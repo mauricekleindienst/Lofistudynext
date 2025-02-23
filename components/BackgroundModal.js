@@ -14,7 +14,7 @@ export default function BackgroundModal({ backgrounds, onSelect, selectedBackgro
   ];
 
   const getBackgroundCategory = (note) => {
-    if (note.toLowerCase().includes('rain') || note.toLowerCase().includes('autumn') || note.toLowerCase().includes('garden')) return 'nature';
+    if (note.toLowerCase().includes('rain') || note.toLowerCase().includes('autumn') || note.toLowerCase().includes('garden')|| note.toLowerCase().includes('island')) return 'nature';
     if (note.toLowerCase().includes('train') || note.toLowerCase().includes('night') || note.toLowerCase().includes('city')) return 'urban';
     if (note.toLowerCase().includes('couch') || note.toLowerCase().includes('room') || note.toLowerCase().includes('coffee')) return 'cozy';
     if (note.toLowerCase().includes('minecraft') || note.toLowerCase().includes('skyrim')) return 'gaming';
