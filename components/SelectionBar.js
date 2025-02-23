@@ -9,6 +9,7 @@ import Settings from "./Settings";
 import Todo from "./Todo";
 import Stats from "./Stats";
 import YouTubePlayer from "./YouTubePlayer";
+import Quiz from "./Quiz";
 import styles from "../styles/SelectionBar.module.css";
 
 const initialIcons = [
@@ -16,7 +17,7 @@ const initialIcons = [
   { id: "sounds", label: "Sounds", icon: "graphic_eq" },
   { id: "youtubePlayer", label: "YouTube", icon: "smart_display" },
   { id: "todo", label: "Todo", icon: "checklist" },
-  // { id: "note", label: "Note", icon: "edit" },
+  { id: "quiz", label: "Flashcards", icon: "school" },
   { id: "stats", label: "Stats", icon: "bar_chart" },
   { id: "scoreboard", label: "Scoreboard", icon: "stairs" },
   { id: "settings", label: "Settings", icon: "settings" },
@@ -31,6 +32,7 @@ const components = {
   todo: Todo,
   stats: Stats,
   settings: Settings,
+  quiz: Quiz,
 };
 
 export default function SelectionBar({ userEmail, userName }) {

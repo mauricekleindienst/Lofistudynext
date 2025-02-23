@@ -25,7 +25,7 @@ async function retrySignInWithCredential(credential, retries = 0) {
   }
 }
 
-export default NextAuth({
+export const authOptions = {
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID,
@@ -111,4 +111,6 @@ export default NextAuth({
     newUser: "/auth/register",
   },
   debug: false,
-});
+};
+
+export default NextAuth(authOptions);

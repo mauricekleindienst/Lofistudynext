@@ -1,3 +1,14 @@
+import styles from '../styles/Analytics.module.css';
+import MetricCard from './MetricCard';
+import FocusPatternChart from './charts/FocusPatternChart';
+import ProductivityHeatmap from './charts/ProductivityHeatmap';
+import GoalsProgress from './charts/GoalsProgress';
+
+const calculateFocusScore = () => {
+  // Implement focus score calculation logic
+  return 85; // Placeholder value
+};
+
 export default function Analytics() {
   return (
     <div className={styles.analyticsContainer}>

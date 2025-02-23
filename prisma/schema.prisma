@@ -74,6 +74,10 @@ model Flashcard {
   imageUrl  String?
   completed Boolean  @default(false)
   createdAt DateTime @default(now())
+  rating    Int?     // 1-5 rating of how well the user knows the card
+  lastReviewed DateTime? // When the card was last reviewed
+  nextReview   DateTime? // When the card should be reviewed next (for spaced repetition)
+  reviewCount  Int       @default(0) // Number of times the card has been reviewed
 }
 
 model Challenge {

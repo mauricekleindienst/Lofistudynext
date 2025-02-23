@@ -7,6 +7,12 @@ import 'bootstrap/dist/css/bootstrap.css';
 import { ChakraProvider } from '@chakra-ui/react'
 import { ThemeProvider } from "../contexts/ThemeContext";
 
+// Set initial theme class on HTML element
+if (typeof window !== 'undefined') {
+  const savedTheme = localStorage.getItem('theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', savedTheme);
+}
+
 function MyApp({ Component, pageProps: { session, ...pageProps } }) {
   return (
     <SessionProvider session={session}>
