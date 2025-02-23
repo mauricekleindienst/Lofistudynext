@@ -146,15 +146,10 @@
 }
 
 .infoBadge.highlight {
-  animation: badgePulse 2s infinite;
   background: #4CAF50;
 }
 
-@keyframes badgePulse {
-  0% { transform: scale(1); box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2); }
-  50% { transform: scale(1.2); box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4); }
-  100% { transform: scale(1); box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2); }
-}
+
 
 .infoBadge.small {
   min-width: 16px;
