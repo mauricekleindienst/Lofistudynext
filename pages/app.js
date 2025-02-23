@@ -12,13 +12,15 @@ import LiveChat from "../components/LiveChat";
 import DraggableIframe from "../components/DraggableIframe";
 import { ErrorBoundary } from "react-error-boundary";
 import ChallengeSidebar from '../components/ChallengeSidebar';
+import BackgroundPrompt from '../components/BackgroundPrompt';
+import BackgroundModal from '../components/BackgroundModal';
 
 // Define the default background
 const DEFAULT_BACKGROUND = {
-  id: 11,
-  src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/winter.mp4",
-  alt: "Winter",
-  note: "Winter",
+  id: 2,
+  src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Rain.mp4",
+  alt: "Rain",
+  note: "Rain",
   createdby: "Lo-Fi.study",
   priority: true
 };
@@ -41,7 +43,8 @@ const backgrounds = [
   { id: 15, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Darkroom.mp4", alt: "Darkroom", note: "Darkroom", createdby: "Lo-Fi.study", priority: false },
   { id: 16, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Snowtrain.mp4", alt: "Snowtrain", note: "Snowtrain", createdby: "Lo-Fi.study", priority: false },
   { id: 17, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Garden.mp4", alt: "Garden", note: "Garden", createdby: "Lo-Fi.study", priority: false },
-  { id: 18, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/japannight.mp4", alt: "japannight", note: "japannight", createdby: "Lo-Fi.study", priority: false },
+  { id: 18, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/japannight.mp4", alt: "Nighttime in Japan", note: "Nighttime in Japan", createdby: "Lo-Fi.study", priority: false },
+  { id: 19, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Nightcity.mp4", alt: "Night City", note: "Night City", createdby: "Lo-Fi.study", priority: false },
 ];
 const messages = [
   "Pouring Coffee",
@@ -73,6 +76,7 @@ export default function Study() {
   const scrollContainerRef = useRef(null);
   const videoRef = useRef(null);
   const [isBackgroundLoading, setIsBackgroundLoading] = useState(false);
+  const [showBackgroundModal, setShowBackgroundModal] = useState(false);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -296,10 +300,10 @@ useEffect(() => {
     };
   }, []);
 
-  const handleBackgroundSelection = useCallback((background) => {
-    setIsBackgroundLoading(true);
+  const handleBackgroundSelection = (background) => {
     setSelectedBackground(background);
-  }, []);
+    setIsBackgroundLoading(true);
+  };
 
   const handleScroll = (direction) => {
     const container = scrollContainerRef.current;
@@ -400,39 +404,53 @@ useEffect(() => {
         onIconClick={handleIconClick}
       />
       
+      {!selectedBackground && !showLoading && session && !zenMode && (
+        <BackgroundPrompt />
+      )}
+      
       {renderComponent("pomodoro")}
       {renderComponent("note")}
       {renderComponent("calendar")}
       {renderComponent("chat")}
       <div className={`${styles.container} ${zenMode ? styles.zenMode : ''}`}>
         {selectedBackground && (
-          <video
-            ref={videoRef}
-            className={styles.videoBackground}
-            autoPlay
-            loop
-            muted
-            playsInline
-          />
-        )}
-        {isBackgroundLoading && (
-          <div className={styles.backgroundLoader}>
-            <div className={styles.backgroundLoaderSpinner}></div>
-          </div>
+          <>
+            <video
+              ref={videoRef}
+              className={`${styles.videoBackground} ${isBackgroundLoading ? styles.loading : ''}`}
+              autoPlay
+              loop
+              muted
+              playsInline
+            />
+            {isBackgroundLoading && (
+              <div className={styles.videoLoadingIndicator}>
+                <div className={styles.loadingSpinner}></div>
+                <p>Loading your study space...</p>
+              </div>
+            )}
+          </>
         )}
         <aside
           className={`${styles.sidebar} ${
             sidebarOpen ? styles.open : styles.closed
           } ${zenMode ? styles.hidden : ''}`}
         >
-          
           <h1>
             Welcome, {getFirstName(session.user.name)}! {currentTime}
           </h1>
        
-       
           <div className={styles.backgroundSelector}>
-            <h2>Backgrounds</h2>
+            <div className={styles.backgroundHeader}>
+              <h2>Backgrounds</h2>
+              <button 
+                className={styles.viewAllButton}
+                onClick={() => setShowBackgroundModal(true)}
+              >
+                <span className="material-icons">grid_view</span>
+                View All
+              </button>
+            </div>
             <div className={styles.backgroundScrollContainer}>
               <button 
                 className={`${styles.scrollButton} ${styles.scrollLeft}`} 
@@ -453,6 +471,9 @@ useEffect(() => {
                   >
                     <video src={background.src} muted loop />
                     <span className={styles.backgroundLabel}>{background.note}</span>
+                    <div className={styles.backgroundTooltip}>
+                      <p><strong>Created by:</strong> {background.createdby}</p>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -494,9 +515,21 @@ useEffect(() => {
       <div className={`${styles.createdByLabel} ${zenMode ? styles.hidden : ''}`}>
         Wallpaper by: {selectedBackground.createdby}
       </div>
-     <button className={`${styles.zenModeButton} ${zenMode ? styles.active : ''}`} onClick={toggleZenMode} aria-label="Toggle Zen Mode" >
- <span className={styles.moonIcon}></span>
+      <button className={`${styles.zenModeButton} ${zenMode ? styles.active : ''}`} onClick={toggleZenMode} aria-label="Toggle Zen Mode">
+        <span className={styles.moonIcon}></span>
       </button>
+
+      {showBackgroundModal && (
+        <BackgroundModal
+          backgrounds={backgrounds}
+          selectedBackground={selectedBackground}
+          onSelect={(bg) => {
+            handleBackgroundSelection(bg);
+            setShowBackgroundModal(false);
+          }}
+          onClose={() => setShowBackgroundModal(false)}
+        />
+      )}
     </ErrorBoundary>
   );
 }

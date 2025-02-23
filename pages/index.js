@@ -11,12 +11,17 @@ import Footer from "../components/Footer";
 import CookieBanner from "../components/CookieBanner";
 import Image from "next/image";
 import styles from "../styles/Home.module.css";
+import SelectionBar from '../components/SelectionBar';
+import BackgroundPrompt from '../components/BackgroundPrompt';
+import { useSession } from 'next-auth/react';
 
 export default function Landing() {
   const [imagesLoaded, setImagesLoaded] = useState([]);
   const featuresRef = useRef(null);
   const freeToolSectionRef = useRef(null);
   const router = useRouter();
+  const { data: session } = useSession();
+  const [selectedBackground, setSelectedBackground] = useState(null);
 
   const img = useMemo(() => [
     {
@@ -169,7 +174,29 @@ export default function Landing() {
       </Head>
       <Header />
       <CookieBanner />
-      <main className={styles.main}>
+      {!selectedBackground && session && <BackgroundPrompt />}
+      <SelectionBar 
+        userEmail={session?.user?.email} 
+        userName={session?.user?.name}
+        onBackgroundSelect={setSelectedBackground}
+      />
+      {selectedBackground && (
+        <div 
+          className={styles.background}
+          style={{
+            backgroundImage: `url(${selectedBackground})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            zIndex: -1,
+          }}
+        />
+      )}
+      <main className={`${styles.main} ${!selectedBackground && session ? styles.blurred : ''}`}>
         <motion.div
           className={styles.welcomeWrapper}
           initial="hidden"
