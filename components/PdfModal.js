@@ -92,6 +92,10 @@ export default function PdfModal({ onClose }) {
               <p className={styles.uploadInfo}>
                 Select a PDF file from your device or drag and drop it here
               </p>
+              <p className={styles.privacyInfo}>
+                <span className="material-icons">lock</span>
+                Your PDF stays on your device - we never upload or store it on our servers
+              </p>
               {error && <p className={styles.errorMessage}>{error}</p>}
             </div>
           </div>

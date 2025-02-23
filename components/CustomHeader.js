@@ -73,9 +73,20 @@ export default function CustomHeader() {
     }
   }, [router]);
 
+  const shareWebsite = useCallback(async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.origin);
+      dispatch({ type: SHOW_TOAST, message: "Link copied to clipboard!" });
+      setTimeout(() => dispatch({ type: HIDE_TOAST }), 3000);
+    } catch (error) {
+      dispatch({ type: SHOW_TOAST, message: "Failed to copy link" });
+    }
+  }, []);
+
   return (
     <div className={styles.header}>
       <HeaderButton onClick={shareVideoRoom} icon="videocam" tooltip="Share Room" />
+      <HeaderButton onClick={shareWebsite} icon="share" tooltip="Share Lo-fi.study" />
       <HeaderButton
         onClick={toggleFullscreen}
         icon={state.isFullscreen ? "fullscreen_exit" : "fullscreen"}
