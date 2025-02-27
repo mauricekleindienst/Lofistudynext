@@ -66,7 +66,7 @@ export default function Custom404() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
         >
-          Looks like you've wandered into an unexplored dimension. Let's get you back to your study session.
+          Looks like you&apos;ve wandered into an unexplored dimension. Let&apos;s get you back to your study session.
         </motion.p>
 
         <motion.div 
