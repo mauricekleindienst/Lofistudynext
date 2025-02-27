@@ -26,25 +26,36 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
+  const { type = 'weekly' } = req.query;
+
   try {
     const users = await prisma.user_pomodoros.findMany({
       where: {
-        pomodoro_count_weekly: {
+        [type === 'weekly' ? 'pomodoro_count_weekly' : 'pomodoro_count']: {
           gt: 0,
         },
       },
       orderBy: {
-        pomodoro_count_weekly: 'desc',
+        [type === 'weekly' ? 'pomodoro_count_weekly' : 'pomodoro_count']: 'desc',
       },
       select: {
         email: true,
         firstname: true,
         pomodoro_count_weekly: true,
+        pomodoro_count: true,
       },
     });
 
-    res.status(200).json(users);
+    // Format the response based on the type
+    const formattedUsers = users.map(user => ({
+      email: user.email,
+      firstname: user.firstname,
+      pomodoro_count: type === 'weekly' ? user.pomodoro_count_weekly : user.pomodoro_count,
+    }));
+
+    res.status(200).json(formattedUsers);
   } catch (error) {
+    console.error('Error fetching scoreboard:', error);
     res.status(500).json({ error: 'Internal server error' });
   } finally {
     await prisma.$disconnect();

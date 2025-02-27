@@ -38,6 +38,7 @@
     "@types/node": "^20.14.11",
     "@types/react": "^18.3.3",
     "adm-zip": "^0.5.16",
+    "anki-apkg-export": "^4.0.3",
     "autoprefixer": "^10.4.19",
     "axios": "^1.7.7",
     "bootstrap": "^5.3.3",

@@ -1,15 +1,14 @@
 .statsContainer {
-  border-radius: 15px;
-  color: var(--text-primary);
-  width: 600px;
-  max-height: 90vh; /* Limit the maximum height */
   background: linear-gradient(145deg, var(--bg-primary), var(--bg-secondary));
-  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  border-radius: 15px;
+  width: 500px;
+  height: 600px;
   position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 1000;
+  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -22,6 +21,7 @@
   justify-content: center;
   align-items: center;
   border-bottom: 2px solid var(--accent-color);
+  cursor: move;
 }
 
 .dragHandle::before {
@@ -30,11 +30,6 @@
   height: 4px;
   background-color: var(--accent-color);
   border-radius: 2px;
-  transition: background-color 0.3s ease;
-}
-
-.dragHandle:hover::before {
-  background-color: var(--accent-hover);
 }
 
 .header {
@@ -47,9 +42,9 @@
   border-bottom: 1px solid var(--border-color);
 }
 
-.header h2 { 
-  margin: 0; 
-  font-size: 20px; 
+.header h2 {
+  margin: 0;
+  font-size: 20px;
   font-weight: 700;
   color: var(--text-primary);
 }
@@ -66,53 +61,193 @@
   color: var(--accent-hover);
 }
 
-.content { 
-  padding: 15px;
-  overflow-y: auto; /* Allow scrolling if content exceeds max-height */
+.content {
+  flex: 1;
+  padding: 12px;
+  overflow-y: auto;
+  height: calc(100% - 80px);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
-.statsSummary {
+.tabs {
   display: flex;
-  justify-content: space-between;
+  gap: 8px;
   margin-bottom: 15px;
 }
 
-.statsSummary p { font-size: 16px; font-weight: bold; margin: 0; }
+.tab {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  padding: 6px 12px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 13px;
+}
 
-.chartsContainer {
+.tab:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-primary);
+}
+
+.tab.active {
+  background: var(--accent-color);
+  color: white;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.statBlock {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  padding: 10px;
   display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
 }
 
-.chartWrapper {
-  width: 48%;
-  height: 200px; /* Set a fixed height for the chart wrappers */
-  margin-bottom: 30px;
-  background: var(--bg-secondary);
-}
-
-.chartWrapper h3 { 
-  text-align: center;
-  margin: 0 0 10px 0;
+.statIcon {
   font-size: 16px;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+}
+
+.statInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.statInfo h3 {
+  font-size: 11px;
+  margin: 0;
+  color: var(--text-secondary);
+}
+
+.statInfo p {
+  font-size: 15px;
+  margin: 2px 0 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.chartBlock {
+  padding: 10px;
+  height: 180px;
+  min-height: 180px;
+  margin-bottom: 10px;
+}
+
+.chartBlock h3 {
+  margin: 0 0 6px;
+  font-size: 13px;
+}
+
+.doughnutWrapper {
+  height: 140px;
+}
+
+.studyBlocksGrid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  padding: 10px;
+  height: 120px;
+}
+
+.studyBlock {
+  border-radius: 4px;
+  padding: 2px;
+  position: relative;
+  min-height: 80px;
+}
+
+.blockBar {
+  width: 100%;
+  background: var(--accent-color);
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  transition: height 0.3s ease;
+  opacity: 0.6;
+  border-radius: 2px;
+}
+
+.blockDate {
+  font-size: 10px;
+  position: absolute;
+  top: 2px;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+
+.error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  padding: 20px;
+  text-align: center;
+}
+
+.error p {
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.retryButton {
+  background: var(--accent-color);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.retryButton:hover {
+  background: var(--accent-hover);
+  transform: scale(1.05);
 }
 
 .loading {
-  text-align: center;
-  font-size: 18px;
-  color: #fff;
-  padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 150px;
+  color: var(--text-primary);
 }
 
 @media (max-width: 650px) {
-  .statsContainer { width: 90%; }
-  .chartsContainer { flex-direction: column; }
-  .chartWrapper { 
-    width: 100%; 
-    height: 180px; /* Slightly smaller height for mobile */
+  .statsContainer {
+    width: 95%;
+    height: 85vh;
+  }
+
+  .statsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .studyBlocksGrid {
+    height: 100px;
+  }
+
+  .studyBlock {
+    min-height: 60px;
   }
 }
+
 .chartColors {
   --chart-background: rgba(255, 123, 0, 0.8);
   --chart-border: rgba(255, 123, 0, 1);
@@ -121,4 +256,148 @@
 [data-theme='dark'] .chartColors {
   --chart-background: rgba(255, 123, 0, 0.6);
   --chart-border: rgba(255, 123, 0, 1); 
+}
+
+.yearGrid {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 15px;
+}
+
+.yearHeader {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.yearHeader h3 {
+  margin: 0;
+  font-size: 14px;
+  color: var(--text-primary);
+}
+
+.viewToggle {
+  background: transparent;
+  border: none;
+  color: var(--accent-color);
+  font-size: 13px;
+  cursor: pointer;
+  padding: 6px 12px;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.viewToggle:hover {
+  background: rgba(255, 123, 0, 0.1);
+}
+
+.contributionGrid {
+  display: grid;
+  grid-template-columns: repeat(52, 1fr);
+  gap: 2px;
+  padding: 8px;
+  min-height: 80px;
+  width: 100%;
+  position: relative;
+  overflow: visible;
+}
+
+.contributionCell {
+  aspect-ratio: 1;
+  border-radius: 2px;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+  cursor: pointer;
+  position: relative;
+}
+
+.contributionCell:hover {
+  transform: scale(1.2);
+  opacity: 0.8;
+  z-index: 2;
+}
+
+.contributionCell::before {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%) scale(0);
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 11px;
+  line-height: 1.4;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--border-color);
+  z-index: 3;
+  width: max-content;
+  max-width: 200px;
+  letter-spacing: 0.2px;
+  backdrop-filter: blur(8px);
+}
+
+.contributionCell:hover::before {
+  transform: translateX(-50%) translateY(-8px) scale(1);
+  opacity: 1;
+}
+
+/* Adjust tooltip position for cells near the right edge */
+.contributionCell:nth-last-child(-n+7)::before {
+  left: auto;
+  right: 0;
+  transform-origin: right bottom;
+  transform: scale(0);
+}
+
+.contributionCell:nth-last-child(-n+7):hover::before {
+  transform: translateY(-8px) scale(1);
+}
+
+@media (max-width: 650px) {
+  .contributionGrid {
+    grid-template-columns: repeat(26, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 1px;
+    padding: 6px;
+  }
+
+  .contributionCell:hover {
+    transform: scale(1.1);
+  }
+
+  .contributionCell::before {
+    font-size: 10px;
+    padding: 6px 10px;
+    bottom: calc(100% + 6px);
+    line-height: 1.3;
+  }
+}
+
+.insightsGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.statsRow {
+  gap: 8px;
+}
+
+.statCard {
+  padding: 12px;
+}
+
+.statCard h4 {
+  font-size: 12px;
+  margin-bottom: 6px;
+}
+
+.statCard p {
+  font-size: 18px;
 }
