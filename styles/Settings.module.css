@@ -72,8 +72,8 @@
 .settingsList {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  padding: 12px 15px;
+  gap: 6px;
+  padding: 12px;
   max-height: 300px;
   overflow-y: auto;
 }
@@ -89,8 +89,9 @@
 }
 
 .setting:hover {
-  background-color: rgba(255, 255, 255, 0.1);
   transform: translateX(4px);
+  border-color: var(--accent-color);
+  background: rgba(255, 255, 255, 0.05);
 }
 
 .icon {
@@ -214,17 +215,19 @@
 .themeToggle {
   padding: 6px 12px;
   border-radius: 6px;
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--bg-secondary);
   color: var(--text-primary);
   border: 1px solid var(--border-color);
   cursor: pointer;
   transition: all 0.3s ease;
   font-size: 12px;
+  min-width: 70px;
+  text-align: center;
 }
 
 .themeToggle:hover {
-  background: rgba(255, 255, 255, 0.1);
-  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.05);
+  border-color: var(--accent-color);
 }
 
 .themeToggle.active {
@@ -283,8 +286,8 @@
   font-size: 11px;
   color: var(--text-secondary);
   padding: 6px 8px;
-  margin-top: 6px;
-  background: rgba(255, 255, 255, 0.05);
+  margin-top: 4px;
+  background: var(--bg-secondary);
   border-radius: 6px;
   border: 1px solid var(--border-color);
   text-align: center;

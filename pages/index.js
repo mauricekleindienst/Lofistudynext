@@ -2,7 +2,7 @@ import { useEffect, useRef, useMemo, useState } from "react";
 import Head from "next/head";
 import Typed from "typed.js";
 import { useRouter } from "next/router";
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import Glide from "@glidejs/glide";
 import "@glidejs/glide/dist/css/glide.core.min.css";
 import "@glidejs/glide/dist/css/glide.theme.min.css";
@@ -17,25 +17,38 @@ export default function Landing() {
   const featuresRef = useRef(null);
   const freeToolSectionRef = useRef(null);
   const router = useRouter();
+  const { scrollYProgress } = useScroll();
+
+  // Parallax effects
+  const heroImageY = useTransform(scrollYProgress, [0, 1], [0, 200]);
+  const heroOpacity = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
 
   const img = useMemo(() => [
     {
       src: "https://i.ibb.co/K0qdm4r/lgsarius-cyberpunk-night-study-girl-window-desklight-c1650ad7-776d-470a-a2e0-da9e78140212.webp",
       alt: "Cyberpunk night study scene",
+      title: "Night Focus",
+      description: "Perfect for late-night study sessions"
     },
     {
       src: "https://i.ibb.co/nC5NnTr/DALL-E-2025-09-22-13-11-47-A-serene-winter-landscape-during-the-blue-hour-featuring-a-small-cozy-cab.webp",
       alt: "Serene winter landscape with cozy cabin",
+      title: "Winter Serenity",
+      description: "Cozy and peaceful study environment"
     },
     {
       src: "https://i.ibb.co/PG0bPhB/lgsarius-Lofi-study-girl-on-desk-plants-rain-coffee-rain-02e5bc5f-943e-4c0b-b986-1cf5d7362034.webp",
       alt: "Lo-fi study girl with plants and rain",
+      title: "Rainy Vibes",
+      description: "Calming rain ambiance for focus"
     },
     {
       src: "https://i.ibb.co/m9QYfwJ/lgsarius-Lofi-Trainstation-sunset-648859c2-8af6-4b30-b276-dca8f45ba231.webp",
       alt: "Lo-fi trainstation at sunset",
+      title: "Journey Mode",
+      description: "Travel-inspired concentration"
     },
-  ], [])
+  ], []);
 
   const ImageSlider = useMemo(() => {
     const MemoizedSlider = () => {
@@ -111,7 +124,7 @@ export default function Landing() {
 
   useEffect(() => {
     const typed = new Typed("#typedtext", {
-      strings: ["Work", "Study", "Chill", "Code"],
+      strings: ["Work", "Study", "Create", "Focus", "Code", "Learn"],
       typeSpeed: 120,
       backSpeed: 120,
       backDelay: 500,
@@ -124,26 +137,46 @@ export default function Landing() {
     };
   }, []);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      if (featuresRef.current) {
-        const rect = featuresRef.current.getBoundingClientRect();
-        if (rect.top >= 0 && rect.top <= window.innerHeight) {
-          featuresRef.current.style.animation = 'none';
-          featuresRef.current.offsetHeight; // Trigger reflow
-          featuresRef.current.style.animation = null;
-        }
-      }
-    };
+  const features = [
+    {
+      icon: "🎵",
+      title: "Ambient Sounds",
+      description: "Curated lo-fi beats and nature sounds to create your perfect study atmosphere",
+      color: "#FF6B6B"
+    },
+    {
+      icon: "⏱️",
+      title: "Smart Timer",
+      description: "Stay focused with our intelligent Pomodoro timer that adapts to your study patterns",
+      color: "#4ECDC4"
+    },
+    {
+      icon: "📝",
+      title: "Note Taking",
+      description: "Capture and organize your thoughts with our intuitive note-taking system",
+      color: "#45B7D1"
+    },
+    {
+      icon: "🎯",
+      title: "Goal Tracking",
+      description: "Set and achieve your study goals with our comprehensive tracking system",
+      color: "#96CEB4"
+    },
+    {
+      icon: "🏆",
+      title: "Progress Stats",
+      description: "Monitor your improvement with detailed statistics and insights",
+      color: "#FFEEAD"
+    },
+    {
+      icon: "🤝",
+      title: "Community",
+      description: "Join a community of focused learners and share your progress",
+      color: "#D4A5A5"
+    }
+  ];
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
 
-  const fadeInUp = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0 },
-  };
 
   const scrollToFeatures = () => {
     if (featuresRef.current) {
@@ -160,179 +193,221 @@ export default function Landing() {
   return (
     <div className={styles.container}>
       <Head>
-        <title>Lo-Fi.Study - Enhance Your Study Sessions</title>
-        <meta name="keywords" content="study music, focus music, lo-fi, productivity, ambient music, Pomodoro timer, study tools, note-taking, study atmosphere" />
-        <meta property="og:title" content="Lo-Fi.Study - Enhance Your Study Sessions" />
-        <meta property="og:description" content="Discover a platform designed to help you stay focused with ambient sounds, productivity tools, and customizable study environments." />
-        <meta property="og:image" content="/path-to-your-og-image.jpg" />
+        <title>Lo-Fi.Study - Your Perfect Study Environment</title>
+        <meta name="description" content="Create your ideal study atmosphere with Lo-Fi.Study. Featuring ambient sounds, productivity tools, and a beautiful environment designed for focus and success." />
+        <meta name="keywords" content="study music, focus music, lo-fi, productivity, ambient sounds, Pomodoro timer, study tools, note-taking" />
+        <meta property="og:title" content="Lo-Fi.Study - Your Perfect Study Environment" />
+        <meta property="og:description" content="Create your ideal study atmosphere with Lo-Fi.Study. Ambient sounds, productivity tools, and a beautiful environment designed for focus." />
+        <meta property="og:image" content="https://i.ibb.co/kG960G6/cover.webp" />
+        <meta name="twitter:card" content="summary_large_image" />
       </Head>
       <Header />
       <CookieBanner />
+      
       <main className={styles.main}>
-        <motion.div
-          className={styles.welcomeWrapper}
-          initial="hidden"
-          animate="visible"
-          variants={fadeInUp}
-          transition={{ duration: 0.5 }}
-        >
-          <section className={styles.welcomeSection}>
-            <div className={styles.cartoonLeft}>
-              <Image
-                src="/character_notebook.svg"
-                alt="Study illustration left"
-                width={200}
-                height={200}
-                priority
-              />
-            </div>
-  
-            <div className={styles.welcomeContent}>
-              <h1 className={styles.title}>
-                Welcome to
-                <br />
-                <span className={styles.gradientText}>Lo-Fi.Study</span>
-              </h1>
-              <p className={styles.description}>
-                Create the perfect atmosphere to{" "}
-                <span className={styles.typedTextWrapper}>
-                  <span id="typedtext" className={styles.typedText}></span>
-                </span>
-              </p>
-              <div className={styles.ctaContainer}>
-                <motion.button
-                  onClick={() => router.push("/auth/signin")}
-                  className={styles.ctaButton}
-                  whileHover={{ scale: 1.05, boxShadow: "0 0 15px rgba(255,123,0,0.5)" }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  Get Started
-                </motion.button>
-                <motion.button
-                  onClick={scrollToFreeToolSection}
-                  className={`${styles.ctaButton} ${styles.secondaryButton}`}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  Learn More
-                </motion.button>
-              </div>
-            </div>
-            <div className={styles.backgroundAnimation}></div>
-          </section>
-        </motion.div>
-        <motion.section
-          className={styles.coverSection}
-          initial="hidden"
-          animate="visible"
-          variants={fadeInUp}
-          transition={{ duration: 0.5, delay: 0.2 }}
-        >
-          <div className={styles.coverWrapper}>
-            <div className={styles.coverContent}>
-              <h2 className={styles.sectionTitle}>The Lo-Fi.Study App</h2>
-              <p className={styles.coverDescription}>
-                Immerse yourself in a world of focus and productivity. Create your perfect study atmosphere with curated lo-fi beats, ambient sounds, and powerful productivity tools. Whether you&apos;re tackling a challenging project or diving deep into your studies, our immersive soundscapes and intuitive features are designed to help you maintain concentration, reduce distractions, and boost your workflow. Discover the ultimate blend of relaxation and productivity, tailor-made for your daily routine. Let the ambient vibes guide you toward accomplishing your goals, one task at a time.
-              </p>
-
+        {/* Hero Section */}
+        <section className={styles.heroSection}>
+          <motion.div 
+            className={styles.heroContent}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+          >
+            <motion.h1 
+              className={styles.title}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+            >
+              Transform Your
+              <br />
+              <span className={styles.gradientText}>Study Experience</span>
+            </motion.h1>
+            <motion.p 
+              className={styles.description}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.4 }}
+            >
+              Create the perfect atmosphere to{" "}
+              <span className={styles.typedTextWrapper}>
+                <span id="typedtext" className={styles.typedText}></span>
+              </span>
+            </motion.p>
+            <motion.div 
+              className={styles.ctaContainer}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.6 }}
+            >
               <motion.button
+                onClick={() => router.push("/auth/signin")}
                 className={styles.ctaButton}
-                whileHover={{ scale: 1.05 }}
+                whileHover={{ scale: 1.05, boxShadow: "0 0 20px rgba(255,123,0,0.5)" }}
                 whileTap={{ scale: 0.95 }}
-                onClick={scrollToFeatures}
               >
-                Explore Features
+                Get Started Free
               </motion.button>
-            </div>
-            <div className={styles.coverImageWrapper}>
-              <Image
-                src="https://i.ibb.co/kG960G6/cover.webp"
-                alt="Lo-Fi Study Cover"
-                width={2000}
-                height={1200}
-                className={styles.coverImage}
-              />
-            </div>
-          </div>
-        </motion.section>
+              <motion.button
+                onClick={scrollToFreeToolSection}
+                className={`${styles.ctaButton} ${styles.secondaryButton}`}
+                whileHover={{ scale: 1.05, backgroundColor: "rgba(255,123,0,0.1)" }}
+                whileTap={{ scale: 0.95 }}
+              >
+                Learn More
+              </motion.button>
+            </motion.div>
+          </motion.div>
+          <motion.div 
+            className={styles.heroImage}
+            style={{ y: heroImageY, opacity: heroOpacity }}
+          >
+            <Image
+              src="https://i.ibb.co/kG960G6/cover.webp"
+              alt="Lo-Fi Study Environment"
+              width={600}
+              height={400}
+              priority
+              className={styles.mainImage}
+            />
+          </motion.div>
+        </section>
 
-        <motion.section
-          ref={freeToolSectionRef}
-          className={styles.freeToolSection}
-          initial="hidden"
-          animate="visible"
-          variants={fadeInUp}
-          transition={{ duration: 0.5, delay: 0.3 }}
-        >
-          <div className={styles.freeToolContent}>
-            <h2 className={styles.freeToolTitle}>Empowering Students, Free of Charge</h2>
-            <p className={styles.freeToolDescription}>
-              Lo-Fi.Study is a <span className={styles.freeToolHighlight}>completely free</span> platform designed to boost your productivity and enhance your learning experience. Created by students who understand the challenges of academic life, our tools are tailored for learners striving for excellence.
-            </p>
-            <p className={styles.freeToolDescription}>
-              We offer a comprehensive suite of features, including ambient sounds, productivity tools, and customizable study environments - all at <span className={styles.freeToolHighlight}>no cost</span>. Our mission is to make effective studying accessible to everyone, regardless of their financial situation.
-            </p>
-            <p className={styles.freeToolDescription}>
-              Your feedback drives our innovation. We continuously refine and expand our platform based on <span className={styles.freeToolHighlight}>user input</span>, creating an evolving ecosystem that transforms studying into an efficient, enjoyable, and rewarding experience. Join our community and be part of shaping the future of learning!
-            </p>
-            <div className={styles.freeToolIcons}>
-              <span className={styles.freeToolIcon} role="img" aria-label="Headphones">🎧</span>
-              <span className={styles.freeToolIcon} role="img" aria-label="Books">📚</span>
-              <span className={styles.freeToolIcon} role="img" aria-label="Chart Increasing">📈</span>
-            </div>
-          </div>
-        </motion.section>
+  
 
-        <motion.div
-          initial="hidden"
-          animate="visible"
-          variants={fadeInUp}
-          transition={{ duration: 0.5, delay: 0.4 }}
-        >
-          <ImageSlider />
-        </motion.div>
-
-        <motion.section
-          ref={featuresRef}
-          className={styles.featureSection}
-          initial="hidden"
-          animate="visible"
-          variants={fadeInUp}
-          transition={{ duration: 0.5, delay: 0.6 }}
-        >
-          <h2 className={styles.sectionTitle}>Features</h2>
+        {/* Features Section */}
+        <section ref={featuresRef} className={styles.featureSection}>
+          <motion.h2 
+            className={styles.sectionTitle}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            Everything You Need to Excel
+          </motion.h2>
           <div className={styles.featureGrid}>
-            <div className={styles.featureItem}>
-              <h3>Ambient Sounds</h3>
-              <p>
-                Choose from a variety of lo-fi beats and nature sounds to create
-                your perfect study atmosphere.
-              </p>
-            </div>
-            <div className={styles.featureItem}>
-              <h3>Pomodoro Timer</h3>
-              <p>
-                Stay focused with our customizable Pomodoro timer. Break your
-                study sessions into manageable chunks.
-              </p>
-            </div>
-
-            <div className={styles.featureItem}>
-              <h3>Note Taking</h3>
-              <p>
-                Capture your thoughts and organize your study materials with our
-                built-in note-taking tool.
-              </p>
-            </div>
-            <div className={styles.featureItem}>
-              <h3>Scoreboard</h3>
-              <p>
-                Get motivated by tracking your study progress and competing with
-                friends on the leaderboard.
-              </p>
-            </div>
+            {features.map((feature, index) => (
+              <motion.div
+                key={feature.title}
+                className={styles.featureCard}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                style={{ '--feature-color': feature.color }}
+              >
+                <span className={styles.featureIcon}>{feature.icon}</span>
+                <h3>{feature.title}</h3>
+                <p>{feature.description}</p>
+              </motion.div>
+            ))}
           </div>
-        </motion.section>
+        </section>
+
+        {/* Showcase Section */}
+        <section className={styles.showcaseSection}>
+          <motion.h2 
+            className={styles.sectionTitle}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            Beautiful Study Environments
+          </motion.h2>
+          <div className={styles.showcaseGrid}>
+            {img.map((image, index) => (
+              <motion.div
+                key={image.src}
+                className={styles.showcaseCard}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                whileHover={{ y: -10, transition: { duration: 0.3 } }}
+              >
+                <div className={styles.showcaseImageWrapper}>
+                  <Image
+                    src={image.src}
+                    alt={image.alt}
+                    width={400}
+                    height={225}
+                    className={styles.showcaseImage}
+                    onLoad={() => {
+                      setImagesLoaded(prev => {
+                        const newImagesLoaded = [...prev];
+                        newImagesLoaded[index] = true;
+                        return newImagesLoaded;
+                      });
+                    }}
+                  />
+                </div>
+                <div className={styles.showcaseContent}>
+                  <h3>{image.title}</h3>
+                  <p>{image.description}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </section>
+
+        {/* Free Tools Section */}
+        <section ref={freeToolSectionRef} className={styles.freeToolSection}>
+          <motion.div 
+            className={styles.freeToolContent}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            <h2 className={styles.sectionTitle}>Always Free, Always Growing</h2>
+            <div className={styles.freeToolGrid}>
+              <motion.div 
+                className={styles.freeToolCard}
+                whileHover={{ y: -10, transition: { duration: 0.3 } }}
+              >
+                <span className={styles.freeToolIcon}>🎯</span>
+                <h3>Student-Focused</h3>
+                <p>Created by students, for students. We understand your needs.</p>
+              </motion.div>
+              <motion.div 
+                className={styles.freeToolCard}
+                whileHover={{ y: -10, transition: { duration: 0.3 } }}
+              >
+                <span className={styles.freeToolIcon}>💯</span>
+                <h3>No Hidden Costs</h3>
+                <p>All features are completely free. No premium tier, no ads.</p>
+              </motion.div>
+              <motion.div 
+                className={styles.freeToolCard}
+                whileHover={{ y: -10, transition: { duration: 0.3 } }}
+              >
+                <span className={styles.freeToolIcon}>🚀</span>
+                <h3>Constant Updates</h3>
+                <p>Regular updates based on your feedback and needs.</p>
+              </motion.div>
+            </div>
+          </motion.div>
+        </section>
+
+        {/* Call to Action */}
+        <section className={styles.ctaSection}>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className={styles.ctaContent}
+          >
+            <h2>Ready to Transform Your Study Sessions?</h2>
+            <p>Join thousands of students already improving their focus with Lo-Fi.Study</p>
+            <motion.button
+              onClick={() => router.push("/auth/signin")}
+              className={styles.ctaButton}
+              whileHover={{ scale: 1.05, boxShadow: "0 0 20px rgba(255,123,0,0.5)" }}
+              whileTap={{ scale: 0.95 }}
+            >
+              Get Started Free
+            </motion.button>
+          </motion.div>
+        </section>
       </main>
       <Footer />
     </div>
