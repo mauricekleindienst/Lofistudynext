@@ -1,4 +1,3 @@
-
 .resizableBox {
   --text-color: #ffffff;
   --background-color: #1e1e1e;
@@ -23,140 +22,313 @@
 }
 
 .notesContainer {
+  padding: 0;
+  border-radius: 15px;
+  color: var(--text-primary);
+  width: 100%;
+  max-width: 800px;
+  height: 600px;
+  background: linear-gradient(145deg, var(--bg-primary), var(--bg-secondary));
+  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1000;
   display: flex;
   flex-direction: column;
-  height: 100%;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.dragHandle {
+  height: 24px;
+  background-color: var(--bg-secondary);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-bottom: 2px solid var(--accent-color);
+  cursor: move;
+}
+
+.dragHandle::before {
+  content: '';
+  width: 30px;
+  height: 3px;
+  background-color: var(--accent-color);
+  border-radius: 2px;
+  transition: background-color 0.3s ease;
+}
+
+.dragHandle:hover::before {
+  background-color: var(--accent-hover);
 }
 
 .header {
-  font-size: 24px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 15px;
-  background: linear-gradient(145deg, var(--background-color), var(--editor-background-color));
-  border-bottom: 2px solid var(--border-color);
+  padding: 12px 15px;
+  background-color: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
 }
 
 .header h2 {
   margin: 0;
+  font-size: 16px;
   font-weight: 700;
+  color: var(--text-primary);
 }
 
-.header button {
-  background: none;
-  border: none;
-  
-  font-size: 24px;
-  color: var(--text-color);
-  transition: color 0.3s ease;
-}
-
-.header button:hover {
-  color: var(--border-color);
-}
-
-.content {
+.headerButtons {
   display: flex;
-  height: 100%;
+  gap: 8px;
 }
 
-.pageList {
-  width: 150px;
-  background: linear-gradient(145deg, var(--background-color), var(--editor-background-color));
-  padding: 15px;
-  border-right: 2px solid var(--border-color);
+.closeButton, .saveButton {
+  background-color: transparent;
+  border: none;
+  color: var(--accent-color);
+  font-size: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  padding: 4px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.closeButton:hover, .saveButton:hover {
+  background-color: rgba(255, 123, 0, 0.1);
+  color: var(--accent-hover);
+}
+
+.saveButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.saveButton .material-icons {
+  font-size: 20px;
+}
+
+.notesContent {
+  display: flex;
+  height: calc(100% - 80px);
+  overflow: hidden;
+}
+
+.notesList {
+  width: 250px;
+  border-right: 1px solid var(--border-color);
   overflow-y: auto;
+  padding: 12px;
+  background-color: var(--bg-secondary);
 }
 
-.pageItem {
+.newNoteButton {
+  width: 100%;
+  padding: 8px 12px;
+  background: var(--accent-color);
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.newNoteButton:hover {
+  background: var(--accent-hover);
+}
+
+.noteItem {
+  padding: 12px;
+  border-radius: 8px;
+  background: var(--bg-primary);
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 1px solid var(--border-color);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px;
-  border: 1px solid transparent;
-  
-  transition: all 0.3s ease;
-  margin-bottom: 10px;
-  border-radius: 10px;
 }
 
-.pageItem:hover {
-  background-color: rgba(255, 123, 0, 0.1);
+.noteItem:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: var(--accent-color);
 }
 
-.pageItem.active {
-  background-color: rgba(255, 123, 0, 0.2);
-  border-color: var(--border-color);
+.noteItem.active {
+  background: rgba(255, 123, 0, 0.1);
+  border-color: var(--accent-color);
 }
 
-.pageItem button {
+.noteInfo {
+  flex: 1;
+  overflow: hidden;
+}
+
+.noteInfo h3 {
+  margin: 0;
+  font-size: 14px;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.noteInfo p {
+  margin: 0;
+  font-size: 12px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.deleteButton {
   background: none;
   border: none;
-  
-  font-size: 18px;
-  color: var(--text-color);
-  transition: color 0.3s ease;
-}
-
-.pageItem button:hover {
-  color: var(--border-color);
-}
-
-.addPageButton {
-  width: 100%;
-  padding: 10px;
-  background-color: var(--border-color);
-  border: none;
-  
-  color: var(--text-color);
-  border-radius: 10px;
-  margin-top: 15px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  opacity: 0;
   transition: all 0.3s ease;
-  font-weight: 700;
 }
 
-.addPageButton:hover {
-  background-color: #ff9900;
-  transform: scale(1.05);
+.noteItem:hover .deleteButton {
+  opacity: 1;
+}
+
+.deleteButton:hover {
+  color: #ff4444;
+  background: rgba(255, 68, 68, 0.1);
 }
 
 .editor {
-  flex-grow: 1;
-  background-color: var(--editor-background-color);
-  padding: 15px;
-  overflow: auto;
-  border-radius: 0 20px 20px 0;
-  font-family: var(--font-family);
-  -webkit-user-select: text;
-  -moz-user-select: text;
-  -ms-user-select: text;
-  user-select: text;
-}
-.tooltip {
-  position: relative;
-  display: inline-block;
-  
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  background-color: var(--bg-primary);
 }
 
-.tooltip .tooltiptext {
-  visibility: hidden;
-  width: 120px;
-  background-color: black;
-  color: #fff;
-  text-align: center;
-  border-radius: 6px;
-  padding: 5px 0;
+.titleInput {
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: var(--text-primary);
+  margin-bottom: 20px;
+  padding: 0;
+  outline: none;
+  font-weight: 600;
+}
+
+.contentInput {
+  flex: 1;
+  background: none;
+  border: none;
+  font-size: 16px;
+  color: var(--text-primary);
+  resize: none;
+  outline: none;
+  line-height: 1.6;
+}
+
+.titleInput::placeholder,
+.contentInput::placeholder {
+  color: var(--text-secondary);
+  opacity: 0.5;
+}
+
+.error {
   position: absolute;
-  z-index: 1;
-  bottom: 125%; /* Position the tooltip above the icon */
+  bottom: 20px;
   left: 50%;
-  margin-left: -60px;
-  opacity: 0;
-  transition: opacity 0.3s;
+  transform: translateX(-50%);
+  background: rgba(255, 68, 68, 0.1);
+  color: #ff4444;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  animation: fadeIn 0.3s ease;
 }
 
-.tooltip:hover .tooltiptext {
-  visibility: visible;
-  opacity: 1;
+.authPrompt {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+}
+
+/* Scrollbar Styles */
+.notesList::-webkit-scrollbar {
+  width: 4px;
+}
+
+.notesList::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+
+.notesList::-webkit-scrollbar-thumb {
+  background: var(--accent-color);
+  border-radius: 2px;
+}
+
+.contentInput::-webkit-scrollbar {
+  width: 4px;
+}
+
+.contentInput::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+
+.contentInput::-webkit-scrollbar-thumb {
+  background: var(--accent-color);
+  border-radius: 2px;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 10px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+@media (max-width: 900px) {
+  .notesContainer {
+    width: 90%;
+    height: 80vh;
+  }
+}
+
+@media (max-width: 600px) {
+  .notesContent {
+    flex-direction: column;
+  }
+
+  .notesList {
+    width: 100%;
+    height: 200px;
+    border-right: none;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .editor {
+    height: calc(100% - 200px);
+  }
 }

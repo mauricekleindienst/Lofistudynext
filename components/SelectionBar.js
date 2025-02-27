@@ -20,6 +20,7 @@ const initialIcons = [
   { id: "sounds", label: "Sounds", icon: "graphic_eq" },
   { id: "youtubePlayer", label: "YouTube", icon: "smart_display" },
   { id: "todo", label: "Todo", icon: "checklist" },
+  { id: "notes", label: "Notes", icon: "note_alt" },
   { id: "quiz", label: "Flashcards", icon: "school" },
   { id: "stats", label: "Stats", icon: "bar_chart" },
   { id: "scoreboard", label: "Scoreboard", icon: "stairs" },
@@ -31,7 +32,7 @@ const initialIcons = [
 const components = {
   pomodoro: PomodoroTimer,
   sounds: Sounds,
-  // note: Notes,
+  notes: Notes,
   scoreboard: Scoreboard,
   youtubePlayer: YouTubePlayer,
   todo: Todo,
