@@ -1,11 +1,11 @@
 .timerContainer {
   padding: 0;
-  border-radius: 20px;
+  border-radius: 15px;
   color: var(--text-primary);
   width: 100%;
-  max-width: 400px;
+  max-width: 300px;
   background: linear-gradient(145deg, var(--bg-primary), var(--bg-secondary));
-  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
   position: fixed;
   top: 50%;
   left: 50%;
@@ -13,40 +13,47 @@
   z-index: 1000;
   display: flex;
   flex-direction: column;
-  align-items: center;
   overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
+
 .dragHandle {
   width: 100%;
-  height: 30px;
+  height: 24px;
   background-color: var(--bg-secondary);
   display: flex;
   justify-content: center;
   align-items: center;
-  
   border-bottom: 2px solid var(--accent-color);
+  cursor: move;
 }
 
 .dragHandle::before {
   content: '';
-  width: 40px;
-  height: 4px;
+  width: 30px;
+  height: 3px;
   background-color: var(--accent-color);
   border-radius: 2px;
+  transition: background-color 0.3s ease;
 }
+
+.dragHandle:hover::before {
+  background-color: var(--accent-hover);
+}
+
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  padding: 20px 30px;
+  padding: 12px 15px;
   background-color: var(--bg-secondary);
   border-bottom: 1px solid var(--border-color);
 }
 
 .header h2 {
   margin: 0;
-  font-size: 24px;
+  font-size: 16px;
   font-weight: 700;
   color: var(--text-primary);
 }
@@ -55,8 +62,8 @@
   background-color: transparent;
   border: none;
   color: var(--accent-color);
-  
-  font-size: 24px;
+  font-size: 20px;
+  cursor: pointer;
   transition: color 0.3s ease;
 }
 
@@ -68,72 +75,113 @@
   display: flex;
   justify-content: space-between;
   width: 100%;
-  margin-bottom: 20px;
+  padding: 12px 15px;
+  margin-bottom: 0;
+  gap: 8px;
 }
-.timerHeader, .timerDisplay, .pomodoroCount, .settingsWheel {
-  padding: 0 30px;
-}
-.pomodoroinfo{
 
- color: var(--accent-color);
-  margin-bottom: 10px;
-}
 .timerMode {
-  
-  padding: 10px 15px;
+  flex: 1;
+  padding: 8px 12px;
   color: var(--text-primary);
   transition: all 0.3s ease;
-  border-radius: 5px;
-  font-size: 14px;
+  border-radius: 6px;
+  font-size: 12px;
   cursor: pointer;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  text-align: center;
 }
 
-.timerMode:hover,
+.timerMode:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: var(--accent-color);
+}
+
 .timerMode.active {
   background-color: var(--accent-color);
-  transform: scale(1.05);
-}
-.timerHeader {
-  padding-top: 20px;
+  border-color: var(--accent-color);
+  transform: translateY(-1px);
 }
 
-.pomodoroCount {
-  padding-bottom: 20px;
-  color: var(--text-primary);
+.pomodoroinfo {
+  color: var(--text-secondary);
+  font-size: 12px;
+  padding: 0 15px;
+  margin-bottom: 8px;
 }
+
+.categorySelection {
+  width: 100%;
+  padding: 0 15px;
+  margin-bottom: 15px;
+}
+
+.categorySelect {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.categorySelect:hover {
+  border-color: var(--accent-color);
+}
+
+.categorySelect:focus {
+  outline: none;
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 2px rgba(255, 123, 0, 0.1);
+}
+
+.categorySelect option {
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  padding: 8px;
+}
+
 .timerDisplay {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: 20px;
+  padding: 15px;
+  margin-bottom: 15px;
 }
 
 .timerDisplay h3 {
-  font-size: 48px;
-  margin: 0 0 20px 0;
+  font-size: 36px;
+  margin: 0 0 15px 0;
   color: var(--text-primary);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
 }
 
 .buttonContainer {
   display: flex;
   justify-content: center;
   align-items: center;
+  gap: 12px;
 }
 
 .startButton, .resetButton {
   background-color: var(--accent-color);
   border: none;
-  padding: 15px;
+  padding: 10px;
   color: var(--text-primary);
   border-radius: 50%;
-  margin: 0 10px;
-  font-size: 18px;
+  font-size: 16px;
   display: flex;
   justify-content: center;
   align-items: center;
   transition: all 0.3s ease;
-  width: 50px;
-  height: 50px;
+  width: 38px;
+  height: 38px;
+  cursor: pointer;
 }
 
 .startButton:hover, .resetButton:hover {
@@ -142,22 +190,31 @@
 }
 
 .pomodoroCount {
-  margin-top: 20px;
-  font-size: 16px;
+  padding: 0 15px 15px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  text-align: center;
 }
 
 .settingsWheel {
   position: absolute;
-  bottom: 20px;
-  right: 20px;
-  
+  bottom: 15px;
+  right: 15px;
   color: var(--accent-color);
-  transition: color 0.3s ease;
+  transition: all 0.3s ease;
   cursor: pointer;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-size: 20px;
 }
 
 .settingsWheel:hover {
   color: var(--accent-hover);
+  background: rgba(255, 123, 0, 0.1);
 }
 
 .settingsModal {
@@ -166,61 +223,69 @@
   left: 50%;
   transform: translate(-50%, -50%);
   background: var(--bg-secondary);
-  padding: 30px;
-  border-radius: 20px;
+  padding: 20px;
+  border-radius: 15px;
   z-index: 1001;
-  width: 300px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  width: 250px;
+  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .settingsModal h3 {
-  margin-top: 0;
+  margin: 0 0 15px;
   color: var(--text-primary);
-  font-size: 20px;
-  margin-bottom: 20px;
+  font-size: 16px;
+  font-weight: 700;
 }
 
 .settingsInput {
-  margin-bottom: 20px;
+  margin-bottom: 15px;
 }
 
 .settingsInput label {
   display: block;
-  margin-bottom: 5px;
-  color: var(--text-primary);
-  font-size: 14px;
+  margin-bottom: 4px;
+  color: var(--text-secondary);
+  font-size: 12px;
 }
 
 .settingsInput input {
   width: 100%;
-  padding: 10px;
+  padding: 8px 12px;
   border: 1px solid var(--border-color);
-  border-radius: 5px;
+  border-radius: 6px;
   background-color: var(--bg-primary);
   color: var(--text-primary);
-  font-size: 16px;
+  font-size: 13px;
+  transition: all 0.3s ease;
+}
+
+.settingsInput input:focus {
+  outline: none;
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 2px rgba(255, 123, 0, 0.1);
 }
 
 .settingsModal button {
   background-color: var(--accent-color);
   border: none;
-  padding: 10px 20px;
-  
+  padding: 8px 12px;
   color: var(--text-primary);
-  border-radius: 5px;
-  
-  font-size: 16px;
-  transition: background-color 0.3s ease;
+  border-radius: 6px;
+  font-size: 13px;
+  transition: all 0.3s ease;
   cursor: pointer;
+  width: 100%;
 }
 
 .settingsModal button:hover {
   background-color: var(--accent-hover);
+  transform: translateY(-1px);
 }
+
 .tooltip {
   position: relative;
   display: inline-block;
-  
 }
 
 .tooltip .tooltiptext {
@@ -243,26 +308,4 @@
 .tooltip:hover .tooltiptext {
   visibility: visible;
   opacity: 1;
-}
-
-.categorySelection {
-  width: 100%;
-  padding: 0 30px;
-  margin-bottom: 20px;
-}
-
-.categorySelect {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid var(--border-color);
-  border-radius: 5px;
-  background-color: var(--bg-secondary);
-  color: var(--text-primary);
-  font-size: 16px;
-  cursor: pointer;
-}
-
-.categorySelect option {
-  background-color: var(--bg-secondary);
-  color: var(--text-primary);
 }
