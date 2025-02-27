@@ -21,9 +21,9 @@ export default function Header() {
   }, []);
 
   const navItems = [
-    { label: 'Features', href: '/#features' },
-    { label: 'About', href: '/#about' },
-    { label: 'Contact', href: '/#contact' },
+    { label: 'About', href: '/aboutus' },
+    { label: 'FAQ', href: '/FAQ' },
+    { label: 'Contact', href: '/Contact' },
   ];
 
   const menuVariants = {
@@ -60,6 +60,7 @@ export default function Header() {
             width={40}
             height={40}
             className={styles.logo}
+            style={{ filter: 'invert(56%) sepia(93%) saturate(1771%) hue-rotate(360deg) brightness(103%) contrast(106%)' }}
           />
           <span className={styles.logoText}>Lo-Fi.Study</span>
         </Link>
@@ -70,7 +71,7 @@ export default function Header() {
             <Link
               key={item.label}
               href={item.href}
-              className={styles.navLink}
+              className={`${styles.navLink} ${router.pathname === item.href ? styles.active : ''}`}
             >
               {item.label}
             </Link>
@@ -134,7 +135,7 @@ export default function Header() {
                 <motion.div key={item.label} variants={itemVariants}>
                   <Link
                     href={item.href}
-                    className={styles.mobileNavLink}
+                    className={`${styles.mobileNavLink} ${router.pathname === item.href ? styles.active : ''}`}
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     {item.label}

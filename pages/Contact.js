@@ -6,6 +6,7 @@ import { useState } from "react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import styles from "../styles/Home.module.css";
+import { motion } from "framer-motion";
 
 export default function Contact() {
   const router = useRouter();
@@ -18,21 +19,34 @@ export default function Contact() {
     e.preventDefault();
     const form = e.target;
     const data = new FormData(form);
-    const response = await fetch(form.action, {
-      method: form.method,
-      body: data,
-      headers: {
-        Accept: "application/json",
-      },
-    });
+    
+    setStatus("SENDING");
+    
+    try {
+      const response = await fetch(form.action, {
+        method: form.method,
+        body: data,
+        headers: {
+          Accept: "application/json",
+        },
+      });
 
-    if (response.ok) {
-      setStatus("SUCCESS");
-      setName("");
-      setEmail("");
-      setMessage("");
-    } else {
+      if (response.ok) {
+        setStatus("SUCCESS");
+        setName("");
+        setEmail("");
+        setMessage("");
+        
+        // Clear success message after 5 seconds
+        setTimeout(() => setStatus(""), 5000);
+      } else {
+        throw new Error("Failed to send message");
+      }
+    } catch (error) {
       setStatus("ERROR");
+      
+      // Clear error message after 5 seconds
+      setTimeout(() => setStatus(""), 5000);
     }
   };
 
@@ -49,10 +63,50 @@ export default function Contact() {
       <Header />
 
       <main className={styles.main}>
-        <section className={styles.contactSection}>
-          <h1 className={styles.title}>Get in Touch</h1>
-          <p className={styles.subtitle}>We&apos;d love to hear from you!</p>
-          <div className={styles.contactWrapper}>
+        <motion.section 
+          className={styles.contactSection}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <motion.h1 
+            className={styles.title}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+          >
+            Get in <span className={styles.gradientText}>Touch</span>
+          </motion.h1>
+          <motion.p 
+            className={styles.subtitle}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
+          >
+            We&apos;d love to hear from you! Send us your questions, feedback, or suggestions.
+          </motion.p>
+          
+          <motion.div 
+            className={styles.contactWrapper}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.6 }}
+          >
+            <div className={styles.contactInfo}>
+              <div className={styles.contactMethod}>
+               
+               
+              </div>
+            
+              <div className={styles.contactMethod}>
+                <span className="material-icons">forum</span>
+                <div>
+                  <h3>Community</h3>
+                  <p>Join our Discord server</p>
+                </div>
+              </div>
+            </div>
+
             <form
               onSubmit={handleSubmit}
               action="https://formspree.io/f/mqazannj"
@@ -60,8 +114,7 @@ export default function Contact() {
               className={styles.contactForm}
             >
               <div className={styles.formGroup}>
-                <label htmlFor="name">Name</label>
-                <input
+                <motion.input
                   type="text"
                   id="name"
                   name="name"
@@ -69,11 +122,11 @@ export default function Contact() {
                   onChange={(e) => setName(e.target.value)}
                   required
                   placeholder="Your name"
+                  whileFocus={{ scale: 1.02 }}
                 />
               </div>
               <div className={styles.formGroup}>
-                <label htmlFor="email">Email</label>
-                <input
+                <motion.input
                   type="email"
                   id="email"
                   name="email"
@@ -81,34 +134,61 @@ export default function Contact() {
                   onChange={(e) => setEmail(e.target.value)}
                   required
                   placeholder="Your email"
+                  whileFocus={{ scale: 1.02 }}
                 />
               </div>
               <div className={styles.formGroup}>
-                <label htmlFor="message">Message</label>
-                <textarea
+                <motion.textarea
                   id="message"
                   name="message"
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                   required
                   placeholder="Your message"
+                  whileFocus={{ scale: 1.02 }}
                 />
               </div>
-              <button type="submit" className={styles.submitButton}>
-                Send Message
-              </button>
+              <motion.button 
+                type="submit" 
+                className={styles.submitButton}
+                whileHover={{ scale: 1.05, boxShadow: "0 0 20px rgba(255,123,0,0.5)" }}
+                whileTap={{ scale: 0.95 }}
+                disabled={status === "SENDING"}
+              >
+                {status === "SENDING" ? (
+                  <span className={styles.sendingSpinner}>
+                    <span className="material-icons">sync</span>
+                    Sending...
+                  </span>
+                ) : "Send Message"}
+              </motion.button>
+              
               {status === "SUCCESS" && (
-                <p className={styles.successMessage}>
+                <motion.div 
+                  className={`${styles.formMessage} ${styles.successMessage}`}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                >
+                  <span className="material-icons">check_circle</span>
                   Thanks! Your message has been sent.
-                </p>
+                </motion.div>
               )}
+              
               {status === "ERROR" && (
-                <p className={styles.errorMessage}>Oops! There was an error.</p>
+                <motion.div 
+                  className={`${styles.formMessage} ${styles.errorMessage}`}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                >
+                  <span className="material-icons">error</span>
+                  Oops! There was an error. Please try again.
+                </motion.div>
               )}
             </form>
-           
-          </div>
-        </section>
+          </motion.div>
+        </motion.section>
       </main>
 
       <Footer />

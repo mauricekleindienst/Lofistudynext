@@ -4,8 +4,12 @@ import Head from "next/head";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import styles from "../styles/Home.module.css";
+import { motion, AnimatePresence } from "framer-motion";
+import { useState } from "react";
 
 export default function FAQ() {
+  const [openIndex, setOpenIndex] = useState(null);
+
   const faqs = [
     {
       question: "What is Lo-Fi Study?",
@@ -62,17 +66,68 @@ export default function FAQ() {
       <Header />
 
       <main className={styles.main}>
-        <section className={styles.faqSection}>
-          <h1 className={styles.title}>Frequently Asked Questions</h1>
-          <div className={styles.faqGrid}>
+        <motion.section 
+          className={styles.faqSection}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <motion.h1 
+            className={styles.title}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+          >
+            Frequently Asked <span className={styles.gradientText}>Questions</span>
+          </motion.h1>
+          
+          <motion.div 
+            className={styles.faqGrid}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+          >
             {faqs.map((faq, index) => (
-              <details key={index} className={styles.faqItem}>
-                <summary className={styles.faqQuestion}>{faq.question}</summary>
-                <p className={styles.faqAnswer}>{faq.answer}</p>
-              </details>
+              <motion.div
+                key={index}
+                className={styles.faqItem}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+              >
+                <motion.button
+                  className={`${styles.faqQuestion} ${openIndex === index ? styles.active : ''}`}
+                  onClick={() => setOpenIndex(openIndex === index ? null : index)}
+                  whileHover={{ scale: 1.01 }}
+                  whileTap={{ scale: 0.99 }}
+                >
+                  {faq.question}
+                  <motion.span 
+                    className="material-icons"
+                    animate={{ rotate: openIndex === index ? 180 : 0 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    expand_more
+                  </motion.span>
+                </motion.button>
+                <AnimatePresence>
+                  {openIndex === index && (
+                    <motion.div
+                      className={styles.faqAnswer}
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <p>{faq.answer}</p>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.div>
             ))}
-          </div>
-        </section>
+          </motion.div>
+        </motion.section>
       </main>
 
       <Footer />
