@@ -50,25 +50,47 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  perspective: 1000px;
-  z-index: 1;
   position: relative;
   min-width: 300px;
   max-width: 600px;
+  aspect-ratio: 2/1;
+  border-radius: 24px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  transition: all 0.5s ease;
+}
+
+.heroImage::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom right,
+    rgba(255, 123, 0, 0.1),
+    rgba(255, 154, 68, 0.05)
+  );
+  z-index: 1;
+  pointer-events: none;
+}
+
+.heroImage:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4);
+  border-color: rgba(255, 123, 0, 0.3);
 }
 
 .mainImage {
-  border-radius: 20px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-  transform: perspective(1000px) rotateY(-10deg);
-  transition: transform 0.5s ease;
   width: 100%;
-  height: auto;
-  object-fit: cover;
+  height: 100%;
+  object-fit: contain;
+  transition: transform 0.5s ease;
 }
 
 .heroImage:hover .mainImage {
-  transform: perspective(1000px) rotateY(0deg);
+  transform: scale(1.05);
 }
 
 .title {
@@ -652,7 +674,9 @@
     flex-direction: column;
     text-align: center;
     gap: 2rem;
-    padding: 4rem 2rem;
+    padding: 2rem 1rem;
+    min-height: auto;
+    padding-top: 4rem;
   }
 
   .heroContent {
@@ -661,8 +685,9 @@
 
   .heroImage {
     width: 100%;
-    max-width: 500px;
+    max-width: 450px;
     margin: 0 auto;
+    min-width: auto;
   }
 
   .title {
@@ -688,15 +713,34 @@
   }
 
   .heroSection {
-    padding: 2rem 1rem;
+    padding: 1.5rem 1rem;
+    gap: 1.5rem;
   }
 
   .heroImage {
-    max-width: 400px;
+    max-width: 350px;
+    aspect-ratio: 2/1;
   }
 
   .title {
     font-size: 2.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .description {
+    font-size: 1.1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .ctaContainer {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .ctaButton {
+    width: 100%;
+    padding: 0.875rem 1.5rem;
+    font-size: 1rem;
   }
 
   .statsGrid {
@@ -707,11 +751,6 @@
   .showcaseGrid,
   .freeToolGrid {
     grid-template-columns: 1fr;
-  }
-
-  .ctaButton {
-    padding: 0.8rem 1.5rem;
-    font-size: 1rem;
   }
 
   .sectionTitle {
@@ -769,7 +808,12 @@
   }
 
   .heroImage {
-    max-width: 300px;
+    max-width: 280px;
+    aspect-ratio: 2/1;
+  }
+
+  .description {
+    font-size: 1rem;
   }
 }
 

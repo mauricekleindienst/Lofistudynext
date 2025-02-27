@@ -19,9 +19,9 @@ export default function Landing() {
   const router = useRouter();
   const { scrollYProgress } = useScroll();
 
-  // Parallax effects
-  const heroImageY = useTransform(scrollYProgress, [0, 1], [0, 200]);
-  const heroOpacity = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
+  // Update parallax effects to be more subtle and prevent disappearing
+  const heroImageY = useTransform(scrollYProgress, [0, 1], [0, 100]);
+  const heroOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0.3]);
 
   const img = useMemo(() => [
     {
@@ -260,13 +260,15 @@ export default function Landing() {
           </motion.div>
           <motion.div 
             className={styles.heroImage}
-            style={{ y: heroImageY, opacity: heroOpacity }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
           >
             <Image
-              src="/hero-image.webp"
+              src="https://i.ibb.co/TxKz05g2/hero-image.png"
               alt="Lo-Fi Study Environment"
-              width={600}
-              height={400}
+              width={1000}
+              height={800}
               priority
               className={styles.mainImage}
               placeholder="blur"
