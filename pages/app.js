@@ -282,6 +282,20 @@ useEffect(() => {
     };
   }, [selectedBackground]);
 
+  const handleBackgroundSelection = (background) => {
+    setSelectedBackground(background);
+    setIsBackgroundLoading(true);
+    setShowBackgroundModal(false); // Close the modal if it's open
+  };
+
+  const handleScroll = (direction) => {
+    const container = scrollContainerRef.current;
+    if (container) {
+      const scrollAmount = direction === 'left' ? -200 : 200;
+      container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+    }
+  };
+
   if (status === "loading" || showLoading) {
     return (
       <div className={styles["loader-container"]}>
@@ -392,6 +406,7 @@ useEffect(() => {
               <div className={styles.videoLoadingIndicator}>
                 <div className={styles.loadingSpinner}></div>
                 <p>Loading your study space...</p>
+                <p className={styles.loadingHint}>If this takes too long, please choose a different background.</p>
               </div>
             )}
           </>
