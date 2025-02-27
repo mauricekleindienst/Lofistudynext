@@ -263,12 +263,14 @@ export default function Landing() {
             style={{ y: heroImageY, opacity: heroOpacity }}
           >
             <Image
-              src="https://i.ibb.co/kG960G6/cover.webp"
+              src="/hero-image.webp"
               alt="Lo-Fi Study Environment"
               width={600}
               height={400}
               priority
               className={styles.mainImage}
+              placeholder="blur"
+              blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mN8/+F9PQAI8wNPvd7POQAAAABJRU5ErkJggg=="
             />
           </motion.div>
         </section>
