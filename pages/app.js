@@ -77,8 +77,9 @@ export default function Study() {
   const [messageIndex, setMessageIndex] = useState(0);
   const scrollContainerRef = useRef(null);
   const videoRef = useRef(null);
-  const [isBackgroundLoading, setIsBackgroundLoading] = useState(false);
+  const [isBackgroundLoading, setIsBackgroundLoading] = useState(true);
   const [showBackgroundModal, setShowBackgroundModal] = useState(false);
+  const preloadCacheRef = useRef(new Map());
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -187,107 +188,85 @@ useEffect(() => {
     };
   }, []);
 
+  // Preload priority backgrounds on mount
+  useEffect(() => {
+    const preloadPriorityBackgrounds = async () => {
+      const priorityBackgrounds = backgrounds.filter(bg => bg.priority);
+      
+      for (const bg of priorityBackgrounds) {
+        if (!preloadCacheRef.current.has(bg.src)) {
+          const video = document.createElement('video');
+          video.preload = 'auto';
+          video.src = bg.src;
+          
+          // Create a promise that resolves when the video is loaded
+          const loadPromise = new Promise((resolve, reject) => {
+            video.onloadeddata = () => resolve();
+            video.onerror = () => reject();
+          });
+          
+          preloadCacheRef.current.set(bg.src, { video, loadPromise });
+          
+          try {
+            await loadPromise;
+          } catch (error) {
+            console.error(`Failed to preload background: ${bg.src}`, error);
+          }
+        }
+      }
+    };
+
+    preloadPriorityBackgrounds();
+
+    return () => {
+      preloadCacheRef.current.clear();
+    };
+  }, []);
+
+  // Handle background selection and loading
   useEffect(() => {
     if (!selectedBackground || !videoRef.current) return;
 
-    setIsBackgroundLoading(true);
     const video = videoRef.current;
-    
-    // Keep track of mounting state
     let isMounted = true;
+    setIsBackgroundLoading(true);
 
-    const handleVideoLoaded = () => {
-      if (!isMounted) return;
-      setIsBackgroundLoading(false);
-      
-      // Ensure video is playing and loops properly
-      const ensurePlayback = async () => {
-        try {
-          await video.play();
-          // Check periodically if video is still playing
-          const playbackCheck = setInterval(() => {
-            if (video.paused && !video.ended) {
-              video.play().catch(console.error);
-            }
-          }, 1000);
-          
-          return () => clearInterval(playbackCheck);
-        } catch (error) {
-          console.error('Error playing video:', error);
-          handleVideoError();
-        }
-      };
-      
-      ensurePlayback();
-    };
-
-    const handleVideoError = () => {
-      if (!isMounted) return;
-      console.error('Video loading failed, switching to fallback');
-      
-      // Try to recover by reloading current video first
+    const loadBackground = async () => {
       try {
+        // Check if the background is preloaded
+        const preloadedData = preloadCacheRef.current.get(selectedBackground.src);
+        
+        if (preloadedData) {
+          // Use the preloaded video's src
+          video.src = preloadedData.video.src;
+        } else {
+          // Load the video normally
+          video.src = selectedBackground.src;
+        }
+
         video.load();
-        video.play().catch(() => {
-          // If reload fails, switch to fallback
+        await video.play();
+        
+        if (isMounted) {
+          setIsBackgroundLoading(false);
+        }
+      } catch (error) {
+        console.error('Error loading background:', error);
+        
+        if (isMounted) {
+          // Try fallback background
           video.src = DEFAULT_BACKGROUND.src;
           video.load();
-          video.play().catch(err => console.error('Error playing fallback video:', err));
-        });
-      } catch (err) {
-        console.error('Recovery failed:', err);
+          await video.play();
+          setIsBackgroundLoading(false);
+        }
       }
-      
-      setIsBackgroundLoading(false);
     };
 
-    const handleVideoStall = () => {
-      if (!isMounted) return;
-      console.log('Video stalled, attempting recovery');
-      video.load();
-      video.play().catch(handleVideoError);
-    };
+    loadBackground();
 
-    // Set up video properties
-    video.src = selectedBackground.src;
-    video.autoplay = true;
-    video.loop = true;
-    video.muted = true;
-    video.playsInline = true;
-    video.load();
-
-    // Add all relevant event listeners
-    video.addEventListener('loadeddata', handleVideoLoaded);
-    video.addEventListener('error', handleVideoError);
-    video.addEventListener('stalled', handleVideoStall);
-    video.addEventListener('pause', () => {
-      if (!video.ended) video.play().catch(console.error);
-    });
-
-    // Failsafe timeout
-    const loadingTimeout = setTimeout(() => {
-      if (isMounted && isBackgroundLoading) {
-        handleVideoError();
-      }
-    }, 5000);
-
-    return () => {
-      isMounted = false;
-      video.removeEventListener('loadeddata', handleVideoLoaded);
-      video.removeEventListener('error', handleVideoError);
-      video.removeEventListener('stalled', handleVideoStall);
-      clearTimeout(loadingTimeout);
-    };
-  }, [selectedBackground]);
-
-  // Add this new effect to handle visibility changes
-  useEffect(() => {
-    if (!videoRef.current) return;
-
+    // Visibility change handler
     const handleVisibilityChange = () => {
-      const video = videoRef.current;
-      if (!video) return;
-
       if (document.hidden) {
         video.pause();
       } else {
@@ -298,22 +277,10 @@ useEffect(() => {
     document.addEventListener('visibilitychange', handleVisibilityChange);
 
     return () => {
+      isMounted = false;
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
-  }, []);
-
-  const handleBackgroundSelection = (background) => {
-    setSelectedBackground(background);
-    setIsBackgroundLoading(true);
-  };
-
-  const handleScroll = (direction) => {
-    const container = scrollContainerRef.current;
-    if (container) {
-      const scrollAmount = direction === 'left' ? -200 : 200;
-      container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
-    }
-  };
+  }, [selectedBackground]);
 
   if (status === "loading" || showLoading) {
     return (

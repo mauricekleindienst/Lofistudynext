@@ -17,12 +17,14 @@ model events {
 }
 
 model notes {
-  id      Int     @id @default(autoincrement())
-  email   String  @db.VarChar(255)
-  title   String? @db.VarChar(255)
-  content String @db.Text
+  id         Int      @id @default(autoincrement())
+  email      String   @db.VarChar(255)
+  title      String   @db.VarChar(255)
+  content    String   @db.Text
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 
-  @@unique([email, id])
+  @@index([email])
 }
 
 model subtasks {

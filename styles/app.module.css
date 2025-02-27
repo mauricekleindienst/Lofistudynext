@@ -20,7 +20,9 @@
   height: 100%;
   object-fit: cover;
   z-index: -1;
-  transition: opacity 0.3s ease;
+  opacity: 1;
+  transition: opacity 0.5s ease-in-out;
+  will-change: opacity;
 }
 
 .videoBackground.loading {
@@ -654,12 +656,14 @@
   padding: 30px;
   border-radius: 15px;
   backdrop-filter: blur(10px);
+  animation: fadeIn 0.3s ease-in-out;
 }
 
 .videoLoadingIndicator p {
   color: var(--text-primary);
   font-size: 16px;
   margin: 0;
+  opacity: 0.9;
 }
 
 .loadingSpinner {
@@ -669,6 +673,7 @@
   border-left-color: var(--accent-color);
   border-radius: 50%;
   animation: spin 1s linear infinite;
+  will-change: transform;
 }
 
 @keyframes spin {
@@ -677,6 +682,17 @@
   }
   100% {
     transform: rotate(360deg);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -48%);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%);
   }
 }
 
