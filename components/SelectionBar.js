@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useEffect } from "react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/router";
 import PomodoroTimer from "./PomodoroTimer";
 import Sounds from "./Sounds";
 import Notes from "./Notes";
@@ -14,6 +15,9 @@ import Quiz from "./Quiz";
 import BackgroundPrompt from "./BackgroundPrompt";
 import PdfModal from "./PdfModal";
 import styles from "../styles/SelectionBar.module.css";
+
+// Define the admin emails for access control
+const ADMIN_EMAILS = ['admin@lofi.study', 'your-admin-email@example.com', 'kleindiema@gmail.com'];
 
 const initialIcons = [
   { id: "pomodoro", label: "Pomodoro", icon: "alarm" },
@@ -43,6 +47,7 @@ const components = {
 
 export default function SelectionBar({ userEmail, userName }) {
   const { data: session } = useSession();
+  const router = useRouter();
   const [icons, setIcons] = useState(initialIcons);
   const [visibleComponents, setVisibleComponents] = useState([]);
   const [newChatMessage, setNewChatMessage] = useState(false);
@@ -62,6 +67,9 @@ export default function SelectionBar({ userEmail, userName }) {
   });
   const [showPdfModal, setShowPdfModal] = useState(false);
   const [savedPdfs, setSavedPdfs] = useState([]);
+
+  // Check if the current user is an admin
+  const isAdmin = session && ADMIN_EMAILS.includes(session.user.email);
 
   // Listen for Pomodoro updates
   useEffect(() => {
@@ -240,25 +248,30 @@ export default function SelectionBar({ userEmail, userName }) {
   };
 
   const renderedComponents = useMemo(
-    () =>
-      Object.entries(components).map(([name, Component]) => (
-        <div
-          key={name}
-          className={visibleComponents.includes(name) ? "" : styles.hidden}
-        >
+    () => {
+      return visibleComponents.map((component) => {
+        const Component = components[component];
+        if (!Component) return null;
+        return (
           <Component
-            onMinimize={() => toggleComponentVisibility(name)}
+            key={component}
+            onClose={() => toggleComponentVisibility(component)}
             userEmail={userEmail}
             userName={userName}
-            onNewMessage={() => setNewChatMessage(true)}
           />
-        </div>
-      )),
+        );
+      });
+    },
     [visibleComponents, userEmail, userName]
   );
 
   const toggleZenMode = () => {
     setZenMode((prev) => !prev); // Toggle Zen Mode state
+  };
+
+  // Function to navigate to the admin feedback page
+  const goToAdminFeedback = () => {
+    router.push('/admin/feedback');
   };
 
   return (
@@ -267,22 +280,22 @@ export default function SelectionBar({ userEmail, userName }) {
         <BackgroundPrompt onClose={() => setShowTutorial(false)} />
       )}
       {showPdfModal && (
-        <PdfModal 
-          onClose={() => setShowPdfModal(false)} 
+        <PdfModal
+          onClose={() => setShowPdfModal(false)}
           savedPdfs={savedPdfs}
-          onPdfsChange={setSavedPdfs}
+          setSavedPdfs={setSavedPdfs}
         />
       )}
-      <DragDropContext onDragEnd={onDragEnd}>
-        <Droppable droppableId="selectionBar" direction="horizontal">
-          {(provided) => (
-            <div
-              className={`${styles.selectionBar} ${
-                zenMode ? styles.hidden : "" // Conditionally hide bar in Zen Mode
-              }`}
-              {...provided.droppableProps}
-              ref={provided.innerRef}
-            >
+      <Droppable droppableId="selectionBar" direction="horizontal">
+        {(provided) => (
+          <div
+            className={`${styles.selectionBar} ${
+              zenMode ? styles.hidden : "" // Conditionally hide bar in Zen Mode
+            }`}
+            {...provided.droppableProps}
+            ref={provided.innerRef}
+          >
+            <DragDropContext onDragEnd={onDragEnd}>
               {icons.map((icon, index) => (
                 <Draggable key={icon.id} draggableId={icon.id} index={index}>
                   {(provided, snapshot) => (
@@ -307,10 +320,30 @@ export default function SelectionBar({ userEmail, userName }) {
                 </Draggable>
               ))}
               {provided.placeholder}
+            </DragDropContext>
+            
+            {/* Admin section */}
+            {isAdmin && (
+              <div 
+                className={`${styles.iconButton} ${styles.adminIcon}`}
+                onClick={goToAdminFeedback}
+              >
+                <span className="material-icons">admin_panel_settings</span>
+                <div className={styles.tooltip}>Manage Feedback</div>
+              </div>
+            )}
+            
+            <div className={styles.zenModeToggle} onClick={toggleZenMode}>
+              <span className="material-icons">
+                {zenMode ? "visibility_off" : "visibility"}
+              </span>
+              <div className={styles.tooltip}>
+                {zenMode ? "Exit Zen Mode" : "Enter Zen Mode"}
+              </div>
             </div>
-          )}
-        </Droppable>
-      </DragDropContext>
+          </div>
+        )}
+      </Droppable>
       {renderedComponents}
     </div>
   );

@@ -1,9 +1,10 @@
 // CustomHeader.jsx
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import styles from "../styles/CustomHeader.module.css";
 import { useState, useCallback, useReducer, useEffect } from "react";
 import { useRouter } from "next/router";
 import MovableModal from "./MovableModal";
+import FeedbackModal from "./FeedbackModal";
 
 // Action types for useReducer
 const TOGGLE_FULLSCREEN = "TOGGLE_FULLSCREEN";
@@ -29,11 +30,13 @@ const headerReducer = (state, action) => {
 
 export default function CustomHeader() {
   const router = useRouter();
+  const { data: session } = useSession();
   const [state, dispatch] = useReducer(headerReducer, {
     isFullscreen: false,
     toast: { show: false, message: "" },
     dropdownVisible: false,
   });
+  const [showFeedbackModal, setShowFeedbackModal] = useState(false);
 
   // Add periodic reminder
   useEffect(() => {
@@ -101,18 +104,48 @@ export default function CustomHeader() {
     }
   }, []);
 
+  const openFeedbackModal = () => {
+    setShowFeedbackModal(true);
+  };
+
+  const goToAdminFeedback = () => {
+    router.push('/admin/feedback');
+  };
+
+  // List of admin emails
+  const adminEmails = ['admin@lofi.study', 'your-admin-email@example.com', 'kleindiema@gmail.com'];
+  const isAdmin = session && adminEmails.includes(session.user.email);
+
   return (
     <div className={styles.header}>
-      <HeaderButton onClick={shareVideoRoom} icon="videocam" tooltip="Share Room" />
-      <HeaderButton onClick={shareWebsite} icon="share" tooltip="Share Lo-fi.study" />
-      <HeaderButton
-        onClick={toggleFullscreen}
-        icon={state.isFullscreen ? "fullscreen_exit" : "fullscreen"}
-        tooltip={state.isFullscreen ? "Exit Fullscreen" : "Fullscreen"}
-      />
-      <HeaderButton onClick={() => signOut()} icon="logout" tooltip="Logout" />
+      <div className={styles.leftButtons}>
+        <HeaderButton 
+          onClick={openFeedbackModal} 
+          icon="rate_review" 
+          tooltip="Send Feedback" 
+        />
+        {isAdmin && (
+          <HeaderButton 
+            onClick={goToAdminFeedback} 
+            icon="admin_panel_settings" 
+            tooltip="Admin Feedback" 
+          />
+        )}
+      </div>
+      
+      <div className={styles.rightButtons}>
+        <HeaderButton onClick={shareVideoRoom} icon="videocam" tooltip="Share Room" />
+        <HeaderButton onClick={shareWebsite} icon="share" tooltip="Share Lo-fi.study" />
+        <HeaderButton
+          onClick={toggleFullscreen}
+          icon={state.isFullscreen ? "fullscreen_exit" : "fullscreen"}
+          tooltip={state.isFullscreen ? "Exit Fullscreen" : "Fullscreen"}
+        />
+        <HeaderButton onClick={() => signOut()} icon="logout" tooltip="Logout" />
+      </div>
 
       {state.toast.show && <Toast message={state.toast.message} />}
+      <FeedbackModal isOpen={showFeedbackModal} onClose={() => setShowFeedbackModal(false)} />
     </div>
   );
 }

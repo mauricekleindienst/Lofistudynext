@@ -20,9 +20,7 @@ const nextConfig = {
     DATABASE_URL: process.env.DATABASE_URL,
     // Add other environment variables you need here
   },
-  // Add site URL for sitemap
-  siteUrl: process.env.SITE_URL || 'https://lo-fi.study',
-  generateRobotsTxt: true,
+  swcMinify: false,
 };
 
 module.exports = nextConfig;

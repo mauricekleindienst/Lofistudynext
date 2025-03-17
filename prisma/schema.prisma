@@ -22,7 +22,7 @@ model notes {
   title      String   @db.VarChar(255)
   content    String   @db.Text
   created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  updated_at DateTime @default(now()) @updatedAt
 
   @@index([email])
 }
@@ -122,4 +122,19 @@ model TutorialState {
   updatedAt DateTime @updatedAt
 
   @@unique([email, tutorial])
+}
+
+model Feedback {
+  id        Int      @id @default(autoincrement())
+  email     String
+  message   String   @db.Text
+  status    String   @default("pending") // pending, reviewed, responded
+  createdAt DateTime @default(now()) @map("createdat")
+  updatedAt DateTime @default(now()) @updatedAt @map("updatedat")
+  response  String?  @db.Text
+  
+  @@index([email])
+  @@index([status])
+  
+  @@map("feedback")
 }

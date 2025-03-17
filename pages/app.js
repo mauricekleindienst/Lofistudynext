@@ -14,6 +14,9 @@ import { ErrorBoundary } from "react-error-boundary";
 import BackgroundPrompt from '../components/BackgroundPrompt';
 import BackgroundModal from '../components/BackgroundModal';
 
+// Define the admin emails for access control
+const ADMIN_EMAILS = ['admin@lofi.study', 'your-admin-email@example.com', 'kleindiema@gmail.com'];
+
 // Define the default background
 const DEFAULT_BACKGROUND = {
   id: 2,
