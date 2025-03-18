@@ -4,10 +4,13 @@ import styles from '../styles/FeedbackModal.module.css';
 import { useSession } from 'next-auth/react';
 
 export default function FeedbackModal({ isOpen, onClose }) {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const [feedback, setFeedback] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState({ type: '', message: '' });
+
+  // Don't render anything if modal is not open or session is loading
+  if (!isOpen || status === 'loading') return null;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -56,8 +59,6 @@ export default function FeedbackModal({ isOpen, onClose }) {
       setIsSubmitting(false);
     }
   };
-
-  if (!isOpen) return null;
 
   return (
     <div className={styles.modalOverlay}>
