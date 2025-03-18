@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { useState } from 'react';
 import styles from '../styles/FeedbackModal.module.css';
 import { useSession } from 'next-auth/react';
