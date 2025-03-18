@@ -123,3 +123,15 @@ model TutorialState {
 
   @@unique([email, tutorial])
 }
+
+model Feedback {
+  id        Int      @id @default(autoincrement())
+  email     String   @db.Text
+  message   String   @db.Text
+  status    String   @default("pending") @db.Text
+  createdAt DateTime @default(now()) @map("createdat")
+  updatedAt DateTime @updatedAt @map("updatedat")
+  response  String?  @db.Text
+
+  @@map("feedback")
+}
