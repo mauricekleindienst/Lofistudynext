@@ -13,9 +13,9 @@ if (typeof window !== 'undefined') {
   document.documentElement.setAttribute('data-theme', savedTheme);
 }
 
-function MyApp({ Component, pageProps: { session, ...pageProps } }) {
+function MyApp({ Component, pageProps }) {
   return (
-    <SessionProvider session={session}>
+    <SessionProvider>
       <ThemeProvider>
         <ChakraProvider>
           <UserProvider>
