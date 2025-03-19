@@ -4,12 +4,14 @@ import styles from "../styles/CustomHeader.module.css";
 import { useState, useCallback, useReducer, useEffect } from "react";
 import { useRouter } from "next/router";
 import MovableModal from "./MovableModal";
+import FeedbackModal from "./FeedbackModal";
 
 // Action types for useReducer
 const TOGGLE_FULLSCREEN = "TOGGLE_FULLSCREEN";
 const SHOW_TOAST = "SHOW_TOAST";
 const HIDE_TOAST = "HIDE_TOAST";
 const TOGGLE_DROPDOWN = "TOGGLE_DROPDOWN";
+const TOGGLE_FEEDBACK = "TOGGLE_FEEDBACK";
 
 // Reducer to manage the state of the component
 const headerReducer = (state, action) => {
@@ -22,6 +24,8 @@ const headerReducer = (state, action) => {
       return { ...state, toast: { show: false, message: "" } };
     case TOGGLE_DROPDOWN:
       return { ...state, dropdownVisible: !state.dropdownVisible };
+    case TOGGLE_FEEDBACK:
+      return { ...state, isFeedbackOpen: !state.isFeedbackOpen };
     default:
       return state;
   }
@@ -33,6 +37,7 @@ export default function CustomHeader() {
     isFullscreen: false,
     toast: { show: false, message: "" },
     dropdownVisible: false,
+    isFeedbackOpen: false,
   });
 
   // Add periodic reminder
@@ -101,10 +106,15 @@ export default function CustomHeader() {
     }
   }, []);
 
+  const toggleFeedback = useCallback(() => {
+    dispatch({ type: TOGGLE_FEEDBACK });
+  }, []);
+
   return (
     <div className={styles.header}>
       <HeaderButton onClick={shareVideoRoom} icon="videocam" tooltip="Share Room" />
       <HeaderButton onClick={shareWebsite} icon="share" tooltip="Share Lo-fi.study" />
+      <HeaderButton onClick={toggleFeedback} icon="feedback" tooltip="Send Feedback" />
       <HeaderButton
         onClick={toggleFullscreen}
         icon={state.isFullscreen ? "fullscreen_exit" : "fullscreen"}
@@ -113,6 +123,7 @@ export default function CustomHeader() {
       <HeaderButton onClick={() => signOut()} icon="logout" tooltip="Logout" />
 
       {state.toast.show && <Toast message={state.toast.message} />}
+      <FeedbackModal isOpen={state.isFeedbackOpen} onClose={toggleFeedback} />
     </div>
   );
 }
