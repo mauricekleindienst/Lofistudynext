@@ -1,0 +1,135 @@
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.75);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modalContent {
+  background: linear-gradient(145deg, #1e1e1e, #2a2a2a);
+  padding: 2rem;
+  border-radius: 15px;
+  width: 90%;
+  max-width: 500px;
+  position: relative;
+  color: white;
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+}
+
+.closeButton {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background-color 0.3s;
+}
+
+.closeButton:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.modalTitle {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: #ff7b00;
+}
+
+.modalDescription {
+  margin-bottom: 1.5rem;
+  color: #ccc;
+  line-height: 1.5;
+}
+
+.feedbackTextarea {
+  width: 100%;
+  min-height: 120px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: white;
+  font-size: 1rem;
+  resize: vertical;
+}
+
+.feedbackTextarea:focus {
+  outline: none;
+  border-color: #ff7b00;
+}
+
+.formFooter {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.submitButton, .cancelButton {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.submitButton {
+  background-color: #ff7b00;
+  color: white;
+}
+
+.submitButton:hover {
+  background-color: #ff8c1a;
+}
+
+.submitButton:disabled {
+  background-color: #666;
+  cursor: not-allowed;
+}
+
+.cancelButton {
+  background-color: transparent;
+  color: #ccc;
+  border: 1px solid #ccc;
+}
+
+.cancelButton:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.cancelButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.statusMessage {
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.success {
+  background-color: rgba(0, 255, 0, 0.1);
+  color: #4caf50;
+}
+
+.error {
+  background-color: rgba(255, 0, 0, 0.1);
+  color: #f44336;
+} 

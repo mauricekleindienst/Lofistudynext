@@ -1,16 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  webpack: (config, { isServer }) => {
+  reactStrictMode: true,
+  webpack: (config) => {
     config.resolve.alias.canvas = false;
-    config.cache = false;
-    // Add rule for pdf.worker.js
-    config.module.rules.push({
-      test: /pdf\.worker\.(min\.)?js/,
-      type: 'asset/resource',
-      generator: {
-        filename: 'static/worker/[hash][ext][query]'
-      }
-    });
     return config;
   },
   images: {
@@ -19,10 +11,7 @@ const nextConfig = {
   env: {
     DATABASE_URL: process.env.DATABASE_URL,
     // Add other environment variables you need here
-  },
-  // Add site URL for sitemap
-  siteUrl: process.env.SITE_URL || 'https://lo-fi.study',
-  generateRobotsTxt: true,
+  }
 };
 
 module.exports = nextConfig;

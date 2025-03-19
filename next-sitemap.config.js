@@ -1,6 +1,6 @@
 /** @type {import('next-sitemap').IConfig} */
 module.exports = {
-  siteUrl: 'https://lo-fi.study',
+  siteUrl: process.env.SITE_URL || 'https://lo-fi.study',
   generateRobotsTxt: true, // Generate robots.txt file
   sitemapSize: 5000, // Ensure a high value to avoid splitting
   additionalPaths: async (config) => {

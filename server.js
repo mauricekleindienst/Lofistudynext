@@ -7,8 +7,8 @@ const cron = require('node-cron'); // for scheduling tasks
 const { Pool } = require('pg'); // for database interaction
 
 const dev = process.env.NODE_ENV !== 'production';
-const app = next({ dev });
-const handle = app.getRequestHandler();
+const nextApp = next({ dev, conf: require('./next.config.js') });
+const handle = nextApp.getRequestHandler();
 
 const messages = []; // In-memory storage for messages
 
@@ -36,7 +36,7 @@ cron.schedule('59 23 * * 0', () => {
   resetWeeklyCount().catch(error => console.error(error));
 });
 
-app.prepare().then(() => {
+nextApp.prepare().then(() => {
   const server = express();
   const httpServer = http.createServer(server);
   const io = new Server(httpServer);
@@ -91,4 +91,7 @@ app.prepare().then(() => {
     if (err) throw err;
     console.log(`> Ready on http://localhost:${port}`);
   });
+}).catch((err) => {
+  console.error('Error starting server:', err);
+  process.exit(1);
 });
