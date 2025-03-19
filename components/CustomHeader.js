@@ -114,7 +114,7 @@ export default function CustomHeader() {
     <div className={styles.header}>
       <HeaderButton onClick={shareVideoRoom} icon="videocam" tooltip="Share Room" />
       <HeaderButton onClick={shareWebsite} icon="share" tooltip="Share Lo-fi.study" />
-      <HeaderButton onClick={toggleFeedback} icon="feedback" tooltip="Send Feedback" />
+      <HeaderButton onClick={toggleFeedback} icon="rate_review" tooltip="Send Feedback" />
       <HeaderButton
         onClick={toggleFullscreen}
         icon={state.isFullscreen ? "fullscreen_exit" : "fullscreen"}
