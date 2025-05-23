@@ -276,6 +276,7 @@ export default function SelectionBar({ userEmail, userName }) {
           <Component
             key={component}
             onClose={() => toggleComponentVisibility(component)}
+            onMinimize={() => toggleComponentVisibility(component)}
             userEmail={userEmail}
             userName={userName}
           />
