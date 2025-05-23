@@ -1,10 +1,11 @@
 .settingsContainer {
   padding: 0;
-  border-radius: 15px;
+  border-radius: 20px;
   color: var(--text-primary);
   width: 100%;
   max-width: 300px;
   background: linear-gradient(145deg, var(--bg-primary), var(--bg-secondary));
+  backdrop-filter: blur(15px);
   box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
   position: fixed;
   top: 50%;
@@ -19,34 +20,39 @@
 
 .dragHandle {
   height: 24px;
-  background-color: var(--bg-secondary);
+  background: rgba(255, 255, 255, 0.03);
   display: flex;
   justify-content: center;
   align-items: center;
-  border-bottom: 2px solid var(--accent-color);
   cursor: move;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .dragHandle::before {
   content: '';
-  width: 30px;
-  height: 3px;
-  background-color: var(--accent-color);
-  border-radius: 2px;
-  transition: background-color 0.3s ease;
+  width: 40px;
+  height: 4px;
+  background: linear-gradient(90deg, var(--accent-color), rgba(255, 123, 0, 0.6));
+  border-radius: 3px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dragHandle:hover {
+  background: rgba(255, 255, 255, 0.05);
 }
 
 .dragHandle:hover::before {
-  background-color: var(--accent-hover);
+  background: linear-gradient(90deg, var(--accent-hover), var(--accent-color));
+  transform: scaleX(1.1);
 }
 
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 15px;
-  background-color: var(--bg-secondary);
-  border-bottom: 1px solid var(--border-color);
+  padding: 16px 20px;
+  background: rgba(255, 255, 255, 0.02);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .header h2 {
