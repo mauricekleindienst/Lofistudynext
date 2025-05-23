@@ -4,8 +4,8 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.8);
-  backdrop-filter: blur(8px);
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(15px);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -14,14 +14,15 @@
 }
 
 .modal {
-  background: var(--bg-primary);
-  border-radius: 20px;
-  width: 90%;
-  max-width: 1200px;
+  background: linear-gradient(145deg, var(--bg-primary), var(--bg-secondary));
+  border-radius: 24px;
+  width: 92%;
+  max-width: 1300px;
   max-height: 90vh;
   overflow-y: auto;
   padding: 30px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   animation: slideUp 0.3s ease;
 }
 
@@ -29,36 +30,72 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 25px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 20px;
+}
+
+.headerContent {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.headerContent .material-icons {
+  font-size: 28px;
+  color: var(--accent-color);
 }
 
 .modalHeader h2 {
-  font-size: 24px;
+  font-size: 26px;
   color: var(--text-primary);
   margin: 0;
+  background: linear-gradient(145deg, var(--accent-color), var(--accent-hover));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 700;
 }
 
 .closeButton {
-  background: none;
+  background: rgba(255, 255, 255, 0.1);
   border: none;
   color: var(--text-primary);
   cursor: pointer;
-  padding: 8px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
-  transition: background-color 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
 }
 
 .closeButton:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.05);
+}
+
+.closeButton .material-icons {
+  font-size: 20px;
 }
 
 .searchBar {
   display: flex;
   align-items: center;
-  background: var(--bg-secondary);
-  border-radius: 12px;
-  padding: 12px 20px;
-  margin-bottom: 20px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 14px 20px;
+  margin-bottom: 25px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.searchBar:focus-within {
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 2px rgba(var(--accent-rgb), 0.2);
 }
 
 .searchBar input {
@@ -67,61 +104,105 @@
   color: var(--text-primary);
   font-size: 16px;
   width: 100%;
-  margin-left: 10px;
+  margin-left: 12px;
   outline: none;
+  font-family: inherit;
+}
+
+.searchBar input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
 }
 
 .searchBar .material-icons {
+  color: var(--accent-color);
+  font-size: 22px;
+}
+
+.clearSearch {
+  background: none;
+  border: none;
   color: var(--text-secondary);
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.clearSearch:hover {
+  color: var(--text-primary);
 }
 
 .categories {
   display: flex;
-  gap: 10px;
+  gap: 12px;
   margin-bottom: 30px;
   flex-wrap: wrap;
 }
 
 .categoryButton {
-  background: var(--bg-secondary);
-  border: none;
-  padding: 10px 20px;
-  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 12px 22px;
+  border-radius: 16px;
   color: var(--text-primary);
   cursor: pointer;
   transition: all 0.3s ease;
+  font-weight: 500;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.categoryButton .material-icons {
+  font-size: 18px;
 }
 
 .categoryButton:hover {
-  background: var(--accent-color);
+  background: rgba(var(--accent-rgb), 0.2);
+  transform: translateY(-2px);
 }
 
 .categoryButton.active {
   background: var(--accent-color);
   color: white;
+  border-color: var(--accent-color);
+  box-shadow: 0 5px 15px rgba(var(--accent-rgb), 0.3);
+}
+
+.resultsInfo {
+  margin-bottom: 20px;
+  color: var(--text-secondary);
+  font-size: 14px;
 }
 
 .backgroundGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 25px;
 }
 
 .backgroundCard {
-  background: var(--bg-secondary);
-  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
   overflow: hidden;
   cursor: pointer;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  position: relative;
 }
 
 .backgroundCard:hover {
   transform: translateY(-5px);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.25);
+  border-color: rgba(255, 255, 255, 0.2);
 }
 
 .backgroundCard.selected {
-  box-shadow: 0 0 0 3px var(--accent-color);
+  box-shadow: 0 0 0 3px var(--accent-color), 0 10px 20px rgba(0, 0, 0, 0.2);
 }
 
 .videoWrapper {
@@ -138,20 +219,92 @@
   object-fit: cover;
 }
 
+.videoOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.backgroundCard:hover .videoOverlay {
+  opacity: 1;
+}
+
+.selectButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--accent-color);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 30px;
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  transform: translateY(10px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+.backgroundCard:hover .selectButton {
+  transform: translateY(0);
+}
+
+.selectButton:hover {
+  background: var(--accent-hover);
+  transform: scale(1.05);
+}
+
 .backgroundInfo {
-  padding: 15px;
+  padding: 18px;
 }
 
 .backgroundInfo h3 {
   margin: 0;
-  font-size: 16px;
+  font-size: 18px;
   color: var(--text-primary);
+  font-weight: 600;
 }
 
 .backgroundInfo p {
-  margin: 5px 0 0;
+  margin: 8px 0 0;
   font-size: 14px;
   color: var(--text-secondary);
+}
+
+.noResults {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 0;
+  color: var(--text-secondary);
+}
+
+.noResults .material-icons {
+  font-size: 48px;
+  margin-bottom: 15px;
+  opacity: 0.7;
+}
+
+.noResults h3 {
+  margin: 0 0 10px;
+  font-size: 20px;
+  color: var(--text-primary);
+}
+
+.noResults p {
+  margin: 0;
+  font-size: 16px;
 }
 
 @keyframes fadeIn {
@@ -165,7 +318,7 @@
 
 @keyframes slideUp {
   from {
-    transform: translateY(20px);
+    transform: translateY(30px);
     opacity: 0;
   }
   to {
@@ -180,7 +333,7 @@
 }
 
 .modal::-webkit-scrollbar-track {
-  background: var(--bg-secondary);
+  background: rgba(255, 255, 255, 0.05);
   border-radius: 10px;
 }
 
@@ -197,29 +350,75 @@
 @media (max-width: 768px) {
   .modal {
     padding: 20px;
+    width: 95%;
+    height: 85vh;
+  }
+
+  .modalHeader h2 {
+    font-size: 22px;
+  }
+
+  .categories {
+    gap: 10px;
+  }
+
+  .categoryButton {
+    padding: 10px 15px;
+    font-size: 14px;
   }
 
   .backgroundGrid {
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: 15px;
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 576px) {
   .modal {
     padding: 15px;
   }
 
-  .backgroundGrid {
-    grid-template-columns: 1fr;
+  .modalHeader {
+    padding-bottom: 15px;
+    margin-bottom: 15px;
   }
 
-  .categories {
-    gap: 8px;
+  .headerContent .material-icons {
+    font-size: 22px;
+  }
+
+  .modalHeader h2 {
+    font-size: 18px;
+  }
+
+  .searchBar {
+    padding: 10px 15px;
+  }
+
+  .backgroundGrid {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+  }
+
+  .backgroundInfo h3 {
+    font-size: 16px;
+  }
+
+  .backgroundInfo p {
+    font-size: 12px;
   }
 
   .categoryButton {
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+
+  .categoryButton .material-icons {
+    font-size: 16px;
+  }
+
+  .selectButton {
     padding: 8px 16px;
     font-size: 14px;
   }
-} 
+}

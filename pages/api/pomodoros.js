@@ -1,6 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "../auth/[...nextauth]";
+import { authOptions } from "./auth/[...nextauth]";
 
 const prisma = new PrismaClient();
 
@@ -13,25 +13,27 @@ export default async function handler(req, res) {
     }
 
     if (req.method === 'GET') {
-      try {
-        // Try to get flashcard count from database
-        const flashcardCount = await prisma.flashcard.count({
-          where: {
-            userEmail: session.user.email
-          }
-        });
-        
-        return res.status(200).json({ count: flashcardCount });
-      } catch (dbError) {
-        // If table doesn't exist or other DB error, return 0
-        console.log('Flashcard table not found or error:', dbError.message);
-        return res.status(200).json({ count: 0 });
+      // Return empty array for now - you can expand this based on your needs
+      return res.status(200).json([]);
+    } else if (req.method === 'POST') {
+      const { userId } = req.body;
+      
+      if (!userId) {
+        return res.status(400).json({ error: 'User ID is required' });
       }
+
+      // Here you would typically save to your database
+      // For now, returning a mock response
+      return res.status(200).json({
+        id: userId,
+        pomodoroCount: 1,
+        updatedAt: new Date().toISOString()
+      });
     } else {
       return res.status(405).json({ error: 'Method not allowed' });
     }
   } catch (error) {
-    console.error('Flashcards count API error:', error);
+    console.error('Pomodoros API error:', error);
     return res.status(500).json({ error: 'Internal server error' });
   } finally {
     await prisma.$disconnect();

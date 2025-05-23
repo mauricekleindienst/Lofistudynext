@@ -10,13 +10,25 @@ export const UserProvider = ({ children }) => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await fetch('/api/pomodoros');
-      const data = await response.json();
-      setUsers(data);
+      try {
+        const response = await fetch('/api/pomodoros');
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        setUsers(data);
+      } catch (error) {
+        console.error('Failed to fetch pomodoros data:', error);
+        // Set empty array as fallback
+        setUsers([]);
+      }
     };
 
-    fetchData();
-  }, []);
+    // Only fetch if user is authenticated
+    if (session?.user) {
+      fetchData();
+    }
+  }, [session]);
 
   const addPomodoro = async (userId) => {
     const response = await fetch('/api/pomodoros', {

@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from "react";
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import { DragDropContext, Droppable, Draggable } from "./DragDropComponents";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import PomodoroTimer from "./PomodoroTimer";
@@ -127,33 +127,53 @@ export default function SelectionBar({ userEmail, userName }) {
 
     const fetchInfo = async () => {
       try {
-       
+        const newInfo = {};
         
         // Fetch todos count
-        const todosRes = await fetch('/api/todos/count');
-        const todosData = await todosRes.json();
+        try {
+          const todosRes = await fetch('/api/todos/count');
+          if (todosRes.ok) {
+            const todosData = await todosRes.json();
+            newInfo.todo = todosData.count;
+          }
+        } catch (e) {
+          console.log('Failed to fetch todos count:', e.message);
+        }
 
         // Fetch weekly pomodoro count
-        const pomodoroRes = await fetch('/api/pomodoros/weekly');
-        const pomodoroData = await pomodoroRes.json();
+        try {
+          const pomodoroRes = await fetch('/api/pomodoros/weekly');
+          if (pomodoroRes.ok) {
+            const pomodoroData = await pomodoroRes.json();
+            newInfo.pomodoro = pomodoroData.count;
+          }
+        } catch (e) {
+          console.log('Failed to fetch pomodoro count:', e.message);
+        }
 
         // Fetch flashcards count
-        const flashcardsRes = await fetch('/api/flashcards/count');
-        const flashcardsData = await flashcardsRes.json();
+        try {
+          const flashcardsRes = await fetch('/api/flashcards/count');
+          if (flashcardsRes.ok) {
+            const flashcardsData = await flashcardsRes.json();
+            newInfo.quiz = flashcardsData.count;
+          }
+        } catch (e) {
+          console.log('Failed to fetch flashcards count:', e.message);
+        }
 
         // Fetch user rank
-        const rankRes = await fetch('/api/scoreboard/rank');
-        const rankData = await rankRes.json();
+        try {
+          const rankRes = await fetch('/api/scoreboard/rank');
+          if (rankRes.ok) {
+            const rankData = await rankRes.json();
+            newInfo.scoreboard = rankData.rank;
+          }
+        } catch (e) {
+          console.log('Failed to fetch scoreboard rank:', e.message);
+        }
 
-        const newInfo = {
-          todo: todosData.count,
-          pomodoro: pomodoroData.count,
-          quiz: flashcardsData.count,
-          scoreboard: rankData.rank
-        };
-
-      
-        setComponentInfo(newInfo);
+        setComponentInfo(prev => ({ ...prev, ...newInfo }));
       } catch (error) {
         console.error('Error fetching component info:', error);
       }
@@ -286,16 +306,16 @@ export default function SelectionBar({ userEmail, userName }) {
           setSavedPdfs={setSavedPdfs}
         />
       )}
-      <Droppable droppableId="selectionBar" direction="horizontal">
-        {(provided) => (
-          <div
-            className={`${styles.selectionBar} ${
-              zenMode ? styles.hidden : "" // Conditionally hide bar in Zen Mode
-            }`}
-            {...provided.droppableProps}
-            ref={provided.innerRef}
-          >
-            <DragDropContext onDragEnd={onDragEnd}>
+      <DragDropContext onDragEnd={onDragEnd}>
+        <Droppable droppableId="selectionBar" direction="horizontal">
+          {(provided) => (
+            <div
+              className={`${styles.selectionBar} ${
+                zenMode ? styles.hidden : "" // Conditionally hide bar in Zen Mode
+              }`}
+              {...provided.droppableProps}
+              ref={provided.innerRef}
+            >
               {icons.map((icon, index) => (
                 <Draggable key={icon.id} draggableId={icon.id} index={index}>
                   {(provided, snapshot) => (
@@ -320,30 +340,12 @@ export default function SelectionBar({ userEmail, userName }) {
                 </Draggable>
               ))}
               {provided.placeholder}
-            </DragDropContext>
             
-            {/* Admin section */}
-            {isAdmin && (
-              <div 
-                className={`${styles.iconButton} ${styles.adminIcon}`}
-                onClick={goToAdminFeedback}
-              >
-                <span className="material-icons">admin_panel_settings</span>
-                <div className={styles.tooltip}>Manage Feedback</div>
-              </div>
-            )}
-            
-            <div className={styles.zenModeToggle} onClick={toggleZenMode}>
-              <span className="material-icons">
-                {zenMode ? "visibility_off" : "visibility"}
-              </span>
-              <div className={styles.tooltip}>
-                {zenMode ? "Exit Zen Mode" : "Enter Zen Mode"}
-              </div>
-            </div>
+           
           </div>
         )}
       </Droppable>
+    </DragDropContext>
       {renderedComponents}
     </div>
   );

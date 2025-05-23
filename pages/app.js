@@ -2,7 +2,6 @@ import { useSession } from "next-auth/react";
 import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { useRouter } from "next/router";
 import styles from "../styles/app.module.css";
-import MusicPlayer from "../components/MusicPlayer";
 import CustomHeader from "../components/CustomHeader";
 import PomodoroTimer from "../components/PomodoroTimer";
 import SelectionBar from "../components/SelectionBar";
@@ -13,44 +12,12 @@ import DraggableIframe from "../components/DraggableIframe";
 import { ErrorBoundary } from "react-error-boundary";
 import BackgroundPrompt from '../components/BackgroundPrompt';
 import BackgroundModal from '../components/BackgroundModal';
+import Sidebar from '../components/Sidebar';
+import { backgrounds, DEFAULT_BACKGROUND } from '../data/backgrounds';
 
 // Define the admin emails for access control
 const ADMIN_EMAILS = ['admin@lofi.study', 'your-admin-email@example.com', 'kleindiema@gmail.com'];
 
-// Define the default background
-const DEFAULT_BACKGROUND = {
-  id: 2,
-  src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Rain.mp4",
-  alt: "Rain",
-  note: "Rain",
-  createdby: "Lo-Fi.study",
-  priority: true
-};
-
-const backgrounds = [
-  { id: 1, src: "/backgrounds/Couch.mp4", alt: "Couch", note: "Couch", priority: true },
-  { id: 2, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Rain.mp4", alt: "Rain", note: "Rain",  createdby: "Lo-Fi.study", priority: true },
-  { id: 3, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Train.mp4", alt: "Train", note: "Train", createdby: "Lo-Fi.study", priority: false },
-  { id: 4, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Classroom.mp4", alt: "Classroom", note: "Classroom", createdby: "Lo-Fi.study", priority: false },
-  { id: 5, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Autumn.mp4", alt: "Autumn", note: "Autumn", createdby: "Lo-Fi.study", priority: false },
-  { id: 6, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Night.mp4", alt: "Night", note: "Night", createdby: "Lo-Fi.study", priority: false },
-  { id: 7, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Skyrim.mp4", alt: "Skyrim", note: "Skyrim", createdby: "Skyrim", priority: false },
-  { id: 8, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Train2.mp4", alt: "Train2", note: "Train2", createdby: "Lo-Fi.study", priority: false },
-  { id: 9, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Chillroom.mp4", alt: "Chillroom", note: "Chillroom", createdby: "Lo-Fi.study", priority: false },
-  { id: 10, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/cables.mp4", alt: "Cables", note: "Cables", createdby: "Lo-Fi.study", priority: false },
-  { id: 11, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/winter.mp4", alt: "Winter", note: "Winter", createdby: "Lo-Fi.study", priority: false },
-  { id: 12, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/study_girl.mp4", alt: "StudyGirl", note: "StudyGirl", createdby: "Lo-Fi.study", priority: false },
-  { id: 13, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/coffee.mp4", alt: "Coffee", note: "Coffee", createdby: "Lo-Fi.study", priority: false },
-  { id: 14, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Minecraft.mp4", alt: "Minecraft", note: "Minecraft", createdby: "Mojang", priority: false },
-  { id: 15, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Darkroom.mp4", alt: "Darkroom", note: "Darkroom", createdby: "Lo-Fi.study", priority: false },
-  { id: 16, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Snowtrain.mp4", alt: "Snowtrain", note: "Snowtrain", createdby: "Lo-Fi.study", priority: false },
-  { id: 17, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Garden.mp4", alt: "Garden", note: "Garden", createdby: "Lo-Fi.study", priority: false },
-  { id: 18, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/japannight.mp4", alt: "Nighttime in Japan", note: "Nighttime in Japan", createdby: "Lo-Fi.study", priority: false },
-  { id: 19, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Nightcity.mp4", alt: "Night City", note: "Night City", createdby: "Lo-Fi.study", priority: false },
-  { id: 20, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Beachisland.mp4", alt: "Beach Island", note: "Beach Island", createdby: "Lo-Fi.study", priority: false },
-  { id: 21, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/NightRoom.mp4", alt: "Night Room", note: "Night Room", createdby: "Lo-Fi.study", priority: false },
-  { id: 22, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Bedroom.mp4", alt: "Bedroom", note: "Bedroom", createdby: "Lo-Fi.study", priority: false },
-];
 const messages = [
   "Pouring Coffee",
   "Grabbing Your Notes",
@@ -78,7 +45,6 @@ export default function Study() {
   const [showLoading, setShowLoading] = useState(true);
   const [zenMode, setZenMode] = useState(false);
   const [messageIndex, setMessageIndex] = useState(0);
-  const scrollContainerRef = useRef(null);
   const videoRef = useRef(null);
   const [isBackgroundLoading, setIsBackgroundLoading] = useState(true);
   const [showBackgroundModal, setShowBackgroundModal] = useState(false);
@@ -414,74 +380,17 @@ useEffect(() => {
             )}
           </>
         )}
-        <aside
-          className={`${styles.sidebar} ${
-            sidebarOpen ? styles.open : styles.closed
-          } ${zenMode ? styles.hidden : ''}`}
-        >
-          <h1>
-            Welcome, {getFirstName(session.user.name)}! {currentTime}
-          </h1>
-          
-          <div className={styles.backgroundSelector}>
-            <div className={styles.backgroundHeader}>
-              <h2>Backgrounds</h2>
-              <button 
-                className={styles.viewAllButton}
-                onClick={() => setShowBackgroundModal(true)}
-              >
-                <span className="material-icons">grid_view</span>
-                View All
-              </button>
-            </div>
-            <div className={styles.backgroundScrollContainer}>
-              <button 
-                className={`${styles.scrollButton} ${styles.scrollLeft}`} 
-                onClick={() => handleScroll('left')}
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
-                  <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
-                </svg>
-              </button>
-              <div className={styles.backgroundOptions} ref={scrollContainerRef}>
-                {backgrounds.map((background) => (
-                  <div
-                    key={background.id}
-                    className={`${styles.backgroundOption} ${
-                      selectedBackground?.id === background.id ? styles.selected : ''
-                    }`}
-                    onClick={() => handleBackgroundSelection(background)}
-                  >
-                    <video src={background.src} muted loop />
-                    <span className={styles.backgroundLabel}>{background.note}</span>
-                    <div className={styles.backgroundTooltip}>
-                      <p><strong>Created by:</strong> {background.createdby}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <button 
-                className={`${styles.scrollButton} ${styles.scrollRight}`} 
-                onClick={() => handleScroll('right')}
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
-                  <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
-                </svg>
-              </button>
-            </div>
-          </div>
-
-          <MusicPlayer />
-        </aside>
-        <button 
-          className={styles.toggleButton}
-          onClick={toggleSidebar}
-          aria-label={sidebarOpen ? 'Close Sidebar' : 'Open Sidebar'}
-        >
-          <span className="material-icons">
-            {sidebarOpen ? 'chevron_left' : 'chevron_right'}
-          </span>
-        </button>
+        <Sidebar
+          isOpen={sidebarOpen}
+          onToggle={toggleSidebar}
+          selectedBackground={selectedBackground}
+          onBackgroundSelect={handleBackgroundSelection}
+          onShowBackgroundModal={() => setShowBackgroundModal(true)}
+          zenMode={zenMode}
+          onZenModeToggle={toggleZenMode}
+          userName={getFirstName(session.user.name)}
+          currentTime={currentTime}
+        />
         <main className={styles.main}>
           {videoRoomUrl && (
             <DraggableIframe
