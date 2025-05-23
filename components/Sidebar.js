@@ -32,10 +32,6 @@ export default function Sidebar({
   userName,
   currentTime
 }) {
-  const scrollContainerRef = useRef(null);
-  const preloadCacheRef = useRef(new Map());
-  const [loadingVideos, setLoadingVideos] = useState(new Set());
-  
   // Music player state
   const [tracks, setTracks] = useState(initialTracks);
   const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
@@ -66,25 +62,6 @@ export default function Sidebar({
   }, []);
 
   // Preload priority backgrounds on mount
-  useEffect(() => {
-    // Preload priority backgrounds
-    const preloadPriorityBackgrounds = () => {
-      backgrounds
-        .filter(bg => bg.priority)
-        .forEach(background => {
-          if (!preloadCacheRef.current.has(background.id)) {
-            const video = document.createElement('video');
-            video.preload = 'metadata';
-            video.muted = true;
-            video.src = background.src;
-            preloadCacheRef.current.set(background.id, video);
-          }
-        });
-    };
-
-    preloadPriorityBackgrounds();
-  }, []);
-  
   // Persist music player state in localStorage
   useEffect(() => {
     const storedTracks = JSON.parse(localStorage.getItem('tracks'));
@@ -101,50 +78,10 @@ export default function Sidebar({
     localStorage.setItem('volume', volume);
   }, [tracks, currentTrackIndex, volume]);
 
-  const handleScroll = (direction) => {
-    if (scrollContainerRef.current) {
-      const scrollAmount = 200;
-      scrollContainerRef.current.scrollBy({
-        left: direction === 'left' ? -scrollAmount : scrollAmount,
-        behavior: 'smooth'
-      });
-    }
-  };
-
   const handleBackgroundSelection = (background) => {
     onBackgroundSelect(background);
   };
   
-  // Helper functions for video loading states
-  const handleVideoLoadStart = (backgroundId) => {
-    setLoadingVideos(prev => new Set([...prev, backgroundId]));
-    
-    // Preload this video
-    if (!preloadCacheRef.current.has(backgroundId)) {
-      const video = document.createElement('video');
-      video.preload = 'metadata';
-      video.muted = true;
-      video.src = backgrounds.find(bg => bg.id === backgroundId)?.src;
-      preloadCacheRef.current.set(backgroundId, video);
-    }
-  };
-
-  const handleVideoLoaded = (backgroundId) => {
-    setLoadingVideos(prev => {
-      const newSet = new Set(prev);
-      newSet.delete(backgroundId);
-      return newSet;
-    });
-  };
-
-  const handleVideoError = (backgroundId, e) => {
-    console.warn(`Failed to load background video: ${backgrounds.find(bg => bg.id === backgroundId)?.note}`);
-    handleVideoLoaded(backgroundId);
-    // Show fallback background
-    e.target.style.background = 'linear-gradient(135deg, #1a1a2e, #16213e)';
-    e.target.style.opacity = '0.7';
-  };
-
   // Music Player Functions
   const playPause = () => {
     if (playerRef.current) {
@@ -299,77 +236,20 @@ export default function Sidebar({
           </h1>
           
           <div className={styles.backgroundSelector}>
-            <div className={styles.backgroundHeader}>
-              <h2>Backgrounds</h2>
-              <button 
-                className={styles.viewAllButton}
-                onClick={onShowBackgroundModal}
-              >
-                <span className="material-icons">grid_view</span>
-                All
-              </button>
-            </div>
-            
-            <div className={styles.backgroundScrollContainer}>
-              <button 
-                className={`${styles.scrollButton} ${styles.scrollLeft}`}
-                onClick={() => handleScroll('left')}
-                aria-label="Scroll left"
-              >
-                <span className="material-icons">chevron_left</span>
-              </button>
-              
-              <div className={styles.backgroundOptions} ref={scrollContainerRef}>
-                {backgrounds.map((background) => (
-                  <div
-                    key={background.id}
-                    className={`${styles.backgroundOption} ${
-                      selectedBackground?.id === background.id ? styles.selected : ''
-                    } ${loadingVideos.has(background.id) ? styles.loading : ''}`}
-                    onClick={() => handleBackgroundSelection(background)}
-                  >
-                    <div className={styles.backgroundInfo}>
-                      <video
-                        src={background.src}
-                        muted
-                        loop
-                        playsInline
-                        preload="metadata"
-                        onLoadStart={() => handleVideoLoadStart(background.id)}
-                        onMouseEnter={(e) => {
-                          e.target.play().catch(() => {
-                            // Ignore autoplay errors
-                          });
-                        }}
-                        onMouseLeave={(e) => {
-                          e.target.pause();
-                          e.target.currentTime = 0;
-                        }}
-                        onError={(e) => handleVideoError(background.id, e)}
-                        onLoadedData={() => handleVideoLoaded(background.id)}
-                        onCanPlay={() => handleVideoLoaded(background.id)}
-                        className={`${styles.backgroundVideo} ${loadingVideos.has(background.id) ? styles.loading : ''}`}
-                      />
-                      <div className={styles.backgroundLabel}>{background.note}</div>
-                      {background.createdby && (
-                        <div className={styles.backgroundTooltip}>
-                          <p><strong>Background:</strong> {background.note}</p>
-                          <p><strong>Created by:</strong> {background.createdby}</p>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                ))}
+            <button 
+              className={styles.backgroundSelectionButton}
+              onClick={onShowBackgroundModal}
+              aria-label="Select Background"
+            >
+              <div className={styles.buttonContent}>
+                <span className="material-icons">wallpaper</span>
+                <div className={styles.buttonText}>
+                  <h3>Backgrounds</h3>
+                  <p>Choose your study environment</p>
+                </div>
+                <span className="material-icons">arrow_forward</span>
               </div>
-              
-              <button 
-                className={`${styles.scrollButton} ${styles.scrollRight}`}
-                onClick={() => handleScroll('right')}
-                aria-label="Scroll right"
-              >
-                <span className="material-icons">chevron_right</span>
-              </button>
-            </div>
+            </button>
           </div>
 
           {/* Integrated Music Player */}

@@ -79,118 +79,8 @@
   margin-bottom: 20px;
 }
 
-.backgroundHeader {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 15px;
-}
-
-.backgroundHeader h2 {
-  font-size: 1.3rem;
-  font-weight: 600;
-  color: var(--text-primary);
-  margin: 0;
-  background: linear-gradient(145deg, var(--accent-color), var(--accent-hover));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.backgroundActions {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.viewAllButton {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 10px 16px;
-  background: linear-gradient(145deg, var(--accent-color), var(--accent-hover));
-  color: white;
-  border: none;
-  border-radius: 16px;
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  font-size: 0.9rem;
-  font-weight: 600;
-  box-shadow: 0 4px 12px rgba(var(--accent-rgb), 0.3);
-}
-
-.viewAllButton:hover {
-  transform: translateY(-2px) scale(1.03);
-  box-shadow: 0 6px 16px rgba(var(--accent-rgb), 0.4);
-}
-
-.viewAllButton .material-icons {
-  font-size: 18px;
-}
-
-.expandButton {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-  border-radius: 12px;
-  background: var(--bg-secondary);
-  color: var(--text-secondary);
-  border: 1px solid var(--border-color);
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.expandButton:hover {
-  background: var(--accent-color);
-  color: var(--text-primary);
-  border-color: var(--accent-color);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(255, 123, 0, 0.2);
-}
-
-/* Category Tabs */
-.categoryTabs {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 15px;
-  padding: 4px;
-  background: rgba(0, 0, 0, 0.1);
-  border-radius: 12px;
-  overflow-x: auto;
-  scrollbar-width: thin;
-}
-
-.categoryTabs::-webkit-scrollbar {
-  height: 4px;
-}
-
-.categoryTabs::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 2px;
-}
-
-.categoryTabs::-webkit-scrollbar-thumb {
-  background: var(--accent-color);
-  border-radius: 2px;
-}
-
-.categoryTab {
-  padding: 8px 16px;
-  border-radius: 8px;
-  background: transparent;
-  color: var(--text-secondary);
-  border: none;
-  font-size: 0.9rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  white-space: nowrap;
-}
-
-.categoryTab:hover {
+/* Controls */
+.controls {
   background: rgba(255, 255, 255, 0.1);
   color: var(--text-primary);
 }
@@ -201,33 +91,72 @@
   font-weight: 600;
 }
 
-/* Background Grid */
-.backgroundGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
-  gap: 12px;
-  transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-  overflow: hidden;
-  max-height: 180px;
+/* Background Selection Button */
+.backgroundSelectionButton {
+  width: 100%;
+  padding: 20px;
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
 }
 
-.backgroundGrid.expanded {
-  max-height: 500px;
-  overflow-y: auto;
+.backgroundSelectionButton:hover {
+  background: linear-gradient(145deg, rgba(255, 123, 0, 0.1), rgba(255, 255, 255, 0.05));
+  border-color: rgba(255, 123, 0, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(255, 123, 0, 0.15);
 }
 
-.backgroundGrid::-webkit-scrollbar {
-  width: 6px;
+.buttonContent {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  color: var(--text-primary);
 }
 
-.backgroundGrid::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 3px;
+.buttonContent .material-icons:first-child {
+  font-size: 32px;
+  color: var(--accent-color);
+  background: linear-gradient(145deg, rgba(255, 123, 0, 0.1), rgba(255, 123, 0, 0.05));
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 123, 0, 0.2);
 }
 
-.backgroundGrid::-webkit-scrollbar-thumb {
-  background: var(--accent-color);
-  border-radius: 3px;
+.buttonText {
+  flex: 1;
+  text-align: left;
+}
+
+.buttonText h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.buttonText p {
+  margin: 4px 0 0 0;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  opacity: 0.8;
+}
+
+.buttonContent .material-icons:last-child {
+  font-size: 24px;
+  color: var(--text-secondary);
+  opacity: 0.6;
+  transition: all 0.3s ease;
+}
+
+.backgroundSelectionButton:hover .buttonContent .material-icons:last-child {
+  color: var(--accent-color);
+  opacity: 1;
+  transform: translateX(4px);
 }
 
 .backgroundOption {
