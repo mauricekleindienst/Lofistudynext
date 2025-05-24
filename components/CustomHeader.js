@@ -114,7 +114,7 @@ export default function CustomHeader() {
 
   // List of admin emails
   const adminEmails = ['admin@lofi.study', 'your-admin-email@example.com', 'kleindiema@gmail.com'];
-  const isAdmin = session && adminEmails.includes(session.user.email);
+  const isAdmin = user && adminEmails.includes(user.email);
 
   return (
     <div className={styles.header}>

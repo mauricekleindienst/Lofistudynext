@@ -65,8 +65,11 @@ export default function SelectionBar({ userEmail, userName }) {
   const [showPdfModal, setShowPdfModal] = useState(false);
   const [savedPdfs, setSavedPdfs] = useState([]);
 
+  // Get user from auth context
+  const { user } = useAuth();
+  
   // Check if the current user is an admin
-  const isAdmin = session && ADMIN_EMAILS.includes(session.user.email);
+  const isAdmin = user && ADMIN_EMAILS.includes(user.email);
 
   // Listen for Pomodoro updates
   useEffect(() => {
