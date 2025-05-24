@@ -1,41 +1,52 @@
-import { PrismaClient } from '@prisma/client';
+import { requireAuth } from '../../../lib/auth-helpers';
 
-const prisma = new PrismaClient();
-
-export default async function handler(req, res) {
+export default requireAuth(async function handler(req, res, user) {
   if (req.method !== 'PUT') {
     res.setHeader('Allow', ['PUT']);
     return res.status(405).end(`Method ${req.method} Not Allowed`);
   }
 
-  const { email, newOrder } = req.body;
+  const { newOrder } = req.body;
 
-  if (!email || !newOrder || !Array.isArray(newOrder)) {
-    return res.status(400).json({ error: 'Email and newOrder array are required' });
+  if (!newOrder || !Array.isArray(newOrder)) {
+    return res.status(400).json({ error: 'newOrder array is required' });
   }
 
   try {
-    // Use transaction to ensure all position updates succeed or none do
-    await prisma.$transaction(
-      newOrder.map(({ id, position }) =>
-        prisma.todos.updateMany({
-          where: {
-            AND: [
-              { id: parseInt(id) },
-              { email: email }
-            ]
-          },
-          data: { position },
-        })
-      )
+    const { createClient } = require('@supabase/supabase-js');
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL,
+      process.env.SUPABASE_SERVICE_ROLE_KEY
     );
 
+    // Update positions for each todo
+    for (const { id, position } of newOrder) {
+      const { error } = await supabase
+        .from('todos')
+        .update({ position })
+        .eq('id', parseInt(id))
+        .eq('user_id', user.id);
+
+      if (error) {
+        console.error('Error updating todo position:', error);
+        return res.status(500).json({ error: 'Failed to reorder todos' });
+      }
+    }
+
     // Fetch updated todos to return in response
-    const updatedTodos = await prisma.todos.findMany({
-      where: { email },
-      orderBy: { position: 'asc' },
-      include: { subtasks: true }
-    });
+    const { data: updatedTodos, error: fetchError } = await supabase
+      .from('todos')
+      .select(`
+        *,
+        subtasks (*)
+      `)
+      .eq('user_id', user.id)
+      .order('position', { ascending: true });
+
+    if (fetchError) {
+      console.error('Error fetching updated todos:', fetchError);
+      return res.status(500).json({ error: 'Failed to fetch updated todos' });
+    }
 
     return res.status(200).json({ 
       message: 'Todo order updated successfully',
@@ -43,13 +54,6 @@ export default async function handler(req, res) {
     });
   } catch (error) {
     console.error('Error reordering todos:', error);
-    
-    if (error.code === 'P2025') {
-      return res.status(404).json({ error: 'One or more todos not found' });
-    }
-    
     return res.status(500).json({ error: 'Failed to reorder todos' });
-  } finally {
-    await prisma.$disconnect();
   }
-}
+});

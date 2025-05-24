@@ -1,27 +1,26 @@
-import { PrismaClient } from '@prisma/client';
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "../auth/[...nextauth]";
+import { requireAuth } from '../../../lib/auth-helpers';
 
-const prisma = new PrismaClient();
-
-export default async function handler(req, res) {
-  const session = await getServerSession(req, res, authOptions);
-
-  if (!session) {
-    return res.status(401).json({ error: 'Please sign in to continue' });
-  }
+export default requireAuth(async function handler(req, res, user) {
+  const { createClient } = require('@supabase/supabase-js');
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL,
+    process.env.SUPABASE_SERVICE_ROLE_KEY
+  );
 
   if (req.method === 'GET') {
     try {
       const { tutorial } = req.query;
-      const tutorialState = await prisma.tutorialState.findUnique({
-        where: {
-          email_tutorial: {
-            email: session.user.email,
-            tutorial: tutorial
-          }
-        }
-      });
+      const { data: tutorialState, error } = await supabase
+        .from('tutorial_states')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('tutorial', tutorial)
+        .single();
+      
+      if (error && error.code !== 'PGRST116') {
+        console.error('Failed to fetch tutorial state:', error);
+        return res.status(500).json({ error: 'Failed to fetch tutorial state' });
+      }
       
       res.status(200).json(tutorialState || { completed: false });
     } catch (error) {
@@ -32,22 +31,22 @@ export default async function handler(req, res) {
     try {
       const { tutorial, completed } = req.body;
       
-      const tutorialState = await prisma.tutorialState.upsert({
-        where: {
-          email_tutorial: {
-            email: session.user.email,
-            tutorial: tutorial
-          }
-        },
-        update: {
-          completed: completed
-        },
-        create: {
-          email: session.user.email,
+      const { data: tutorialState, error } = await supabase
+        .from('tutorial_states')
+        .upsert({
+          user_id: user.id,
           tutorial: tutorial,
           completed: completed
-        }
-      });
+        }, {
+          onConflict: 'user_id,tutorial'
+        })
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Failed to update tutorial state:', error);
+        return res.status(500).json({ error: 'Failed to update tutorial state' });
+      }
       
       res.status(200).json(tutorialState);
     } catch (error) {
@@ -58,4 +57,4 @@ export default async function handler(req, res) {
     res.setHeader('Allow', ['GET', 'POST']);
     res.status(405).end(`Method ${req.method} Not Allowed`);
   }
-} 
+}); 

@@ -1,4 +1,4 @@
-import { useSession } from "next-auth/react";
+import { useAuth } from "../contexts/AuthContext";
 import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { useRouter } from "next/router";
 import styles from "../styles/app.module.css";
@@ -29,7 +29,7 @@ const messages = [
   "Boosting Your Focus"
 ];
 export default function Study() {
-  const { data: session, status } = useSession();
+  const { user, loading } = useAuth();
   const router = useRouter();
   const { roomUrl } = router.query;
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -99,7 +99,7 @@ useEffect(() => {
   }, []);
 
   useEffect(() => {
-    if (status === "loading" || status === "unauthenticated") {
+    if (loading || !user) {
       setShowLoading(true);
       return;
     }
@@ -133,7 +133,7 @@ useEffect(() => {
     }
 
     return () => clearTimeout(loadingTimeout);
-  }, [status, isBackgroundLoading]);
+  }, [loading, user, isBackgroundLoading]);
 
   useEffect(() => {
     const preloadCache = new Map();
@@ -265,7 +265,7 @@ useEffect(() => {
     }
   };
 
-  if (status === "loading" || showLoading) {
+  if (loading || showLoading) {
     return (
       <div className={styles["loader-container"]}>
         <div className={styles.loader}>
@@ -286,7 +286,7 @@ useEffect(() => {
     );
   }
 
-  if (status === "unauthenticated") {
+  if (!user) {
     if (typeof window !== "undefined") {
       window.location.href = "/auth/signin";
     }
@@ -335,7 +335,7 @@ useEffect(() => {
       case "chat":
         return <LiveChat
           onMinimize={() => handleIconClick("chat")}
-          userName={getFirstName(session.user.name)}
+          userName={getFirstName(user.user_metadata?.name || user.email)}
         />;
       default:
         return null;
@@ -347,12 +347,12 @@ useEffect(() => {
       <CustomHeader />
       <SelectionBar
         className={`${styles.selectionBar} ${zenMode ? styles.hidden : ''}`}
-        userEmail={session.user.email}
-        userName={getFirstName(session.user.name)}
+        userEmail={user.email}
+        userName={getFirstName(user.user_metadata?.name || user.email)}
         onIconClick={handleIconClick}
       />
       
-      {!selectedBackground && !showLoading && session && !zenMode && (
+      {!selectedBackground && !showLoading && user && !zenMode && (
         <BackgroundPrompt />
       )}
       
@@ -388,7 +388,7 @@ useEffect(() => {
           onShowBackgroundModal={() => setShowBackgroundModal(true)}
           zenMode={zenMode}
           onZenModeToggle={toggleZenMode}
-          userName={getFirstName(session.user.name)}
+          userName={getFirstName(user.user_metadata?.name || user.email)}
           currentTime={currentTime}
         />
         <main className={styles.main}>

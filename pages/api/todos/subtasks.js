@@ -1,16 +1,14 @@
-import { PrismaClient } from '@prisma/client';
+import { requireAuth } from '../../../lib/auth-helpers';
 
-const prisma = new PrismaClient();
-
-export default async function handler(req, res) {
+export default requireAuth(async function handler(req, res, user) {
   try {
     switch (req.method) {
       case 'POST':
-        return addSubtaskHandler(req, res);
+        return addSubtaskHandler(req, res, user);
       case 'PUT':
-        return updateSubtaskHandler(req, res);
+        return updateSubtaskHandler(req, res, user);
       case 'DELETE':
-        return deleteSubtaskHandler(req, res);
+        return deleteSubtaskHandler(req, res, user);
       default:
         res.setHeader('Allow', ['POST', 'PUT', 'DELETE']);
         return res.status(405).end(`Method ${req.method} Not Allowed`);
@@ -18,40 +16,49 @@ export default async function handler(req, res) {
   } catch (error) {
     console.error('Error in subtask handler:', error);
     return res.status(500).json({ error: 'Internal server error' });
-  } finally {
-    await prisma.$disconnect();
   }
-}
+});
 
-async function addSubtaskHandler(req, res) {
-  const { todoId, email, text } = req.body;
+async function addSubtaskHandler(req, res, user) {
+  const { todoId, text } = req.body;
 
-  if (!todoId || !email || !text) {
-    return res.status(400).json({ error: 'TodoId, email, and text are required' });
+  if (!todoId || !text) {
+    return res.status(400).json({ error: 'TodoId and text are required' });
   }
 
   try {
-    // First verify the todo belongs to the user
-    const todo = await prisma.todos.findUnique({
-      where: {
-        id_email: {
-          id: parseInt(todoId),
-          email: email,
-        }
-      }
-    });
+    const { createClient } = require('@supabase/supabase-js');
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL,
+      process.env.SUPABASE_SERVICE_ROLE_KEY
+    );
 
-    if (!todo) {
+    // First verify the todo belongs to the user
+    const { data: todo, error: todoError } = await supabase
+      .from('todos')
+      .select('id')
+      .eq('id', parseInt(todoId))
+      .eq('user_id', user.id)
+      .single();
+
+    if (todoError || !todo) {
       return res.status(404).json({ error: 'Todo not found' });
     }
 
-    const subtask = await prisma.subtasks.create({
-      data: {
+    const { data: subtask, error } = await supabase
+      .from('subtasks')
+      .insert({
         todo_id: parseInt(todoId),
         text,
         completed: false,
-      },
-    });
+      })
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Error adding subtask:', error);
+      return res.status(500).json({ error: 'Failed to add subtask' });
+    }
 
     return res.status(201).json({
       message: 'Subtask added successfully',
@@ -63,42 +70,51 @@ async function addSubtaskHandler(req, res) {
   }
 }
 
-async function updateSubtaskHandler(req, res) {
-  const { id, todoId, email, text, completed } = req.body;
+async function updateSubtaskHandler(req, res, user) {
+  const { id, todoId, text, completed } = req.body;
 
-  if (!id || !todoId || !email) {
-    return res.status(400).json({ error: 'Id, todoId, and email are required' });
+  if (!id || !todoId) {
+    return res.status(400).json({ error: 'Id and todoId are required' });
   }
 
   try {
-    // Verify todo ownership
-    const todo = await prisma.todos.findUnique({
-      where: {
-        id_email: {
-          id: parseInt(todoId),
-          email: email,
-        }
-      }
-    });
+    const { createClient } = require('@supabase/supabase-js');
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL,
+      process.env.SUPABASE_SERVICE_ROLE_KEY
+    );
 
-    if (!todo) {
+    // Verify todo ownership
+    const { data: todo, error: todoError } = await supabase
+      .from('todos')
+      .select('id')
+      .eq('id', parseInt(todoId))
+      .eq('user_id', user.id)
+      .single();
+
+    if (todoError || !todo) {
       return res.status(404).json({ error: 'Todo not found' });
     }
 
-    const updateData = {
-      ...(text !== undefined && { text }),
-      ...(completed !== undefined && { completed }),
-    };
+    const updateData = {};
+    if (text !== undefined) updateData.text = text;
+    if (completed !== undefined) updateData.completed = completed;
 
-    const subtask = await prisma.subtasks.update({
-      where: {
-        id_todo_id: {
-          id: parseInt(id),
-          todo_id: parseInt(todoId),
-        }
-      },
-      data: updateData,
-    });
+    const { data: subtask, error } = await supabase
+      .from('subtasks')
+      .update(updateData)
+      .eq('id', parseInt(id))
+      .eq('todo_id', parseInt(todoId))
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Error updating subtask:', error);
+      if (error.code === 'PGRST116') {
+        return res.status(404).json({ error: 'Subtask not found' });
+      }
+      return res.status(500).json({ error: 'Failed to update subtask' });
+    }
 
     return res.status(200).json({
       message: 'Subtask updated successfully',
@@ -106,50 +122,50 @@ async function updateSubtaskHandler(req, res) {
     });
   } catch (error) {
     console.error('Error updating subtask:', error);
-    if (error.code === 'P2025') {
-      return res.status(404).json({ error: 'Subtask not found' });
-    }
     return res.status(500).json({ error: 'Failed to update subtask' });
   }
 }
 
-async function deleteSubtaskHandler(req, res) {
-  const { id, todoId, email } = req.body;
+async function deleteSubtaskHandler(req, res, user) {
+  const { id, todoId } = req.body;
 
-  if (!id || !todoId || !email) {
-    return res.status(400).json({ error: 'Id, todoId, and email are required' });
+  if (!id || !todoId) {
+    return res.status(400).json({ error: 'Id and todoId are required' });
   }
 
   try {
-    // Verify todo ownership
-    const todo = await prisma.todos.findUnique({
-      where: {
-        id_email: {
-          id: parseInt(todoId),
-          email: email,
-        }
-      }
-    });
+    const { createClient } = require('@supabase/supabase-js');
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL,
+      process.env.SUPABASE_SERVICE_ROLE_KEY
+    );
 
-    if (!todo) {
+    // Verify todo ownership
+    const { data: todo, error: todoError } = await supabase
+      .from('todos')
+      .select('id')
+      .eq('id', parseInt(todoId))
+      .eq('user_id', user.id)
+      .single();
+
+    if (todoError || !todo) {
       return res.status(404).json({ error: 'Todo not found' });
     }
 
-    await prisma.subtasks.delete({
-      where: {
-        id_todo_id: {
-          id: parseInt(id),
-          todo_id: parseInt(todoId),
-        }
-      },
-    });
+    const { error } = await supabase
+      .from('subtasks')
+      .delete()
+      .eq('id', parseInt(id))
+      .eq('todo_id', parseInt(todoId));
+
+    if (error) {
+      console.error('Error deleting subtask:', error);
+      return res.status(500).json({ error: 'Failed to delete subtask' });
+    }
 
     return res.status(200).json({ message: 'Subtask deleted successfully' });
   } catch (error) {
     console.error('Error deleting subtask:', error);
-    if (error.code === 'P2025') {
-      return res.status(404).json({ error: 'Subtask not found' });
-    }
     return res.status(500).json({ error: 'Failed to delete subtask' });
   }
 }

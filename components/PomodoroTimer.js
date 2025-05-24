@@ -6,7 +6,7 @@ import React, {
   useReducer,
   useMemo,
 } from "react";
-import { useSession } from "next-auth/react";
+import { useAuth } from "../contexts/AuthContext";
 
 import Draggable from "react-draggable";
 import styles from "../styles/PomodoroTimer.module.css";
@@ -63,7 +63,7 @@ function reducer(state, action) {
 
 export default function PomodoroTimer({ onMinimize }) {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const { data: session } = useSession();
+  const { user } = useAuth();
   const timerRef = useRef(null);
 
   const soundRefs = {
@@ -161,13 +161,13 @@ export default function PomodoroTimer({ onMinimize }) {
       });
       window.dispatchEvent(event);
 
-      if (session?.user?.email) {
+      if (user?.email) {
         fetch("/api/updatePomodoroCount", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            email: session.user.email,
-            firstname: session.user.name.split(" ")[0],
+            email: user.email,
+            firstname: user.user_metadata?.full_name?.split(" ")[0] || user.email.split("@")[0],
             increment: 1,
             category: state.category,
           }),
@@ -200,7 +200,7 @@ export default function PomodoroTimer({ onMinimize }) {
     state.currentMode,
     state.pomodoroCount,
     state.category,
-    session,
+    user,
     showNotification,
     playSound,
     soundRefs,

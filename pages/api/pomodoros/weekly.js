@@ -1,28 +1,27 @@
-import { PrismaClient } from '@prisma/client';
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "../auth/[...nextauth]";
+import { requireAuth } from '../../../lib/auth-helpers';
 
-const prisma = new PrismaClient();
-
-export default async function handler(req, res) {
+export default requireAuth(async function handler(req, res, user) {
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const session = await getServerSession(req, res, authOptions);
-  if (!session) {
-    return res.status(401).json({ error: 'Please sign in to continue' });
-  }
-
   try {
-    const userPomodoros = await prisma.user_pomodoros.findUnique({
-      where: {
-        email: session.user.email
-      },
-      select: {
-        pomodoro_count_weekly: true
-      }
-    });
+    const { createClient } = require('@supabase/supabase-js');
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL,
+      process.env.SUPABASE_SERVICE_ROLE_KEY
+    );
+
+    const { data: userPomodoros, error } = await supabase
+      .from('user_pomodoros')
+      .select('pomodoro_count_weekly')
+      .eq('user_id', user.id)
+      .single();
+
+    if (error && error.code !== 'PGRST116') {
+      console.error('Failed to fetch weekly pomodoro count:', error);
+      return res.status(500).json({ error: 'Failed to fetch weekly pomodoro count' });
+    }
 
     const count = userPomodoros?.pomodoro_count_weekly || 0;
     res.status(200).json({ count });
@@ -30,4 +29,4 @@ export default async function handler(req, res) {
     console.error('Failed to fetch weekly pomodoro count:', error);
     res.status(500).json({ error: 'Failed to fetch weekly pomodoro count' });
   }
-} 
+}); 

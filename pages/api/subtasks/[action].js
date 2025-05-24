@@ -1,70 +1,65 @@
-import { PrismaClient } from '@prisma/client';
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "../auth/[...nextauth]";
+import { supabase } from '../../../lib/supabase-admin'
+import { requireAuth } from '../../../lib/auth-helpers'
 
-const prisma = new PrismaClient();
-
-async function updateSubtaskChallenges(email) {
+async function updateSubtaskChallenges(user) {
   try {
-    const challenges = await prisma.challenge.findMany({
-      where: {
-        trackingType: 'subtask_complete'
-      },
-      include: {
-        progress: {
-          where: { email }
-        }
-      }
-    });
+    const { data: challenges, error } = await supabase
+      .from('challenges')
+      .select(`
+        *,
+        progress!progress_challenge_id_fkey (*)
+      `)
+      .eq('tracking_type', 'subtask_complete')
+      .eq('progress.user_id', user.id)
+
+    if (error) throw error
 
     for (const challenge of challenges) {
       const currentProgress = challenge.progress[0];
       
-      await prisma.progress.upsert({
-        where: {
-          email_challengeId: {
-            email,
-            challengeId: challenge.id
-          }
-        },
-        update: {
-          progress: {
-            increment: 1
-          },
-          completed: (currentProgress?.progress || 0) + 1 >= challenge.total,
-          completedAt: (currentProgress?.progress || 0) + 1 >= challenge.total ? new Date() : null
-        },
-        create: {
-          email,
-          challengeId: challenge.id,
-          progress: 1,
-          completed: 1 >= challenge.total
-        }
-      });
+      const progressData = {
+        user_id: user.id,
+        challenge_id: challenge.id,
+        progress: (currentProgress?.progress || 0) + 1,
+        completed: (currentProgress?.progress || 0) + 1 >= challenge.total,
+        completed_at: (currentProgress?.progress || 0) + 1 >= challenge.total ? new Date() : null
+      }
+
+      if (currentProgress) {
+        await supabase
+          .from('progress')
+          .update(progressData)
+          .eq('user_id', user.id)
+          .eq('challenge_id', challenge.id)
+      } else {
+        await supabase
+          .from('progress')
+          .insert(progressData)
+      }
     }
   } catch (error) {
     console.error('Error updating subtask challenges:', error);
   }
 }
 
-export default async function handler(req, res) {
-  const session = await getServerSession(req, res, authOptions);
-  if (!session) {
-    return res.status(401).json({ error: 'Please sign in to continue' });
-  }
-
+const handler = async (req, res) => {
+  const user = req.user
   const { action } = req.query;
   const { subtaskId, todoId, completed } = req.body;
 
   if (req.method === 'POST' && action === 'complete') {
     try {
-      const subtask = await prisma.subtasks.update({
-        where: { id: parseInt(subtaskId) },
-        data: { completed },
-      });
+      const { data: subtask, error } = await supabase
+        .from('subtasks')
+        .update({ completed })
+        .eq('id', subtaskId)
+        .select()
+        .single()
+
+      if (error) throw error
 
       // Update challenges
-      await updateSubtaskChallenges(session.user.email);
+      await updateSubtaskChallenges(user);
 
       res.status(200).json(subtask);
     } catch (error) {
@@ -73,13 +68,18 @@ export default async function handler(req, res) {
     }
   } else if (req.method === 'POST' && action === 'create') {
     try {
-      const subtask = await prisma.subtasks.create({
-        data: {
-          todo_id: parseInt(todoId),
+      const { data: subtask, error } = await supabase
+        .from('subtasks')
+        .insert({
+          todo_id: todoId,
           text: req.body.text,
           completed: false,
-        },
-      });
+        })
+        .select()
+        .single()
+
+      if (error) throw error
+
       res.status(201).json(subtask);
     } catch (error) {
       console.error('Failed to create subtask:', error);
@@ -87,9 +87,13 @@ export default async function handler(req, res) {
     }
   } else if (req.method === 'DELETE') {
     try {
-      await prisma.subtasks.delete({
-        where: { id: parseInt(subtaskId) },
-      });
+      const { error } = await supabase
+        .from('subtasks')
+        .delete()
+        .eq('id', subtaskId)
+
+      if (error) throw error
+
       res.status(204).end();
     } catch (error) {
       console.error('Failed to delete subtask:', error);
@@ -99,4 +103,6 @@ export default async function handler(req, res) {
     res.setHeader('Allow', ['POST', 'DELETE']);
     res.status(405).end(`Method ${req.method} Not Allowed`);
   }
-} 
+}
+
+export default requireAuth(handler) 

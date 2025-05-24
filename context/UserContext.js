@@ -1,11 +1,11 @@
 // context/UserContext.js
 import { createContext, useContext, useState, useEffect } from 'react';
-import { useSession } from 'next-auth/react';
+import { useAuth } from '../contexts/AuthContext';
 
 const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
-  const { data: session } = useSession();
+  const { user } = useAuth();
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
@@ -25,10 +25,10 @@ export const UserProvider = ({ children }) => {
     };
 
     // Only fetch if user is authenticated
-    if (session?.user) {
+    if (user) {
       fetchData();
     }
-  }, [session]);
+  }, [user]);
 
   const addPomodoro = async (userId) => {
     const response = await fetch('/api/pomodoros', {

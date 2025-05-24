@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from "react";
 import { DragDropContext, Droppable, Draggable } from "./DragDropComponents";
-import { useSession } from "next-auth/react";
+import { useAuth } from "../contexts/AuthContext";
 import { useRouter } from "next/router";
 import PomodoroTimer from "./PomodoroTimer";
 import Sounds from "./Sounds";
@@ -10,7 +10,6 @@ import Scoreboard from "./Scoreboard";
 import Settings from "./Settings";
 import Todo from "./Todo";
 import Stats from "./Stats";
-import YouTubePlayer from "./YouTubePlayer";
 import Quiz from "./Quiz";
 import BackgroundPrompt from "./BackgroundPrompt";
 import PdfModal from "./PdfModal";
@@ -22,7 +21,6 @@ const ADMIN_EMAILS = ['admin@lofi.study', 'your-admin-email@example.com', 'klein
 const initialIcons = [
   { id: "pomodoro", label: "Pomodoro", icon: "alarm" },
   { id: "sounds", label: "Sounds", icon: "graphic_eq" },
-  { id: "youtubePlayer", label: "YouTube", icon: "smart_display" },
   { id: "todo", label: "Todo", icon: "checklist" },
   { id: "notes", label: "Notes", icon: "note_alt" },
   { id: "quiz", label: "Flashcards", icon: "school" },
@@ -38,7 +36,6 @@ const components = {
   sounds: Sounds,
   notes: Notes,
   scoreboard: Scoreboard,
-  youtubePlayer: YouTubePlayer,
   todo: Todo,
   stats: Stats,
   settings: Settings,
@@ -46,7 +43,7 @@ const components = {
 };
 
 export default function SelectionBar({ userEmail, userName }) {
-  const { data: session } = useSession();
+  const { user } = useAuth();
   const router = useRouter();
   const [icons, setIcons] = useState(initialIcons);
   const [visibleComponents, setVisibleComponents] = useState([]);

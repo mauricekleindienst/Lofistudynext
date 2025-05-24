@@ -1,17 +1,16 @@
-import { PrismaClient } from '@prisma/client';
-import fetch from 'node-fetch';
+import { supabase } from '../../lib/supabase-admin'
+import { requireAuth } from '../../lib/auth-helpers'
 
-const prisma = new PrismaClient();
-
-export default async function handler(req, res) {
+const handler = async (req, res) => {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed. Only POST requests are accepted.' });
   }
 
-  const { email, firstname, increment, category } = req.body;
+  const user = req.user
+  const { increment, category } = req.body;
 
-  if (!email || !firstname || typeof increment !== 'number' || !category) {
-    return res.status(400).json({ error: 'Invalid request. All fields are required.' });
+  if (typeof increment !== 'number' || !category) {
+    return res.status(400).json({ error: 'Invalid request. Increment and category are required.' });
   }
 
   if (!['Studying', 'Coding', 'Writing', 'Working', 'Other'].includes(category)) {
@@ -21,31 +20,44 @@ export default async function handler(req, res) {
   try {
     const today = new Date().toISOString().split('T')[0];
 
-    const existingUser = await prisma.user_pomodoros.findUnique({
-      where: { email },
-    });
+    // Get existing user data
+    const { data: existingUser, error: fetchError } = await supabase
+      .from('user_pomodoros')
+      .select('*')
+      .eq('user_id', user.id)
+      .single()
 
     let updatedDailyCounts = existingUser
       ? { ...existingUser.daily_counts, [today]: (existingUser.daily_counts[today] || 0) + increment }
       : { [today]: increment };
 
-    const user = await prisma.user_pomodoros.upsert({
-      where: { email },
-      update: {
-        pomodoro_count: { increment },
-        pomodoro_count_weekly: { increment },
-        [category.toLowerCase()]: { increment },
-        daily_counts: updatedDailyCounts,
-      },
-      create: {
-        email,
-        firstname,
-        pomodoro_count: increment,
-        pomodoro_count_weekly: increment,
-        [category.toLowerCase()]: increment,
-        daily_counts: { [today]: increment },
-      },
-    });
+    const updateData = {
+      pomodoro_count: (existingUser?.pomodoro_count || 0) + increment,
+      pomodoro_count_weekly: (existingUser?.pomodoro_count_weekly || 0) + increment,
+      [category.toLowerCase()]: (existingUser?.[category.toLowerCase()] || 0) + increment,
+      daily_counts: updatedDailyCounts,
+      updated_at: new Date()
+    }
+
+    if (existingUser) {
+      const { error } = await supabase
+        .from('user_pomodoros')
+        .update(updateData)
+        .eq('user_id', user.id)
+
+      if (error) throw error
+    } else {
+      const { error } = await supabase
+        .from('user_pomodoros')
+        .insert({
+          user_id: user.id,
+          email: user.email,
+          firstname: user.user_metadata?.full_name || user.email.split('@')[0],
+          ...updateData
+        })
+
+      if (error) throw error
+    }
 
     // Get current hour for time-based challenges
     const currentHour = new Date().getHours();
@@ -53,118 +65,116 @@ export default async function handler(req, res) {
     // Check and update challenges
     await Promise.all([
       // Update daily pomodoro count challenge
-      updateChallengeProgress(email, 'pomodoro_daily', increment),
+      updateChallengeProgress(user, 'pomodoro_daily', increment),
       
       // Update category-specific challenge
-      updateChallengeProgress(email, 'category_count', increment, category.toLowerCase()),
+      updateChallengeProgress(user, 'category_count', increment, category.toLowerCase()),
       
       // Update weekly pomodoro challenge
-      updateChallengeProgress(email, 'pomodoro_weekly', increment),
+      updateChallengeProgress(user, 'pomodoro_weekly', increment),
       
       // Check time-based challenges
-      updateTimeBasedChallenges(email, currentHour)
+      updateTimeBasedChallenges(user, currentHour)
     ]);
 
     res.status(200).json({ message: 'Pomodoro count updated successfully' });
   } catch (error) {
     console.error('Error:', error);
     res.status(500).json({ error: 'Internal server error' });
-  } finally {
-    await prisma.$disconnect();
   }
 }
 
-async function updateChallengeProgress(email, type, count, category = null) {
+export default requireAuth(handler)
+
+async function updateChallengeProgress(user, type, count, category = null) {
   try {
-    const challenges = await prisma.challenge.findMany({
-      where: category 
-        ? { 
-            AND: [
-              { trackingType: type },
-              { category: category }
-            ]
-          }
-        : { trackingType: type },
-      include: {
-        progress: {
-          where: { email }
-        }
-      }
-    });
+    let query = supabase
+      .from('challenges')
+      .select(`
+        *,
+        progress!progress_challenge_id_fkey (*)
+      `)
+      .eq('tracking_type', type)
+      .eq('progress.user_id', user.id)
+
+    if (category) {
+      query = query.eq('category', category)
+    }
+
+    const { data: challenges, error } = await query
+
+    if (error) throw error
 
     for (const challenge of challenges) {
       const currentProgress = challenge.progress[0];
       
-      await prisma.progress.upsert({
-        where: {
-          email_challengeId: {
-            email,
-            challengeId: challenge.id
-          }
-        },
-        update: {
-          progress: {
-            increment: count
-          },
-          completed: (currentProgress?.progress || 0) + count >= challenge.total,
-          completedAt: (currentProgress?.progress || 0) + count >= challenge.total ? new Date() : null
-        },
-        create: {
-          email,
-          challengeId: challenge.id,
-          progress: count,
-          completed: count >= challenge.total
-        }
-      });
+      const progressData = {
+        user_id: user.id,
+        challenge_id: challenge.id,
+        progress: (currentProgress?.progress || 0) + count,
+        completed: (currentProgress?.progress || 0) + count >= challenge.total,
+        completed_at: (currentProgress?.progress || 0) + count >= challenge.total ? new Date() : null
+      }
+
+      if (currentProgress) {
+        await supabase
+          .from('progress')
+          .update(progressData)
+          .eq('user_id', user.id)
+          .eq('challenge_id', challenge.id)
+      } else {
+        await supabase
+          .from('progress')
+          .insert(progressData)
+      }
     }
   } catch (error) {
     console.error('Error updating challenge progress:', error);
   }
 }
 
-async function updateTimeBasedChallenges(email, currentHour) {
+async function updateTimeBasedChallenges(user, currentHour) {
   try {
-    const timeBasedChallenges = await prisma.challenge.findMany({
-      where: {
-        trackingType: 'time_check'
-      },
-      include: {
-        progress: {
-          where: { email }
-        }
-      }
-    });
+    const { data: timeBasedChallenges, error } = await supabase
+      .from('challenges')
+      .select(`
+        *,
+        progress!progress_challenge_id_fkey (*)
+      `)
+      .eq('tracking_type', 'time_check')
+      .eq('progress.user_id', user.id)
+
+    if (error) throw error
 
     for (const challenge of timeBasedChallenges) {
-      if (challenge.timeRequirement) {
-        const requirementHour = parseInt(challenge.timeRequirement.before || challenge.timeRequirement.after);
+      if (challenge.time_requirement) {
+        const requirementHour = parseInt(challenge.time_requirement.before || challenge.time_requirement.after);
         
         // Check if time requirement is met
-        if ((challenge.timeRequirement.before && currentHour < requirementHour) ||
-            (challenge.timeRequirement.after && currentHour >= requirementHour)) {
+        if ((challenge.time_requirement.before && currentHour < requirementHour) ||
+            (challenge.time_requirement.after && currentHour >= requirementHour)) {
           
-          await prisma.progress.upsert({
-            where: {
-              email_challengeId: {
-                email,
-                challengeId: challenge.id
-              }
-            },
-            update: {
-              progress: {
-                increment: 1
-              },
-              completed: true,
-              completedAt: new Date()
-            },
-            create: {
-              email,
-              challengeId: challenge.id,
-              progress: 1,
-              completed: true,
-              completedAt: new Date()
-            }
-          });
+          const progressData = {
+            user_id: user.id,
+            challenge_id: challenge.id,
+            progress: 1,
+            completed: true,
+            completed_at: new Date()
+          }
+
+          const currentProgress = challenge.progress[0];
+          
+          if (currentProgress) {
+            await supabase
+              .from('progress')
+              .update(progressData)
+              .eq('user_id', user.id)
+              .eq('challenge_id', challenge.id)
+          } else {
+            await supabase
+              .from('progress')
+              .insert(progressData)
+          }
         }
       }
     }

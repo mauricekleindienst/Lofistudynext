@@ -1,18 +1,19 @@
-import { PrismaClient } from '@prisma/client';
+import { supabase } from '../../lib/supabase-admin'
+import { requireAuth } from '../../lib/auth-helpers'
 
-const prisma = new PrismaClient();
+const handler = async (req, res) => {
+  const user = req.user
 
-export default async function handler(req, res) {
   try {
     switch (req.method) {
       case 'GET':
-        return getTodosHandler(req, res);
+        return getTodosHandler(req, res, user);
       case 'POST':
-        return saveTodoHandler(req, res);
+        return saveTodoHandler(req, res, user);
       case 'PUT':
-        return updateTodoHandler(req, res);
+        return updateTodoHandler(req, res, user);
       case 'DELETE':
-        return deleteTodoHandler(req, res);
+        return deleteTodoHandler(req, res, user);
       default:
         res.setHeader('Allow', ['GET', 'POST', 'PUT', 'DELETE']);
         return res.status(405).end(`Method ${req.method} Not Allowed`);
@@ -20,34 +21,39 @@ export default async function handler(req, res) {
   } catch (error) {
     console.error('Error in todo handler:', error);
     return res.status(500).json({ error: 'Internal server error' });
-  } finally {
-    // Ensure that Prisma disconnects only once after all requests
-    await prisma.$disconnect();
   }
 }
 
-async function getTodosHandler(req, res) {
-  const { email, page = 1, limit = 20 } = req.query;
+export default requireAuth(handler)
 
-  if (!email) {
-    return res.status(400).json({ error: 'Email is required' });
-  }
+async function getTodosHandler(req, res, user) {
+  const { page = 1, limit = 20 } = req.query;
 
   try {
     const skip = (page - 1) * limit;
-    const todos = await prisma.todos.findMany({
-      where: { email },
-      orderBy: { position: 'asc' },
-      include: { subtasks: true },
-      skip,
-      take: parseInt(limit),
-    });
+    
+    const { data: todos, error } = await supabase
+      .from('todos')
+      .select(`
+        *,
+        subtasks (*)
+      `)
+      .eq('user_id', user.id)
+      .order('position', { ascending: true })
+      .range(skip, skip + parseInt(limit) - 1)
 
-    const totalCount = await prisma.todos.count({ where: { email } });
+    if (error) throw error
+
+    const { count, error: countError } = await supabase
+      .from('todos')
+      .select('*', { count: 'exact', head: true })
+      .eq('user_id', user.id)
+
+    if (countError) throw countError
 
     return res.status(200).json({
       todos,
-      totalPages: Math.ceil(totalCount / limit),
+      totalPages: Math.ceil(count / limit),
       currentPage: parseInt(page),
     });
   } catch (error) {
@@ -56,28 +62,42 @@ async function getTodosHandler(req, res) {
   }
 }
 
-async function saveTodoHandler(req, res) {
-  const { email, text, color = '#ff7b00' } = req.body;
+async function saveTodoHandler(req, res, user) {
+  const { text, color = '#ff7b00' } = req.body;
 
-  if (!email || !text) {
-    return res.status(400).json({ error: 'Email and text are required' });
+  if (!text) {
+    return res.status(400).json({ error: 'Text is required' });
   }
 
   try {
-    const maxPosition = await prisma.todos.aggregate({
-      _max: { position: true },
-      where: { email },
-    }).then(result => result._max.position || 0);
+    // Get max position
+    const { data: maxPositionData, error: maxError } = await supabase
+      .from('todos')
+      .select('position')
+      .eq('user_id', user.id)
+      .order('position', { ascending: false })
+      .limit(1)
+      .single()
 
-    const todo = await prisma.todos.create({
-      data: {
-        email,
+    let maxPosition = 0
+    if (maxPositionData && !maxError) {
+      maxPosition = maxPositionData.position
+    }
+
+    const { data: todo, error } = await supabase
+      .from('todos')
+      .insert({
+        user_id: user.id,
+        email: user.email,
         text,
         completed: false,
         color,
         position: maxPosition + 1,
-      },
-    });
+      })
+      .select()
+      .single()
+
+    if (error) throw error
 
     return res.status(201).json({ message: 'Todo saved successfully', id: todo.id });
   } catch (error) {
@@ -86,11 +106,11 @@ async function saveTodoHandler(req, res) {
   }
 }
 
-async function updateTodoHandler(req, res) {
-  const { id, email, text, completed, color } = req.body;
+async function updateTodoHandler(req, res, user) {
+  const { id, text, completed, color } = req.body;
 
-  if (!id || !email) {
-    return res.status(400).json({ error: 'Id and email are required' });
+  if (!id) {
+    return res.status(400).json({ error: 'Id is required' });
   }
 
   try {
@@ -98,32 +118,22 @@ async function updateTodoHandler(req, res) {
       ...(text !== undefined && { text }),
       ...(completed !== undefined && { completed }),
       ...(color !== undefined && { color }),
+      updated_at: new Date()
     };
 
-    // Use updateMany with AND condition instead of update with id_email
-    const updatedTodo = await prisma.todos.updateMany({
-      where: {
-        AND: [
-          { id: parseInt(id) },
-          { email: email }
-        ]
-      },
-      data: updateData,
-    });
+    const { data: todo, error } = await supabase
+      .from('todos')
+      .update(updateData)
+      .eq('id', id)
+      .eq('user_id', user.id)
+      .select()
+      .single()
 
-    if (updatedTodo.count === 0) {
+    if (error) throw error
+
+    if (!todo) {
       return res.status(404).json({ error: 'Todo not found' });
     }
-
-    // Fetch the updated todo to return in response
-    const todo = await prisma.todos.findFirst({
-      where: {
-        AND: [
-          { id: parseInt(id) },
-          { email: email }
-        ]
-      }
-    });
 
     return res.status(200).json({ 
       message: 'Todo updated successfully',
@@ -135,47 +145,39 @@ async function updateTodoHandler(req, res) {
   }
 }
 
-async function deleteTodoHandler(req, res) {
-  const { id, email } = req.body;
+async function deleteTodoHandler(req, res, user) {
+  const { id } = req.body;
 
-  if (!id || !email) {
-    return res.status(400).json({ error: 'Id and email are required' });
+  if (!id) {
+    return res.status(400).json({ error: 'Id is required' });
   }
 
   try {
     // First delete all subtasks
-    await prisma.subtasks.deleteMany({
-      where: { 
-        todo_id: parseInt(id)
-      },
-    });
+    const { error: subtasksError } = await supabase
+      .from('subtasks')
+      .delete()
+      .eq('todo_id', id)
+
+    if (subtasksError) throw subtasksError
 
     // Then delete the todo
-    const deletedTodo = await prisma.todos.deleteMany({
-      where: {
-        AND: [
-          { id: parseInt(id) },
-          { email: email }
-        ]
-      },
-    });
+    const { data: deletedTodo, error } = await supabase
+      .from('todos')
+      .delete()
+      .eq('id', id)
+      .eq('user_id', user.id)
+      .select()
 
-    if (deletedTodo.count === 0) {
+    if (error) throw error
+
+    if (!deletedTodo || deletedTodo.length === 0) {
       return res.status(404).json({ error: 'Todo not found or already deleted' });
     }
 
     return res.status(200).json({ message: 'Todo deleted successfully' });
   } catch (error) {
     console.error('Error deleting todo:', error);
-
-    if (error.code === 'P2025') {
-      return res.status(404).json({ error: 'Todo not found or already deleted' });
-    }
-
-    if (error.code === 'P1001') {
-      return res.status(500).json({ error: 'Database connection failed' });
-    }
-
     return res.status(500).json({ error: 'Failed to delete todo' });
   }
 }

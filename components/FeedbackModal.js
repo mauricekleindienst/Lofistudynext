@@ -1,16 +1,16 @@
 /* eslint-disable */
 import { useState } from 'react';
 import styles from '../styles/FeedbackModal.module.css';
-import { useSession } from 'next-auth/react';
+import { useAuth } from '../contexts/AuthContext';
 
 export default function FeedbackModal({ isOpen, onClose }) {
-  const { data: session, status } = useSession();
+  const { user, loading } = useAuth();
   const [feedback, setFeedback] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState({ type: '', message: '' });
 
   // Don't render anything if modal is not open or session is loading
-  if (!isOpen || status === 'loading') return null;
+  if (!isOpen || loading) return null;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -29,7 +29,7 @@ export default function FeedbackModal({ isOpen, onClose }) {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          email: session?.user?.email || 'anonymous',
+          email: user?.email || 'anonymous',
           message: feedback.trim()
         })
       });

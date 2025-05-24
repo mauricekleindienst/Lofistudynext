@@ -1,13 +1,8 @@
 // api/getScoreboard.js
-import { PrismaClient } from '@prisma/client';
+import { supabase } from '../../lib/supabase-admin'
+import { requireAuth } from '../../lib/auth-helpers'
 import Cors from 'cors';
 import initMiddleware from '../../lib/init-middleware';
-
-let prisma;
-if (!global.prisma) {
-  global.prisma = new PrismaClient();
-}
-prisma = global.prisma;
 
 const cors = initMiddleware(
   Cors({
@@ -15,7 +10,7 @@ const cors = initMiddleware(
   })
 );
 
-export default async function handler(req, res) {
+const handler = async (req, res) => {
   try {
     await cors(req, res);
   } catch (error) {
@@ -29,22 +24,23 @@ export default async function handler(req, res) {
   const { type = 'weekly' } = req.query;
 
   try {
-    const users = await prisma.user_pomodoros.findMany({
-      where: {
-        [type === 'weekly' ? 'pomodoro_count_weekly' : 'pomodoro_count']: {
-          gt: 0,
-        },
-      },
-      orderBy: {
-        [type === 'weekly' ? 'pomodoro_count_weekly' : 'pomodoro_count']: 'desc',
-      },
-      select: {
-        email: true,
-        firstname: true,
-        pomodoro_count_weekly: true,
-        pomodoro_count: true,
-      },
-    });
+    let query = supabase
+      .from('user_pomodoros')
+      .select('email, firstname, pomodoro_count_weekly, pomodoro_count')
+
+    if (type === 'weekly') {
+      query = query
+        .gt('pomodoro_count_weekly', 0)
+        .order('pomodoro_count_weekly', { ascending: false })
+    } else {
+      query = query
+        .gt('pomodoro_count', 0)
+        .order('pomodoro_count', { ascending: false })
+    }
+
+    const { data: users, error } = await query
+
+    if (error) throw error
 
     // Format the response based on the type
     const formattedUsers = users.map(user => ({
@@ -57,7 +53,7 @@ export default async function handler(req, res) {
   } catch (error) {
     console.error('Error fetching scoreboard:', error);
     res.status(500).json({ error: 'Internal server error' });
-  } finally {
-    await prisma.$disconnect();
   }
 }
+
+export default requireAuth(handler)

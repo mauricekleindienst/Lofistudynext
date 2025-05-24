@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { useSession } from "next-auth/react";
+import { useAuth } from "../contexts/AuthContext";
 import Draggable from "react-draggable";
 import {
   DragDropContext,
@@ -14,7 +14,7 @@ import {
 } from "react-icons/fa";
 
 export default function Todo({ onMinimize }) {
-  const { data: session, status } = useSession();
+  const { user } = useAuth();
   const [todos, setTodos] = useState([]);
   const [newTodo, setNewTodo] = useState("");
   const [editingTodo, setEditingTodo] = useState(null);
@@ -24,12 +24,12 @@ export default function Todo({ onMinimize }) {
   const [error, setError] = useState(null);
 
   const fetchTodosFromServer = useCallback(async () => {
-    if (!session?.user?.email) return;
+    if (!user?.email) return;
 
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch(`/api/todos?email=${session.user.email}`);
+      const response = await fetch(`/api/todos?email=${user.email}`);
       const data = await response.json();
       
       if (!response.ok) {
@@ -46,7 +46,7 @@ export default function Todo({ onMinimize }) {
     } finally {
       setLoading(false);
     }
-  }, [session]);
+  }, [user]);
 
   useEffect(() => {
     if (status === "authenticated") {
@@ -65,7 +65,7 @@ export default function Todo({ onMinimize }) {
 
   const addTodo = async () => {
     const trimmedTodo = newTodo.trim();
-    if (!trimmedTodo || !session?.user?.email) return;
+    if (!trimmedTodo || !user?.email) return;
 
     const tempId = `temp-${Date.now()}`;
     const newTodoItem = {
@@ -85,7 +85,7 @@ export default function Todo({ onMinimize }) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          email: session.user.email,
+          email: user.email,
           text: trimmedTodo,
           color: selectedColor,
         }),
@@ -110,7 +110,7 @@ export default function Todo({ onMinimize }) {
   };
 
   const toggleTodo = async (id) => {
-    if (!session?.user?.email) return;
+    if (!user?.email) return;
 
     const originalTodos = todos;
     const updatedTodos = todos.map((todo) =>
@@ -126,7 +126,7 @@ export default function Todo({ onMinimize }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           id,
-          email: session.user.email,
+          email: user.email,
           completed: todoToUpdate.completed,
         }),
       });
@@ -143,7 +143,7 @@ export default function Todo({ onMinimize }) {
   };
 
   const deleteTodo = async (id) => {
-    if (session?.user?.email) {
+    if (user?.email) {
       // Optimistic update: remove the todo from the UI
       const originalTodos = todos;
       setTodos((prev) => prev.filter((todo) => todo.id !== id));
@@ -153,7 +153,7 @@ export default function Todo({ onMinimize }) {
         const response = await fetch("/api/todos", {
           method: "DELETE",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ id, email: session.user.email }),
+          body: JSON.stringify({ id, email: user.email }),
         });
 
         const data = await response.json();
@@ -172,7 +172,7 @@ export default function Todo({ onMinimize }) {
   
 
   const onDragEnd = async (result) => {
-    if (!result.destination || !session?.user?.email) return;
+    if (!result.destination || !user?.email) return;
 
     const originalTodos = [...todos];
     const items = Array.from(todos);
@@ -192,7 +192,7 @@ export default function Todo({ onMinimize }) {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          email: session.user.email,
+          email: user.email,
           newOrder: updatedItems.map((todo) => ({
             id: todo.id,
             position: todo.position,
@@ -217,7 +217,7 @@ export default function Todo({ onMinimize }) {
   };
 
   const saveEditedTodo = async (id) => {
-    if (session?.user?.email) {
+    if (user?.email) {
       const updatedTodos = todos.map((todo) =>
         todo.id === id ? { ...todo, text: editingText } : todo
       );
@@ -231,7 +231,7 @@ export default function Todo({ onMinimize }) {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             id,
-            email: session.user.email,
+            email: user.email,
             text: editingText,
           }),
         });

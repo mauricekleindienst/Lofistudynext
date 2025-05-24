@@ -1,6 +1,6 @@
 // pages/auth/signin.js
 import { useState, useEffect } from "react";
-import { signIn, useSession } from "next-auth/react";
+import { useAuth } from "../../contexts/AuthContext";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import styles from "../../styles/Login.module.css";
@@ -29,35 +29,72 @@ const backgrounds = [
 //   { id: 9, src: "/backgrounds/Chillroom.mp4", alt: "Chillroom", note: "Chillroom" },
 // ];
 export default function SignIn() {
-  const { data: session, status } = useSession();
+  const { user, signIn, signInWithGoogle, signInWithDiscord, loading } = useAuth();
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [background, setBackground] = useState(null);
-  const [showPassword, setShowPassword] = useState(false);
-  const [videoLoaded, setVideoLoaded] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [currentBgIndex, setCurrentBgIndex] = useState(0);
 
   useEffect(() => {
-    const randomBackground =
-      backgrounds[Math.floor(Math.random() * backgrounds.length)];
-    setBackground(randomBackground);
+    if (user && !loading) {
+      router.push('/app');
+    }
+  }, [user, loading, router]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentBgIndex((prevIndex) => (prevIndex + 1) % backgrounds.length);
+    }, 10000);
+    return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
-    if (status === "authenticated") {
-      router.push("/app");
+    if (router.query.error) {
+      setError("Authentication failed. Please try again.");
     }
-  }, [status, router]);
+  }, [router.query.error]);
 
-  const handleSubmit = async (e) => {
+  const handleEmailSignIn = async (e) => {
     e.preventDefault();
+    if (!email || !password) {
+      setError("Please fill in all fields");
+      return;
+    }
+
+    setIsLoading(true);
     setError("");
+
     try {
-      const result = await signIn("credentials", {
-        redirect: false,
-        email,
-        password,
+      await signIn(email, password);
+      // Redirect will be handled by the useEffect above
+    } catch (error) {
+      setError(error.message || "Failed to sign in");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    try {
+      await signInWithGoogle();
+    } catch (error) {
+      setError("Failed to sign in with Google");
+    }
+  };
+
+  const handleDiscordSignIn = async () => {
+    try {
+      await signInWithDiscord();
+    } catch (error) {
+      setError("Failed to sign in with Discord");
+    }
+  };
+
+  if (loading) {
+    return <div className={styles.loading}>Loading...</div>;
+  }
       });
       if (result.error) {
         setError(result.error);

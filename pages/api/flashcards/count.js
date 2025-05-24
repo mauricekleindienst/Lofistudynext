@@ -1,27 +1,27 @@
-import { PrismaClient } from '@prisma/client';
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "../auth/[...nextauth]";
+import { requireAuth } from '../../../lib/auth-helpers';
 
-const prisma = new PrismaClient();
-
-export default async function handler(req, res) {
+export default requireAuth(async function handler(req, res, user) {
   try {
-    const session = await getServerSession(req, res, authOptions);
-    
-    if (!session) {
-      return res.status(401).json({ error: 'Please sign in to continue' });
-    }
-
     if (req.method === 'GET') {
       try {
+        const { createClient } = require('@supabase/supabase-js');
+        const supabase = createClient(
+          process.env.NEXT_PUBLIC_SUPABASE_URL,
+          process.env.SUPABASE_SERVICE_ROLE_KEY
+        );
+
         // Try to get flashcard count from database
-        const flashcardCount = await prisma.flashcard.count({
-          where: {
-            userEmail: session.user.email
-          }
-        });
+        const { count, error } = await supabase
+          .from('flashcards')
+          .select('*', { count: 'exact', head: true })
+          .eq('user_id', user.id);
         
-        return res.status(200).json({ count: flashcardCount });
+        if (error) {
+          console.log('Flashcard table not found or error:', error.message);
+          return res.status(200).json({ count: 0 });
+        }
+        
+        return res.status(200).json({ count: count || 0 });
       } catch (dbError) {
         // If table doesn't exist or other DB error, return 0
         console.log('Flashcard table not found or error:', dbError.message);
@@ -33,7 +33,5 @@ export default async function handler(req, res) {
   } catch (error) {
     console.error('Flashcards count API error:', error);
     return res.status(500).json({ error: 'Internal server error' });
-  } finally {
-    await prisma.$disconnect();
   }
-}
+});

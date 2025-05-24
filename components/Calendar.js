@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useSession } from 'next-auth/react';
+import { useAuth } from '../contexts/AuthContext';
 import Draggable from 'react-draggable';
 import { Calendar as BigCalendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
@@ -10,14 +10,14 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 const localizer = momentLocalizer(moment);
 
 export default function Calendar({ onMinimize }) {
-  const { data: session, status } = useSession();
+  const { user } = useAuth();
   const [events, setEvents] = useState([]);
   const [newEvent, setNewEvent] = useState({ title: '', start: new Date(), end: new Date() });
 
   const fetchEventsFromServer = useCallback(async () => {
-    if (session?.user?.email) {
+    if (user?.email) {
       try {
-        const response = await fetch(`/api/calendar?email=${session.user.email}`);
+        const response = await fetch(`/api/calendar?email=${user.email}`);
         if (response.ok) {
           const data = await response.json();
           setEvents(data);
@@ -28,10 +28,10 @@ export default function Calendar({ onMinimize }) {
         console.error('Error fetching events:', error);
       }
     }
-  }, [session]);
+  }, [user]);
 
   const addEvent = async () => {
-    if (newEvent.title && newEvent.start && session?.user?.email) {
+    if (newEvent.title && newEvent.start && user?.email) {
       const newEventItem = { 
         id: Date.now(), 
         title: newEvent.title, 
@@ -46,7 +46,7 @@ export default function Calendar({ onMinimize }) {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ 
-            email: session.user.email, 
+            email: user.email, 
             title: newEvent.title, 
             date: newEvent.start.toISOString().split('T')[0]
           }),

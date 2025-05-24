@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
-import { useSession } from 'next-auth/react';
+import { useAuth } from '../contexts/AuthContext';
 import Draggable from 'react-draggable';
 import { motion } from 'framer-motion';
 import styles from '../styles/Notes.module.css';
 
 export default function Notes({ onMinimize }) {
-  const { data: session } = useSession();
+  const { user } = useAuth();
   const [notes, setNotes] = useState([]);
   const [currentNote, setCurrentNote] = useState({ id: null, title: '', content: '' });
   const [loading, setLoading] = useState(true);
@@ -13,10 +13,10 @@ export default function Notes({ onMinimize }) {
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
-    if (session?.user?.email) {
+    if (user?.email) {
       fetchNotes();
     }
-  }, [session]);
+  }, [user]);
 
   const fetchNotes = async () => {
     try {

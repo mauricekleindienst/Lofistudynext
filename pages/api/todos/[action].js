@@ -1,56 +1,134 @@
-import { PrismaClient } from '@prisma/client';
+import { supabase } from '../../../lib/supabase-admin'
+import { requireAuth } from '../../../lib/auth-helpers'
 
-const prisma = new PrismaClient();
-
-async function updateTodoChallenges(email) {
+async function updateTodoChallenges(user) {
   try {
     // Update todo completion challenge
-    const challenges = await prisma.challenge.findMany({
-      where: {
-        trackingType: 'todo_complete'
-      },
-      include: {
-        progress: {
-          where: { email }
-        }
-      }
-    });
+    const { data: challenges, error } = await supabase
+      .from('challenges')
+      .select(`
+        *,
+        progress!progress_challenge_id_fkey (*)
+      `)
+      .eq('tracking_type', 'todo_complete')
+      .eq('progress.user_id', user.id)
+
+    if (error) throw error
 
     for (const challenge of challenges) {
       const currentProgress = challenge.progress[0];
       
-      await prisma.progress.upsert({
-        where: {
-          email_challengeId: {
-            email,
-            challengeId: challenge.id
-          }
-        },
-        update: {
-          progress: {
-            increment: 1
-          },
-          completed: (currentProgress?.progress || 0) + 1 >= challenge.total,
-          completedAt: (currentProgress?.progress || 0) + 1 >= challenge.total ? new Date() : null
-        },
-        create: {
-          email,
-          challengeId: challenge.id,
-          progress: 1,
-          completed: 1 >= challenge.total
-        }
-      });
+      const progressData = {
+        user_id: user.id,
+        challenge_id: challenge.id,
+        progress: (currentProgress?.progress || 0) + 1,
+        completed: (currentProgress?.progress || 0) + 1 >= challenge.total,
+        completed_at: (currentProgress?.progress || 0) + 1 >= challenge.total ? new Date() : null
+      }
+
+      if (currentProgress) {
+        await supabase
+          .from('progress')
+          .update(progressData)
+          .eq('user_id', user.id)
+          .eq('challenge_id', challenge.id)
+      } else {
+        await supabase
+          .from('progress')
+          .insert(progressData)
+      }
     }
   } catch (error) {
     console.error('Error updating todo challenges:', error);
   }
 }
 
-export default async function handler(req, res) {
-  if (req.method === 'POST' && action === 'complete') {
-    // ... existing todo completion code ...
+const handler = async (req, res) => {
+  const user = req.user
+  const { action } = req.query;
+  const { method } = req;
+
+  try {
+    switch (action) {
+      case 'complete':
+        if (method === 'POST') {
+          return await completeTodoHandler(req, res, user);
+        }
+        break;
+      case 'update':
+        if (method === 'PUT') {
+          return await updateTodoHandler(req, res, user);
+        }
+        break;
+      default:
+        return res.status(404).json({ error: 'Action not found' });
+    }
     
-    // Update challenges
-    await updateTodoChallenges(email);
+    res.setHeader('Allow', ['GET', 'POST', 'PUT']);
+    return res.status(405).end(`Method ${method} Not Allowed`);
+  } catch (error) {
+    console.error('Todo action API error:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
-} 
+}
+
+export default requireAuth(handler)
+async function completeTodoHandler(req, res, user) {
+  const { todoId } = req.body;
+  
+  if (!todoId) {
+    return res.status(400).json({ error: 'Todo ID is required' });
+  }
+
+  try {
+    // Mark todo as completed
+    const { data: updatedTodo, error } = await supabase
+      .from('todos')
+      .update({ completed: true })
+      .eq('id', todoId)
+      .eq('user_id', user.id)
+      .select()
+      .single()
+
+    if (error) throw error
+
+    // Update challenges
+    await updateTodoChallenges(user);
+
+    return res.status(200).json(updatedTodo);
+  } catch (error) {
+    console.error('Error completing todo:', error);
+    return res.status(500).json({ error: 'Failed to complete todo' });
+  }
+}
+
+async function updateTodoHandler(req, res, user) {
+  const { todoId, text, completed } = req.body;
+  
+  if (!todoId) {
+    return res.status(400).json({ error: 'Todo ID is required' });
+  }
+
+  try {
+    const updateData = {
+      ...(text !== undefined && { text }),
+      ...(completed !== undefined && { completed }),
+      updated_at: new Date()
+    }
+
+    const { data: updatedTodo, error } = await supabase
+      .from('todos')
+      .update(updateData)
+      .eq('id', todoId)
+      .eq('user_id', user.id)
+      .select()
+      .single()
+
+    if (error) throw error
+
+    return res.status(200).json(updatedTodo);
+  } catch (error) {
+    console.error('Error updating todo:', error);
+    return res.status(500).json({ error: 'Failed to update todo' });
+  }
+}

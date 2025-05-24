@@ -1,41 +1,46 @@
-import { PrismaClient } from '@prisma/client';
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "./auth/[...nextauth]";
+import { supabase } from '../../lib/supabase-admin'
+import { requireAuth } from '../../lib/auth-helpers'
 
-const prisma = new PrismaClient();
+const handler = async (req, res) => {
+  const user = req.user
 
-export default async function handler(req, res) {
   try {
-    const session = await getServerSession(req, res, authOptions);
-    
-    if (!session) {
-      return res.status(401).json({ error: 'Please sign in to continue' });
-    }
-
     if (req.method === 'GET') {
-      // Return empty array for now - you can expand this based on your needs
-      return res.status(200).json([]);
-    } else if (req.method === 'POST') {
-      const { userId } = req.body;
-      
-      if (!userId) {
-        return res.status(400).json({ error: 'User ID is required' });
-      }
+      // Get user's pomodoro sessions
+      const { data: pomodoros, error } = await supabase
+        .from('pomodoro_sessions')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
 
-      // Here you would typically save to your database
-      // For now, returning a mock response
-      return res.status(200).json({
-        id: userId,
-        pomodoroCount: 1,
-        updatedAt: new Date().toISOString()
-      });
+      if (error) throw error
+
+      return res.status(200).json(pomodoros);
+    } else if (req.method === 'POST') {
+      const { duration, completed } = req.body;
+      
+      // Save pomodoro session
+      const { data: pomodoro, error } = await supabase
+        .from('pomodoro_sessions')
+        .insert({
+          user_id: user.id,
+          email: user.email,
+          duration: duration || 25,
+          completed: completed || false
+        })
+        .select()
+        .single()
+
+      if (error) throw error
+
+      return res.status(200).json(pomodoro);
     } else {
       return res.status(405).json({ error: 'Method not allowed' });
     }
   } catch (error) {
     console.error('Pomodoros API error:', error);
     return res.status(500).json({ error: 'Internal server error' });
-  } finally {
-    await prisma.$disconnect();
   }
 }
+
+export default requireAuth(handler)

@@ -1,5 +1,5 @@
 // CustomHeader.jsx
-import { signOut, useSession } from "next-auth/react";
+import { useAuth } from "../contexts/AuthContext";
 import styles from "../styles/CustomHeader.module.css";
 import { useState, useCallback, useReducer, useEffect } from "react";
 import { useRouter } from "next/router";
@@ -30,7 +30,7 @@ const headerReducer = (state, action) => {
 
 export default function CustomHeader() {
   const router = useRouter();
-  const { data: session } = useSession();
+  const { user, signOut } = useAuth();
   const [state, dispatch] = useReducer(headerReducer, {
     isFullscreen: false,
     toast: { show: false, message: "" },

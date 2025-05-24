@@ -1,4 +1,4 @@
-import { SessionProvider } from "next-auth/react";
+import { AuthProvider } from "../contexts/AuthContext";
 import { UserProvider } from "../context/UserContext";
 import "../styles/globals.css";
 import Head from "next/head";
@@ -15,7 +15,7 @@ if (typeof window !== 'undefined') {
 
 function MyApp({ Component, pageProps }) {
   return (
-    <SessionProvider>
+    <AuthProvider>
       <ThemeProvider>
         <ChakraProvider>
           <UserProvider>
@@ -73,7 +73,7 @@ function MyApp({ Component, pageProps }) {
           </UserProvider>
         </ChakraProvider>
       </ThemeProvider>
-    </SessionProvider>
+    </AuthProvider>
   );
 }
 

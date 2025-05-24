@@ -1,39 +1,39 @@
-import { Pool } from "pg";
+import { supabase } from '../../lib/supabase-admin'
+import { requireAuth } from '../../lib/auth-helpers'
 
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: {
-    rejectUnauthorized: false,
-  },
-});
-
-export default async function handler(req, res) {
+const handler = async (req, res) => {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  const { email, title, videoId } = req.body;
+  const user = req.user
+  const { title, videoId } = req.body;
 
-  if (!email || !title || !videoId) {
+  if (!title || !videoId) {
     return res.status(400).json({ error: "Missing required fields" });
   }
 
   try {
-    const client = await pool.connect();
+    const { data: newTrack, error } = await supabase
+      .from('tracks')
+      .insert({
+        user_id: user.id,
+        user_email: user.email,
+        title,
+        video_id: videoId
+      })
+      .select()
+      .single()
 
-    const result = await client.query(
-      "INSERT INTO tracks (user_email, title, video_id) VALUES ($1, $2, $3) RETURNING id",
-      [email, title, videoId]
-    );
+    if (error) throw error
 
-    const newTrackId = result.rows[0].id;
-
-    client.release();
     res
       .status(200)
-      .json({ message: "Track added successfully", id: newTrackId });
+      .json({ message: "Track added successfully", id: newTrack.id });
   } catch (error) {
     console.error("Error adding track:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 }
+
+export default requireAuth(handler)

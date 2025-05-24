@@ -1,72 +1,66 @@
-import { getSession } from 'next-auth/react';
-import prisma from '../../../lib/prisma';
+import { requireAuth } from '../../../lib/auth-helpers';
 
-export default async function handler(req, res) {
-  const session = await getSession({ req });
-  
-  if (!session) {
-    return res.status(401).json({ error: 'Unauthorized' });
-  }
-
+export default requireAuth(async function handler(req, res, user) {
   const { type, category, count, time } = req.body;
-  const email = session.user.email;
 
   try {
+    const { createClient } = require('@supabase/supabase-js');
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL,
+      process.env.SUPABASE_SERVICE_ROLE_KEY
+    );
+
     // Get relevant challenges
-    const challenges = await prisma.challenge.findMany({
-      where: {
-        OR: [
-          { trackingType: type },
-          { 
-            AND: [
-              { trackingType: 'category_count' },
-              { category: category }
-            ]
-          }
-        ]
-      },
-      include: {
-        progress: {
-          where: { email }
-        }
-      }
-    });
+    const { data: challenges, error: challengesError } = await supabase
+      .from('challenges')
+      .select('*')
+      .or(`tracking_type.eq.${type},and(tracking_type.eq.category_count,category.eq.${category})`);
+
+    if (challengesError) {
+      console.error('Error fetching challenges:', challengesError);
+      return res.status(500).json({ error: 'Error fetching challenges' });
+    }
 
     // Process each challenge
     for (const challenge of challenges) {
-      const currentProgress = challenge.progress[0];
-      
+      // Get current progress
+      const { data: currentProgress } = await supabase
+        .from('challenge_progress')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('challenge_id', challenge.id)
+        .single();
+
       // Check time requirements if they exist
-      if (challenge.timeRequirement) {
+      if (challenge.time_requirement) {
         const currentHour = new Date().getHours();
-        const requirementHour = parseInt(challenge.timeRequirement.before || challenge.timeRequirement.after);
+        const requirementHour = parseInt(challenge.time_requirement.before || challenge.time_requirement.after);
         
-        if (challenge.timeRequirement.before && currentHour >= requirementHour) continue;
-        if (challenge.timeRequirement.after && currentHour < requirementHour) continue;
+        if (challenge.time_requirement.before && currentHour >= requirementHour) continue;
+        if (challenge.time_requirement.after && currentHour < requirementHour) continue;
       }
 
+      const incrementValue = count || 1;
+      const newProgress = (currentProgress?.progress || 0) + incrementValue;
+      const completed = newProgress >= challenge.total;
+
       // Update progress
-      await prisma.progress.upsert({
-        where: {
-          email_challengeId: {
-            email,
-            challengeId: challenge.id
-          }
-        },
-        update: {
-          progress: {
-            increment: count || 1
-          },
-          completed: (currentProgress?.progress || 0) + (count || 1) >= challenge.total,
-          completedAt: (currentProgress?.progress || 0) + (count || 1) >= challenge.total ? new Date() : null
-        },
-        create: {
-          email,
-          challengeId: challenge.id,
-          progress: count || 1,
-          completed: (count || 1) >= challenge.total
-        }
-      });
+      const { error: updateError } = await supabase
+        .from('challenge_progress')
+        .upsert({
+          user_id: user.id,
+          challenge_id: challenge.id,
+          progress: newProgress,
+          completed: completed,
+          completed_at: completed ? new Date().toISOString() : null
+        }, {
+          onConflict: 'user_id,challenge_id'
+        });
+
+      if (updateError) {
+        console.error('Error updating progress:', updateError);
+        // Continue processing other challenges even if one fails
+      }
     }
 
     res.status(200).json({ message: 'Progress updated' });
@@ -74,4 +68,4 @@ export default async function handler(req, res) {
     console.error('Error updating challenge progress:', error);
     res.status(500).json({ error: 'Error updating progress' });
   }
-} 
+}); 

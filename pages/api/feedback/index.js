@@ -1,24 +1,16 @@
-import { PrismaClient } from '@prisma/client';
-import { getSession } from 'next-auth/react';
+import { supabase } from '../../../lib/supabase-admin'
+import { requireAuth } from '../../../lib/auth-helpers'
 
-const prisma = new PrismaClient();
+const handler = async (req, res) => {
+  const user = req.user
 
-export default async function handler(req, res) {
-  const session = await getSession({ req });
-  
   // GET: Retrieve feedback (admin only)
   if (req.method === 'GET') {
-    // Make sure we have a session and the user is an admin
-    if (!session) {
-      return res.status(401).json({ error: 'Unauthorized' });
-    }
-
     try {
       // Check if the user is an admin
-      // Replace this array with your actual admin emails or a more robust system
       const admins = ['admin@lofi.study', 'your-admin-email@example.com', 'kleindiema@gmail.com'];
       
-      if (!admins.includes(session.user.email)) {
+      if (!admins.includes(user.email)) {
         return res.status(403).json({ error: 'Forbidden' });
       }
 
@@ -29,30 +21,28 @@ export default async function handler(req, res) {
       const skip = (pageNum - 1) * limitNum;
 
       // Build the query
-      const where = {};
+      let query = supabase
+        .from('feedback')
+        .select('*', { count: 'exact' })
+        .order('created_at', { ascending: false })
+        .range(skip, skip + limitNum - 1)
+
       if (status) {
-        where.status = status;
+        query = query.eq('status', status)
       }
 
-      // Get feedback with pagination
-      const [feedback, totalCount] = await Promise.all([
-        prisma.feedback.findMany({
-          where,
-          orderBy: { createdAt: 'desc' },
-          skip,
-          take: limitNum,
-        }),
-        prisma.feedback.count({ where }),
-      ]);
+      const { data: feedback, error, count } = await query
+
+      if (error) throw error
 
       // Return feedback with pagination info
       return res.status(200).json({
         data: feedback,
         pagination: {
-          total: totalCount,
+          total: count,
           page: pageNum,
           limit: limitNum,
-          totalPages: Math.ceil(totalCount / limitNum),
+          totalPages: Math.ceil(count / limitNum),
         },
       });
     } catch (error) {
@@ -64,24 +54,26 @@ export default async function handler(req, res) {
   // POST: Submit new feedback
   if (req.method === 'POST') {
     try {
-      const { email, message } = req.body;
+      const { message } = req.body;
 
       // Validate input
       if (!message) {
         return res.status(400).json({ error: 'Message is required' });
       }
 
-      // Use session email if available, otherwise use the provided email
-      const userEmail = session?.user?.email || email || 'anonymous';
-
       // Create the feedback entry
-      const feedback = await prisma.feedback.create({
-        data: {
-          email: userEmail,
+      const { data: feedback, error } = await supabase
+        .from('feedback')
+        .insert({
+          user_id: user.id,
+          email: user.email,
           message,
           status: 'pending',
-        },
-      });
+        })
+        .select()
+        .single()
+
+      if (error) throw error
 
       return res.status(201).json({ success: true, data: feedback });
     } catch (error) {
@@ -92,4 +84,38 @@ export default async function handler(req, res) {
 
   // Method not allowed
   return res.status(405).json({ error: 'Method not allowed' });
+}
+
+// Allow anonymous feedback submission for POST, but require auth for GET
+export default async function publicHandler(req, res) {
+  if (req.method === 'POST') {
+    // Allow anonymous feedback
+    try {
+      const { email, message } = req.body;
+
+      if (!message) {
+        return res.status(400).json({ error: 'Message is required' });
+      }
+
+      const { data: feedback, error } = await supabase
+        .from('feedback')
+        .insert({
+          email: email || 'anonymous',
+          message,
+          status: 'pending',
+        })
+        .select()
+        .single()
+
+      if (error) throw error
+
+      return res.status(201).json({ success: true, data: feedback });
+    } catch (error) {
+      console.error('Error submitting feedback:', error);
+      return res.status(500).json({ error: 'Failed to submit feedback' });
+    }
+  }
+  
+  // For GET requests, require authentication
+  return requireAuth(handler)(req, res);
 } 

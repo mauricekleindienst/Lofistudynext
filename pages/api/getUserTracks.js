@@ -1,41 +1,33 @@
-import { Pool } from "pg";
+import { supabase } from '../../lib/supabase-admin'
+import { requireAuth } from '../../lib/auth-helpers'
 
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: {
-    rejectUnauthorized: false,
-  },
-});
-
-export default async function handler(req, res) {
+const handler = async (req, res) => {
   if (req.method !== "GET") {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  const { userEmail } = req.query;
-
-  if (!userEmail) {
-    return res.status(400).json({ error: "Invalid request" });
-  }
+  const user = req.user
 
   try {
-    const client = await pool.connect();
+    const { data: tracks, error } = await supabase
+      .from('tracks')
+      .select('id, title, video_id')
+      .eq('user_id', user.id)
+      .order('created_at', { ascending: false })
 
-    const result = await client.query(
-      "SELECT id, title, video_id FROM tracks WHERE user_email = $1",
-      [userEmail]
-    );
+    if (error) throw error
 
-    const userTracks = result.rows.map((row) => ({
-      id: row.id,
-      title: row.title,
-      videoId: row.video_id,
+    const userTracks = tracks.map((track) => ({
+      id: track.id,
+      title: track.title,
+      videoId: track.video_id,
     }));
 
-    client.release();
     res.status(200).json(userTracks);
   } catch (error) {
     console.error("Error fetching user tracks:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 }
+
+export default requireAuth(handler)

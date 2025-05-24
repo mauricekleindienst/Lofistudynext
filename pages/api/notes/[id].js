@@ -1,16 +1,6 @@
-import { PrismaClient } from '@prisma/client';
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "../auth/[...nextauth]";
+import { requireAuth } from '../../../lib/auth-helpers';
 
-const prisma = new PrismaClient();
-
-export default async function handler(req, res) {
-  const session = await getServerSession(req, res, authOptions);
-
-  if (!session) {
-    return res.status(401).json({ error: 'Please sign in to continue' });
-  }
-
+export default requireAuth(async function handler(req, res, user) {
   const { id } = req.query;
 
   if (!id) {
@@ -19,16 +9,25 @@ export default async function handler(req, res) {
 
   if (req.method === 'DELETE') {
     try {
-      const result = await prisma.notes.deleteMany({
-        where: {
-          AND: [
-            { id: parseInt(id) },
-            { email: session.user.email }
-          ]
-        }
-      });
+      const { createClient } = require('@supabase/supabase-js');
+      const supabase = createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL,
+        process.env.SUPABASE_SERVICE_ROLE_KEY
+      );
 
-      if (result.count === 0) {
+      const { data, error } = await supabase
+        .from('notes')
+        .delete()
+        .eq('id', parseInt(id))
+        .eq('user_id', user.id)
+        .select();
+
+      if (error) {
+        console.error('Error deleting note:', error);
+        return res.status(500).json({ error: 'Failed to delete note' });
+      }
+
+      if (!data || data.length === 0) {
         return res.status(404).json({ error: 'Note not found or already deleted' });
       }
 
@@ -41,4 +40,4 @@ export default async function handler(req, res) {
 
   res.setHeader('Allow', ['DELETE']);
   return res.status(405).end(`Method ${req.method} Not Allowed`);
-} 
+}); 

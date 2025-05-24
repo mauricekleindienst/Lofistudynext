@@ -1,33 +1,31 @@
-import { PrismaClient } from '@prisma/client';
-import { getSession } from 'next-auth/react';
+import { supabase } from '../../../lib/supabase-admin'
+import { requireAuth } from '../../../lib/auth-helpers'
 
-const prisma = new PrismaClient();
-
-export default async function handler(req, res) {
-  const session = await getSession({ req });
+const handler = async (req, res) => {
+  const user = req.user
   const { id } = req.query;
   
-  // Check authentication and admin status
-  if (!session) {
-    return res.status(401).json({ error: 'Unauthorized' });
-  }
-  
-  // Replace this array with your actual admin emails or a more robust system
+  // Check admin status
   const admins = ['admin@lofi.study', 'your-admin-email@example.com', 'kleindiema@gmail.com'];
   
-  if (!admins.includes(session.user.email)) {
+  if (!admins.includes(user.email)) {
     return res.status(403).json({ error: 'Forbidden' });
   }
 
   // GET: Retrieve a specific feedback item
   if (req.method === 'GET') {
     try {
-      const feedback = await prisma.feedback.findUnique({
-        where: { id: parseInt(id, 10) },
-      });
+      const { data: feedback, error } = await supabase
+        .from('feedback')
+        .select('*')
+        .eq('id', id)
+        .single()
       
-      if (!feedback) {
-        return res.status(404).json({ error: 'Feedback not found' });
+      if (error) {
+        if (error.code === 'PGRST116') {
+          return res.status(404).json({ error: 'Feedback not found' });
+        }
+        throw error
       }
       
       return res.status(200).json({ data: feedback });
@@ -48,15 +46,21 @@ export default async function handler(req, res) {
       }
       
       // Build the update data
-      const updateData = {};
+      const updateData = {
+        updated_at: new Date()
+      };
       if (status) updateData.status = status;
       if (response) updateData.response = response;
       
       // Update the feedback
-      const updatedFeedback = await prisma.feedback.update({
-        where: { id: parseInt(id, 10) },
-        data: updateData,
-      });
+      const { data: updatedFeedback, error } = await supabase
+        .from('feedback')
+        .update(updateData)
+        .eq('id', id)
+        .select()
+        .single()
+      
+      if (error) throw error
       
       return res.status(200).json({ data: updatedFeedback });
     } catch (error) {
@@ -68,9 +72,12 @@ export default async function handler(req, res) {
   // DELETE: Remove a feedback item
   if (req.method === 'DELETE') {
     try {
-      await prisma.feedback.delete({
-        where: { id: parseInt(id, 10) },
-      });
+      const { error } = await supabase
+        .from('feedback')
+        .delete()
+        .eq('id', id)
+      
+      if (error) throw error
       
       return res.status(200).json({ success: true });
     } catch (error) {
@@ -81,4 +88,6 @@ export default async function handler(req, res) {
   
   // Method not allowed
   return res.status(405).json({ error: 'Method not allowed' });
-} 
+}
+
+export default requireAuth(handler) 

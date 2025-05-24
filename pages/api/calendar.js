@@ -1,54 +1,80 @@
-const addEventHandler = async (req, res) => {
-  const { email, title, date } = req.body;
+import { supabase } from '../../lib/supabase-admin'
+import { requireAuth } from '../../lib/auth-helpers'
 
-  if (!email || !title || !date) {
-    return res
-      .status(400)
-      .json({ error: "Email, title, and date are required" });
-  }
+const handler = async (req, res) => {
+  const { method } = req
+  const user = req.user
 
   try {
-    const client = await pool.connect();
-    const result = await client.query(
-      "INSERT INTO events (email, title, date) VALUES ($1, $2, $3) RETURNING id",
-      [email, title, new Date(date)]
-    );
-    client.release();
-
-    const newEventId = result.rows[0].id;
-    res
-      .status(200)
-      .json({ message: "Event added successfully", id: newEventId });
+    switch (method) {
+      case 'GET':
+        await getEventsHandler(req, res, user)
+        break
+      case 'POST':
+        await addEventHandler(req, res, user)
+        break
+      default:
+        res.setHeader('Allow', ['GET', 'POST'])
+        res.status(405).end(`Method ${method} Not Allowed`)
+    }
   } catch (error) {
-    console.error("Error adding event:", error);
-    res.status(500).json({ error: "Internal server error" });
+    console.error('Calendar API error:', error)
+    res.status(500).json({ error: 'Internal server error' })
   }
-};
+}
 
-const getEventsHandler = async (req, res) => {
-  const { email } = req.query;
+export default requireAuth(handler)
 
-  if (!email) {
-    return res.status(400).json({ error: "Email is required" });
+const addEventHandler = async (req, res, user) => {
+  const { title, date } = req.body
+
+  if (!title || !date) {
+    return res.status(400).json({ error: "Title and date are required" })
   }
 
   try {
-    const client = await pool.connect();
-    const result = await client.query(
-      "SELECT id, title, date as start, date as end FROM events WHERE email = $1",
-      [email]
-    );
-    client.release();
+    const { data: newEvent, error } = await supabase
+      .from('events')
+      .insert({
+        email: user.email,
+        title,
+        date: new Date(date),
+        user_id: user.id
+      })
+      .select()
+      .single()
 
-    const events = result.rows.map((event) => ({
+    if (error) throw error
+
+    res.status(200).json({ 
+      message: "Event added successfully", 
+      id: newEvent.id 
+    })
+  } catch (error) {
+    console.error("Error adding event:", error)
+    res.status(500).json({ error: "Internal server error" })
+  }
+}
+
+const getEventsHandler = async (req, res, user) => {
+  try {
+    const { data: events, error } = await supabase
+      .from('events')
+      .select('id, title, date')
+      .eq('user_id', user.id)
+      .order('date', { ascending: true })
+
+    if (error) throw error
+
+    const formattedEvents = events.map((event) => ({
       ...event,
-      start: new Date(event.start),
-      end: new Date(event.end),
-    }));
+      start: event.date,
+      end: event.date,
+    }))
 
-    res.status(200).json(events);
+    res.status(200).json(formattedEvents)
   } catch (error) {
-    console.error("Error fetching events:", error);
-    res.status(500).json({ error: "Internal server error" });
+    console.error("Error fetching events:", error)
+    res.status(500).json({ error: "Internal server error" })
   }
-};
+}

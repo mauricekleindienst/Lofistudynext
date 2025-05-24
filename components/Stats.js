@@ -1,6 +1,6 @@
 // Stats.jsx
 import React, { useState, useEffect, useMemo } from "react";
-import { useSession } from "next-auth/react";
+import { useAuth } from "../contexts/AuthContext";
 import { Doughnut, Bar, Line } from "react-chartjs-2";
 import Draggable from "react-draggable";
 import {
@@ -53,7 +53,7 @@ const formatDate = (dateStr) => {
 };
 
 export default function Stats({ onMinimize }) {
-  const { data: session } = useSession();
+  const { user } = useAuth();
   const [stats, setStats] = useState(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -61,10 +61,10 @@ export default function Stats({ onMinimize }) {
   const [yearView, setYearView] = useState(false);
 
   useEffect(() => {
-    if (session?.user?.email) {
+    if (user?.email) {
       fetchStats();
     }
-  }, [session]);
+  }, [user]);
 
   const fetchStats = async () => {
     setLoading(true);
@@ -72,7 +72,7 @@ export default function Stats({ onMinimize }) {
       const response = await fetch("/api/getPomodoroStats", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: session.user.email }),
+        body: JSON.stringify({ email: user.email }),
       });
 
       if (response.status === 404) {
