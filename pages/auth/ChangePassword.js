@@ -1,34 +1,48 @@
 // pages/auth/ChangePassword.js
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
-import { getAuth, confirmPasswordReset, verifyPasswordResetCode } from "firebase/auth";
+import { useAuth } from "../../contexts/AuthContext";
 import styles from "../../styles/Login.module.css";
-import { auth } from "../../firebaseConfig";
 
 export default function ChangePassword() {
   const router = useRouter();
-  const { oobCode } = router.query; // oobCode is the code from the reset email
+  const { updatePassword } = useAuth();
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    // Check for access_token and refresh_token in URL hash (from email link)
+    const hash = window.location.hash;
+    if (hash && hash.includes('access_token')) {
+      // Supabase handles the session automatically from the URL fragments
+      setMessage("Please enter your new password below.");
+    }
+  }, []);
 
   const handlePasswordReset = async (e) => {
     e.preventDefault();
     setError("");
     setMessage("");
+    setIsLoading(true);
 
     if (newPassword !== confirmPassword) {
       setError("Passwords do not match!");
+      setIsLoading(false);
+      return;
+    }
+
+    if (newPassword.length < 6) {
+      setError("Password must be at least 6 characters long.");
+      setIsLoading(false);
       return;
     }
 
     try {
-      // Verify the password reset code first
-      await verifyPasswordResetCode(auth, oobCode);
-      // Complete the password reset
-      await confirmPasswordReset(auth, oobCode, newPassword);
+      await updatePassword(newPassword);
       setMessage("Your password has been successfully reset.");
       // Redirect to login page after a delay
       setTimeout(() => {
@@ -36,6 +50,8 @@ export default function ChangePassword() {
       }, 3000);
     } catch (error) {
       setError(error.message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -81,8 +97,8 @@ export default function ChangePassword() {
             required
             className={styles.authInput}
           />
-          <button type="submit" className={styles.authButton}>
-            Change Password
+          <button type="submit" disabled={isLoading} className={styles.authButton}>
+            {isLoading ? "Updating..." : "Change Password"}
           </button>
         </form>
         {message && <p className={styles.authMessage}>{message}</p>}

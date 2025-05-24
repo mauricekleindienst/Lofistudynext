@@ -3,13 +3,13 @@ import { useRouter } from "next/router";
 import styles from "../styles/Header.module.css";
 import Image from "next/image";
 import Link from "next/link";
-import { signIn, useSession } from 'next-auth/react';
+import { useAuth } from '../contexts/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { data: session } = useSession();
+  const { user } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
@@ -79,7 +79,7 @@ export default function Header() {
         </div>
 
         <div className={styles.authButtons}>
-          {session ? (
+          {user ? (
             <motion.button
               className={styles.appButton}
               onClick={() => router.push('/app')}
@@ -142,7 +142,7 @@ export default function Header() {
                   </Link>
                 </motion.div>
               ))}
-              {!session && (
+              {!user && (
                 <motion.div className={styles.mobileAuthButtons} variants={itemVariants}>
                   <button
                     className={styles.mobileSignInButton}

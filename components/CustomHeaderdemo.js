@@ -1,5 +1,5 @@
 // CustomHeader.jsx
-import { signOut } from "next-auth/react";
+import { useAuth } from "../contexts/AuthContext";
 import styles from "../styles/CustomHeader.module.css";
 import { useState, useCallback, useReducer, useEffect } from "react";
 import { useRouter } from "next/router";

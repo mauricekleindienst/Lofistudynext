@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { useRouter } from "next/router";
 import styles from "../styles/app.module.css";
-import MusicPlayer from "../components/MusicPlayer";
+import YouTubePlayer from "../components/YouTubePlayer";
 import CustomHeader from "../components/CustomHeaderdemo";
 import PomodoroTimer from "../components/PomodoroTimer";
 import SelectionBar from "../components/SelectionBardemo";
@@ -335,7 +335,7 @@ useEffect(() => {
             </div>
           </div>
 
-          <MusicPlayer />
+          <YouTubePlayer />
         </aside>
         <button
           className={`${styles.toggleButton} ${

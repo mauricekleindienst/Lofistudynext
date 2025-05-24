@@ -1,5 +1,5 @@
 // Stats.jsx
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import { Doughnut, Bar, Line } from "react-chartjs-2";
 import Draggable from "react-draggable";
@@ -60,13 +60,9 @@ export default function Stats({ onMinimize }) {
   const [activeTab, setActiveTab] = useState('daily');
   const [yearView, setYearView] = useState(false);
 
-  useEffect(() => {
-    if (user?.email) {
-      fetchStats();
-    }
-  }, [user]);
-
-  const fetchStats = async () => {
+  const fetchStats = useCallback(async () => {
+    if (!user?.email) return;
+    
     setLoading(true);
     try {
       const response = await fetch("/api/getPomodoroStats", {
@@ -90,7 +86,13 @@ export default function Stats({ onMinimize }) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user?.email]);
+
+  useEffect(() => {
+    if (user?.email) {
+      fetchStats();
+    }
+  }, [user, fetchStats]);
 
   const retryFetch = () => {
     setError("");

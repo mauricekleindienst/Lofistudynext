@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect, useRef } from "react";
-import { useSession, signIn } from "next-auth/react";
+import { useAuth } from "../contexts/AuthContext";
 import Draggable from "react-draggable";
 import styles from "../styles/Quiz.module.css";
 
@@ -21,12 +21,7 @@ const RATINGS = [
 ];
 
 export default function Quiz({ onMinimize }) {
-  const { data: session, status } = useSession({
-    required: true,
-    onUnauthenticated() {
-      setError("Please sign in to use flashcards");
-    },
-  });
+  const { user, loading: authLoading } = useAuth();
   const [flashcards, setFlashcards] = useState([]);
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
   const [showAnswer, setShowAnswer] = useState(false);
@@ -44,15 +39,16 @@ export default function Quiz({ onMinimize }) {
 
   // Fetch flashcards on component mount
   useEffect(() => {
-    if (status === "loading") return;
+    if (authLoading) return;
     
-    if (!session) {
+    if (!user) {
       setLoading(false);
+      setError("Please sign in to use flashcards");
       return;
     }
 
     fetchFlashcards();
-  }, [session, status]);
+  }, [user, authLoading]);
 
   const fetchFlashcards = async () => {
     try {
@@ -83,7 +79,7 @@ export default function Quiz({ onMinimize }) {
 
   const handleAddCard = async (e) => {
     e.preventDefault();
-    if (!session) return;
+    if (!user) return;
     if (!newCard.question || !newCard.answer) return;
 
     try {
@@ -95,7 +91,7 @@ export default function Quiz({ onMinimize }) {
         credentials: 'same-origin',
         body: JSON.stringify({
           ...newCard,
-          email: session.user.email,
+          email: user.email,
         }),
       });
 
@@ -135,7 +131,7 @@ export default function Quiz({ onMinimize }) {
   };
 
   const handleMarkComplete = async () => {
-    if (!session || !flashcards.length) return;
+    if (!user || !flashcards.length) return;
     
     const currentCard = flashcards[currentCardIndex];
     try {
@@ -165,7 +161,7 @@ export default function Quiz({ onMinimize }) {
   };
 
   const handleRateCard = async (rating) => {
-    if (!session || !flashcards.length) return;
+    if (!user || !flashcards.length) return;
     
     const currentCard = flashcards[currentCardIndex];
     try {
@@ -209,13 +205,13 @@ export default function Quiz({ onMinimize }) {
 
   const handleFileUpload = async (event) => {
     const file = event.target.files[0];
-    if (!file || !session) return;
+    if (!file || !user) return;
 
     try {
       setIsUploading(true);
       const formData = new FormData();
       formData.append('file', file);
-      formData.append('email', session.user.email);
+      formData.append('email', user.email);
 
       const response = await fetch('/api/flashcards/upload', {
         method: 'POST',
@@ -241,7 +237,7 @@ export default function Quiz({ onMinimize }) {
   };
 
   const handleDeleteCard = async () => {
-    if (!session || !flashcards.length) return;
+    if (!user || !flashcards.length) return;
     
     const currentCard = flashcards[currentCardIndex];
     try {
@@ -283,7 +279,7 @@ export default function Quiz({ onMinimize }) {
     );
   }
 
-  if (!session) {
+  if (!user) {
     return (
       <Draggable handle=".drag-handle">
         <div className={styles.quizContainer}>

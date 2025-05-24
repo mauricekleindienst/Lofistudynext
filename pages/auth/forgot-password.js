@@ -1,10 +1,9 @@
 // pages/auth/forgot-password.js
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { sendPasswordResetEmail } from "firebase/auth";
+import { useAuth } from "../../contexts/AuthContext";
 import styles from "../../styles/Login.module.css";
-import { auth } from "../../firebaseConfig";
-
+import Image from "next/image";
 
 const backgrounds = [
   { id: 1, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Night.mp4", alt: "Night", note: "Night" },
@@ -19,39 +18,46 @@ const backgrounds = [
 ];
 
 export default function ForgotPassword() {
+  const { resetPassword } = useAuth();
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
-  const [background, setBackground] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [currentBgIndex, setCurrentBgIndex] = useState(0);
 
   useEffect(() => {
-    const randomBackground = backgrounds[Math.floor(Math.random() * backgrounds.length)];
-    setBackground(randomBackground);
+    const interval = setInterval(() => {
+      setCurrentBgIndex((prevIndex) => (prevIndex + 1) % backgrounds.length);
+    }, 10000);
+    return () => clearInterval(interval);
   }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     setMessage("");
+    setIsLoading(true);
 
     try {
-      await sendPasswordResetEmail(auth, email);
+      await resetPassword(email);
       setMessage("Password reset email sent. Check your inbox.");
     } catch (error) {
       setError(error.message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
     <div className={styles.container}>
-      {background && (
+      {backgrounds[currentBgIndex] && (
         <video
           className={styles.videoBackground}
           autoPlay
           loop
           muted
-          src={background.src}
-          alt={background.alt}
+          src={backgrounds[currentBgIndex].src}
+          alt={backgrounds[currentBgIndex].alt}
         />
       )}
       <div className={styles.gradientOverlay}></div>
@@ -66,8 +72,8 @@ export default function ForgotPassword() {
             required
             className={styles.authInput}
           />
-          <button type="submit" className={styles.authButton}>
-            Reset Password
+          <button type="submit" disabled={isLoading} className={styles.authButton}>
+            {isLoading ? "Sending..." : "Reset Password"}
           </button>
         </form>
         {message && <p className={styles.authMessage}>{message}</p>}

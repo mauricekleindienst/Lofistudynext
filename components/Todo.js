@@ -49,10 +49,10 @@ export default function Todo({ onMinimize }) {
   }, [user]);
 
   useEffect(() => {
-    if (status === "authenticated") {
+    if (user) {
       fetchTodosFromServer();
     }
-  }, [status, fetchTodosFromServer]);
+  }, [user, fetchTodosFromServer]);
 
   // Add effect to dispatch todo count updates
   useEffect(() => {

@@ -1,11 +1,11 @@
-import { useState, useEffect } from 'react';
-import { useSession } from 'next-auth/react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useAuth } from '../../contexts/AuthContext';
 import { useRouter } from 'next/router';
 import styles from '../../styles/AdminFeedback.module.css';
 import Head from 'next/head';
 
 export default function AdminFeedback() {
-  const { data: session, status } = useSession();
+  const { user, loading: authLoading } = useAuth();
   const router = useRouter();
   const [feedback, setFeedback] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -18,22 +18,22 @@ export default function AdminFeedback() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   
   // Admins list - in a real app, this would be stored in your database or environment variables
-  const admins = ['admin@lofi.study', 'your-admin-email@example.com', 'kleindiema@gmail.com'];
+  const admins = useMemo(() => ['admin@lofi.study', 'your-admin-email@example.com', 'kleindiema@gmail.com'], []);
   
   useEffect(() => {
     // Check if user is authenticated and an admin
-    if (status === 'unauthenticated') {
-      router.push('/auth/signin');
-    } else if (status === 'authenticated') {
-      if (!admins.includes(session.user.email)) {
+    if (!authLoading) {
+      if (!user) {
+        router.push('/auth/signin');
+      } else if (!admins.includes(user.email)) {
         router.push('/app');
       } else {
         fetchFeedback();
       }
     }
-  }, [status, session, router, currentPage, filter]);
+  }, [user, authLoading, router, currentPage, filter, admins, fetchFeedback]);
   
-  const fetchFeedback = async () => {
+  const fetchFeedback = useCallback(async () => {
     setLoading(true);
     setError(null);
     
@@ -58,7 +58,7 @@ export default function AdminFeedback() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [currentPage, filter]);
   
   const handlePageChange = (newPage) => {
     if (newPage > 0 && newPage <= totalPages) {
@@ -167,7 +167,7 @@ export default function AdminFeedback() {
     }
   };
   
-  if (status === 'loading' || (status === 'authenticated' && loading)) {
+  if (authLoading || loading) {
     return <div className={styles.loadingContainer}>Loading...</div>;
   }
   
