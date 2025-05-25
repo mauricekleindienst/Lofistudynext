@@ -1,6 +1,6 @@
 import { requireAuth } from '../../../lib/auth-helpers';
 
-export default requireAuth(async function handler(req, res, user) {
+export default requireAuth(async function handler(req, res) {
   if (req.method !== 'PUT') {
     res.setHeader('Allow', ['PUT']);
     return res.status(405).end(`Method ${req.method} Not Allowed`);
@@ -25,7 +25,7 @@ export default requireAuth(async function handler(req, res, user) {
         .from('todos')
         .update({ position })
         .eq('id', parseInt(id))
-        .eq('user_id', user.id);
+        .eq('user_id', req.user.id);
 
       if (error) {
         console.error('Error updating todo position:', error);
@@ -40,7 +40,7 @@ export default requireAuth(async function handler(req, res, user) {
         *,
         subtasks (*)
       `)
-      .eq('user_id', user.id)
+      .eq('user_id', req.user.id)
       .order('position', { ascending: true });
 
     if (fetchError) {

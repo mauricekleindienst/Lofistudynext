@@ -1,6 +1,6 @@
 import { requireAuth } from '../../../lib/auth-helpers';
 
-export default requireAuth(async function handler(req, res, user) {
+export default requireAuth(async function handler(req, res) {
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
@@ -24,7 +24,7 @@ export default requireAuth(async function handler(req, res, user) {
     }
 
     // Find user's rank
-    const userIndex = users.findIndex(u => u.user_id === user.id);
+    const userIndex = users.findIndex(u => u.user_id === req.user.id);
     const rank = userIndex !== -1 ? userIndex + 1 : users.length + 1;
 
     res.status(200).json({ rank });

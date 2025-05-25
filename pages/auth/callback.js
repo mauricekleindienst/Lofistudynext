@@ -1,9 +1,10 @@
 import { useEffect } from 'react'
 import { useRouter } from 'next/router'
-import { supabase } from '../../lib/supabase'
+import { getSupabaseBrowserClient } from '../../lib/supabase'
 
 export default function AuthCallback() {
   const router = useRouter()
+  const supabase = getSupabaseBrowserClient()
 
   useEffect(() => {
     const handleAuthCallback = async () => {
@@ -30,7 +31,7 @@ export default function AuthCallback() {
     }
 
     handleAuthCallback()
-  }, [router])
+  }, [router, supabase])
 
   return (
     <div className="min-h-screen flex items-center justify-center">

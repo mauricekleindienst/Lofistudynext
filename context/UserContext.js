@@ -1,17 +1,30 @@
 // context/UserContext.js
 import { createContext, useContext, useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import { getSupabaseBrowserClient } from '../lib/supabase';
 
 const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
-  const { user } = useAuth();
+  const { user, session } = useAuth();
   const [users, setUsers] = useState([]);
+  const supabase = getSupabaseBrowserClient();
 
   useEffect(() => {
     const fetchData = async () => {
+      if (!session?.access_token) {
+        setUsers([]);
+        return;
+      }
+
       try {
-        const response = await fetch('/api/pomodoros');
+        const response = await fetch('/api/pomodoros', {
+          headers: {
+            'Authorization': `Bearer ${session.access_token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -25,16 +38,24 @@ export const UserProvider = ({ children }) => {
     };
 
     // Only fetch if user is authenticated
-    if (user) {
+    if (user && session) {
       fetchData();
+    } else {
+      setUsers([]);
     }
-  }, [user]);
+  }, [user, session]);
 
   const addPomodoro = async (userId) => {
+    if (!session?.access_token) {
+      console.error('No session token available');
+      return;
+    }
+
     const response = await fetch('/api/pomodoros', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${session.access_token}`
       },
       body: JSON.stringify({ userId })
     });

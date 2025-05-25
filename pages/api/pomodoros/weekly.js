@@ -1,6 +1,6 @@
 import { requireAuth } from '../../../lib/auth-helpers';
 
-export default requireAuth(async function handler(req, res, user) {
+export default requireAuth(async function handler(req, res) {
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
@@ -15,7 +15,7 @@ export default requireAuth(async function handler(req, res, user) {
     const { data: userPomodoros, error } = await supabase
       .from('user_pomodoros')
       .select('pomodoro_count_weekly')
-      .eq('user_id', user.id)
+      .eq('user_id', req.user.id)
       .single();
 
     if (error && error.code !== 'PGRST116') {

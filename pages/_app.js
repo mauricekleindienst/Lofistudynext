@@ -22,10 +22,6 @@ function MyApp({ Component, pageProps }) {
             <CookieBanner />
             <Head>
               <title>Lo-Fi.Study</title>
-              <link
-                href="https://fonts.googleapis.com/icon?family=Material+Icons"
-                rel="stylesheet"
-              />
               <meta name="viewport" content="width=device-width, initial-scale=1" />
               <meta name="theme-color" content="#ffffff" />
               <meta name="color-scheme" content="light dark" />

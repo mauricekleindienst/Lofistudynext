@@ -1,6 +1,6 @@
 import { requireAuth } from '../../../lib/auth-helpers';
 
-export default requireAuth(async function handler(req, res, user) {
+export default requireAuth(async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
@@ -34,7 +34,7 @@ export default requireAuth(async function handler(req, res, user) {
     const { data: currentProgress, error: progressError } = await supabase
       .from('challenge_progress')
       .select('*')
-      .eq('user_id', user.id)
+      .eq('user_id', req.user.id)
       .eq('challenge_id', challengeId)
       .single();
 
@@ -49,7 +49,7 @@ export default requireAuth(async function handler(req, res, user) {
     const { data: updatedProgress, error: updateError } = await supabase
       .from('challenge_progress')
       .upsert({
-        user_id: user.id,
+        user_id: req.user.id,
         challenge_id: challengeId,
         progress: newProgress,
         completed,

@@ -1,10 +1,12 @@
 // CustomHeader.jsx
 import { useAuth } from "../contexts/AuthContext";
 import styles from "../styles/CustomHeader.module.css";
-import { useState, useCallback, useReducer, useEffect } from "react";
+import { useState, useCallback, useReducer, useEffect, useRef } from "react";
 import { useRouter } from "next/router";
 import MovableModal from "./MovableModal";
 import FeedbackModal from "./FeedbackModal";
+import BackgroundModal from "./BackgroundModal";
+import { backgrounds } from "../data/backgrounds";
 
 // Action types for useReducer
 const TOGGLE_FULLSCREEN = "TOGGLE_FULLSCREEN";
@@ -28,7 +30,7 @@ const headerReducer = (state, action) => {
   }
 };
 
-export default function CustomHeader() {
+export default function CustomHeader({ onBackgroundSelect, selectedBackground, userName }) {
   const router = useRouter();
   const { user, signOut } = useAuth();
   const [state, dispatch] = useReducer(headerReducer, {
@@ -37,6 +39,41 @@ export default function CustomHeader() {
     dropdownVisible: false,
   });
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
+  const [showBackgroundModal, setShowBackgroundModal] = useState(false);
+  const [currentTime, setCurrentTime] = useState('');
+  const dropdownRef = useRef(null);
+
+  // Update current time
+  useEffect(() => {
+    const updateTime = () => {
+      const now = new Date();
+      const hours = now.getHours();
+      const minutes = now.getMinutes();
+      const timeStr = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+      setCurrentTime(timeStr);
+    };
+
+    updateTime(); // Initial call
+    const timerId = setInterval(updateTime, 60000); // Update every minute
+    
+    return () => clearInterval(timerId);
+  }, []);
+  
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        if (state.dropdownVisible) {
+          dispatch({ type: TOGGLE_DROPDOWN });
+        }
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [state.dropdownVisible]);
 
   // Add periodic reminder
   useEffect(() => {
@@ -119,6 +156,17 @@ export default function CustomHeader() {
   return (
     <div className={styles.header}>
       <div className={styles.leftButtons}>
+        <div className={styles.timeDisplay}>
+          <span className={styles.currentTime}>{currentTime}</span>
+          {userName && <span className={styles.greeting}>Welcome, {userName}</span>}
+        </div>
+        
+        <HeaderButton 
+          onClick={() => setShowBackgroundModal(true)}
+          icon="wallpaper" 
+          tooltip="Change Background" 
+        />
+        
         <HeaderButton 
           onClick={openFeedbackModal} 
           icon="rate_review" 
@@ -134,6 +182,11 @@ export default function CustomHeader() {
       </div>
       
       <div className={styles.rightButtons}>
+        <HeaderButton 
+          onClick={() => setShowBackgroundModal(true)} 
+          icon="wallpaper" 
+          tooltip="Change Background" 
+        />
         <HeaderButton onClick={shareVideoRoom} icon="videocam" tooltip="Share Room" />
         <HeaderButton onClick={shareWebsite} icon="share" tooltip="Share Lo-fi.study" />
         <HeaderButton
@@ -141,11 +194,96 @@ export default function CustomHeader() {
           icon={state.isFullscreen ? "fullscreen_exit" : "fullscreen"}
           tooltip={state.isFullscreen ? "Exit Fullscreen" : "Fullscreen"}
         />
-        <HeaderButton onClick={() => signOut()} icon="logout" tooltip="Logout" />
+        <HeaderButton
+          onClick={() => setShowBackgroundModal(true)}
+          icon="image"
+          tooltip="Change Background"
+        />
+        
+        {/* Profile Dropdown */}
+        <div className={styles.profileDropdown}>
+          <button 
+            className={styles.profileButton} 
+            onClick={() => dispatch({ type: TOGGLE_DROPDOWN })}
+          >
+            <div className={styles.avatar}>
+              {user?.user_metadata?.full_name 
+                ? user.user_metadata.full_name.charAt(0).toUpperCase() 
+                : user?.email?.charAt(0).toUpperCase() || 'U'
+              }
+            </div>
+          </button>
+          
+          {state.dropdownVisible && (
+            <div className={styles.dropdownMenu} ref={dropdownRef}>
+              <div className={styles.userInfo}>
+                <div className={styles.userName}>
+                  {user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'User'}
+                </div>
+                <div className={styles.userEmail}>{user?.email}</div>
+              </div>
+              <div className={styles.divider}></div>
+              <button 
+                className={styles.dropdownItem}
+                onClick={() => {
+                  router.push('/profile');
+                  dispatch({ type: TOGGLE_DROPDOWN });
+                }}
+              >
+                <span className="material-icons">person</span>
+                Profile
+              </button>
+              <button 
+                className={styles.dropdownItem}
+                onClick={() => {
+                  router.push('/auth/ChangePassword');
+                  dispatch({ type: TOGGLE_DROPDOWN });
+                }}
+              >
+                <span className="material-icons">lock</span>
+                Change Password
+              </button>
+              <div className={styles.divider}></div>
+              <button 
+                className={`${styles.dropdownItem} ${styles.signOutItem}`}
+                onClick={async (e) => {
+                  e.preventDefault();
+                  console.log('Sign out button clicked!')
+                  try {
+                    dispatch({ type: TOGGLE_DROPDOWN });
+                    console.log('About to call signOut...')
+                    await signOut();
+                    console.log('signOut completed')
+                  } catch (error) {
+                    console.error('Error in sign out click handler:', error);
+                    dispatch({ type: SHOW_TOAST, message: "Error signing out. Please try again." });
+                    setTimeout(() => dispatch({ type: HIDE_TOAST }), 3000);
+                  }
+                }}
+              >
+                <span className="material-icons">logout</span>
+                Sign Out
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div className={styles.timeDisplayContainer}>
+        <div className={styles.timeDisplay}>
+          <span className={styles.time}>{currentTime}</span>
+          {userName && <span className={styles.greeting}>Welcome, {userName}</span>}
+        </div>
       </div>
 
       {state.toast.show && <Toast message={state.toast.message} />}
       <FeedbackModal isOpen={showFeedbackModal} onClose={() => setShowFeedbackModal(false)} />
+      <BackgroundModal 
+        backgrounds={backgrounds}
+        onSelect={onBackgroundSelect}
+        selectedBackground={selectedBackground}
+        onClose={() => setShowBackgroundModal(false)}
+      />
     </div>
   );
 }

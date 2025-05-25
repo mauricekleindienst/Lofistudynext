@@ -1,6 +1,6 @@
 import { requireAuth } from '../../../lib/auth-helpers';
 
-export default requireAuth(async function handler(req, res, user) {
+export default requireAuth(async function handler(req, res) {
   try {
     switch (req.method) {
       case 'POST':
@@ -38,7 +38,7 @@ async function addSubtaskHandler(req, res, user) {
       .from('todos')
       .select('id')
       .eq('id', parseInt(todoId))
-      .eq('user_id', user.id)
+      .eq('user_id', req.user.id)
       .single();
 
     if (todoError || !todo) {
@@ -89,7 +89,7 @@ async function updateSubtaskHandler(req, res, user) {
       .from('todos')
       .select('id')
       .eq('id', parseInt(todoId))
-      .eq('user_id', user.id)
+      .eq('user_id', req.user.id)
       .single();
 
     if (todoError || !todo) {
@@ -145,7 +145,7 @@ async function deleteSubtaskHandler(req, res, user) {
       .from('todos')
       .select('id')
       .eq('id', parseInt(todoId))
-      .eq('user_id', user.id)
+      .eq('user_id', req.user.id)
       .single();
 
     if (todoError || !todo) {

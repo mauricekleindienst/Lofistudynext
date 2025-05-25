@@ -14,7 +14,14 @@ const nextConfig = {
     return config;
   },
   images: {
-    domains: ['i.ibb.co'],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'i.ibb.co',
+        port: '',
+        pathname: '/**',
+      },
+    ],
   },
   env: {
     DATABASE_URL: process.env.DATABASE_URL,

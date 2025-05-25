@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
-import { supabase } from '../lib/supabase'
+import { getSupabaseBrowserClient } from '../lib/supabase'
 
 const AuthContext = createContext({})
 
@@ -13,6 +13,7 @@ export const AuthProvider = ({ children }) => {
   const [session, setSession] = useState(null)
   const [loading, setLoading] = useState(true)
   const router = useRouter()
+  const supabase = getSupabaseBrowserClient()
 
   useEffect(() => {
     // Get initial session
@@ -28,6 +29,7 @@ export const AuthProvider = ({ children }) => {
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
+        console.log('Auth state changed:', event, session)
         setSession(session)
         setUser(session?.user ?? null)
         setLoading(false)
@@ -35,6 +37,11 @@ export const AuthProvider = ({ children }) => {
         if (event === 'SIGNED_IN') {
           // Ensure user profile exists in database
           await ensureUserProfile(session.user)
+        } else if (event === 'SIGNED_OUT') {
+          // Clear local state when signed out
+          setUser(null)
+          setSession(null)
+          console.log('User signed out, clearing state')
         }
       }
     )
@@ -137,12 +144,33 @@ export const AuthProvider = ({ children }) => {
 
   const signOut = async () => {
     try {
+      console.log('Starting sign out process...')
       setLoading(true)
+      
+      // Call Supabase signOut
       const { error } = await supabase.auth.signOut()
-      if (error) throw error
-      router.push('/')
+      if (error) {
+        console.error('Supabase signOut error:', error)
+      }
+      
+      // Clear local state
+      setUser(null)
+      setSession(null)
+      
+      console.log('Sign out successful, redirecting to home page...')
+      
+      // Force redirect to home page and prevent any other redirects
+      if (typeof window !== 'undefined') {
+        window.location.href = '/'
+      }
     } catch (error) {
       console.error('Error signing out:', error)
+      // Even if there's an error, clear state and redirect
+      setUser(null)
+      setSession(null)
+      if (typeof window !== 'undefined') {
+        window.location.href = '/'
+      }
     } finally {
       setLoading(false)
     }
@@ -172,6 +200,22 @@ export const AuthProvider = ({ children }) => {
     }
   }
 
+  const updateProfile = async (updates) => {
+    try {
+      const { data, error } = await supabase.auth.updateUser({
+        data: updates.data
+      })
+      if (error) throw error
+      
+      // Update the local user state
+      setUser(data.user)
+      
+      return { data, error: null }
+    } catch (error) {
+      return { data: null, error }
+    }
+  }
+
   const value = {
     user,
     session,
@@ -182,7 +226,8 @@ export const AuthProvider = ({ children }) => {
     signInWithGoogle,
     signInWithDiscord,
     resetPassword,
-    updatePassword
+    updatePassword,
+    updateProfile
   }
 
   return (

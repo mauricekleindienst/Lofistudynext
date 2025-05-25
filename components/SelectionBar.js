@@ -65,9 +65,6 @@ export default function SelectionBar({ userEmail, userName }) {
   const [showPdfModal, setShowPdfModal] = useState(false);
   const [savedPdfs, setSavedPdfs] = useState([]);
 
-  // Get user from auth context
-  const { user } = useAuth();
-  
   // Check if the current user is an admin
   const isAdmin = user && ADMIN_EMAILS.includes(user.email);
 
@@ -123,7 +120,7 @@ export default function SelectionBar({ userEmail, userName }) {
 
   // Fetch initial component info
   useEffect(() => {
-    if (!session?.user?.email) return;
+    if (!user?.email) return;
 
     const fetchInfo = async () => {
       try {
@@ -183,7 +180,7 @@ export default function SelectionBar({ userEmail, userName }) {
     // Reduced polling interval for other components that don't have live updates
     const interval = setInterval(fetchInfo, 300000); // 5 minutes
     return () => clearInterval(interval);
-  }, [session]);
+  }, [user]);
 
   // Cleanup PDFs when component unmounts
   useEffect(() => {

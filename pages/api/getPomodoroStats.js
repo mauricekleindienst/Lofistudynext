@@ -15,7 +15,7 @@ const runMiddleware = (req, res, fn) =>
     fn(req, res, (result) => (result instanceof Error ? reject(result) : resolve(result)))
   );
 
-export default requireAuth(async function handler(req, res, user) {
+export default requireAuth(async function handler(req, res) {
   try {
     await runMiddleware(req, res, cors);
 
@@ -43,7 +43,7 @@ export default requireAuth(async function handler(req, res, user) {
     const { data: userPomodoros, error } = await supabase
       .from('user_pomodoros')
       .select('pomodoro_count, studying, coding, writing, working, other, daily_counts')
-      .eq('user_id', user.id)
+      .eq('user_id', req.user.id)
       .single();
 
     if (error && error.code !== 'PGRST116') {

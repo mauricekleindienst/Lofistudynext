@@ -1,6 +1,6 @@
 import { requireAuth } from '../../../lib/auth-helpers';
 
-export default requireAuth(async function handler(req, res, user) {
+export default requireAuth(async function handler(req, res) {
   const { createClient } = require('@supabase/supabase-js');
   const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -11,9 +11,9 @@ export default requireAuth(async function handler(req, res, user) {
     try {
       const { tutorial } = req.query;
       const { data: tutorialState, error } = await supabase
-        .from('tutorial_states')
+        .from('tutorial_state')
         .select('*')
-        .eq('user_id', user.id)
+        .eq('user_id', req.user.id)
         .eq('tutorial', tutorial)
         .single();
       
@@ -32,13 +32,14 @@ export default requireAuth(async function handler(req, res, user) {
       const { tutorial, completed } = req.body;
       
       const { data: tutorialState, error } = await supabase
-        .from('tutorial_states')
+        .from('tutorial_state')
         .upsert({
-          user_id: user.id,
+          user_id: req.user.id,
+          email: req.user.email,
           tutorial: tutorial,
           completed: completed
         }, {
-          onConflict: 'user_id,tutorial'
+          onConflict: 'email,tutorial'
         })
         .select()
         .single();

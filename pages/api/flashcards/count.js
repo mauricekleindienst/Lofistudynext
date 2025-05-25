@@ -1,6 +1,6 @@
 import { requireAuth } from '../../../lib/auth-helpers';
 
-export default requireAuth(async function handler(req, res, user) {
+export default requireAuth(async function handler(req, res) {
   try {
     if (req.method === 'GET') {
       try {
@@ -14,7 +14,7 @@ export default requireAuth(async function handler(req, res, user) {
         const { count, error } = await supabase
           .from('flashcards')
           .select('*', { count: 'exact', head: true })
-          .eq('user_id', user.id);
+          .eq('user_id', req.user.id);
         
         if (error) {
           console.log('Flashcard table not found or error:', error.message);

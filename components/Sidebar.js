@@ -232,25 +232,8 @@ export default function Sidebar({
       >
         <div className={styles.sidebarContent}>
           <h1>
-            Welcome, {userName}! {currentTime}
+            Music Player
           </h1>
-          
-          <div className={styles.backgroundSelector}>
-            <button 
-              className={styles.backgroundSelectionButton}
-              onClick={onShowBackgroundModal}
-              aria-label="Select Background"
-            >
-              <div className={styles.buttonContent}>
-                <span className="material-icons">wallpaper</span>
-                <div className={styles.buttonText}>
-                  <h3>Backgrounds</h3>
-                  <p>Choose your study environment</p>
-                </div>
-                <span className="material-icons">arrow_forward</span>
-              </div>
-            </button>
-          </div>
 
           {/* Integrated Music Player */}
           <div className={styles.musicPlayerSection}>

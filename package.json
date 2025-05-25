@@ -11,7 +11,10 @@
     "heroku-postbuild": "npm install --legacy-peer-deps && npm run build && npm run next-sitemap",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "format": "prettier --write .",
-    "seed-challenges": "node prisma/seed-challenges.js"
+    "seed-challenges": "node prisma/seed-challenges.js",
+    "setup-supabase": "./setup-supabase.sh",
+    "validate-env": "node validate-supabase-env.js",
+    "supabase-check": "node validate-supabase-env.js"
   },
   "dependencies": {
     "@chakra-ui/icons": "^2.1.1",
@@ -47,6 +50,7 @@
     "autoprefixer": "^10.4.19",
     "axios": "^1.7.7",
     "bootstrap": "^5.3.3",
+    "caniuse-lite": "^1.0.30001718",
     "chart.js": "^4.4.3",
     "copy-webpack-plugin": "^12.0.2",
     "cors": "^2.8.5",

@@ -1,6 +1,6 @@
 import { requireAuth } from '../../../lib/auth-helpers';
 
-export default requireAuth(async function handler(req, res, user) {
+export default requireAuth(async function handler(req, res) {
   const { type, category, count, time } = req.body;
 
   try {
@@ -27,7 +27,7 @@ export default requireAuth(async function handler(req, res, user) {
       const { data: currentProgress } = await supabase
         .from('challenge_progress')
         .select('*')
-        .eq('user_id', user.id)
+        .eq('user_id', req.user.id)
         .eq('challenge_id', challenge.id)
         .single();
 
@@ -48,7 +48,7 @@ export default requireAuth(async function handler(req, res, user) {
       const { error: updateError } = await supabase
         .from('challenge_progress')
         .upsert({
-          user_id: user.id,
+          user_id: req.user.id,
           challenge_id: challenge.id,
           progress: newProgress,
           completed: completed,

@@ -287,8 +287,9 @@ useEffect(() => {
   }
 
   if (!user) {
-    if (typeof window !== "undefined") {
-      window.location.href = "/auth/signin";
+    // Only redirect if we're not in a loading state and have confirmed no user
+    if (!loading && typeof window !== "undefined") {
+      router.replace("/auth/signin");
     }
     return null;
   }
