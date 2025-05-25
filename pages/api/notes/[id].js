@@ -2,6 +2,7 @@ import { requireAuth } from '../../../lib/auth-helpers';
 
 export default requireAuth(async function handler(req, res) {
   const { id } = req.query;
+  const user = req.user; // Get user from request
 
   if (!id) {
     return res.status(400).json({ error: 'Note ID is required' });
@@ -40,4 +41,4 @@ export default requireAuth(async function handler(req, res) {
 
   res.setHeader('Allow', ['DELETE']);
   return res.status(405).end(`Method ${req.method} Not Allowed`);
-}); 
+});

@@ -33,8 +33,7 @@ export default function Study() {
   const router = useRouter();
   const { roomUrl } = router.query;
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [currentTime, setCurrentTime] = useState(new Date().toLocaleTimeString());
-  const [selectedBackground, setSelectedBackground] = useState(DEFAULT_BACKGROUND);
+  const [currentTime, setCurrentTime] = useState(new Date().toLocaleTimeString());  const [selectedBackground, setSelectedBackground] = useState(null);
   const [visibleComponents, setVisibleComponents] = useState({
     pomodoro: false,
     note: false,
@@ -48,7 +47,30 @@ export default function Study() {
   const videoRef = useRef(null);
   const [isBackgroundLoading, setIsBackgroundLoading] = useState(true);
   const [showBackgroundModal, setShowBackgroundModal] = useState(false);
-  const preloadCacheRef = useRef(new Map());
+  const preloadCacheRef = useRef(new Map());  // Initialize background from localStorage or default
+  useEffect(() => {
+    const initializeBackground = () => {
+      try {
+        const savedBackgroundId = localStorage.getItem('selectedBackgroundId');
+        let initialBackground;
+
+        if (savedBackgroundId) {
+          const savedBackground = backgrounds.find(bg => bg.id === parseInt(savedBackgroundId));
+          initialBackground = savedBackground || DEFAULT_BACKGROUND;
+        } else {
+          initialBackground = DEFAULT_BACKGROUND;
+        }
+
+        setSelectedBackground(initialBackground);
+        // Don't set loading state here - let the background loading effect handle it
+      } catch (error) {
+        console.error('Error loading saved background:', error);
+        setSelectedBackground(DEFAULT_BACKGROUND);
+      }
+    };
+
+    initializeBackground();
+  }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -97,42 +119,49 @@ useEffect(() => {
 
     return () => clearInterval(timer);
   }, []);
-
   useEffect(() => {
     if (loading || !user) {
       setShowLoading(true);
       return;
     }
 
-    const minLoadTime = 2000; // Minimum time to show loading screen
+    const minLoadTime = 1500; // Reduced minimum time
+    const maxLoadTime = 4000; // Maximum time before forcing show
+    
+    // Set a maximum timeout that forces the app to show
+    const forceShowTimeout = setTimeout(() => {
+      console.warn('Forcing app to show due to loading timeout');
+      setShowLoading(false);
+      setIsBackgroundLoading(false); // Force background loading to complete
+    }, maxLoadTime);
+
     const loadingTimeout = setTimeout(() => {
       if (!isBackgroundLoading) {
         setShowLoading(false);
+        clearTimeout(forceShowTimeout);
       }
     }, minLoadTime);
 
-    // If background is still loading after min time, wait for it
+    // If background is still loading after min time, wait for it but not too long
     if (isBackgroundLoading) {
       const checkInterval = setInterval(() => {
         if (!isBackgroundLoading) {
           setShowLoading(false);
           clearInterval(checkInterval);
+          clearTimeout(forceShowTimeout);
         }
-      }, 500);
-
-      // Failsafe: don't wait longer than 5 seconds total
-      const failsafe = setTimeout(() => {
-        clearInterval(checkInterval);
-        setShowLoading(false);
-      }, 5000);
+      }, 300); // Check more frequently
 
       return () => {
         clearInterval(checkInterval);
-        clearTimeout(failsafe);
+        clearTimeout(forceShowTimeout);
       };
     }
 
-    return () => clearTimeout(loadingTimeout);
+    return () => {
+      clearTimeout(loadingTimeout);
+      clearTimeout(forceShowTimeout);
+    };
   }, [loading, user, isBackgroundLoading]);
 
   useEffect(() => {
@@ -191,7 +220,6 @@ useEffect(() => {
       preloadCacheRef.current.clear();
     };
   }, []);
-
   // Handle background selection and loading
   useEffect(() => {
     if (!selectedBackground || !videoRef.current) return;
@@ -202,6 +230,14 @@ useEffect(() => {
 
     const loadBackground = async () => {
       try {
+        // Set a timeout to prevent infinite loading
+        const loadTimeout = setTimeout(() => {
+          if (isMounted) {
+            console.warn('Background loading timeout, falling back to default');
+            setIsBackgroundLoading(false);
+          }
+        }, 10000); // 10 second timeout
+
         // Check if the background is preloaded
         const preloadedData = preloadCacheRef.current.get(selectedBackground.src);
         
@@ -214,11 +250,45 @@ useEffect(() => {
         }
 
         video.load();
-        await video.play();
         
-        if (isMounted) {
-          setIsBackgroundLoading(false);
-        }
+        // Add event listeners for better loading handling
+        const handleCanPlay = () => {
+          clearTimeout(loadTimeout);
+          if (isMounted) {
+            video.play().then(() => {
+              if (isMounted) {
+                setIsBackgroundLoading(false);
+              }
+            }).catch(error => {
+              console.error('Error playing video:', error);
+              if (isMounted) {
+                setIsBackgroundLoading(false);
+              }
+            });
+          }
+        };
+
+        const handleError = () => {
+          clearTimeout(loadTimeout);
+          console.error('Error loading background video');
+          if (isMounted) {
+            // Try fallback background
+            video.src = DEFAULT_BACKGROUND.src;
+            video.load();
+            video.play().catch(console.error);
+            setIsBackgroundLoading(false);
+          }
+        };
+
+        video.addEventListener('canplay', handleCanPlay);
+        video.addEventListener('error', handleError);
+
+        return () => {
+          clearTimeout(loadTimeout);
+          video.removeEventListener('canplay', handleCanPlay);
+          video.removeEventListener('error', handleError);
+        };
+        
       } catch (error) {
         console.error('Error loading background:', error);
         
@@ -226,13 +296,11 @@ useEffect(() => {
           // Try fallback background
           video.src = DEFAULT_BACKGROUND.src;
           video.load();
-          await video.play();
+          video.play().catch(console.error);
           setIsBackgroundLoading(false);
         }
       }
-    };
-
-    loadBackground();
+    };    const cleanup = loadBackground();
 
     // Visibility change handler
     const handleVisibilityChange = () => {
@@ -248,13 +316,26 @@ useEffect(() => {
     return () => {
       isMounted = false;
       document.removeEventListener('visibilitychange', handleVisibilityChange);
+      if (cleanup && typeof cleanup.then === 'function') {
+        cleanup.then(cleanupFn => {
+          if (cleanupFn && typeof cleanupFn === 'function') {
+            cleanupFn();
+          }
+        });
+      }
     };
   }, [selectedBackground]);
-
   const handleBackgroundSelection = (background) => {
     setSelectedBackground(background);
     setIsBackgroundLoading(true);
     setShowBackgroundModal(false); // Close the modal if it's open
+    
+    // Save selected background to localStorage
+    try {
+      localStorage.setItem('selectedBackgroundId', background.id.toString());
+    } catch (error) {
+      console.error('Error saving background selection:', error);
+    }
   };
 
   const handleScroll = (direction) => {
@@ -309,19 +390,7 @@ useEffect(() => {
     return fullName.split(" ")[0];
   };
 
-  const toggleZenMode = () => {
-    setZenMode(!zenMode);
-    const createdByLabel = document.querySelector(`.${styles.createdByLabel}`);
-    if (createdByLabel) {
-      createdByLabel.style.opacity = zenMode ? "1" : "0"; // Hide in Zen Mode
-      createdByLabel.style.pointerEvents = zenMode ? "auto" : "none"; // Disable interaction
-    }
-    const selectionBar = document.querySelector(`.${styles.selectionBar}`);
-    if (selectionBar) {
-      selectionBar.style.opacity = zenMode ? "1" : "0";
-      selectionBar.style.pointerEvents = zenMode ? "auto" : "none";
-    }
-  };
+  
 
   const renderComponent = (componentName) => {
     if (!visibleComponents[componentName]) return null;
@@ -343,9 +412,12 @@ useEffect(() => {
     }
   };
 
-  return (
-    <ErrorBoundary>
-      <CustomHeader />
+  return (    <ErrorBoundary>
+      <CustomHeader 
+        onBackgroundSelect={handleBackgroundSelection}
+        selectedBackground={selectedBackground}
+        userName={getFirstName(user.user_metadata?.name || user.email)}
+      />
       <SelectionBar
         className={`${styles.selectionBar} ${zenMode ? styles.hidden : ''}`}
         userEmail={user.email}
@@ -380,15 +452,15 @@ useEffect(() => {
               </div>
             )}
           </>
-        )}
+        )}        <CustomHeader 
+          onBackgroundSelect={handleBackgroundSelection}
+          selectedBackground={selectedBackground}
+          userName={getFirstName(user.user_metadata?.name || user.email)}
+        />
         <Sidebar
           isOpen={sidebarOpen}
           onToggle={toggleSidebar}
-          selectedBackground={selectedBackground}
-          onBackgroundSelect={handleBackgroundSelection}
-          onShowBackgroundModal={() => setShowBackgroundModal(true)}
           zenMode={zenMode}
-          onZenModeToggle={toggleZenMode}
           userName={getFirstName(user.user_metadata?.name || user.email)}
           currentTime={currentTime}
         />
@@ -402,13 +474,8 @@ useEffect(() => {
         </main>
    
       </div>
-      <div className={`${styles.createdByLabel} ${zenMode ? styles.hidden : ''}`}>
-        Wallpaper by: {selectedBackground.createdby}
-      </div>
-      <button className={`${styles.zenModeButton} ${zenMode ? styles.active : ''}`} onClick={toggleZenMode} aria-label="Toggle Zen Mode">
-        <span className={styles.moonIcon}></span>
-      </button>
-
+    
+   
       {showBackgroundModal && (
         <BackgroundModal
           backgrounds={backgrounds}

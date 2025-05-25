@@ -8,7 +8,6 @@ import "@glidejs/glide/dist/css/glide.core.min.css";
 import "@glidejs/glide/dist/css/glide.theme.min.css";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-import CookieBanner from "../components/CookieBanner";
 import Image from "next/image";
 import styles from "../styles/Home.module.css";
 
@@ -202,7 +201,6 @@ export default function Landing() {
         <meta name="twitter:card" content="summary_large_image" />
       </Head>
       <Header />
-      <CookieBanner />
       
       <main className={styles.main}>
         {/* Hero Section */}

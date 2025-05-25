@@ -1,10 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import styles from '../styles/BackgroundModal.module.css';
 
 export default function BackgroundModal({ backgrounds, onSelect, selectedBackground, onClose }) {
   const [filter, setFilter] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [hoveredBg, setHoveredBg] = useState(null);
+  const [loadingVideos, setLoadingVideos] = useState(new Set());
+  const [loadedThumbnails, setLoadedThumbnails] = useState(new Set());
+  const videoRefs = useRef(new Map());
+  const observerRef = useRef(null);
 
   // Define categories with icons for better visual representation
   const categories = [
@@ -14,12 +18,10 @@ export default function BackgroundModal({ backgrounds, onSelect, selectedBackgro
     { id: 'cozy', label: 'Cozy', icon: 'weekend' },
     { id: 'gaming', label: 'Gaming', icon: 'sports_esports' }
   ];
-
   // Use the category property from backgrounds data
   const getBackgroundCategory = (background) => {
     return background.category || 'all';
   };
-
   // Handle Escape key press to close modal
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -31,6 +33,109 @@ export default function BackgroundModal({ backgrounds, onSelect, selectedBackgro
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [onClose]);
+  // Setup Intersection Observer for lazy loading
+  useEffect(() => {
+    observerRef.current = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const video = entry.target;
+            const backgroundId = parseInt(video.dataset.backgroundId);
+            
+            if (!loadedThumbnails.has(backgroundId)) {
+              // Load the video for thumbnail preview
+              if (video.src) {
+                video.load();
+                setLoadedThumbnails(prev => new Set([...prev, backgroundId]));
+              }
+            }
+            
+            // Continue observing to ensure proper loading
+          }
+        });
+      },
+      { threshold: 0.1, rootMargin: '100px' }
+    );
+
+    return () => {
+      if (observerRef.current) {
+        observerRef.current.disconnect();
+      }
+    };
+  }, []);
+
+  // Cleanup videos when component unmounts
+  useEffect(() => {
+    return () => {
+      // Pause and cleanup all videos
+      videoRefs.current.forEach(video => {
+        if (video) {
+          video.pause();
+          video.src = '';
+          video.load();
+        }
+      });
+      videoRefs.current.clear();
+    };
+  }, []);
+
+  const handleVideoLoad = useCallback((backgroundId) => {
+    setLoadingVideos(prev => {
+      const newSet = new Set(prev);
+      newSet.delete(backgroundId);
+      return newSet;
+    });
+  }, []);
+
+  const handleVideoError = useCallback((backgroundId) => {
+    setLoadingVideos(prev => {
+      const newSet = new Set(prev);
+      newSet.delete(backgroundId);
+      return newSet;
+    });
+  }, []);
+  const handleMouseEnter = useCallback((backgroundId, videoSrc) => {
+    setHoveredBg(backgroundId);
+    
+    const video = videoRefs.current.get(backgroundId);
+    if (video) {
+      // If video is loaded (has metadata), play it
+      if (video.readyState >= 2) {
+        video.currentTime = 0;
+        video.play().catch(() => {
+          // Video play failed, ignore silently
+        });
+      } else {
+        // Video not loaded yet, ensure it starts loading
+        setLoadingVideos(prev => new Set([...prev, backgroundId]));
+        if (!loadedThumbnails.has(backgroundId)) {
+          video.load();
+        }
+      }
+    }
+  }, [loadedThumbnails]);
+
+  const handleMouseLeave = useCallback((backgroundId) => {
+    setHoveredBg(null);
+    
+    const video = videoRefs.current.get(backgroundId);
+    if (video) {
+      video.pause();
+      video.currentTime = 0;
+    }
+  }, []);
+
+  const handleBackgroundSelect = useCallback((background) => {
+    // Pause all videos before selection
+    videoRefs.current.forEach(video => {
+      if (video) {
+        video.pause();
+        video.currentTime = 0;
+      }
+    });
+    
+    onSelect(background);
+  }, [onSelect]);
 
   const filteredBackgrounds = backgrounds.filter(bg => {
     const matchesCategory = filter === 'all' || getBackgroundCategory(bg) === filter;
@@ -69,16 +174,14 @@ export default function BackgroundModal({ backgrounds, onSelect, selectedBackgro
               <span className="material-icons">close</span>
             </button>
           )}
-        </div>
-
-        <div className={styles.categories}>
+        </div>        <div className={styles.categories}>
           {categories.map(category => (
             <button
               key={category.id}
               className={`${styles.categoryButton} ${filter === category.id ? styles.active : ''}`}
               onClick={() => setFilter(category.id)}
               aria-label={`Filter by ${category.label}`}
-              title={`Filter by ${category.label}`}
+              title={category.label}
             >
               <span className="material-icons">{category.icon}</span>
               <span>{category.label}</span>
@@ -92,32 +195,49 @@ export default function BackgroundModal({ backgrounds, onSelect, selectedBackgro
             {filter !== 'all' ? ` in ${filter}` : ''}
             {searchQuery ? ` matching "${searchQuery}"` : ''}
           </p>
-        </div>
-
-        <div className={styles.backgroundGrid}>
+        </div>        <div className={styles.backgroundGrid}>
           {filteredBackgrounds.length > 0 ? (
             filteredBackgrounds.map(background => (
               <div
                 key={background.id}
                 className={`${styles.backgroundCard} ${selectedBackground?.id === background.id ? styles.selected : ''}`}
-                onClick={() => onSelect(background)}
-                onMouseEnter={() => setHoveredBg(background.id)}
-                onMouseLeave={() => setHoveredBg(null)}
-              >
-                <div className={styles.videoWrapper}>
+                onClick={() => handleBackgroundSelect(background)}
+                onMouseEnter={() => handleMouseEnter(background.id, background.src)}
+                onMouseLeave={() => handleMouseLeave(background.id)}
+              >                <div className={styles.videoWrapper}>
                   <video
+                    ref={el => {
+                      if (el) {
+                        videoRefs.current.set(background.id, el);
+                        // Set up intersection observer for lazy loading
+                        if (observerRef.current && !loadedThumbnails.has(background.id)) {
+                          el.dataset.backgroundId = background.id.toString();
+                          observerRef.current.observe(el);
+                        }
+                      }
+                    }}
                     src={background.src}
                     muted
                     loop
-                    onMouseEnter={e => e.target.play()}
-                    onMouseLeave={e => e.target.pause()}
+                    preload="metadata"
+                    onLoadedData={() => handleVideoLoad(background.id)}
+                    onError={() => handleVideoError(background.id)}
+                    data-background-id={background.id}
                   />
-                  {hoveredBg === background.id && (
+                  {loadingVideos.has(background.id) && (
+                    <div className={styles.videoLoader}>
+                      <div className={styles.loadingSpinner}></div>
+                    </div>
+                  )}                  {hoveredBg === background.id && !loadingVideos.has(background.id) && (
                     <div className={styles.videoOverlay}>
                       <button className={styles.selectButton}>
                         <span className="material-icons">check_circle</span>
-                        Select
                       </button>
+                    </div>
+                  )}
+                  {selectedBackground?.id === background.id && (
+                    <div className={styles.selectedIndicator}>
+                      <span className="material-icons">check_circle</span>
                     </div>
                   )}
                 </div>

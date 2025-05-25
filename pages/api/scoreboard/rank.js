@@ -1,4 +1,5 @@
 import { requireAuth } from '../../../lib/auth-helpers';
+import { createSupabaseWithRetry, executeWithRetry } from '../../../lib/supabase-retry';
 
 export default requireAuth(async function handler(req, res) {
   if (req.method !== 'GET') {
@@ -6,24 +7,27 @@ export default requireAuth(async function handler(req, res) {
   }
 
   try {
-    const { createClient } = require('@supabase/supabase-js');
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL,
-      process.env.SUPABASE_SERVICE_ROLE_KEY
-    );
+    const supabase = createSupabaseWithRetry({ 
+      useServiceRole: true,
+      timeout: 6000, // 6 second timeout
+      maxRetries: 2   // 2 retries for faster response
+    });
 
-    // Get all users ordered by weekly pomodoro count
-    const { data: users, error } = await supabase
-      .from('user_pomodoros')
-      .select('user_id, pomodoro_count_weekly')
-      .order('pomodoro_count_weekly', { ascending: false });
+    // Get all users ordered by weekly pomodoro count with retry logic
+    const result = await executeWithRetry(async () => {
+      return await supabase
+        .from('user_pomodoros')
+        .select('user_id, pomodoro_count_weekly')
+        .order('pomodoro_count_weekly', { ascending: false });
+    }, { maxRetries: 2, retryDelay: 500 });
 
-    if (error) {
-      console.error('Failed to fetch users:', error);
+    if (result.error) {
+      console.error('Failed to fetch users:', result.error);
       return res.status(500).json({ error: 'Failed to fetch user rank' });
     }
 
     // Find user's rank
+    const users = result.data || [];
     const userIndex = users.findIndex(u => u.user_id === req.user.id);
     const rank = userIndex !== -1 ? userIndex + 1 : users.length + 1;
 
@@ -32,4 +36,4 @@ export default requireAuth(async function handler(req, res) {
     console.error('Failed to fetch user rank:', error);
     res.status(500).json({ error: 'Failed to fetch user rank' });
   }
-}); 
+});

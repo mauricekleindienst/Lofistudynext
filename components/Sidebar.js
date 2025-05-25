@@ -1,8 +1,15 @@
 import React, { useState, useRef, useEffect } from 'react';
 import styles from '../styles/Sidebar.module.css';
-import { backgrounds } from '../data/backgrounds';
 import YouTube from 'react-youtube';
-import { debounce } from 'lodash';
+
+// Debounce utility function
+const debounce = (func, delay) => {
+  let timeoutId;
+  return (...args) => {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => func.apply(null, args), delay);
+  };
+};
 
 // Initial music tracks list
 const initialTracks = [
@@ -25,9 +32,6 @@ const initialTracks = [
 export default function Sidebar({ 
   isOpen, 
   onToggle, 
-  selectedBackground, 
-  onBackgroundSelect,
-  onShowBackgroundModal,
   zenMode,
   userName,
   currentTime
@@ -71,16 +75,11 @@ export default function Sidebar({
     if (storedTrackIndex) setCurrentTrackIndex(parseInt(storedTrackIndex));
     if (storedVolume) setVolume(parseInt(storedVolume));
   }, []);
-
   useEffect(() => {
     localStorage.setItem('tracks', JSON.stringify(tracks));
     localStorage.setItem('currentTrackIndex', currentTrackIndex);
     localStorage.setItem('volume', volume);
   }, [tracks, currentTrackIndex, volume]);
-
-  const handleBackgroundSelection = (background) => {
-    onBackgroundSelect(background);
-  };
   
   // Music Player Functions
   const playPause = () => {
@@ -223,25 +222,17 @@ export default function Sidebar({
   }, []);
 
   const getThumbnailUrl = (videoId) => `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`;
-
   return (
     <>
       <div 
         className={`${styles.sidebar} ${isOpen ? styles.open : styles.closed} ${zenMode ? styles.hidden : ''}`}
         id="sidebar"
       >
-        <div className={styles.sidebarContent}>
-          <h1>
-            Music Player
-          </h1>
-
-          {/* Integrated Music Player */}
-          <div className={styles.musicPlayerSection}>
-            <div className={styles.musicHeader}>
-              <h2>Music Player</h2>
-            </div>
-            
-            {isFormVisible && (
+        <div className={styles.musicHeader}>
+          <h2>Music Player</h2>
+        </div>
+          
+        {isFormVisible && (
               <div className={styles.formContainer}>
                 <form className={styles.form} onSubmit={handleFormSubmit}>
                   <input
@@ -331,14 +322,14 @@ export default function Sidebar({
               <div className={styles.volumeControl}>
                 <button onClick={toggleMute} className={styles.muteButton}>
                   <span className="material-icons">{isMuted ? 'volume_off' : 'volume_up'}</span>
-                </button>
-                <input
+                </button>                <input
                   type="range"
                   min="0"
                   max="100"
                   value={volume}
                   onChange={(e) => setVolume(parseInt(e.target.value))}
                   className={styles.slider}
+                  style={{'--slider-value': `${volume}%`}}
                 />
               </div>
             </div>
@@ -354,12 +345,9 @@ export default function Sidebar({
                 </div>
               ))}
             </div>
-            
-            <button className={styles.addButton} onClick={() => setIsFormVisible(!isFormVisible)}>
-              {isFormVisible ? 'Cancel' : 'Add Music'}
-            </button>
-          </div>
-        </div>
+          <button className={styles.addButton} onClick={() => setIsFormVisible(!isFormVisible)}>
+          {isFormVisible ? 'Cancel' : 'Add Music'}
+        </button>
       </div>
 
       <button 

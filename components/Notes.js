@@ -1,49 +1,98 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import { getSupabaseBrowserClient } from '../lib/supabase';
 import Draggable from 'react-draggable';
 import { motion } from 'framer-motion';
 import styles from '../styles/Notes.module.css';
 
 export default function Notes({ onMinimize }) {
-  const { user } = useAuth();
+  const { user, session } = useAuth();
   const [notes, setNotes] = useState([]);
   const [currentNote, setCurrentNote] = useState({ id: null, title: '', content: '' });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
-
+  const supabase = getSupabaseBrowserClient();
   useEffect(() => {
-    if (user?.email) {
+    if (user?.email && session?.access_token) {
       fetchNotes();
     }
-  }, [user]);
-
-  const fetchNotes = async () => {
+  }, [user, session]);  const fetchNotes = async () => {
     try {
-      const response = await fetch('/api/notes');
-      if (!response.ok) throw new Error('Failed to fetch notes');
+      const headers = {
+        'Content-Type': 'application/json',
+      };
+
+      // Add authorization header if we have a session
+      if (session?.access_token) {
+        headers.Authorization = `Bearer ${session.access_token}`;
+      }
+
+      // Add timeout to prevent hanging requests
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+
+      const response = await fetch('/api/notes', { 
+        headers,
+        signal: controller.signal 
+      });
+      
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || 'Failed to fetch notes');
+      }
+
       const data = await response.json();
       setNotes(data);
       setLoading(false);
+      setError(null); // Clear any previous errors
     } catch (err) {
-      setError('Failed to load notes');
+      console.error('Error fetching notes:', err);
+      
+      if (err.name === 'AbortError') {
+        setError('Request timed out. Please check your connection and try again.');
+      } else if (err.message.includes('Failed to fetch')) {
+        setError('Network error. Please check your connection and try again.');
+      } else {
+        setError('Failed to load notes: ' + err.message);
+      }
+      
       setLoading(false);
     }
-  };
-
-  const saveNote = async () => {
+  };  const saveNote = async () => {
     if (!currentNote.title || !currentNote.content) return;
     
     setIsSaving(true);
     try {
       const method = currentNote.id ? 'PUT' : 'POST';
+      const headers = {
+        'Content-Type': 'application/json',
+      };
+
+      // Add authorization header if we have a session
+      if (session?.access_token) {
+        headers.Authorization = `Bearer ${session.access_token}`;
+      }
+
+      // Add timeout to prevent hanging requests
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+
       const response = await fetch('/api/notes', {
         method,
-        headers: { 'Content-Type': 'application/json' },
+        headers,
         body: JSON.stringify(currentNote),
+        signal: controller.signal,
       });
 
-      if (!response.ok) throw new Error('Failed to save note');
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || 'Failed to save note');
+      }
       
       const savedNote = await response.json();
       
@@ -56,17 +105,35 @@ export default function Notes({ onMinimize }) {
       }
       
       setCurrentNote({ id: null, title: '', content: '' });
+      setError(null); // Clear any previous errors
     } catch (err) {
-      setError('Failed to save note');
+      console.error('Error saving note:', err);
+      
+      if (err.name === 'AbortError') {
+        setError('Save timed out. Please check your connection and try again.');
+      } else if (err.message.includes('Failed to fetch')) {
+        setError('Network error. Please check your connection and try again.');
+      } else {
+        setError('Failed to save note: ' + err.message);
+      }
     } finally {
       setIsSaving(false);
     }
   };
-
   const deleteNote = async (id) => {
     try {
+      const headers = {
+        'Content-Type': 'application/json',
+      };
+
+      // Add authorization header if we have a session
+      if (session?.access_token) {
+        headers.Authorization = `Bearer ${session.access_token}`;
+      }
+
       const response = await fetch(`/api/notes/${id}`, {
         method: 'DELETE',
+        headers,
       });
 
       if (!response.ok) throw new Error('Failed to delete note');
@@ -76,6 +143,7 @@ export default function Notes({ onMinimize }) {
         setCurrentNote({ id: null, title: '', content: '' });
       }
     } catch (err) {
+      console.error('Error deleting note:', err);
       setError('Failed to delete note');
     }
   };
@@ -90,8 +158,7 @@ export default function Notes({ onMinimize }) {
       saveNote();
     }
   };
-
-  if (!session) {
+  if (!user) {
     return (
       <Draggable handle=".drag-handle">
         <div className={styles.notesContainer}>

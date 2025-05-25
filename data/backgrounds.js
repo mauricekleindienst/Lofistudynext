@@ -25,11 +25,11 @@ export const backgrounds = [
 ];
 
 export const DEFAULT_BACKGROUND = {
-  id: 2,
-  src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Rain.mp4",
-  alt: "Rain",
-  note: "Rain",
+  id: 1,
+  src: "/backgrounds/Couch.mp4",
+  alt: "Couch",
+  note: "Couch",
   createdby: "Lo-Fi.study",
   priority: true,
-  category: "nature"
+  category: "cozy"
 };

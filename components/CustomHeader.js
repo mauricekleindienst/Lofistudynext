@@ -154,11 +154,9 @@ export default function CustomHeader({ onBackgroundSelect, selectedBackground, u
   const isAdmin = user && adminEmails.includes(user.email);
 
   return (
-    <div className={styles.header}>
-      <div className={styles.leftButtons}>
+    <div className={styles.header}>      <div className={styles.leftButtons}>
         <div className={styles.timeDisplay}>
           <span className={styles.currentTime}>{currentTime}</span>
-          {userName && <span className={styles.greeting}>Welcome, {userName}</span>}
         </div>
         
         <HeaderButton 
@@ -182,22 +180,12 @@ export default function CustomHeader({ onBackgroundSelect, selectedBackground, u
       </div>
       
       <div className={styles.rightButtons}>
-        <HeaderButton 
-          onClick={() => setShowBackgroundModal(true)} 
-          icon="wallpaper" 
-          tooltip="Change Background" 
-        />
         <HeaderButton onClick={shareVideoRoom} icon="videocam" tooltip="Share Room" />
         <HeaderButton onClick={shareWebsite} icon="share" tooltip="Share Lo-fi.study" />
         <HeaderButton
           onClick={toggleFullscreen}
           icon={state.isFullscreen ? "fullscreen_exit" : "fullscreen"}
           tooltip={state.isFullscreen ? "Exit Fullscreen" : "Fullscreen"}
-        />
-        <HeaderButton
-          onClick={() => setShowBackgroundModal(true)}
-          icon="image"
-          tooltip="Change Background"
         />
         
         {/* Profile Dropdown */}
@@ -265,25 +253,23 @@ export default function CustomHeader({ onBackgroundSelect, selectedBackground, u
                 Sign Out
               </button>
             </div>
-          )}
-        </div>
-      </div>
-
-      <div className={styles.timeDisplayContainer}>
-        <div className={styles.timeDisplay}>
-          <span className={styles.time}>{currentTime}</span>
-          {userName && <span className={styles.greeting}>Welcome, {userName}</span>}
-        </div>
+          )}        </div>
       </div>
 
       {state.toast.show && <Toast message={state.toast.message} />}
       <FeedbackModal isOpen={showFeedbackModal} onClose={() => setShowFeedbackModal(false)} />
-      <BackgroundModal 
-        backgrounds={backgrounds}
-        onSelect={onBackgroundSelect}
-        selectedBackground={selectedBackground}
-        onClose={() => setShowBackgroundModal(false)}
-      />
+      {showBackgroundModal && (
+        <BackgroundModal 
+          backgrounds={backgrounds}
+          onSelect={(background) => {
+            onBackgroundSelect(background);
+            setShowBackgroundModal(false);
+          }}
+          selectedBackground={selectedBackground}
+          onClose={() => setShowBackgroundModal(false)}
+          isOpen={showBackgroundModal}
+        />
+      )}
     </div>
   );
 }
