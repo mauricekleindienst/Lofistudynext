@@ -15,7 +15,7 @@ export default requireAuth(async function handler(req, res) {
     const { data: userPomodoros, error } = await supabase
       .from('user_pomodoros')
       .select('pomodoro_count_weekly')
-      .eq('user_id', req.user.id)
+      .eq('email', req.user.email)
       .single();
 
     if (error && error.code !== 'PGRST116') {

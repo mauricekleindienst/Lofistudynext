@@ -105,7 +105,7 @@ export default function ForgotPassword() {
           
           <h1 className={styles.title}>Reset Password</h1>
           <p className={styles.subtitle}>
-            Enter your email address and we'll send you a link to reset your password.
+            Enter your email address and we&apos;ll send you a link to reset your password.
           </p>
           
           {error && (
@@ -166,7 +166,7 @@ export default function ForgotPassword() {
               Back to Sign In
             </Link>
             <span className={styles.separator}>•</span>
-            <span className={styles.linkText}>Don't have an account?</span>
+            <span className={styles.linkText}>Don&apos;t have an account?</span>
             <Link href="/auth/register" className={styles.link}>
               Sign up
             </Link>

@@ -13,8 +13,11 @@ const handler = async (req, res) => {
       case 'POST':
         await addEventHandler(req, res, user)
         break
+      case 'DELETE':
+        await deleteEventHandler(req, res, user)
+        break
       default:
-        res.setHeader('Allow', ['GET', 'POST'])
+        res.setHeader('Allow', ['GET', 'POST', 'DELETE'])
         res.status(405).end(`Method ${method} Not Allowed`)
     }
   } catch (error) {
@@ -75,6 +78,29 @@ const getEventsHandler = async (req, res, user) => {
     res.status(200).json(formattedEvents)
   } catch (error) {
     console.error("Error fetching events:", error)
+    res.status(500).json({ error: "Internal server error" })
+  }
+}
+
+const deleteEventHandler = async (req, res, user) => {
+  const { id } = req.body
+
+  if (!id) {
+    return res.status(400).json({ error: "Event ID is required" })
+  }
+
+  try {
+    const { error } = await supabase
+      .from('events')
+      .delete()
+      .eq('id', id)
+      .eq('user_id', user.id)
+
+    if (error) throw error
+
+    res.status(200).json({ message: "Event deleted successfully" })
+  } catch (error) {
+    console.error("Error deleting event:", error)
     res.status(500).json({ error: "Internal server error" })
   }
 }

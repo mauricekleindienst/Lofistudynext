@@ -24,7 +24,7 @@ const handler = async (req, res) => {
     const { data: existingUser, error: fetchError } = await supabase
       .from('user_pomodoros')
       .select('*')
-      .eq('user_id', user.id)
+      .eq('email', user.email)
       .single()
 
     let updatedDailyCounts = existingUser
@@ -43,15 +43,15 @@ const handler = async (req, res) => {
       const { error } = await supabase
         .from('user_pomodoros')
         .update(updateData)
-        .eq('user_id', user.id)
+        .eq('email', user.email)
 
       if (error) throw error
     } else {
       const { error } = await supabase
         .from('user_pomodoros')
         .insert({
-          user_id: user.id,
           email: user.email,
+          user_id: user.id,
           firstname: user.user_metadata?.full_name || user.email.split('@')[0],
           ...updateData
         })

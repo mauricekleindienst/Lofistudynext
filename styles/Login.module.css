@@ -1014,16 +1014,3 @@
   flex-shrink: 0;
   margin-top: 0.1rem;
 }
-
-/* Ensure proper text selection in all browsers */
-* {
-  -webkit-tap-highlight-color: transparent;
-}
-
-input[type="text"],
-input[type="email"],
-input[type="password"] {
-  -webkit-text-size-adjust: 100%;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}

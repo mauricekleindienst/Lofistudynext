@@ -17,7 +17,18 @@ const handler = async (req, res) => {
 
       return res.status(200).json(pomodoros);
     } else if (req.method === 'POST') {
-      const { duration, completed } = req.body;
+      const { 
+        duration, 
+        completed, 
+        type, 
+        category, 
+        task_name, 
+        notes, 
+        completed_at 
+      } = req.body;
+      
+      // Convert duration from minutes to seconds if needed
+      const durationInSeconds = duration ? (duration > 100 ? duration : duration * 60) : 1500; // Default 25 minutes
       
       // Save pomodoro session
       const { data: pomodoro, error } = await supabase
@@ -25,8 +36,13 @@ const handler = async (req, res) => {
         .insert({
           user_id: user.id,
           email: user.email,
-          duration: duration || 25,
-          completed: completed || false
+          duration: durationInSeconds,
+          completed: completed || false,
+          type: type || 'work',
+          category: category || 'Other',
+          task_name: task_name || null,
+          notes: notes || null,
+          completed_at: completed && completed_at ? completed_at : null
         })
         .select()
         .single()

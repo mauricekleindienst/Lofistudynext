@@ -255,7 +255,7 @@ export default function SignIn() {
               Forgot password?
             </Link>
             <span className={styles.separator}>•</span>
-            <span className={styles.linkText}>Don't have an account?</span>
+            <span className={styles.linkText}>Don&apos;t have an account?</span>
             <Link href="/auth/register" className={styles.link}>
               Sign up
             </Link>

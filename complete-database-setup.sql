@@ -186,7 +186,7 @@ CREATE TABLE IF NOT EXISTS public.pomodoro_sessions (
     completed_at TIMESTAMPTZ,
     task_name TEXT,
     notes TEXT,
-    category VARCHAR(100)
+    category VARCHAR(100) DEFAULT 'Other'
 );
 
 -- Create indexes for better performance

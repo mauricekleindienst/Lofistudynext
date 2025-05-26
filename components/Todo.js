@@ -14,7 +14,7 @@ import {
 } from "react-icons/fa";
 
 export default function Todo({ onMinimize }) {
-  const { user } = useAuth();
+  const { user, session } = useAuth();
   const [todos, setTodos] = useState([]);
   const [newTodo, setNewTodo] = useState("");
   const [editingTodo, setEditingTodo] = useState(null);
@@ -23,13 +23,27 @@ export default function Todo({ onMinimize }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  const getAuthHeaders = useCallback(() => {
+    const headers = {
+      'Content-Type': 'application/json',
+    };
+    
+    if (session?.access_token) {
+      headers.Authorization = `Bearer ${session.access_token}`;
+    }
+    
+    return headers;
+  }, [session]);
+
   const fetchTodosFromServer = useCallback(async () => {
-    if (!user?.email) return;
+    if (!user?.email || !session) return;
 
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch(`/api/todos?email=${user.email}`);
+      const response = await fetch('/api/todos', {
+        headers: getAuthHeaders()
+      });
       const data = await response.json();
       
       if (!response.ok) {
@@ -46,13 +60,13 @@ export default function Todo({ onMinimize }) {
     } finally {
       setLoading(false);
     }
-  }, [user]);
+  }, [user, session, getAuthHeaders]);
 
   useEffect(() => {
-    if (user) {
+    if (user && session) {
       fetchTodosFromServer();
     }
-  }, [user, fetchTodosFromServer]);
+  }, [user, session, fetchTodosFromServer]);
 
   // Add effect to dispatch todo count updates
   useEffect(() => {

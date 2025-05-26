@@ -161,7 +161,24 @@ export default function PomodoroTimer({ onMinimize }) {
       });
       window.dispatchEvent(event);
 
+      // Save completed pomodoro session to database
       if (user?.email) {
+        // Save to pomodoro_sessions table
+        fetch("/api/pomodoros", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            duration: Math.floor(state.pomodoroDurations.pomodoro / 60), // duration in minutes
+            completed: true,
+            type: 'work',
+            category: state.category || 'Other',
+            completed_at: new Date().toISOString()
+          }),
+        }).catch((error) =>
+          console.error("Failed to save pomodoro session:", error)
+        );
+
+        // Update pomodoro count
         fetch("/api/updatePomodoroCount", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -169,7 +186,7 @@ export default function PomodoroTimer({ onMinimize }) {
             email: user.email,
             firstname: user.user_metadata?.full_name?.split(" ")[0] || user.email.split("@")[0],
             increment: 1,
-            category: state.category,
+            category: state.category || 'Other',
           }),
         }).catch((error) =>
           console.error("Failed to update Pomodoro count:", error)
