@@ -34,11 +34,12 @@ export default function Register() {
   const { signUp, signInWithGoogle, signInWithDiscord, user } = useAuth();
   const router = useRouter();
 
-  // Redirect if already authenticated
+  // Redirect if already authenticated and not explicitly staying on auth page
   useEffect(() => {
-    if (user) {
-      console.log('User authenticated, redirecting to app...')
-      router.push('/app');
+    if (user && router.query.redirect !== 'false') {
+      const from = router.query.from || '/app';
+      console.log('User authenticated, redirecting to:', from);
+      router.push(from);
     }
   }, [user, router]);
 
@@ -149,6 +150,10 @@ export default function Register() {
       } else if (provider === 'discord') {
         await signInWithDiscord();
       }
+      
+      // Redirect after successful authentication
+      const from = router.query.from || '/app';
+      router.push(from);
     } catch (error) {
       console.error(`${provider} auth error:`, error);
       setError(`Failed to sign up with ${provider}. Please try again.`);

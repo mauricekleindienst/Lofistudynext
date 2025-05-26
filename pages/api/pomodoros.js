@@ -1,4 +1,4 @@
-import { supabase } from '../../lib/supabase-admin'
+import { supabaseAdmin } from '../../lib/supabase-admin'
 import { requireAuth } from '../../lib/auth-helpers'
 
 const handler = async (req, res) => {
@@ -7,7 +7,7 @@ const handler = async (req, res) => {
   try {
     if (req.method === 'GET') {
       // Get user's pomodoro sessions
-      const { data: pomodoros, error } = await supabase
+      const { data: pomodoros, error } = await supabaseAdminAdmin
         .from('pomodoro_sessions')
         .select('*')
         .eq('user_id', user.id)
@@ -31,7 +31,7 @@ const handler = async (req, res) => {
       const durationInSeconds = duration ? (duration > 100 ? duration : duration * 60) : 1500; // Default 25 minutes
       
       // Save pomodoro session
-      const { data: pomodoro, error } = await supabase
+      const { data: pomodoro, error } = await supabaseAdmin
         .from('pomodoro_sessions')
         .insert({
           user_id: user.id,

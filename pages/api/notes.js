@@ -1,4 +1,4 @@
-import { supabase } from '../../lib/supabase-admin'
+import { supabaseAdmin } from '../../lib/supabase-admin'
 import { requireAuth } from '../../lib/auth-helpers'
 import { executeWithRetry } from '../../lib/supabase-retry'
 
@@ -37,7 +37,7 @@ export default requireAuth(handler)
 const getNotesHandler = async (req, res, user) => {
   try {
     const result = await executeWithRetry(async () => {
-      return await supabase
+      return await supabaseAdmin
         .from('notes')
         .select('*')
         .eq('user_id', user.id)
@@ -64,12 +64,12 @@ const saveNoteHandler = async (req, res, user) => {
     if (id) {
       // Update existing note
       const result = await executeWithRetry(async () => {
-        return await supabase
+        return await supabaseAdmin
           .from('notes')
           .update({
             title,
             content,
-            updated_at: new Date()
+            updated_at: new Date().toISOString()
           })
           .eq('id', id)
           .eq('user_id', user.id)
@@ -83,20 +83,22 @@ const saveNoteHandler = async (req, res, user) => {
     } else {
       // Create new note
       const result = await executeWithRetry(async () => {
-        return await supabase
+        return await supabaseAdmin
           .from('notes')
           .insert({
             title,
             content,
             user_id: user.id,
-            created_at: new Date(),
-            updated_at: new Date()
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
           })
           .select()
           .single()
       }, { maxRetries: 2, retryDelay: 500 });
 
-      if (result.error) throw result.error;      res.status(201).json(result.data);
+      if (result.error) throw result.error;
+
+      res.status(201).json(result.data);
     }
   } catch (error) {
     console.error("Error saving note:", error);

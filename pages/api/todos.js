@@ -1,4 +1,4 @@
-import { supabase } from '../../lib/supabase-admin'
+import { supabaseAdmin } from '../../lib/supabase-admin'
 import { requireAuth } from '../../lib/auth-helpers'
 
 const handler = async (req, res) => {
@@ -32,7 +32,7 @@ async function getTodosHandler(req, res, user) {
   try {
     const skip = (page - 1) * limit;
     
-    const { data: todos, error } = await supabase
+    const { data: todos, error } = await supabaseAdmin
       .from('todos')
       .select(`
         *,
@@ -44,7 +44,7 @@ async function getTodosHandler(req, res, user) {
 
     if (error) throw error
 
-    const { count, error: countError } = await supabase
+    const { count, error: countError } = await supabaseAdmin
       .from('todos')
       .select('*', { count: 'exact', head: true })
       .eq('user_id', user.id)
@@ -71,7 +71,7 @@ async function saveTodoHandler(req, res, user) {
 
   try {
     // Get max position
-    const { data: maxPositionData, error: maxError } = await supabase
+    const { data: maxPositionData, error: maxError } = await supabaseAdmin
       .from('todos')
       .select('position')
       .eq('user_id', user.id)
@@ -84,7 +84,7 @@ async function saveTodoHandler(req, res, user) {
       maxPosition = maxPositionData.position
     }
 
-    const { data: todo, error } = await supabase
+    const { data: todo, error } = await supabaseAdmin
       .from('todos')
       .insert({
         user_id: user.id,
@@ -121,7 +121,7 @@ async function updateTodoHandler(req, res, user) {
       updated_at: new Date()
     };
 
-    const { data: todo, error } = await supabase
+    const { data: todo, error } = await supabaseAdmin
       .from('todos')
       .update(updateData)
       .eq('id', id)
@@ -154,7 +154,7 @@ async function deleteTodoHandler(req, res, user) {
 
   try {
     // First delete all subtasks
-    const { error: subtasksError } = await supabase
+    const { error: subtasksError } = await supabaseAdmin
       .from('subtasks')
       .delete()
       .eq('todo_id', id)
@@ -162,7 +162,7 @@ async function deleteTodoHandler(req, res, user) {
     if (subtasksError) throw subtasksError
 
     // Then delete the todo
-    const { data: deletedTodo, error } = await supabase
+    const { data: deletedTodo, error } = await supabaseAdmin
       .from('todos')
       .delete()
       .eq('id', id)

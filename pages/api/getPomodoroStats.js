@@ -23,15 +23,11 @@ export default requireAuth(async function handler(req, res) {
       return res.status(405).json({ error: 'Method not allowed. Only POST requests are allowed.' });
     }
 
-    const { email } = req.body;
+    // Use the authenticated user's email instead of requiring it in request body
+    const userEmail = req.user?.email;
 
-    if (!email) {
-      return res.status(400).json({ error: 'Bad Request: Email is required.' });
-    }
-
-    // Ensure user can only access their own data
-    if (email !== user.email) {
-      return res.status(403).json({ error: 'Forbidden: You can only access your own data' });
+    if (!userEmail) {
+      return res.status(400).json({ error: 'Bad Request: User email not found in session.' });
     }
 
     const { createClient } = require('@supabase/supabase-js');
@@ -43,7 +39,7 @@ export default requireAuth(async function handler(req, res) {
     const { data: userPomodoros, error } = await supabase
       .from('user_pomodoros')
       .select('pomodoro_count, studying, coding, writing, working, other, daily_counts')
-      .eq('user_id', req.user.id)
+      .eq('email', userEmail)
       .single();
 
     if (error && error.code !== 'PGRST116') {
@@ -52,7 +48,7 @@ export default requireAuth(async function handler(req, res) {
     }
 
     if (!userPomodoros) {
-      return res.status(404).json({ error: `User with email ${email} not found.` });
+      return res.status(404).json({ error: `User with email ${userEmail} not found.` });
     }
 
     const stats = {

@@ -1,6 +1,6 @@
 // pages/api/profile.js
 import { requireAuth } from '../../lib/auth-helpers';
-import { supabase } from '../../lib/supabase-admin';
+import { supabaseAdmin } from '../../lib/supabase-admin';
 
 const handler = async (req, res) => {
   const user = req.user;
@@ -8,7 +8,7 @@ const handler = async (req, res) => {
   if (req.method === 'GET') {
     try {
       // Get user profile from auth.users
-      const { data: userProfile, error: userError } = await supabase.auth.admin.getUserById(user.id);
+      const { data: userProfile, error: userError } = await supabaseAdminAdmin.auth.admin.getUserById(user.id);
       
       if (userError) {
         console.error('Error fetching user profile:', userError);
@@ -16,13 +16,13 @@ const handler = async (req, res) => {
       }
 
       // Get additional user stats
-      const { data: pomodoroStats, error: pomodoroError } = await supabase
+      const { data: pomodoroStats, error: pomodoroError } = await supabaseAdminAdmin
         .from('user_pomodoros')
         .select('pomodoro_count, studying, coding, writing, working, other')
         .eq('user_id', user.id)
         .single();
 
-      const { data: todoStats, error: todoError } = await supabase
+      const { data: todoStats, error: todoError } = await supabaseAdminAdmin
         .from('todos')
         .select('completed')
         .eq('user_id', user.id);
@@ -53,7 +53,7 @@ const handler = async (req, res) => {
       }
 
       // Update user metadata
-      const { data: updatedUser, error: updateError } = await supabase.auth.admin.updateUserById(
+      const { data: updatedUser, error: updateError } = await supabaseAdmin.auth.admin.updateUserById(
         user.id,
         {
           user_metadata: {
@@ -70,7 +70,7 @@ const handler = async (req, res) => {
 
       // Also update the firstname in user_pomodoros table if it exists
       try {
-        await supabase
+        await supabaseAdmin
           .from('user_pomodoros')
           .update({ firstname: full_name.trim().split(' ')[0] })
           .eq('user_id', user.id);

@@ -29,12 +29,9 @@ export default function SignIn() {
   const router = useRouter();
 
   useEffect(() => {
-    // Only redirect if we have a confirmed user and not in loading state
-    if (user && !loading) {
-      console.log('User authenticated, redirecting to app...')
-      router.push('/app');
-    }
-  }, [user, loading, router]);
+    // Don't automatically redirect authenticated users - let them access auth pages
+    // Only redirect if coming from a protected route or after explicit authentication
+  }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -57,6 +54,10 @@ export default function SignIn() {
       const { error: signInError } = await signIn(email, password);
       if (signInError) {
         setError(signInError.message || "Failed to sign in");
+      } else {
+        // Successful sign in, redirect
+        const from = router.query.from || '/app';
+        router.push(from);
       }
     } catch (error) {
       setError(error.message || "Failed to sign in");

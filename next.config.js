@@ -2,7 +2,7 @@
 const nextConfig = {
   webpack: (config, { isServer }) => {
     config.resolve.alias.canvas = false;
-    config.cache = false;
+    
     // Add rule for pdf.worker.js
     config.module.rules.push({
       test: /pdf\.worker\.(min\.)?js/,
@@ -22,10 +22,6 @@ const nextConfig = {
         pathname: '/**',
       },
     ],
-  },
-  env: {
-    DATABASE_URL: process.env.DATABASE_URL,
-    // Add other environment variables you need here
   },
   swcMinify: false,
 };

@@ -1,4 +1,4 @@
-import { supabase } from '../../lib/supabase-admin'
+import { supabaseAdmin } from '../../lib/supabase-admin'
 import { requireAuth } from '../../lib/auth-helpers'
 
 const handler = async (req, res) => {
@@ -21,7 +21,7 @@ const handler = async (req, res) => {
     const today = new Date().toISOString().split('T')[0];
 
     // Get existing user data
-    const { data: existingUser, error: fetchError } = await supabase
+    const { data: existingUser, error: fetchError } = await supabaseAdmin
       .from('user_pomodoros')
       .select('*')
       .eq('email', user.email)
@@ -40,14 +40,14 @@ const handler = async (req, res) => {
     }
 
     if (existingUser) {
-      const { error } = await supabase
+      const { error } = await supabaseAdmin
         .from('user_pomodoros')
         .update(updateData)
         .eq('email', user.email)
 
       if (error) throw error
     } else {
-      const { error } = await supabase
+      const { error } = await supabaseAdmin
         .from('user_pomodoros')
         .insert({
           email: user.email,
@@ -117,13 +117,13 @@ async function updateChallengeProgress(user, type, count, category = null) {
       }
 
       if (currentProgress) {
-        await supabase
+        await supabaseAdmin
           .from('progress')
           .update(progressData)
           .eq('user_id', user.id)
           .eq('challenge_id', challenge.id)
       } else {
-        await supabase
+        await supabaseAdmin
           .from('progress')
           .insert(progressData)
       }
@@ -135,7 +135,7 @@ async function updateChallengeProgress(user, type, count, category = null) {
 
 async function updateTimeBasedChallenges(user, currentHour) {
   try {
-    const { data: timeBasedChallenges, error } = await supabase
+    const { data: timeBasedChallenges, error } = await supabaseAdmin
       .from('challenges')
       .select(`
         *,
@@ -165,13 +165,13 @@ async function updateTimeBasedChallenges(user, currentHour) {
           const currentProgress = challenge.progress[0];
           
           if (currentProgress) {
-            await supabase
+            await supabaseAdmin
               .from('progress')
               .update(progressData)
               .eq('user_id', user.id)
               .eq('challenge_id', challenge.id)
           } else {
-            await supabase
+            await supabaseAdmin
               .from('progress')
               .insert(progressData)
           }

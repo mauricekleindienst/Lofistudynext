@@ -1,0 +1,460 @@
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 40px;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.header h1 {
+  color: #333;
+  margin: 0 0 10px 0;
+  font-size: 2.5rem;
+  font-weight: 700;
+}
+
+.header p {
+  color: #666;
+  margin: 0 0 20px 0;
+  font-size: 1.1rem;
+}
+
+.userInfo {
+  color: #4a5568;
+  font-size: 0.9rem;
+  background: #f7fafc;
+  padding: 10px 20px;
+  border-radius: 25px;
+  display: inline-block;
+}
+
+.authRequired {
+  text-align: center;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 60px 30px;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  margin-top: 100px;
+}
+
+.authRequired h1 {
+  color: #333;
+  margin-bottom: 20px;
+  font-size: 2rem;
+}
+
+.authRequired p {
+  color: #666;
+  margin-bottom: 30px;
+  font-size: 1.1rem;
+}
+
+.signInButton {
+  background: #4299e1;
+  color: white;
+  padding: 12px 30px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.signInButton:hover {
+  background: #3182ce;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(66, 153, 225, 0.3);
+}
+
+.testSections {
+  display: grid;
+  gap: 30px;
+  margin-bottom: 40px;
+}
+
+.section {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 15px;
+  padding: 30px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.section h2 {
+  color: #2d3748;
+  margin: 0 0 25px 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  border-bottom: 2px solid #e2e8f0;
+  padding-bottom: 10px;
+}
+
+.testGroup {
+  margin-bottom: 25px;
+  padding: 20px;
+  background: #f8fafc;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+}
+
+.testGroup h3 {
+  color: #4a5568;
+  margin: 0 0 15px 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.inputGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.inputGrid input,
+.inputGrid select,
+.inputGrid textarea {
+  padding: 10px 12px;
+  border: 1px solid #cbd5e0;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: all 0.2s;
+  background: white;
+}
+
+.inputGrid input:focus,
+.inputGrid select:focus,
+.inputGrid textarea:focus {
+  outline: none;
+  border-color: #4299e1;
+  box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
+}
+
+.testButton {
+  background: #48bb78;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 14px;
+}
+
+.testButton:hover:not(:disabled) {
+  background: #38a169;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(72, 187, 120, 0.3);
+}
+
+.testButton:disabled {
+  background: #a0aec0;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.resultsSection {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 15px;
+  padding: 30px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  margin-bottom: 30px;
+}
+
+.resultsSection h2 {
+  color: #2d3748;
+  margin: 0 0 25px 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  border-bottom: 2px solid #e2e8f0;
+  padding-bottom: 10px;
+}
+
+.noResults {
+  color: #718096;
+  font-style: italic;
+  text-align: center;
+  padding: 40px 20px;
+  background: #f8fafc;
+  border-radius: 10px;
+  border: 2px dashed #cbd5e0;
+}
+
+.results {
+  display: grid;
+  gap: 20px;
+}
+
+.result {
+  border-radius: 10px;
+  padding: 20px;
+  border-left: 4px solid;
+}
+
+.result.success {
+  background: #f0fff4;
+  border-left-color: #48bb78;
+}
+
+.result.error {
+  background: #fff5f5;
+  border-left-color: #f56565;
+}
+
+.resultHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.resultHeader strong {
+  color: #2d3748;
+  font-size: 1.1rem;
+}
+
+.timestamp {
+  color: #718096;
+  font-size: 0.9rem;
+  font-weight: normal;
+}
+
+.status {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.statusSuccess {
+  background: #c6f6d5;
+  color: #276749;
+}
+
+.statusError {
+  background: #fed7d7;
+  color: #c53030;
+}
+
+.resultData {
+  background: #1a202c;
+  color: #e2e8f0;
+  padding: 15px;
+  border-radius: 8px;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: 12px;
+  line-height: 1.5;
+  overflow-x: auto;
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.quickActions {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 15px;
+  padding: 30px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.quickActions h2 {
+  color: #2d3748;
+  margin: 0 0 25px 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.clearButton {
+  background: #f56565;
+  color: white;
+  border: none;
+  padding: 12px 25px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-right: 15px;
+}
+
+.clearButton:hover {
+  background: #e53e3e;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(245, 101, 101, 0.3);
+}
+
+.testAllButton {
+  background: #805ad5;
+  color: white;
+  border: none;
+  padding: 12px 25px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.testAllButton:hover {
+  background: #6b46c1;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(128, 90, 213, 0.3);
+}
+
+/* Additional debugging styles */
+.copyButton {
+  background: #4299e1;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin: 4px 8px 4px 0;
+  font-size: 11px;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.copyButton:hover {
+  background: #3182ce;
+  transform: translateY(-1px);
+}
+
+.copyButton:active {
+  background: #2b6cb0;
+  transform: translateY(0);
+}
+
+.resultDetails {
+  border-top: 1px solid #e2e8f0;
+  margin-top: 12px;
+  padding-top: 12px;
+}
+
+.resultMeta {
+  color: #718096;
+  font-size: 11px;
+  margin-bottom: 8px;
+  padding: 8px 12px;
+  background: rgba(113, 128, 150, 0.1);
+  border-radius: 6px;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+}
+
+.requestBody {
+  background: #fffbeb;
+  border: 1px solid #fed7aa;
+  padding: 12px;
+  border-radius: 6px;
+  margin: 8px 0;
+}
+
+.responseData {
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  padding: 12px;
+  border-radius: 6px;
+  margin: 8px 0;
+}
+
+.jsonData {
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: 11px;
+  white-space: pre-wrap;
+  word-break: break-all;
+  max-height: 250px;
+  overflow-y: auto;
+  line-height: 1.4;
+  background: #1a202c;
+  color: #e2e8f0;
+  padding: 10px;
+  border-radius: 4px;
+  margin: 4px 0;
+}
+
+.consoleOutput {
+  background: #1a202c;
+  color: #e2e8f0;
+  border: 1px solid #4a5568;
+  border-radius: 6px;
+  padding: 12px;
+  margin: 8px 0;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: 11px;
+  white-space: pre-wrap;
+  max-height: 200px;
+  overflow-y: auto;
+  line-height: 1.4;
+}
+
+.debugSection {
+  border: 2px solid #4299e1;
+  border-radius: 8px;
+  padding: 16px;
+  margin: 16px 0;
+  background: #ebf8ff;
+}
+
+.debugTitle {
+  font-weight: 600;
+  color: #2b6cb0;
+  margin-bottom: 12px;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.buttonGroup {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .container {
+    padding: 15px;
+  }
+  
+  .header h1 {
+    font-size: 2rem;
+  }
+  
+  .inputGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .resultHeader {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .quickActions {
+    text-align: left;
+  }
+  
+  .clearButton,
+  .testAllButton {
+    display: block;
+    width: 100%;
+    margin: 0 0 15px 0;
+  }
+
+  .quickActions button {
+    display: block;
+    width: 100%;
+    margin: 0 0 10px 0;
+  }
+}

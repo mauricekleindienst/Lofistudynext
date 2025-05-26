@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev2": "next dev",
-    "dev": "node server.js",
+    "dev": "next build && next start",
+    "dev-original": "node server.js",
     "build": "next build",
     "start": "node server.js",
     "next-sitemap": "next-sitemap",

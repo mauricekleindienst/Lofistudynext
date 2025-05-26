@@ -1,4 +1,4 @@
-import { supabase } from '../../lib/supabase-admin'
+import { supabaseAdmin } from '../../lib/supabase-admin'
 import { requireAuth } from '../../lib/auth-helpers'
 
 const handler = async (req, res) => {
@@ -36,7 +36,7 @@ const addEventHandler = async (req, res, user) => {
   }
 
   try {
-    const { data: newEvent, error } = await supabase
+    const { data: newEvent, error } = await supabaseAdmin
       .from('events')
       .insert({
         email: user.email,
@@ -61,7 +61,7 @@ const addEventHandler = async (req, res, user) => {
 
 const getEventsHandler = async (req, res, user) => {
   try {
-    const { data: events, error } = await supabase
+    const { data: events, error } = await supabaseAdmin
       .from('events')
       .select('id, title, date')
       .eq('user_id', user.id)
@@ -90,7 +90,7 @@ const deleteEventHandler = async (req, res, user) => {
   }
 
   try {
-    const { error } = await supabase
+    const { error } = await supabaseAdmin
       .from('events')
       .delete()
       .eq('id', id)

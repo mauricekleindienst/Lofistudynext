@@ -28,8 +28,11 @@ export default function ForgotPassword() {
   const router = useRouter();
 
   useEffect(() => {
-    if (user) {
-      router.push('/app');
+    // Allow users to access forgot password even if logged in
+    // Only redirect if explicitly requested
+    if (user && router.query.redirect === 'true') {
+      const from = router.query.from || '/app';
+      router.push(from);
     }
   }, [user, router]);
 
