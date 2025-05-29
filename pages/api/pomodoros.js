@@ -5,9 +5,8 @@ const handler = async (req, res) => {
   const user = req.user
 
   try {
-    if (req.method === 'GET') {
-      // Get user's pomodoro sessions
-      const { data: pomodoros, error } = await supabaseAdminAdmin
+    if (req.method === 'GET') {      // Get user's pomodoro sessions
+      const { data: pomodoros, error } = await supabaseAdmin
         .from('pomodoro_sessions')
         .select('*')
         .eq('user_id', user.id)

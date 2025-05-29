@@ -6,9 +6,8 @@ const handler = async (req, res) => {
   const user = req.user;
 
   if (req.method === 'GET') {
-    try {
-      // Get user profile from auth.users
-      const { data: userProfile, error: userError } = await supabaseAdminAdmin.auth.admin.getUserById(user.id);
+    try {      // Get user profile from auth.users
+      const { data: userProfile, error: userError } = await supabaseAdmin.auth.admin.getUserById(user.id);
       
       if (userError) {
         console.error('Error fetching user profile:', userError);
@@ -16,13 +15,13 @@ const handler = async (req, res) => {
       }
 
       // Get additional user stats
-      const { data: pomodoroStats, error: pomodoroError } = await supabaseAdminAdmin
+      const { data: pomodoroStats, error: pomodoroError } = await supabaseAdmin
         .from('user_pomodoros')
         .select('pomodoro_count, studying, coding, writing, working, other')
         .eq('user_id', user.id)
         .single();
 
-      const { data: todoStats, error: todoError } = await supabaseAdminAdmin
+      const { data: todoStats, error: todoError } = await supabaseAdmin
         .from('todos')
         .select('completed')
         .eq('user_id', user.id);

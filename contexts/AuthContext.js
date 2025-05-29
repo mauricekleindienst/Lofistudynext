@@ -121,11 +121,12 @@ export const AuthProvider = ({ children }) => {
       if (error) throw error
       return { data, error: null }
     } catch (error) {
-      return { data: null, error }
-    } finally {
+      return { data: null, error }    } finally {
       setLoading(false)
     }
-  }  const signInWithGoogle = async () => {
+  }
+
+  const signInWithGoogle = async () => {
     try {
       // Get the current origin, fallback to production domain if not available
       const redirectOrigin = typeof window !== 'undefined' 
@@ -143,10 +144,10 @@ export const AuthProvider = ({ children }) => {
             access_type: 'offline',
             prompt: 'consent',
           }
-        }
-      })
+        }      })
       if (error) throw error
-      return { data, error: null }    } catch (error) {
+      return { data, error: null }
+    } catch (error) {
       console.error('Google sign-in error:', error)
       return { data: null, error }
     }
