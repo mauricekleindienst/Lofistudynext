@@ -3,8 +3,10 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import Head from "next/head";
 import Link from "next/link";
+import Image from "next/image";
 import { useAuth } from "../../contexts/AuthContext";
-import styles from "../../styles/Login.module.css";
+import { backgrounds } from "../../data/backgrounds";
+import styles from "../../styles/Auth.module.css";
 
 export default function ChangePassword() {
   const router = useRouter();
@@ -13,10 +15,12 @@ export default function ChangePassword() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [passwordStrength, setPasswordStrength] = useState({ score: 0, feedback: "" });
+  const [currentBgIndex, setCurrentBgIndex] = useState(() => 
+    Math.floor(Math.random() * backgrounds.length)
+  );
 
   // Password strength checker
   const checkPasswordStrength = (password) => {
@@ -47,14 +51,27 @@ export default function ChangePassword() {
       color: score < 2 ? "#ef4444" : score < 4 ? "#f59e0b" : "#10b981"
     });
   };
-
   useEffect(() => {
+    // Background cycling
+    const interval = setInterval(() => {
+      setCurrentBgIndex((prevIndex) => {
+        // Generate a random index that's different from the current one
+        let newIndex;
+        do {
+          newIndex = Math.floor(Math.random() * backgrounds.length);
+        } while (newIndex === prevIndex && backgrounds.length > 1);
+        return newIndex;
+      });
+    }, 15000); // Change background every 15 seconds
+    
     // Check for access_token and refresh_token in URL hash (from email link)
     const hash = window.location.hash;
     if (hash && hash.includes('access_token')) {
       // Supabase handles the session automatically from the URL fragments
       setMessage("Please enter your new password below.");
     }
+    
+    return () => clearInterval(interval);
   }, []);
 
   const handlePasswordReset = async (e) => {

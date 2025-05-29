@@ -16,8 +16,9 @@ export default function Register() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
-  const [currentBgIndex, setCurrentBgIndex] = useState(0);
+  const [success, setSuccess] = useState('');  const [currentBgIndex, setCurrentBgIndex] = useState(() => 
+    Math.floor(Math.random() * backgrounds.length)
+  );
   const [passwordStrength, setPasswordStrength] = useState({ score: 0, feedback: '' });
   
   const { signUp, signInWithGoogle, signInWithDiscord, user } = useAuth();
@@ -35,8 +36,15 @@ export default function Register() {
   // Background rotation
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentBgIndex((prevIndex) => (prevIndex + 1) % backgrounds.length);
-    }, 10000);
+      setCurrentBgIndex((prevIndex) => {
+        // Generate a random index that's different from the current one
+        let newIndex;
+        do {
+          newIndex = Math.floor(Math.random() * backgrounds.length);
+        } while (newIndex === prevIndex && backgrounds.length > 1);
+        return newIndex;
+      });
+    }, 15000); // Change background every 15 seconds
     return () => clearInterval(interval);
   }, []);
 
