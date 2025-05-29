@@ -125,28 +125,47 @@ export const AuthProvider = ({ children }) => {
     } finally {
       setLoading(false)
     }
-  }
-  const signInWithGoogle = async () => {
+  }  const signInWithGoogle = async () => {
     try {
+      // Get the current origin, fallback to production domain if not available
+      const redirectOrigin = typeof window !== 'undefined' 
+        ? window.location.origin 
+        : 'https://lo-fi.study';
+      
+      const redirectTo = `${redirectOrigin}/auth/callback`;
+      console.log('Google OAuth redirect URL:', redirectTo);
+      
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/auth/callback`
+          redirectTo: redirectTo,
+          queryParams: {
+            access_type: 'offline',
+            prompt: 'consent',
+          }
         }
       })
       if (error) throw error
-      return { data, error: null }
-    } catch (error) {
+      return { data, error: null }    } catch (error) {
       console.error('Google sign-in error:', error)
       return { data: null, error }
     }
   }
+
   const signInWithDiscord = async () => {
     try {
+      // Get the current origin, fallback to production domain if not available
+      const redirectOrigin = typeof window !== 'undefined' 
+        ? window.location.origin 
+        : 'https://lo-fi.study';
+      
+      const redirectTo = `${redirectOrigin}/auth/callback`;
+      console.log('Discord OAuth redirect URL:', redirectTo);
+      
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'discord',
         options: {
-          redirectTo: `${window.location.origin}/auth/callback`
+          redirectTo: redirectTo
         }
       })
       if (error) throw error

@@ -6,17 +6,27 @@ export default function AuthCallback() {
   const router = useRouter()
   const supabase = getSupabaseBrowserClient()
   const [error, setError] = useState(null)
-
   useEffect(() => {
     const handleAuthCallback = async () => {
-      try {        const { data, error } = await supabase.auth.exchangeCodeForSession(
-          window.location.href
-        )
+      try {
+        // Check if there's a code in the URL
+        const urlParams = new URLSearchParams(window.location.search)
+        const code = urlParams.get('code')
+        
+        if (!code) {
+          console.log('No auth code found, redirecting to signin...')
+          router.replace('/auth/signin')
+          return
+        }
+
+        console.log('Processing auth callback with code:', code)
+
+        // Get the session after OAuth redirect
+        const { data, error } = await supabase.auth.getSession()
         
         if (error) {
           console.error('Auth callback error:', error)
           setError(error.message)
-          // Wait a bit then redirect to signin with error
           setTimeout(() => {
             router.replace('/auth/signin?error=auth-callback-error')
           }, 2000)
@@ -24,12 +34,13 @@ export default function AuthCallback() {
         }
 
         if (data.session) {
-          // Success - redirect to app
-          console.log('Auth successful, redirecting to app...')
-          router.replace('/app')
+          console.log('Auth successful, session found:', data.session.user.email)
+          // Small delay to ensure AuthContext picks up the session
+          setTimeout(() => {
+            router.replace('/app')
+          }, 500)
         } else {
-          // No session - redirect to signin
-          console.log('No session found, redirecting to signin...')
+          console.log('No session found after callback, redirecting to signin...')
           router.replace('/auth/signin')
         }
       } catch (error) {
@@ -41,7 +52,9 @@ export default function AuthCallback() {
       }
     }
     
-    handleAuthCallback()
+    // Add a small delay to ensure the URL is fully loaded
+    const timer = setTimeout(handleAuthCallback, 100)
+    return () => clearTimeout(timer)
   }, [router, supabase])
 
   if (error) {
