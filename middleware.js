@@ -2,6 +2,18 @@ import { createServerClient } from '@supabase/ssr'
 import { NextResponse } from 'next/server'
 
 export async function middleware(request) {
+  // Skip middleware for static files and auth callback to prevent infinite loops
+  const { pathname } = request.nextUrl
+  
+  if (
+    pathname.startsWith('/_next/') ||
+    pathname.startsWith('/api/') ||
+    pathname.includes('.') ||
+    pathname === '/auth/callback'
+  ) {
+    return NextResponse.next()
+  }
+
   let response = NextResponse.next({
     request: {
       headers: request.headers,
@@ -54,7 +66,18 @@ export async function middleware(request) {
     }
   )
 
-  await supabase.auth.getUser()
+  // Only check auth for protected routes
+  if (pathname.startsWith('/app') || pathname.startsWith('/profile')) {
+    try {
+      const { data: { user } } = await supabase.auth.getUser()
+      
+      if (!user && pathname !== '/auth/signin') {
+        return NextResponse.redirect(new URL('/auth/signin', request.url))
+      }
+    } catch (error) {
+      console.error('Middleware auth error:', error)
+    }
+  }
 
   return response
 }

@@ -14,14 +14,29 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true)
   const router = useRouter()
   const supabase = getSupabaseBrowserClient()
-
   useEffect(() => {
+    let isMounted = true
+
     // Get initial session
     const getInitialSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession()
-      setSession(session)
-      setUser(session?.user ?? null)
-      setLoading(false)
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession()
+        
+        if (error) {
+          console.error('Error getting initial session:', error)
+        }
+        
+        if (isMounted) {
+          setSession(session)
+          setUser(session?.user ?? null)
+          setLoading(false)
+        }
+      } catch (error) {
+        console.error('Error in getInitialSession:', error)
+        if (isMounted) {
+          setLoading(false)
+        }
+      }
     }
 
     getInitialSession()
@@ -30,24 +45,30 @@ export const AuthProvider = ({ children }) => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         console.log('Auth state changed:', event, session)
-        setSession(session)
-        setUser(session?.user ?? null)
-        setLoading(false)
+        
+        if (isMounted) {
+          setSession(session)
+          setUser(session?.user ?? null)
+          setLoading(false)
 
-        if (event === 'SIGNED_IN') {
-          // Ensure user profile exists in database
-          await ensureUserProfile(session.user)
-        } else if (event === 'SIGNED_OUT') {
-          // Clear local state when signed out
-          setUser(null)
-          setSession(null)
-          console.log('User signed out, clearing state')
+          if (event === 'SIGNED_IN' && session?.user) {
+            // Ensure user profile exists in database
+            await ensureUserProfile(session.user)
+          } else if (event === 'SIGNED_OUT') {
+            // Clear local state when signed out
+            setUser(null)
+            setSession(null)
+            console.log('User signed out, clearing state')
+          }
         }
       }
     )
 
-    return () => subscription?.unsubscribe()
-  }, [])
+    return () => {
+      isMounted = false
+      subscription?.unsubscribe()
+    }
+  }, [supabase])
 
   const ensureUserProfile = async (user) => {
     try {
@@ -105,10 +126,8 @@ export const AuthProvider = ({ children }) => {
       setLoading(false)
     }
   }
-
   const signInWithGoogle = async () => {
     try {
-      setLoading(true)
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
@@ -118,15 +137,12 @@ export const AuthProvider = ({ children }) => {
       if (error) throw error
       return { data, error: null }
     } catch (error) {
+      console.error('Google sign-in error:', error)
       return { data: null, error }
-    } finally {
-      setLoading(false)
     }
   }
-
   const signInWithDiscord = async () => {
     try {
-      setLoading(true)
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'discord',
         options: {
@@ -136,9 +152,8 @@ export const AuthProvider = ({ children }) => {
       if (error) throw error
       return { data, error: null }
     } catch (error) {
+      console.error('Discord sign-in error:', error)
       return { data: null, error }
-    } finally {
-      setLoading(false)
     }
   }
 

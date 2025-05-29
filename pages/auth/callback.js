@@ -9,11 +9,8 @@ export default function AuthCallback() {
 
   useEffect(() => {
     const handleAuthCallback = async () => {
-      try {
-        // Handle the auth code exchange
-        const { data, error } = await supabase.auth.exchangeCodeForSession(
-          router.asPath.includes('code=') ? 
-            new URLSearchParams(window.location.search).get('code') : null
+      try {        const { data, error } = await supabase.auth.exchangeCodeForSession(
+          window.location.href
         )
         
         if (error) {
@@ -37,7 +34,8 @@ export default function AuthCallback() {
         }
       } catch (error) {
         console.error('Error in auth callback:', error)
-        setError('Authentication failed')        setTimeout(() => {
+        setError('Authentication failed')
+        setTimeout(() => {
           router.replace('/auth/signin?error=callback-error')
         }, 2000)
       }

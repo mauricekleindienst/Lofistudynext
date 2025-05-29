@@ -4,19 +4,8 @@ import Link from "next/link";
 import Head from "next/head";
 import Image from "next/image";
 import { useAuth } from "../../contexts/AuthContext";
+import { backgrounds } from "../../data/backgrounds";
 import styles from "../../styles/Auth.module.css";
-
-const backgrounds = [
-  { id: 1, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Couch.mp4", alt: "Couch" },
-  { id: 2, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Rain.mp4", alt: "Rain" },
-  { id: 3, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Train.mp4", alt: "Train" },
-  { id: 4, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Classroom.mp4", alt: "Classroom" },
-  { id: 5, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Autumn.mp4", alt: "Autumn" },
-  { id: 6, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Night.mp4", alt: "Night" },
-  { id: 7, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Skyrim.mp4", alt: "Skyrim" },
-  { id: 8, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Train2.mp4", alt: "Train2" },
-  { id: 9, src: "https://lofistudy.fra1.cdn.digitaloceanspaces.com/backgrounds/Chillroom.mp4", alt: "Chillroom" },
-];
 
 export default function SignIn() {
   const { user, signIn, signInWithGoogle, signInWithDiscord, loading } = useAuth();
@@ -24,8 +13,9 @@ export default function SignIn() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [currentBgIndex, setCurrentBgIndex] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);  const [currentBgIndex, setCurrentBgIndex] = useState(() => 
+    Math.floor(Math.random() * backgrounds.length)
+  );
   const router = useRouter();
 
   useEffect(() => {
@@ -35,8 +25,15 @@ export default function SignIn() {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentBgIndex((prevIndex) => (prevIndex + 1) % backgrounds.length);
-    }, 10000);
+      setCurrentBgIndex((prevIndex) => {
+        // Generate a random index that's different from the current one
+        let newIndex;
+        do {
+          newIndex = Math.floor(Math.random() * backgrounds.length);
+        } while (newIndex === prevIndex && backgrounds.length > 1);
+        return newIndex;
+      });
+    }, 15000); // Change background every 15 seconds
     return () => clearInterval(interval);
   }, []);
 
