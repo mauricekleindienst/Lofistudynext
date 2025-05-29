@@ -24,7 +24,6 @@ export default function Header() {
     { label: 'About', href: '/aboutus' },
     { label: 'FAQ', href: '/FAQ' },
     { label: 'Contact', href: '/Contact' },
-    { label: 'API Test', href: '/api-test' },
   ];
 
   const menuVariants = {
