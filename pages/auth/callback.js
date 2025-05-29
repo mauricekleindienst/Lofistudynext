@@ -17,12 +17,10 @@ export default function AuthCallback() {
           console.log('No auth code found, redirecting to signin...')
           router.replace('/auth/signin')
           return
-        }
+        }        console.log('Processing auth callback with code:', code)
 
-        console.log('Processing auth callback with code:', code)
-
-        // Get the session after OAuth redirect
-        const { data, error } = await supabase.auth.getSession()
+        // Exchange the code for a session
+        const { data, error } = await supabase.auth.exchangeCodeForSession(code)
         
         if (error) {
           console.error('Auth callback error:', error)
