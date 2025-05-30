@@ -1,12 +1,17 @@
 // pages/api/profile.js
-import { requireAuth } from '../../lib/auth-helpers';
-import { supabaseAdmin } from '../../lib/supabase-admin';
+import { createClient, createAdminClient } from '../../utils/supabase/server';
 
 const handler = async (req, res) => {
-  const user = req.user;
-
+  const supabase = createClient();
+  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  
+  if (authError || !user) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
   if (req.method === 'GET') {
-    try {      // Get user profile from auth.users
+    try {
+      const supabaseAdmin = createAdminClient()
+      // Get user profile from auth.users
       const { data: userProfile, error: userError } = await supabaseAdmin.auth.admin.getUserById(user.id);
       
       if (userError) {
@@ -42,9 +47,9 @@ const handler = async (req, res) => {
       return res.status(500).json({ error: 'Internal server error' });
     }
   }
-
   if (req.method === 'PUT') {
     try {
+      const supabaseAdmin = createAdminClient()
       const { full_name } = req.body;
 
       if (!full_name || typeof full_name !== 'string') {
@@ -87,8 +92,7 @@ const handler = async (req, res) => {
       return res.status(500).json({ error: 'Internal server error' });
     }
   }
-
   return res.status(405).json({ error: 'Method not allowed' });
 };
 
-export default requireAuth(handler);
+export default handler;

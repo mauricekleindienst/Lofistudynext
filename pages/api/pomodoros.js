@@ -1,11 +1,16 @@
-import { supabaseAdmin } from '../../lib/supabase-admin'
-import { requireAuth } from '../../lib/auth-helpers'
+import { createClient, createAdminClient } from '../../utils/supabase/server'
 
 const handler = async (req, res) => {
-  const user = req.user
-
+  const supabase = createClient();
+  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  
+  if (authError || !user) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+  
   try {
-    if (req.method === 'GET') {      // Get user's pomodoro sessions
+    const supabaseAdmin = createAdminClient()
+    if (req.method === 'GET') {// Get user's pomodoro sessions
       const { data: pomodoros, error } = await supabaseAdmin
         .from('pomodoro_sessions')
         .select('*')
@@ -58,4 +63,4 @@ const handler = async (req, res) => {
   }
 }
 
-export default requireAuth(handler)
+export default handler;

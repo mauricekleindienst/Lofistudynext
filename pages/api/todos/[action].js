@@ -1,5 +1,5 @@
-import { supabase } from '../../../lib/supabase-admin'
-import { requireAuth } from '../../../lib/auth-helpers'
+import { createAdminClient } from '../../../utils/supabase/server'
+import { requireAuth } from '../../../utils/auth-helpers'
 
 async function updateTodoChallenges(user) {
   try {

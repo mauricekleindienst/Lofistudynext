@@ -1,14 +1,16 @@
-import { requireAuth } from '../../../lib/auth-helpers';
+import { createClient, createAdminClient } from '../../../utils/supabase/server';
 
-export default requireAuth(async function handler(req, res) {
+async function handler(req, res) {
+  const supabase = createClient();
+  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  
+  if (authError || !user) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
   const { type, category, count, time } = req.body;
 
   try {
-    const { createClient } = require('@supabase/supabase-js');
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL,
-      process.env.SUPABASE_SERVICE_ROLE_KEY
-    );
+    const supabase = createAdminClient();
 
     // Get relevant challenges
     const { data: challenges, error: challengesError } = await supabase
@@ -27,7 +29,7 @@ export default requireAuth(async function handler(req, res) {
       const { data: currentProgress } = await supabase
         .from('challenge_progress')
         .select('*')
-        .eq('user_id', req.user.id)
+        .eq('user_id', user.id)
         .eq('challenge_id', challenge.id)
         .single();
 
@@ -48,7 +50,7 @@ export default requireAuth(async function handler(req, res) {
       const { error: updateError } = await supabase
         .from('challenge_progress')
         .upsert({
-          user_id: req.user.id,
+          user_id: user.id,
           challenge_id: challenge.id,
           progress: newProgress,
           completed: completed,
@@ -63,9 +65,10 @@ export default requireAuth(async function handler(req, res) {
       }
     }
 
-    res.status(200).json({ message: 'Progress updated' });
-  } catch (error) {
+    res.status(200).json({ message: 'Progress updated' });  } catch (error) {
     console.error('Error updating challenge progress:', error);
     res.status(500).json({ error: 'Error updating progress' });
   }
-}); 
+}
+
+export default handler;

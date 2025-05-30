@@ -1,9 +1,15 @@
-import { supabaseAdmin } from '../../lib/supabase-admin'
-import { requireAuth } from '../../lib/auth-helpers'
+import { createClient, createAdminClient } from '../../utils/supabase/server'
 
-const handler = async (req, res) => {
+export default async function handler(req, res) {
+  // Check authentication
+  const supabase = createClient()
+  const { data: { user }, error: authError } = await supabase.auth.getUser()
+  
+  if (authError || !user) {
+    return res.status(401).json({ error: 'Unauthorized' })
+  }
+
   const { method } = req
-  const user = req.user
 
   try {
     switch (method) {
@@ -26,16 +32,14 @@ const handler = async (req, res) => {
   }
 }
 
-export default requireAuth(handler)
-
 const addEventHandler = async (req, res, user) => {
   const { title, date } = req.body
 
   if (!title || !date) {
     return res.status(400).json({ error: "Title and date are required" })
   }
-
   try {
+    const supabaseAdmin = createAdminClient()
     const { data: newEvent, error } = await supabaseAdmin
       .from('events')
       .insert({
@@ -59,8 +63,8 @@ const addEventHandler = async (req, res, user) => {
   }
 }
 
-const getEventsHandler = async (req, res, user) => {
-  try {
+const getEventsHandler = async (req, res, user) => {  try {
+    const supabaseAdmin = createAdminClient()
     const { data: events, error } = await supabaseAdmin
       .from('events')
       .select('id, title, date')
@@ -88,8 +92,8 @@ const deleteEventHandler = async (req, res, user) => {
   if (!id) {
     return res.status(400).json({ error: "Event ID is required" })
   }
-
   try {
+    const supabaseAdmin = createAdminClient()
     const { error } = await supabaseAdmin
       .from('events')
       .delete()

@@ -1,8 +1,9 @@
-import { supabase } from '../../../lib/supabase-admin'
-import { requireAuth } from '../../../lib/auth-helpers'
+import { createAdminClient } from '../../../utils/supabase/server'
+import { requireAuth } from '../../../utils/auth-helpers'
 
 const handler = async (req, res) => {
   const user = req.user
+  const supabase = createAdminClient()
 
   // GET: Retrieve feedback (admin only)
   if (req.method === 'GET') {

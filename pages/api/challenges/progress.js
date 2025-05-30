@@ -1,8 +1,15 @@
-import { requireAuth } from '../../../lib/auth-helpers';
+import { createClient, createAdminClient } from '../../../utils/supabase/server';
 
-export default requireAuth(async function handler(req, res) {
+async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  const supabase = createClient();
+  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  
+  if (authError || !user) {
+    return res.status(401).json({ error: 'Unauthorized' });
   }
 
   const { challengeId, email } = req.body;
@@ -13,11 +20,7 @@ export default requireAuth(async function handler(req, res) {
   }
 
   try {
-    const { createClient } = require('@supabase/supabase-js');
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL,
-      process.env.SUPABASE_SERVICE_ROLE_KEY
-    );
+    const supabase = createAdminClient();
 
     // Get challenge details
     const { data: challenge, error: challengeError } = await supabase
@@ -34,7 +37,7 @@ export default requireAuth(async function handler(req, res) {
     const { data: currentProgress, error: progressError } = await supabase
       .from('challenge_progress')
       .select('*')
-      .eq('user_id', req.user.id)
+      .eq('user_id', user.id)
       .eq('challenge_id', challengeId)
       .single();
 
@@ -49,7 +52,7 @@ export default requireAuth(async function handler(req, res) {
     const { data: updatedProgress, error: updateError } = await supabase
       .from('challenge_progress')
       .upsert({
-        user_id: req.user.id,
+        user_id: user.id,
         challenge_id: challengeId,
         progress: newProgress,
         completed,
@@ -65,9 +68,10 @@ export default requireAuth(async function handler(req, res) {
       return res.status(500).json({ error: 'Error updating progress' });
     }
 
-    res.json(updatedProgress);
-  } catch (error) {
+    res.json(updatedProgress);  } catch (error) {
     console.error('Error updating progress:', error);
     res.status(500).json({ error: 'Error updating progress' });
   }
-}); 
+}
+
+export default handler;

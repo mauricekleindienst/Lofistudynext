@@ -1,9 +1,16 @@
-import { requireAuth } from '../../../lib/auth-helpers';
+import { createClient, createAdminClient } from '../../../utils/supabase/server';
 
-export default requireAuth(async function handler(req, res) {
+async function handler(req, res) {
   if (req.method !== 'PUT') {
     res.setHeader('Allow', ['PUT']);
     return res.status(405).end(`Method ${req.method} Not Allowed`);
+  }
+
+  const supabase = createClient();
+  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  
+  if (authError || !user) {
+    return res.status(401).json({ error: 'Unauthorized' });
   }
 
   const { newOrder } = req.body;
@@ -13,19 +20,15 @@ export default requireAuth(async function handler(req, res) {
   }
 
   try {
-    const { createClient } = require('@supabase/supabase-js');
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL,
-      process.env.SUPABASE_SERVICE_ROLE_KEY
-    );
+    const supabaseAdmin = createAdminClient();
 
     // Update positions for each todo
     for (const { id, position } of newOrder) {
-      const { error } = await supabase
+      const { error } = await supabaseAdmin
         .from('todos')
         .update({ position })
         .eq('id', parseInt(id))
-        .eq('user_id', req.user.id);
+        .eq('user_id', user.id);
 
       if (error) {
         console.error('Error updating todo position:', error);
@@ -51,9 +54,10 @@ export default requireAuth(async function handler(req, res) {
     return res.status(200).json({ 
       message: 'Todo order updated successfully',
       todos: updatedTodos
-    });
-  } catch (error) {
+    });  } catch (error) {
     console.error('Error reordering todos:', error);
     return res.status(500).json({ error: 'Failed to reorder todos' });
   }
-});
+}
+
+export default handler;

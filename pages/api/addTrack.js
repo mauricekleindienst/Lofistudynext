@@ -1,20 +1,26 @@
-import { supabase } from '../../lib/supabase-admin'
-import { requireAuth } from '../../lib/auth-helpers'
+import { createClient, createAdminClient } from '../../utils/supabase/server'
 
-const handler = async (req, res) => {
+export default async function handler(req, res) {
+  // Check authentication
+  const supabase = createClient()
+  const { data: { user }, error: authError } = await supabase.auth.getUser()
+  
+  if (authError || !user) {
+    return res.status(401).json({ error: 'Unauthorized' })
+  }
+
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  const user = req.user
   const { title, videoId } = req.body;
 
   if (!title || !videoId) {
     return res.status(400).json({ error: "Missing required fields" });
-  }
-
-  try {
-    const { data: newTrack, error } = await supabase
+  }  try {
+    const supabaseAdmin = createAdminClient()
+    
+    const { data: newTrack, error } = await supabaseAdmin
       .from('tracks')
       .insert({
         user_id: user.id,
@@ -35,5 +41,3 @@ const handler = async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 }
-
-export default requireAuth(handler)

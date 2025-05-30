@@ -1,21 +1,24 @@
-import { requireAuth } from '../../../lib/auth-helpers';
+import { createClient, createAdminClient } from '../../../utils/supabase/server';
 
-export default requireAuth(async function handler(req, res) {
+async function handler(req, res) {
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  try {
-    const { createClient } = require('@supabase/supabase-js');
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL,
-      process.env.SUPABASE_SERVICE_ROLE_KEY
-    );
+  const supabase = createClient();
+  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  
+  if (authError || !user) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
 
-    const { count, error } = await supabase
+  try {
+    const supabaseAdmin = createAdminClient();
+
+    const { count, error } = await supabaseAdmin
       .from('todos')
       .select('*', { count: 'exact', head: true })
-      .eq('user_id', req.user.id)
+      .eq('user_id', user.id)
       .eq('completed', false);
 
     if (error) {
@@ -23,9 +26,10 @@ export default requireAuth(async function handler(req, res) {
       return res.status(500).json({ error: 'Failed to fetch todos count' });
     }
 
-    res.status(200).json({ count: count || 0 });
-  } catch (error) {
+    res.status(200).json({ count: count || 0 });  } catch (error) {
     console.error('Failed to fetch todos count:', error);
     res.status(500).json({ error: 'Failed to fetch todos count' });
   }
-}); 
+}
+
+export default handler;

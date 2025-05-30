@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { getSupabaseBrowserClient } from '../lib/supabase';
+import { createClient } from '../utils/supabase/client';
 import Draggable from 'react-draggable';
 import { motion } from 'framer-motion';
 import styles from '../styles/Notes.module.css';
@@ -12,7 +12,7 @@ export default function Notes({ onMinimize }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
-  const supabase = getSupabaseBrowserClient();
+  const supabase = createClient();
   useEffect(() => {
     if (user?.email && session?.access_token) {
       fetchNotes();

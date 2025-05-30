@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
-import { getSupabaseBrowserClient } from '../lib/supabase'
+import { createClient } from '../utils/supabase/client'
 
 const AuthContext = createContext({})
 
@@ -13,7 +13,7 @@ export const AuthProvider = ({ children }) => {
   const [session, setSession] = useState(null)
   const [loading, setLoading] = useState(true)
   const router = useRouter()
-  const supabase = getSupabaseBrowserClient()
+  const supabase = createClient()
   useEffect(() => {
     let isMounted = true
 

@@ -1,8 +1,13 @@
-import { supabaseAdmin } from '../../lib/supabase-admin'
-import { requireAuth } from '../../lib/auth-helpers'
+import { createClient, createAdminClient } from '../../utils/supabase/server'
 
-const handler = async (req, res) => {
-  const user = req.user
+export default async function handler(req, res) {
+  // Get the user session
+  const supabase = createClient()
+  const { data: { user }, error: authError } = await supabase.auth.getUser()
+  
+  if (authError || !user) {
+    return res.status(401).json({ error: 'Unauthorized' })
+  }
 
   try {
     switch (req.method) {
@@ -24,12 +29,11 @@ const handler = async (req, res) => {
   }
 }
 
-export default requireAuth(handler)
-
 async function getTodosHandler(req, res, user) {
   const { page = 1, limit = 20 } = req.query;
 
   try {
+    const supabaseAdmin = createAdminClient()
     const skip = (page - 1) * limit;
     
     const { data: todos, error } = await supabaseAdmin
@@ -68,8 +72,8 @@ async function saveTodoHandler(req, res, user) {
   if (!text) {
     return res.status(400).json({ error: 'Text is required' });
   }
-
   try {
+    const supabaseAdmin = createAdminClient()
     // Get max position
     const { data: maxPositionData, error: maxError } = await supabaseAdmin
       .from('todos')
@@ -112,8 +116,8 @@ async function updateTodoHandler(req, res, user) {
   if (!id) {
     return res.status(400).json({ error: 'Id is required' });
   }
-
   try {
+    const supabaseAdmin = createAdminClient()
     const updateData = {
       ...(text !== undefined && { text }),
       ...(completed !== undefined && { completed }),
@@ -151,8 +155,8 @@ async function deleteTodoHandler(req, res, user) {
   if (!id) {
     return res.status(400).json({ error: 'Id is required' });
   }
-
   try {
+    const supabaseAdmin = createAdminClient()
     // First delete all subtasks
     const { error: subtasksError } = await supabaseAdmin
       .from('subtasks')

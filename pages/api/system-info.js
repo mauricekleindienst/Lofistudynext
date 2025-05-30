@@ -1,12 +1,18 @@
-import { supabase } from '../../lib/supabase-admin'
-import { requireAuth } from '../../lib/auth-helpers'
+import { createClient, createAdminClient } from '../../utils/supabase/server'
 
 const handler = async (req, res) => {
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const user = req.user;
+  const supabase = createClient();
+  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  
+  if (authError || !user) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  const supabaseAdmin = createAdminClient();
 
   try {
     // Get database connection info and basic stats
@@ -29,12 +35,11 @@ const handler = async (req, res) => {
         { count: pomodoroSessions },
         { count: todos },
         { count: notes },
-        { count: events }
-      ] = await Promise.all([
-        supabase.from('pomodoro_sessions').select('*', { count: 'exact', head: true }).eq('user_id', user.id),
-        supabase.from('todos').select('*', { count: 'exact', head: true }).eq('user_id', user.id),
-        supabase.from('notes').select('*', { count: 'exact', head: true }).eq('user_id', user.id),
-        supabase.from('events').select('*', { count: 'exact', head: true }).eq('user_id', user.id)
+        { count: events }      ] = await Promise.all([
+        supabaseAdmin.from('pomodoro_sessions').select('*', { count: 'exact', head: true }).eq('user_id', user.id),
+        supabaseAdmin.from('todos').select('*', { count: 'exact', head: true }).eq('user_id', user.id),
+        supabaseAdmin.from('notes').select('*', { count: 'exact', head: true }).eq('user_id', user.id),
+        supabaseAdmin.from('events').select('*', { count: 'exact', head: true }).eq('user_id', user.id)
       ]);
 
       systemInfo.userStats = {
@@ -61,4 +66,4 @@ const handler = async (req, res) => {
   }
 }
 
-export default requireAuth(handler)
+export default handler;

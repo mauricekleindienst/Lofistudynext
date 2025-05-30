@@ -1,10 +1,14 @@
-import { supabaseAdmin } from '../../lib/supabase-admin'
-import { requireAuth } from '../../lib/auth-helpers'
-import { executeWithRetry } from '../../lib/supabase-retry'
+import { createClient, createAdminClient } from '../../utils/supabase/server'
 
 const handler = async (req, res) => {
   const { method } = req
-  const user = req.user
+  
+  const supabase = createClient();
+  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  
+  if (authError || !user) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
 
   console.log(`Notes API ${method} request from user:`, user?.email || 'unauthenticated')
 
@@ -32,17 +36,16 @@ const handler = async (req, res) => {
   }
 }
 
-export default requireAuth(handler)
+export default handler;
 
 const getNotesHandler = async (req, res, user) => {
   try {
-    const result = await executeWithRetry(async () => {
-      return await supabaseAdmin
-        .from('notes')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('updated_at', { ascending: false })
-    }, { maxRetries: 2, retryDelay: 500 });
+    const supabaseAdmin = createAdminClient()
+    const result = await supabaseAdmin
+      .from('notes')
+      .select('*')
+      .eq('user_id', user.id)
+      .order('updated_at', { ascending: false });
 
     if (result.error) throw result.error;
 
@@ -58,43 +61,38 @@ const saveNoteHandler = async (req, res, user) => {
 
   if (!title || !content) {
     return res.status(400).json({ error: "Title and content are required" })
-  }
-
-  try {
+  }  try {
+    const supabaseAdmin = createAdminClient()
+    
     if (id) {
       // Update existing note
-      const result = await executeWithRetry(async () => {
-        return await supabaseAdmin
-          .from('notes')
-          .update({
-            title,
-            content,
-            updated_at: new Date().toISOString()
-          })
-          .eq('id', id)
-          .eq('user_id', user.id)
-          .select()
-          .single()
-      }, { maxRetries: 2, retryDelay: 500 });
+      const result = await supabaseAdmin
+        .from('notes')
+        .update({
+          title,
+          content,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', id)
+        .eq('user_id', user.id)
+        .select()
+        .single();
 
       if (result.error) throw result.error;
 
       res.status(200).json(result.data);
-    } else {
-      // Create new note
-      const result = await executeWithRetry(async () => {
-        return await supabaseAdmin
-          .from('notes')
-          .insert({
-            title,
-            content,
-            user_id: user.id,
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString()
-          })
-          .select()
-          .single()
-      }, { maxRetries: 2, retryDelay: 500 });
+    } else {      // Create new note
+      const result = await supabaseAdmin
+        .from('notes')
+        .insert({
+          title,
+          content,
+          user_id: user.id,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        })
+        .select()
+        .single();
 
       if (result.error) throw result.error;
 
@@ -112,15 +110,13 @@ const deleteNoteHandler = async (req, res, user) => {
   if (!id) {
     return res.status(400).json({ error: "Note ID is required" })
   }
-
   try {
-    const result = await executeWithRetry(async () => {
-      return await supabase
-        .from('notes')
-        .delete()
-        .eq('id', id)
-        .eq('user_id', user.id)
-    }, { maxRetries: 2, retryDelay: 500 });
+    const supabaseAdmin = createAdminClient()
+    const result = await supabaseAdmin
+      .from('notes')
+      .delete()
+      .eq('id', id)
+      .eq('user_id', user.id);
 
     if (result.error) throw result.error;
 

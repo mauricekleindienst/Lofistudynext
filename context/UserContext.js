@@ -1,14 +1,14 @@
 // context/UserContext.js
 import { createContext, useContext, useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { getSupabaseBrowserClient } from '../lib/supabase';
+import { createClient } from '../utils/supabase/client';
 
 const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
   const { user, session } = useAuth();
   const [users, setUsers] = useState([]);
-  const supabase = getSupabaseBrowserClient();
+  const supabase = createClient();
 
   useEffect(() => {
     const fetchData = async () => {

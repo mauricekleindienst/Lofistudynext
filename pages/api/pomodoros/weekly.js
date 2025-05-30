@@ -1,4 +1,5 @@
-import { requireAuth } from '../../../lib/auth-helpers';
+import { createAdminClient } from '../../../utils/supabase/server';
+import { requireAuth } from '../../../utils/auth-helpers';
 
 export default requireAuth(async function handler(req, res) {
   if (req.method !== 'GET') {
@@ -6,11 +7,7 @@ export default requireAuth(async function handler(req, res) {
   }
 
   try {
-    const { createClient } = require('@supabase/supabase-js');
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL,
-      process.env.SUPABASE_SERVICE_ROLE_KEY
-    );
+    const supabase = createAdminClient();
 
     const { data: userPomodoros, error } = await supabase
       .from('user_pomodoros')

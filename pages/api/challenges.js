@@ -1,22 +1,22 @@
-import { getSupabaseServerClient } from '../../lib/supabase-server';
+import { createClient, createAdminClient } from '../../utils/supabase/server';
 
 export default async function handler(req, res) {
-  const supabase = getSupabaseServerClient(req, res);
+  // Check authentication
+  const supabase = createClient()
+  const { data: { user }, error: authError } = await supabase.auth.getUser()
+  
+  if (authError || !user) {
+    return res.status(401).json({ error: 'Unauthorized' })
+  }
+
+  const supabaseAdmin = createAdminClient();
 
   try {
-    // Check authentication
-    const { data: { session }, error: authError } = await supabase.auth.getSession();
-    
-    if (authError || !session) {
-      return res.status(401).json({ error: 'Unauthorized' });
-    }
-
     const { method } = req;
 
     switch (method) {
-      case 'GET':
-        try {
-          const { data: challenges, error } = await supabase
+      case 'GET':        try {
+          const { data: challenges, error } = await supabaseAdmin
             .from('challenges')
             .select('*')
             .order('id', { ascending: true });
@@ -40,7 +40,7 @@ export default async function handler(req, res) {
             return res.status(400).json({ error: 'Title and description are required' });
           }
 
-          const { data: challenge, error } = await supabase
+          const { data: challenge, error } = await supabaseAdmin
             .from('challenges')
             .insert([{
               title,
@@ -64,8 +64,7 @@ export default async function handler(req, res) {
 
       default:
         res.setHeader('Allow', ['GET', 'POST']);
-        return res.status(405).json({ error: `Method ${method} not allowed` });
-    }
+        return res.status(405).json({ error: `Method ${method} not allowed` });    }
   } catch (error) {
     console.error('Challenges API error:', error);
     return res.status(500).json({ error: 'Internal server error' });

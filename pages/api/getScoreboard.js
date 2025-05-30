@@ -1,6 +1,5 @@
 // api/getScoreboard.js
-import { supabase } from '../../lib/supabase-admin'
-import { requireAuth } from '../../lib/auth-helpers'
+import { createClient, createAdminClient } from '../../utils/supabase/server'
 import Cors from 'cors';
 import initMiddleware from '../../lib/init-middleware';
 
@@ -18,10 +17,17 @@ const handler = async (req, res) => {
   }
 
   if (req.method !== 'GET') {
-    return res.status(405).json({ error: 'Method not allowed' });
+    return res.status(405).json({ error: 'Method not allowed' });  }
+  
+  const authSupabase = createClient();
+  const { data: { user }, error: authError } = await authSupabase.auth.getUser();
+  
+  if (authError || !user) {
+    return res.status(401).json({ error: 'Unauthorized' });
   }
-
+  
   const { type = 'weekly' } = req.query;
+  const supabase = createAdminClient()
 
   try {
     let query = supabase
@@ -56,4 +62,4 @@ const handler = async (req, res) => {
   }
 }
 
-export default requireAuth(handler)
+export default handler;

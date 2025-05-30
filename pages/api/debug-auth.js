@@ -1,4 +1,4 @@
-import { getAuthenticatedUser } from '../../lib/auth-helpers'
+import { getAuthenticatedUser } from '../../utils/auth-helpers'
 
 export default async function handler(req, res) {
   console.log('=== AUTH DEBUG ===')

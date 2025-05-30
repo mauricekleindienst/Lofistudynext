@@ -1,72 +1,24 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { useRouter } from 'next/router'
-import { getSupabaseBrowserClient } from '../../lib/supabase'
+import { useAuth } from '../../contexts/AuthContext'
 
 export default function AuthCallback() {
   const router = useRouter()
-  const supabase = getSupabaseBrowserClient()
-  const [error, setError] = useState(null)
+  const { user, loading } = useAuth()
+  
   useEffect(() => {
-    const handleAuthCallback = async () => {
-      try {
-        // Check if there's a code in the URL
-        const urlParams = new URLSearchParams(window.location.search)
-        const code = urlParams.get('code')
-        
-        if (!code) {
-          console.log('No auth code found, redirecting to signin...')
-          router.replace('/auth/signin')
-          return
-        }        console.log('Processing auth callback with code:', code)
-
-        // Exchange the code for a session
-        const { data, error } = await supabase.auth.exchangeCodeForSession(code)
-        
-        if (error) {
-          console.error('Auth callback error:', error)
-          setError(error.message)
-          setTimeout(() => {
-            router.replace('/auth/signin?error=auth-callback-error')
-          }, 2000)
-          return
-        }
-
-        if (data.session) {
-          console.log('Auth successful, session found:', data.session.user.email)
-          // Small delay to ensure AuthContext picks up the session
-          setTimeout(() => {
-            router.replace('/app')
-          }, 500)
-        } else {
-          console.log('No session found after callback, redirecting to signin...')
-          router.replace('/auth/signin')
-        }
-      } catch (error) {
-        console.error('Error in auth callback:', error)
-        setError('Authentication failed')
-        setTimeout(() => {
-          router.replace('/auth/signin?error=callback-error')
-        }, 2000)
+    if (!loading) {
+      if (user) {
+        // User is authenticated, redirect to app
+        router.replace('/app')
+      } else {
+        // No user found, redirect to signin
+        router.replace('/auth/signin')
       }
     }
-    
-    // Add a small delay to ensure the URL is fully loaded
-    const timer = setTimeout(handleAuthCallback, 100)
-    return () => clearTimeout(timer)
-  }, [router, supabase])
+  }, [user, loading, router])
 
-  if (error) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-red-600 text-lg mb-4">⚠️ Authentication Error</div>
-          <p className="text-gray-600 mb-4">{error}</p>
-          <p className="text-sm text-gray-500">Redirecting to sign in...</p>
-        </div>
-      </div>
-    )
-  }
-
+  // Show loading spinner while checking auth
   return (
     <div className="min-h-screen flex items-center justify-center">
       <div className="text-center">

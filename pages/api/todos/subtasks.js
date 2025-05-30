@@ -1,14 +1,17 @@
-import { requireAuth } from '../../../lib/auth-helpers';
+import { createAdminClient } from '../../../utils/supabase/server';
+import { requireAuth } from '../../../utils/auth-helpers';
 
 export default requireAuth(async function handler(req, res) {
+  const supabase = createAdminClient();
+  
   try {
     switch (req.method) {
       case 'POST':
-        return addSubtaskHandler(req, res, user);
+        return addSubtaskHandler(req, res, req.user, supabase);
       case 'PUT':
-        return updateSubtaskHandler(req, res, user);
+        return updateSubtaskHandler(req, res, req.user, supabase);
       case 'DELETE':
-        return deleteSubtaskHandler(req, res, user);
+        return deleteSubtaskHandler(req, res, req.user, supabase);
       default:
         res.setHeader('Allow', ['POST', 'PUT', 'DELETE']);
         return res.status(405).end(`Method ${req.method} Not Allowed`);
@@ -19,20 +22,13 @@ export default requireAuth(async function handler(req, res) {
   }
 });
 
-async function addSubtaskHandler(req, res, user) {
+async function addSubtaskHandler(req, res, user, supabase) {
   const { todoId, text } = req.body;
 
   if (!todoId || !text) {
     return res.status(400).json({ error: 'TodoId and text are required' });
   }
-
   try {
-    const { createClient } = require('@supabase/supabase-js');
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL,
-      process.env.SUPABASE_SERVICE_ROLE_KEY
-    );
-
     // First verify the todo belongs to the user
     const { data: todo, error: todoError } = await supabase
       .from('todos')
@@ -70,7 +66,7 @@ async function addSubtaskHandler(req, res, user) {
   }
 }
 
-async function updateSubtaskHandler(req, res, user) {
+async function updateSubtaskHandler(req, res, user, supabase) {
   const { id, todoId, text, completed } = req.body;
 
   if (!id || !todoId) {
@@ -78,11 +74,6 @@ async function updateSubtaskHandler(req, res, user) {
   }
 
   try {
-    const { createClient } = require('@supabase/supabase-js');
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL,
-      process.env.SUPABASE_SERVICE_ROLE_KEY
-    );
 
     // Verify todo ownership
     const { data: todo, error: todoError } = await supabase
@@ -126,7 +117,7 @@ async function updateSubtaskHandler(req, res, user) {
   }
 }
 
-async function deleteSubtaskHandler(req, res, user) {
+async function deleteSubtaskHandler(req, res, user, supabase) {
   const { id, todoId } = req.body;
 
   if (!id || !todoId) {
@@ -134,12 +125,6 @@ async function deleteSubtaskHandler(req, res, user) {
   }
 
   try {
-    const { createClient } = require('@supabase/supabase-js');
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL,
-      process.env.SUPABASE_SERVICE_ROLE_KEY
-    );
-
     // Verify todo ownership
     const { data: todo, error: todoError } = await supabase
       .from('todos')

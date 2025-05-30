@@ -1,5 +1,5 @@
-import { requireAuth } from '../../../lib/auth-helpers';
-import { createSupabaseWithRetry, executeWithRetry } from '../../../lib/supabase-retry';
+import { requireAuth, executeWithRetry } from '../../../utils/auth-helpers';
+import { createAdminClient } from '../../../utils/supabase/server';
 
 export default requireAuth(async function handler(req, res) {
   if (req.method !== 'GET') {
@@ -7,11 +7,7 @@ export default requireAuth(async function handler(req, res) {
   }
 
   try {
-    const supabase = createSupabaseWithRetry({ 
-      useServiceRole: true,
-      timeout: 6000, // 6 second timeout
-      maxRetries: 2   // 2 retries for faster response
-    });
+    const supabase = createAdminClient();
 
     // Get all users ordered by weekly pomodoro count with retry logic
     const result = await executeWithRetry(async () => {

@@ -1,20 +1,25 @@
-import { supabase } from '../../lib/supabase-admin'
-import { requireAuth } from '../../lib/auth-helpers'
+import { createClient, createAdminClient } from '../../utils/supabase/server'
 
 const handler = async (req, res) => {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  const user = req.user
+  const supabase = createClient();
+  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  
+  if (authError || !user) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+  
+  const supabaseAdmin = createAdminClient()
   const { id } = req.body;
 
   if (!id) {
     return res.status(400).json({ error: "Track ID is required" });
   }
-
   try {
-    const { error } = await supabase
+    const { error } = await supabaseAdmin
       .from('tracks')
       .delete()
       .eq('id', id)
@@ -29,4 +34,4 @@ const handler = async (req, res) => {
   }
 }
 
-export default requireAuth(handler)
+export default handler;

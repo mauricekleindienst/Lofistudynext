@@ -1,14 +1,11 @@
-import { requireAuth } from '../../../lib/auth-helpers';
+import { createAdminClient } from '../../../utils/supabase/server';
+import { requireAuth } from '../../../utils/auth-helpers';
 
 export default requireAuth(async function handler(req, res) {
   try {
     if (req.method === 'GET') {
       try {
-        const { createClient } = require('@supabase/supabase-js');
-        const supabase = createClient(
-          process.env.NEXT_PUBLIC_SUPABASE_URL,
-          process.env.SUPABASE_SERVICE_ROLE_KEY
-        );
+        const supabase = createAdminClient();
 
         // Try to get flashcard count from database
         const { count, error } = await supabase

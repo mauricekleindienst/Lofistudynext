@@ -1,14 +1,20 @@
-import { supabase } from '../../../lib/supabase-admin'
-import { requireAuth } from '../../../lib/auth-helpers'
+import { createClient, createAdminClient } from '../../../utils/supabase/server'
 
 const handler = async (req, res) => {
-  const user = req.user
+  const supabase = createClient();
+  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  
+  if (authError || !user) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+  
+  const supabaseAdmin = createAdminClient()
 
   if (req.method === 'GET') {
     const { filter = 'all' } = req.query;
 
     try {
-      let query = supabase
+      let query = supabaseAdmin
         .from('challenges')
         .select(`
           *,
@@ -47,4 +53,4 @@ const handler = async (req, res) => {
   }
 }
 
-export default requireAuth(handler) 
+export default handler; 
