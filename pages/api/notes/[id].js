@@ -1,9 +1,15 @@
-import { createAdminClient } from '../../../utils/supabase/server';
-import { requireAuth } from '../../../utils/auth-helpers';
+import { createClient, createAdminClient } from '../../../utils/supabase/server';
 
-export default requireAuth(async function handler(req, res) {
+async function handler(req, res) {
+  // Get authenticated user
+  const authSupabase = createClient();
+  const { data: { user }, error: authError } = await authSupabase.auth.getUser();
+  
+  if (authError || !user) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
   const { id } = req.query;
-  const user = req.user; // Get user from request
 
   if (!id) {
     return res.status(400).json({ error: 'Note ID is required' });
@@ -35,7 +41,8 @@ export default requireAuth(async function handler(req, res) {
       return res.status(500).json({ error: 'Failed to delete note' });
     }
   }
-
   res.setHeader('Allow', ['DELETE']);
   return res.status(405).end(`Method ${req.method} Not Allowed`);
-});
+}
+
+export default handler;

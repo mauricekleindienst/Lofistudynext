@@ -1,9 +1,14 @@
-import { createAdminClient } from '../../../utils/supabase/server'
-import { requireAuth } from '../../../utils/auth-helpers'
+import { createClient, createAdminClient } from '../../../utils/supabase/server'
 
-const handler = async (req, res) => {
-  const user = req.user
-  const supabase = createAdminClient()
+export default async function handler(req, res) {
+  const supabase = createClient();
+  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  
+  if (authError || !user) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+  
+  const supabaseAdmin = createAdminClient()
 
   // GET: Retrieve feedback (admin only)
   if (req.method === 'GET') {
@@ -22,7 +27,7 @@ const handler = async (req, res) => {
       const skip = (pageNum - 1) * limitNum;
 
       // Build the query
-      let query = supabase
+      let query = supabaseAdmin
         .from('feedback')
         .select('*', { count: 'exact' })
         .order('created_at', { ascending: false })
@@ -63,7 +68,7 @@ const handler = async (req, res) => {
       }
 
       // Create the feedback entry
-      const { data: feedback, error } = await supabase
+      const { data: feedback, error } = await supabaseAdmin
         .from('feedback')
         .insert({
           user_id: user.id,
@@ -86,37 +91,3 @@ const handler = async (req, res) => {
   // Method not allowed
   return res.status(405).json({ error: 'Method not allowed' });
 }
-
-// Allow anonymous feedback submission for POST, but require auth for GET
-export default async function publicHandler(req, res) {
-  if (req.method === 'POST') {
-    // Allow anonymous feedback
-    try {
-      const { email, message } = req.body;
-
-      if (!message) {
-        return res.status(400).json({ error: 'Message is required' });
-      }
-
-      const { data: feedback, error } = await supabase
-        .from('feedback')
-        .insert({
-          email: email || 'anonymous',
-          message,
-          status: 'pending',
-        })
-        .select()
-        .single()
-
-      if (error) throw error
-
-      return res.status(201).json({ success: true, data: feedback });
-    } catch (error) {
-      console.error('Error submitting feedback:', error);
-      return res.status(500).json({ error: 'Failed to submit feedback' });
-    }
-  }
-  
-  // For GET requests, require authentication
-  return requireAuth(handler)(req, res);
-} 

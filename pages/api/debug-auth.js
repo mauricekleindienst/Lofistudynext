@@ -1,4 +1,4 @@
-import { getAuthenticatedUser } from '../../utils/auth-helpers'
+import { createClient } from '../../utils/supabase/server'
 
 export default async function handler(req, res) {
   console.log('=== AUTH DEBUG ===')
@@ -6,7 +6,8 @@ export default async function handler(req, res) {
   console.log('Cookies:', req.cookies)
   
   try {
-    const { user, error } = await getAuthenticatedUser(req, res)
+    const supabase = createClient();
+    const { data: { user }, error } = await supabase.auth.getUser();
     
     console.log('Auth result:', { user: user?.email, error: error?.message })
     

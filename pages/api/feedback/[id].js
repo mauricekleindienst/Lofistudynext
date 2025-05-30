@@ -1,9 +1,14 @@
-import { createAdminClient } from '../../../utils/supabase/server'
-import { requireAuth } from '../../../utils/auth-helpers'
+import { createClient, createAdminClient } from '../../../utils/supabase/server'
 
 const handler = async (req, res) => {
-  const user = req.user
-  const supabase = createAdminClient()
+  const authSupabase = createClient();
+  const { data: { user }, error: authError } = await authSupabase.auth.getUser();
+  
+  if (authError || !user) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+  
+  const supabase = createAdminClient();
   const { id } = req.query;
   
   // Check admin status
@@ -91,4 +96,4 @@ const handler = async (req, res) => {
   return res.status(405).json({ error: 'Method not allowed' });
 }
 
-export default requireAuth(handler) 
+export default handler 

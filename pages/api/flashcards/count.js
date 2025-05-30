@@ -1,7 +1,14 @@
-import { createAdminClient } from '../../../utils/supabase/server';
-import { requireAuth } from '../../../utils/auth-helpers';
+import { createClient, createAdminClient } from '../../../utils/supabase/server';
 
-export default requireAuth(async function handler(req, res) {
+async function handler(req, res) {
+  // Get authenticated user
+  const authSupabase = createClient();
+  const { data: { user }, error: authError } = await authSupabase.auth.getUser();
+  
+  if (authError || !user) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
   try {
     if (req.method === 'GET') {
       try {
@@ -11,7 +18,7 @@ export default requireAuth(async function handler(req, res) {
         const { count, error } = await supabase
           .from('flashcards')
           .select('*', { count: 'exact', head: true })
-          .eq('user_id', req.user.id);
+          .eq('user_id', user.id);
         
         if (error) {
           console.log('Flashcard table not found or error:', error.message);
@@ -26,9 +33,10 @@ export default requireAuth(async function handler(req, res) {
       }
     } else {
       return res.status(405).json({ error: 'Method not allowed' });
-    }
-  } catch (error) {
+    }  } catch (error) {
     console.error('Flashcards count API error:', error);
     return res.status(500).json({ error: 'Internal server error' });
   }
-});
+}
+
+export default handler;

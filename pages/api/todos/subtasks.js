@@ -1,17 +1,23 @@
-import { createAdminClient } from '../../../utils/supabase/server';
-import { requireAuth } from '../../../utils/auth-helpers';
+import { createClient, createAdminClient } from '../../../utils/supabase/server';
 
-export default requireAuth(async function handler(req, res) {
+async function handler(req, res) {
+  // Get authenticated user
+  const authSupabase = createClient();
+  const { data: { user }, error: authError } = await authSupabase.auth.getUser();
+  
+  if (authError || !user) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
   const supabase = createAdminClient();
   
-  try {
-    switch (req.method) {
+  try {    switch (req.method) {
       case 'POST':
-        return addSubtaskHandler(req, res, req.user, supabase);
+        return addSubtaskHandler(req, res, user, supabase);
       case 'PUT':
-        return updateSubtaskHandler(req, res, req.user, supabase);
+        return updateSubtaskHandler(req, res, user, supabase);
       case 'DELETE':
-        return deleteSubtaskHandler(req, res, req.user, supabase);
+        return deleteSubtaskHandler(req, res, user, supabase);
       default:
         res.setHeader('Allow', ['POST', 'PUT', 'DELETE']);
         return res.status(405).end(`Method ${req.method} Not Allowed`);
@@ -20,7 +26,7 @@ export default requireAuth(async function handler(req, res) {
     console.error('Error in subtask handler:', error);
     return res.status(500).json({ error: 'Internal server error' });
   }
-});
+}
 
 async function addSubtaskHandler(req, res, user, supabase) {
   const { todoId, text } = req.body;
@@ -148,9 +154,11 @@ async function deleteSubtaskHandler(req, res, user, supabase) {
       return res.status(500).json({ error: 'Failed to delete subtask' });
     }
 
-    return res.status(200).json({ message: 'Subtask deleted successfully' });
+  return res.status(200).json({ message: 'Subtask deleted successfully' });
   } catch (error) {
     console.error('Error deleting subtask:', error);
     return res.status(500).json({ error: 'Failed to delete subtask' });
   }
 }
+
+export default handler;

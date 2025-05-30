@@ -1,7 +1,6 @@
-import { createAdminClient } from '../../../utils/supabase/server'
-import { requireAuth } from '../../../utils/auth-helpers'
+import { createClient, createAdminClient } from '../../../utils/supabase/server'
 
-async function updateTodoChallenges(user) {
+async function updateTodoChallenges(user, supabase) {
   try {
     // Update todo completion challenge
     const { data: challenges, error } = await supabase
@@ -44,20 +43,27 @@ async function updateTodoChallenges(user) {
 }
 
 const handler = async (req, res) => {
-  const user = req.user
+  // Get authenticated user
+  const authSupabase = createClient();
+  const { data: { user }, error: authError } = await authSupabase.auth.getUser();
+  
+  if (authError || !user) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+  
+  const supabase = createAdminClient();
   const { action } = req.query;
   const { method } = req;
 
   try {
-    switch (action) {
-      case 'complete':
+    switch (action) {      case 'complete':
         if (method === 'POST') {
-          return await completeTodoHandler(req, res, user);
+          return await completeTodoHandler(req, res, user, supabase);
         }
         break;
       case 'update':
         if (method === 'PUT') {
-          return await updateTodoHandler(req, res, user);
+          return await updateTodoHandler(req, res, user, supabase);
         }
         break;
       default:
@@ -72,8 +78,9 @@ const handler = async (req, res) => {
   }
 }
 
-export default requireAuth(handler)
-async function completeTodoHandler(req, res, user) {
+export default handler
+
+async function completeTodoHandler(req, res, user, supabase) {
   const { todoId } = req.body;
   
   if (!todoId) {
@@ -90,10 +97,8 @@ async function completeTodoHandler(req, res, user) {
       .select()
       .single()
 
-    if (error) throw error
-
-    // Update challenges
-    await updateTodoChallenges(user);
+    if (error) throw error    // Update challenges
+    await updateTodoChallenges(user, supabase);
 
     return res.status(200).json(updatedTodo);
   } catch (error) {
@@ -102,7 +107,7 @@ async function completeTodoHandler(req, res, user) {
   }
 }
 
-async function updateTodoHandler(req, res, user) {
+async function updateTodoHandler(req, res, user, supabase) {
   const { todoId, text, completed } = req.body;
   
   if (!todoId) {

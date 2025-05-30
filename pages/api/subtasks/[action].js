@@ -1,9 +1,7 @@
-import { createAdminClient } from '../../../utils/supabase/server'
-import { requireAuth } from '../../../utils/auth-helpers'
+import { createClient, createAdminClient } from '../../../utils/supabase/server'
 
-async function updateSubtaskChallenges(user) {
+async function updateSubtaskChallenges(user, supabase) {
   try {
-    const supabase = createAdminClient()
     const { data: challenges, error } = await supabase
       .from('challenges')
       .select(`
@@ -44,7 +42,15 @@ async function updateSubtaskChallenges(user) {
 }
 
 const handler = async (req, res) => {
-  const user = req.user
+  // Get authenticated user
+  const authSupabase = createClient();
+  const { data: { user }, error: authError } = await authSupabase.auth.getUser();
+  
+  if (authError || !user) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+  
+  const supabase = createAdminClient();
   const { action } = req.query;
   const { subtaskId, todoId, completed } = req.body;
 
@@ -106,4 +112,4 @@ const handler = async (req, res) => {
   }
 }
 
-export default requireAuth(handler) 
+export default handler 
