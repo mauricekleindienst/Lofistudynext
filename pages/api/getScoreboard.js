@@ -19,7 +19,7 @@ const handler = async (req, res) => {
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' });  }
   
-  const authSupabase = createClient();
+  const authSupabase = await createClient();
   const { data: { user }, error: authError } = await authSupabase.auth.getUser();
   
   if (authError || !user) {

@@ -21,7 +21,7 @@ async function handler(req, res) {
 
     if (req.method !== 'POST') {
       return res.status(405).json({ error: 'Method not allowed. Only POST requests are allowed.' });
-    }    const authSupabase = createClient();
+    }    const authSupabase = await createClient();
     const { data: { user }, error: authError } = await authSupabase.auth.getUser();
     
     if (authError || !user) {

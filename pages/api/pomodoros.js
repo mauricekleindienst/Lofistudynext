@@ -1,7 +1,7 @@
 import { createClient, createAdminClient } from '../../utils/supabase/server'
 
 const handler = async (req, res) => {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user }, error: authError } = await supabase.auth.getUser();
   
   if (authError || !user) {

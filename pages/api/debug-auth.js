@@ -6,7 +6,7 @@ export default async function handler(req, res) {
   console.log('Cookies:', req.cookies)
   
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data: { user }, error } = await supabase.auth.getUser();
     
     console.log('Auth result:', { user: user?.email, error: error?.message })

@@ -43,7 +43,7 @@ async function updateSubtaskChallenges(user, supabase) {
 
 const handler = async (req, res) => {
   // Get authenticated user
-  const authSupabase = createClient();
+  const authSupabase = await createClient();
   const { data: { user }, error: authError } = await authSupabase.auth.getUser();
   
   if (authError || !user) {
